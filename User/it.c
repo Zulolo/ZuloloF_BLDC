@@ -118,7 +118,7 @@ uint32_t DetectdTimeWhenPWMHigh(void)
 //	return iMin;
 //}
 
-ZF_BOOLEAN PhaseZXDedHandler(uint32_t iThisZXDetectedTime)
+boolean PhaseZXDedHandler(uint32_t iThisZXDetectedTime)
 {
 	static uint32_t iTempDeltaZXD = 0;
 	static uint32_t iHalfPeriod = 0;

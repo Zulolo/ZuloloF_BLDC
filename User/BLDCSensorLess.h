@@ -6,15 +6,15 @@
 	{
 		struct
 		{
-			__IO ZF_BOOLEAN MotorNeedToRun:1;
+			__IO boolean MotorNeedToRun:1;
 			__IO uint16_t RotateDirection:1;
 		}MCR;
 		struct
 		{
-			__IO ZF_BOOLEAN MotorPowerOn:1;
-			__IO ZF_BOOLEAN ZeroCrossDetecting:1;
-			__IO ZF_BOOLEAN Locked:1;
-			__IO ZF_BOOLEAN ThisPhaseDetectedZX:1;
+			__IO boolean MotorPowerOn:1;
+			__IO boolean ZeroCrossDetecting:1;
+			__IO boolean Locked:1;
+			__IO boolean ThisPhaseDetectedZX:1;
 			__IO uint16_t MissedZXD_CNT:8;
 			__IO uint16_t SuccessZXD_CNT:8;
 		}MSR;

@@ -140,7 +140,7 @@ typedef enum {
 typedef enum {
 	ZF_FALSE = FALSE,
 	ZF_TRUE = TRUE
-} ZF_BOOLEAN;
+} boolean;
 extern __IO uint32_t iSystemTick;
 
 #endif 
