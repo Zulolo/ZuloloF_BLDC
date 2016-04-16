@@ -1,0 +1,13 @@
+T22C8 041:510 SEGGER J-Link V4.91b (beta) Log File (0000ms, 22952ms total)
+T22C8 041:510 DLL Compiled: Sep 15 2014 09:17:56 (0001ms, 22953ms total)
+T22C8 041:510 Logging started @ 2015-01-31 11:16 (0001ms, 22953ms total)
+T22C8 041:511 JLINK_SetWarnOutHandler(...) (0000ms, 22953ms total)
+T22C8 041:511 JLINK_OpenEx(...)
+Firmware: J-Link ARM V8 compiled Nov 25 2013 19:20:08Updating firmware:  J-Link ARM V8 compiled Jul 17 2014 12:31:18Replacing firmware: J-Link ARM V8 compiled Nov 25 2013 19:20:08
+  ***** Error: Communication timeout. Emulator did not re-enumerate.Device "CORTEX-M0" selected (0 KB flash, 0 KB RAM).  returns "Communication timeout. Emulator did not re-enumerate." (63573ms, 86526ms total)
+
+  ***** API Error: API JLINK_GetHardwareVersion function called before JLINKARM_Open()
+T22C8 105:084 
+  ***** Error: Can not connect to J-Link via USB.Device "CORTEX-M0" selected (0 KB flash, 0 KB RAM).JLINK_Close() (0001ms, 86527ms total)
+T22C8 114:176  (0001ms, 86527ms total)
+T22C8 114:176 Closed (0001ms, 86527ms total)

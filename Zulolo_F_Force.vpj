@@ -1,0 +1,211 @@
+<!DOCTYPE Project SYSTEM "http://www.slickedit.com/dtd/vse/10.0/vpj.dtd">
+<Project
+	Version="10.0"
+	VendorName="SlickEdit"
+	TemplateName="Other C/C++"
+	WorkingDir=".">
+	<Config
+		Name="Debug"
+		Type="cpp"
+		DebugCallbackName="gdb"
+		OutputFile="%bdZulolo_F_Force"
+		CompilerConfigName="Latest Version">
+		<Menu>
+			<Target
+				Name="Compile"
+				MenuCaption="&amp;Compile"
+				CaptureOutputWith="ProcessBuffer"
+				OutputExts="*.o"
+				SaveOption="SaveCurrent"
+				RunFromDir="%rw">
+				<Exec CmdLine='cc -c -g %i %defd -o "%bd%n.o" "%f"'/>
+			</Target>
+			<Target
+				Name="Link"
+				MenuCaption="&amp;Link">
+				<Exec CmdLine='cc -g -o "%o" %f %libs'/>
+			</Target>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw">
+				<Exec CmdLine='"%(VSLICKBIN1)vsbuild" build "%w" "%r"'/>
+			</Target>
+			<Target
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw">
+				<Exec CmdLine='"%(VSLICKBIN1)vsbuild" rebuild "%w" "%r"'/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				SaveOption="SaveNone"
+				BuildFirst="1"
+				CaptureOutputWith="ProcessBuffer"
+				RunFromDir="%rw">
+				<Exec CmdLine='vsdebugio -prog "%o"'/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				SaveOption="SaveNone"
+				BuildFirst="1"
+				CaptureOutputWith="ProcessBuffer"
+				RunFromDir="%rw">
+				<Exec CmdLine='"%o"'/>
+			</Target>
+		</Menu>
+	</Config>
+	<Config
+		Name="Release"
+		Type="cpp"
+		DebugCallbackName="gdb"
+		OutputFile="%bdZulolo_F_Force"
+		CompilerConfigName="Latest Version">
+		<Menu>
+			<Target
+				Name="Compile"
+				MenuCaption="&amp;Compile"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveCurrent"
+				OutputExts="*.o"
+				RunFromDir="%rw">
+				<Exec CmdLine='cc -c -O %i %defd -o "%bd%n.o" "%f"'/>
+			</Target>
+			<Target
+				Name="Link"
+				MenuCaption="&amp;Link">
+				<Exec CmdLine='cc -O -o "%o" %f %libs'/>
+			</Target>
+			<Target
+				Name="Build"
+				MenuCaption="&amp;Build"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw">
+				<Exec CmdLine='"%(VSLICKBIN1)vsbuild" build "%w" "%r"'/>
+			</Target>
+			<Target
+				Name="Rebuild"
+				MenuCaption="&amp;Rebuild"
+				CaptureOutputWith="ProcessBuffer"
+				SaveOption="SaveWorkspaceFiles"
+				RunFromDir="%rw">
+				<Exec CmdLine='"%(VSLICKBIN1)vsbuild" rebuild "%w" "%r"'/>
+			</Target>
+			<Target
+				Name="Debug"
+				MenuCaption="&amp;Debug"
+				SaveOption="SaveNone"
+				BuildFirst="1"
+				CaptureOutputWith="ProcessBuffer"
+				RunFromDir="%rw">
+				<Exec CmdLine='vsdebugio -prog "%o"'/>
+			</Target>
+			<Target
+				Name="Execute"
+				MenuCaption="E&amp;xecute"
+				SaveOption="SaveNone"
+				BuildFirst="1"
+				CaptureOutputWith="ProcessBuffer"
+				RunFromDir="%rw">
+				<Exec CmdLine='"%o"'/>
+			</Target>
+		</Menu>
+	</Config>
+	<Rules Name="Compile">
+		<Rule
+			InputExts="*.s"
+			OutputExts="*.o"
+			LinkObject="1">
+			<Exec CmdLine='as -o "%bd%n.o" "%f"'/>
+		</Rule>
+	</Rules>
+	<CustomFolders>
+		<Folder
+			Name="Source Files"
+			Filters="*.c;*.C;*.cc;*.cpp;*.cp;*.cxx;*.c++;*.prg;*.pas;*.dpr;*.asm;*.s;*.bas;*.java;*.cs;*.sc;*.e;*.cob;*.html;*.rc;*.tcl;*.py;*.pl;*.d;*.m;*.mm;*.go">
+		</Folder>
+		<Folder
+			Name="Header Files"
+			Filters="*.h;*.H;*.hh;*.hpp;*.hxx;*.inc;*.sh;*.cpy;*.if">
+		</Folder>
+		<Folder
+			Name="Resource Files"
+			Filters="*.ico;*.cur;*.dlg"/>
+		<Folder
+			Name="Bitmaps"
+			Filters="*.bmp"/>
+		<Folder
+			Name="Other Files"
+			Filters="">
+		</Folder>
+	</CustomFolders>
+	<Files AutoFolders="DirectoryView">
+		<Folder Name="CMSIS">
+			<F N="CMSIS/arm_common_tables.h"/>
+			<F N="CMSIS/arm_math.h"/>
+			<F N="CMSIS/core_cm0.h"/>
+			<F N="CMSIS/core_cm0plus.h"/>
+			<F N="CMSIS/core_cm3.h"/>
+			<F N="CMSIS/core_cm4.h"/>
+			<F N="CMSIS/core_cm4_simd.h"/>
+			<F N="CMSIS/core_cmFunc.h"/>
+			<F N="CMSIS/core_cmInstr.h"/>
+			<F N="CMSIS/core_sc000.h"/>
+			<F N="CMSIS/core_sc300.h"/>
+			<F N="CMSIS/Mini51Series.h"/>
+			<F N="CMSIS/Mini5xxDE.h"/>
+			<F N="CMSIS/startup_Mini51Series.s"/>
+			<F N="CMSIS/system_Mini51Series.c"/>
+			<F N="CMSIS/system_Mini51Series.h"/>
+		</Folder>
+		<Folder Name="StdDriver">
+			<Folder Name="inc">
+				<F N="StdDriver/inc/adc.h"/>
+				<F N="StdDriver/inc/clk.h"/>
+				<F N="StdDriver/inc/fmc.h"/>
+				<F N="StdDriver/inc/gpio.h"/>
+				<F N="StdDriver/inc/i2c.h"/>
+				<F N="StdDriver/inc/pwm.h"/>
+				<F N="StdDriver/inc/spi.h"/>
+				<F N="StdDriver/inc/sys.h"/>
+				<F N="StdDriver/inc/timer.h"/>
+				<F N="StdDriver/inc/uart.h"/>
+				<F N="StdDriver/inc/wdt.h"/>
+			</Folder>
+			<Folder Name="src">
+				<F N="StdDriver/src/adc.c"/>
+				<F N="StdDriver/src/clk.c"/>
+				<F N="StdDriver/src/fmc.c"/>
+				<F N="StdDriver/src/gpio.c"/>
+				<F N="StdDriver/src/i2c.c"/>
+				<F N="StdDriver/src/pwm.c"/>
+				<F N="StdDriver/src/retarget.c"/>
+				<F N="StdDriver/src/spi.c"/>
+				<F N="StdDriver/src/sys.c"/>
+				<F N="StdDriver/src/timer.c"/>
+				<F N="StdDriver/src/uart.c"/>
+				<F N="StdDriver/src/wdt.c"/>
+			</Folder>
+		</Folder>
+		<Folder Name="User">
+			<F N="User/BLDCSensorLess.c"/>
+			<F N="User/BLDCSensorLess.h"/>
+			<F N="User/Communication.c"/>
+			<F N="User/Communication.h"/>
+			<F N="User/Error.c"/>
+			<F N="User/Error.h"/>
+			<F N="User/global.h"/>
+			<F N="User/it.c"/>
+			<F N="User/it.h"/>
+			<F N="User/main.c"/>
+			<F N="User/main.h"/>
+		</Folder>
+	</Files>
+</Project>

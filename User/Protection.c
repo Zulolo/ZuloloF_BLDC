@@ -1,0 +1,4 @@
+boolean PTC_bIsBatteryEnd()
+{
+
+}
