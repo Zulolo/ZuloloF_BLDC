@@ -11,7 +11,12 @@
 #define __USED_BY_ERROR_C__
 #include "Error.h"
 
-void clearError(ENUM_ERROR_LEVEL enumErrorType)
+void clearError(void)
+{
+	iErrorMaster = 0;
+}
+
+void resetError(ENUM_ERROR_LEVEL enumErrorType)
 {
 	if (ERR_NULL != enumErrorType)
 	{	

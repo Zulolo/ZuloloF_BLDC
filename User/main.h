@@ -54,8 +54,8 @@ const uint16_t iTestSpeedSequence[] = {250, 300, 350, 400, 450, 300, 400, 250, 2
 #define TEST_SPEED_SEQUENCE_NUM		(sizeof(iTestSpeedSequence)/sizeof(uint16_t))
 __IO uint32_t iSystemTick = 0;
 
-extern void BLDCSensorLessManager(void);
-extern void CommunicationManager(void);
-extern void ErrorManager(void);
-extern void checkMotor(void);
+//extern void BLDCSensorLessManager(void);
+//extern void CommunicationManager(void);
+//extern void ErrorManager(void);
+//extern void checkMotor(void);
 #endif 

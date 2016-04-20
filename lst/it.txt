@@ -152,7 +152,7 @@
 
                   PhaseZXDedHandler PROC
 ;;;120    
-;;;121    uint8_t PhaseZXDedHandler(uint32_t iThisZXDetectedTime)
+;;;121    int32_t PhaseZXDedHandler(uint32_t iThisZXDetectedTime)
 00008e  b530              PUSH     {r4,r5,lr}
 ;;;122    {
 ;;;123    	static uint32_t iTempDeltaZXD = 0;

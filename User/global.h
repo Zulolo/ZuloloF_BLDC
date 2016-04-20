@@ -16,6 +16,7 @@
 
 #define LED_PORT					P5
 #define LED_PIN						BIT4
+#define LED_OUTPUT					P54
 
 #define BATTERY_V_PORT				P3
 #define BATTERY_V_PIN				BIT1
@@ -73,10 +74,10 @@
 #define ROTATE_CLOCKWISE		0
 #define ROTATE_ANTICLOCKWISE	1
 
-#define ADC_CURRENT_CHN_MSK		0x01
-#define ADC_BATTERY_CHN_MSK		0x80
 #define ADC_CURRENT_CHN_IDX		0
 #define ADC_BATTERY_CHN_IDX		7
+#define ADC_CURRENT_CHN_MSK		(0x01 << ADC_CURRENT_CHN_IDX)
+#define ADC_BATTERY_CHN_MSK		(0x01 << ADC_BATTERY_CHN_IDX)
 #define ADC_CURRENT_CMP_MSK		ADC_CMP0_INT
 #define ADC_BATTERY_CMP_MSK		ADC_CMP1_INT
 #define ADC_ADF_MSK				ADC_ADF_INT
@@ -137,10 +138,10 @@ typedef enum {
 	ERR_BRD_FAULT
 } ENUM_ERROR_LEVEL;
 
-typedef enum {
-	ZF_FALSE = FALSE,
-	ZF_TRUE = TRUE
-} boolean;
 extern __IO uint32_t iSystemTick;
+
+#include "BLDCSensorLess.h"
+#include "Communication.h"
+#include "Error.h"
 
 #endif 

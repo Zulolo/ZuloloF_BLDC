@@ -6,15 +6,15 @@
 	{
 		struct
 		{
-			__IO boolean MotorNeedToRun:1;
+			__IO uint16_t MotorNeedToRun:1;
 			__IO uint16_t RotateDirection:1;
 		}MCR;
 		struct
 		{
-			__IO boolean MotorPowerOn:1;
-			__IO boolean ZeroCrossDetecting:1;
-			__IO boolean Locked:1;
-			__IO boolean ThisPhaseDetectedZX:1;
+			__IO uint16_t MotorPowerOn:1;
+			__IO uint16_t ZeroCrossDetecting:1;
+			__IO uint16_t Locked:1;
+			__IO uint16_t ThisPhaseDetectedZX:1;
 			__IO uint16_t MissedZXD_CNT:8;
 			__IO uint16_t SuccessZXD_CNT:8;
 		}MSR;
@@ -176,7 +176,7 @@
 //		#define MOTOR_R_DIRECTION_MSK	(0x02ul)
 //		#define IS_MOTOR_NEED_TO_RUN(x)	((x) & MOTOR_RUNNING_MSK)
 
-//		#define IS_MOTOR_R_CLOCKWISE	(((mMotor.structMotor.MCR & MOTOR_R_DIRECTION_MSK) == 0) ? ZF_TRUE : ZF_FALSE)
+//		#define IS_MOTOR_R_CLOCKWISE	(((mMotor.structMotor.MCR & MOTOR_R_DIRECTION_MSK) == 0) ? TRUE : FALSE)
 		#define GET_PHASE_VALUE(x)		((mMotor.structMotor.MCR.RotateDirection == ROTATE_CLOCKWISE) ? PHASE_TAB_CLOCKWISE[(x)] : PHASE_TAB_ANTICLOCKWISE[(x)])
 		#define PHASE_NUMBER			(sizeof(PHASE_TAB_CLOCKWISE)/sizeof(uint32_t))
 		#define PHASE_INCREASE(x) 		INDEX_INCREASE((x), PHASE_NUMBER) //((x) = (((x) == (PHASE_NUMBER - 1)) ? 0 : ((x) + 1)))
@@ -241,4 +241,6 @@ EXTERNAL_BLDC uint32_t iLastZXDetectedTime;
 EXTERNAL_BLDC uint8_t iCurrentPhase;
 EXTERNAL_BLDC uint8_t FLAG_PHASE_CHANGED;
 EXTERNAL_BLDC __INLINE void stopMotor(void);
+EXTERNAL_BLDC void checkMotor(void);
+EXTERNAL_BLDC void BLDCSensorLessManager(void);
 #endif

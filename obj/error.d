@@ -18,7 +18,7 @@
 .\obj\error.o: .\StdDriver\inc\timer.h
 .\obj\error.o: .\StdDriver\inc\uart.h
 .\obj\error.o: .\StdDriver\inc\wdt.h
-.\obj\error.o: User\BLDCSensorless.h
+.\obj\error.o: User\BLDCSensorLess.h
 .\obj\error.o: User\global.h
-.\obj\error.o: User\Error.h
 .\obj\error.o: User\Communication.h
+.\obj\error.o: User\Error.h

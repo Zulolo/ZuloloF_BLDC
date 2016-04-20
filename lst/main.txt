@@ -867,8 +867,8 @@
 ;;;303        /* User can use SystemCoreClockUpdate() to calculate SystemCoreClock and cyclesPerUs automatically. */
 ;;;304        SystemCoreClockUpdate(); 
 0004b4  f7fffffe          BL       SystemCoreClockUpdate
-0004b8  4c3e              LDR      r4,|L1.1460|
-0004ba  483d              LDR      r0,|L1.1456|
+0004b8  4c3a              LDR      r4,|L1.1444|
+0004ba  4839              LDR      r0,|L1.1440|
 0004bc  6160              STR      r0,[r4,#0x14]
 0004be  2103              MOVS     r1,#3
 0004c0  1f08              SUBS     r0,r1,#4
@@ -960,77 +960,71 @@
 ;;;375        /* Init UART to 115200-8n1 for print message */
 ;;;376        /* This MCU don't have DMA, need to use interrupt to make un-polling UART TX */
 ;;;377        /* Now better not to use printf after motor was started, in future if needed will write one */
-;;;378        UART_Open(UART, 115200);
-0004f0  21e1              MOVS     r1,#0xe1
-0004f2  0249              LSLS     r1,r1,#9
-0004f4  4830              LDR      r0,|L1.1464|
-0004f6  f7fffffe          BL       UART_Open
-;;;379       
-;;;380        printf("Hello World\n");
-0004fa  a030              ADR      r0,|L1.1468|
-0004fc  f7fffffe          BL       __2printf
+;;;378    //    UART_Open(UART, 115200);
+;;;379    //   
+;;;380    //    printf("Hello World\n");
 ;;;381    
 ;;;382        checkMotor();
-000500  f7fffffe          BL       checkMotor
+0004f0  f7fffffe          BL       checkMotor
 ;;;383    
 ;;;384        /* ----==== Here is the parameter used for test ====----*/
 ;;;385        // Max PWM Duty is: PWM_PERIOD = 441
 ;;;386        // Max Period is:
 ;;;387        MOTOR_SHUT_DOWN;
-000504  4931              LDR      r1,|L1.1484|
-000506  2000              MOVS     r0,#0
-000508  6208              STR      r0,[r1,#0x20]
-00050a  4a31              LDR      r2,|L1.1488|
-00050c  6150              STR      r0,[r2,#0x14]
-00050e  4831              LDR      r0,|L1.1492|
-000510  6801              LDR      r1,[r0,#0]
-000512  0383              LSLS     r3,r0,#14
-000514  4399              BICS     r1,r1,r3
-000516  6001              STR      r1,[r0,#0]
-000518  492e              LDR      r1,|L1.1492|
-00051a  3120              ADDS     r1,r1,#0x20
-00051c  680c              LDR      r4,[r1,#0]
-00051e  439c              BICS     r4,r4,r3
-000520  600c              STR      r4,[r1,#0]
-000522  6804              LDR      r4,[r0,#0]
-000524  0343              LSLS     r3,r0,#13
-000526  439c              BICS     r4,r4,r3
-000528  6004              STR      r4,[r0,#0]
-00052a  6808              LDR      r0,[r1,#0]
-00052c  4398              BICS     r0,r0,r3
-00052e  6008              STR      r0,[r1,#0]
-000530  20ff              MOVS     r0,#0xff
-000532  63d0              STR      r0,[r2,#0x3c]
-000534  6390              STR      r0,[r2,#0x38]
+0004f4  492c              LDR      r1,|L1.1448|
+0004f6  2000              MOVS     r0,#0
+0004f8  6208              STR      r0,[r1,#0x20]
+0004fa  4a2c              LDR      r2,|L1.1452|
+0004fc  6150              STR      r0,[r2,#0x14]
+0004fe  482c              LDR      r0,|L1.1456|
+000500  6801              LDR      r1,[r0,#0]
+000502  0383              LSLS     r3,r0,#14
+000504  4399              BICS     r1,r1,r3
+000506  6001              STR      r1,[r0,#0]
+000508  4929              LDR      r1,|L1.1456|
+00050a  3120              ADDS     r1,r1,#0x20
+00050c  680c              LDR      r4,[r1,#0]
+00050e  439c              BICS     r4,r4,r3
+000510  600c              STR      r4,[r1,#0]
+000512  6804              LDR      r4,[r0,#0]
+000514  0343              LSLS     r3,r0,#13
+000516  439c              BICS     r4,r4,r3
+000518  6004              STR      r4,[r0,#0]
+00051a  6808              LDR      r0,[r1,#0]
+00051c  4398              BICS     r0,r0,r3
+00051e  6008              STR      r0,[r1,#0]
+000520  20ff              MOVS     r0,#0xff
+000522  63d0              STR      r0,[r2,#0x3c]
+000524  6390              STR      r0,[r2,#0x38]
 ;;;388    
 ;;;389        mMotor.structMotor.LCT_DUTY = 200;
-000536  4c28              LDR      r4,|L1.1496|
-000538  20c8              MOVS     r0,#0xc8
-00053a  80e0              STRH     r0,[r4,#6]
+000526  4c23              LDR      r4,|L1.1460|
+000528  20c8              MOVS     r0,#0xc8
+00052a  80e0              STRH     r0,[r4,#6]
 ;;;390        mMotor.structMotor.LCT_PERIOD = 10;	// Unit ms
-00053c  200a              MOVS     r0,#0xa
-00053e  81e0              STRH     r0,[r4,#0xe]
+00052c  200a              MOVS     r0,#0xa
+00052e  81e0              STRH     r0,[r4,#0xe]
 ;;;391        mMotor.structMotor.RU_DUTY = 320;
-000540  0140              LSLS     r0,r0,#5
-000542  8120              STRH     r0,[r4,#8]
+000530  0140              LSLS     r0,r0,#5
+000532  8120              STRH     r0,[r4,#8]
 ;;;392        mMotor.structMotor.RU_PERIOD = 8000;	// Unit 2MH, 20ms, 500rpm
-000544  207d              MOVS     r0,#0x7d
-000546  0180              LSLS     r0,r0,#6
-000548  6120              STR      r0,[r4,#0x10]  ; mMotor
-;;;393        mMotor.structMotor.TGT_DUTY = 400;
-00054a  20ff              MOVS     r0,#0xff
-00054c  3091              ADDS     r0,r0,#0x91
-00054e  8160              STRH     r0,[r4,#0xa]
+000534  207d              MOVS     r0,#0x7d
+000536  0180              LSLS     r0,r0,#6
+000538  6120              STR      r0,[r4,#0x10]  ; mMotor
+;;;393    	mMotor.structMotor.TGT_DUTY = 400;
+00053a  20ff              MOVS     r0,#0xff
+00053c  3091              ADDS     r0,r0,#0x91
+00053e  8160              STRH     r0,[r4,#0xa]
 ;;;394    	mMotor.structMotor.MCR.RotateDirection = ROTATE_CLOCKWISE;	// Clockwise
-000550  8820              LDRH     r0,[r4,#0]  ; mMotor
-000552  2102              MOVS     r1,#2
-000554  4388              BICS     r0,r0,r1
-000556  8020              STRH     r0,[r4,#0]
+000540  8820              LDRH     r0,[r4,#0]  ; mMotor
+000542  2102              MOVS     r1,#2
+000544  4388              BICS     r0,r0,r1
+000546  8020              STRH     r0,[r4,#0]
 ;;;395        mMotor.structMotor.MCR.MotorNeedToRun = TRUE;
-000558  8820              LDRH     r0,[r4,#0]  ; mMotor
-00055a  2101              MOVS     r1,#1
-00055c  4308              ORRS     r0,r0,r1
-00055e  8020              STRH     r0,[r4,#0]
+000548  8820              LDRH     r0,[r4,#0]  ; mMotor
+00054a  2101              MOVS     r1,#1
+00054c  4308              ORRS     r0,r0,r1
+00054e  8020              STRH     r0,[r4,#0]
 ;;;396        /* ----=============== Test End ================---- */
 ;;;397    
 ;;;398        while(1)
@@ -1043,56 +1037,56 @@
 ;;;405    //	{
 ;;;406    //	    imsTest = iSystemTick;
 ;;;407    //	}
-;;;408    		BLDCSensorLessManager(); 
+;;;408    	BLDCSensorLessManager(); 
 ;;;409    		//	CommunicationManager();
-;;;410    		ErrorManager();
+;;;410    	ErrorManager();
 ;;;411    
 ;;;412    		// For test
-;;;413    		if (TRUE == mMotor.structMotor.MSR.Locked)
-;;;414    		{
-;;;415    			if (iSystemTick%5000 == 0)
-000560  4f1e              LDR      r7,|L1.1500|
-;;;416    			{
-;;;417    				if (iTestSpeedLastTime != iSystemTick)
-;;;418    				{
-;;;419    					iTestSpeedLastTime = iSystemTick;
-;;;420    					mMotor.structMotor.TGT_DUTY = iTestSpeedSequence[iTestSpeedSequenIndex];
-000562  4e1f              LDR      r6,|L1.1504|
-000564  4d1f              LDR      r5,|L1.1508|
-                  |L1.1382|
-000566  f7fffffe          BL       BLDCSensorLessManager
-00056a  f7fffffe          BL       ErrorManager
-00056e  8860              LDRH     r0,[r4,#2]            ;413  ; mMotor
-000570  0740              LSLS     r0,r0,#29             ;413
-000572  d5f8              BPL      |L1.1382|
-000574  4639              MOV      r1,r7                 ;415
-000576  68a8              LDR      r0,[r5,#8]            ;415  ; iSystemTick
-000578  f7fffffe          BL       __aeabi_uidivmod
-00057c  2900              CMP      r1,#0                 ;415
-00057e  d1f2              BNE      |L1.1382|
-000580  68a9              LDR      r1,[r5,#8]            ;417  ; iSystemTick
-000582  6868              LDR      r0,[r5,#4]            ;417  ; iTestSpeedLastTime
-000584  4288              CMP      r0,r1                 ;417
-000586  d0ee              BEQ      |L1.1382|
-000588  68a8              LDR      r0,[r5,#8]            ;419  ; iSystemTick
-00058a  6068              STR      r0,[r5,#4]  ; iTestSpeedLastTime
-00058c  7828              LDRB     r0,[r5,#0]  ; iTestSpeedSequenIndex
-00058e  0042              LSLS     r2,r0,#1
-000590  5ab2              LDRH     r2,[r6,r2]
-000592  8162              STRH     r2,[r4,#0xa]
-;;;421    					INDEX_INCREASE(iTestSpeedSequenIndex, TEST_SPEED_SEQUENCE_NUM);
-000594  280a              CMP      r0,#0xa
-000596  d201              BCS      |L1.1436|
-000598  1c40              ADDS     r0,r0,#1
-00059a  e000              B        |L1.1438|
-                  |L1.1436|
-00059c  2000              MOVS     r0,#0
-                  |L1.1438|
-00059e  7028              STRB     r0,[r5,#0]
-0005a0  e7e1              B        |L1.1382|
-;;;422    				}
-;;;423    			}
-;;;424    		}
+;;;413    	if (TRUE == mMotor.structMotor.MSR.Locked)
+;;;414    	{
+;;;415    		if (iSystemTick%5000 == 0)
+000550  4f19              LDR      r7,|L1.1464|
+;;;416    		{
+;;;417    			if (iTestSpeedLastTime != iSystemTick)
+;;;418    			{
+;;;419    				iTestSpeedLastTime = iSystemTick;
+;;;420    				mMotor.structMotor.TGT_DUTY = iTestSpeedSequence[iTestSpeedSequenIndex];
+000552  4e1a              LDR      r6,|L1.1468|
+000554  4d1a              LDR      r5,|L1.1472|
+                  |L1.1366|
+000556  f7fffffe          BL       BLDCSensorLessManager
+00055a  f7fffffe          BL       ErrorManager
+00055e  8860              LDRH     r0,[r4,#2]            ;413  ; mMotor
+000560  0740              LSLS     r0,r0,#29             ;413
+000562  d5f8              BPL      |L1.1366|
+000564  4639              MOV      r1,r7                 ;415
+000566  68a8              LDR      r0,[r5,#8]            ;415  ; iSystemTick
+000568  f7fffffe          BL       __aeabi_uidivmod
+00056c  2900              CMP      r1,#0                 ;415
+00056e  d1f2              BNE      |L1.1366|
+000570  68a9              LDR      r1,[r5,#8]            ;417  ; iSystemTick
+000572  6868              LDR      r0,[r5,#4]            ;417  ; iTestSpeedLastTime
+000574  4288              CMP      r0,r1                 ;417
+000576  d0ee              BEQ      |L1.1366|
+000578  68a8              LDR      r0,[r5,#8]            ;419  ; iSystemTick
+00057a  6068              STR      r0,[r5,#4]  ; iTestSpeedLastTime
+00057c  7828              LDRB     r0,[r5,#0]  ; iTestSpeedSequenIndex
+00057e  0042              LSLS     r2,r0,#1
+000580  5ab2              LDRH     r2,[r6,r2]
+000582  8162              STRH     r2,[r4,#0xa]
+;;;421    				INDEX_INCREASE(iTestSpeedSequenIndex, TEST_SPEED_SEQUENCE_NUM);
+000584  280a              CMP      r0,#0xa
+000586  d201              BCS      |L1.1420|
+000588  1c40              ADDS     r0,r0,#1
+00058a  e000              B        |L1.1422|
+                  |L1.1420|
+00058c  2000              MOVS     r0,#0
+                  |L1.1422|
+00058e  7028              STRB     r0,[r5,#0]
+000590  e7e1              B        |L1.1366|
+;;;422    			}
+;;;423    		}
+;;;424    	}
 ;;;425    	}
 ;;;426    
 ;;;427    }
@@ -1102,48 +1096,38 @@
                   NVIC_EnableIRQ PROC
 ;;;503     */
 ;;;504    __STATIC_INLINE void NVIC_EnableIRQ(IRQn_Type IRQn)
-0005a2  06c1              LSLS     r1,r0,#27
+000592  06c1              LSLS     r1,r0,#27
 ;;;505    {
 ;;;506      NVIC->ISER[0] = (1 << ((uint32_t)(IRQn) & 0x1F));
-0005a4  0ec9              LSRS     r1,r1,#27
-0005a6  2001              MOVS     r0,#1
-0005a8  4088              LSLS     r0,r0,r1
-0005aa  490f              LDR      r1,|L1.1512|
-0005ac  6008              STR      r0,[r1,#0]
+000594  0ec9              LSRS     r1,r1,#27
+000596  2001              MOVS     r0,#1
+000598  4088              LSLS     r0,r0,r1
+00059a  490a              LDR      r1,|L1.1476|
+00059c  6008              STR      r0,[r1,#0]
 ;;;507    }
-0005ae  4770              BX       lr
+00059e  4770              BX       lr
 ;;;508    
                           ENDP
 
-                  |L1.1456|
+                  |L1.1440|
                           DCD      0x0001affe
-                  |L1.1460|
+                  |L1.1444|
                           DCD      0xe000e000
-                  |L1.1464|
-                          DCD      0x40050000
-                  |L1.1468|
-0005bc  48656c6c          DCB      "Hello World\n",0
-0005c0  6f20576f
-0005c4  726c640a
-0005c8  00      
-0005c9  00                DCB      0
-0005ca  00                DCB      0
-0005cb  00                DCB      0
-                  |L1.1484|
+                  |L1.1448|
                           DCD      0x50004240
-                  |L1.1488|
+                  |L1.1452|
                           DCD      0x40040040
-                  |L1.1492|
+                  |L1.1456|
                           DCD      0x40010000
-                  |L1.1496|
+                  |L1.1460|
                           DCD      mMotor
-                  |L1.1500|
+                  |L1.1464|
                           DCD      0x00001388
-                  |L1.1504|
+                  |L1.1468|
                           DCD      ||.constdata||
-                  |L1.1508|
+                  |L1.1472|
                           DCD      ||.data||
-                  |L1.1512|
+                  |L1.1476|
                           DCD      0xe000e100
 
                           AREA ||.constdata||, DATA, READONLY, ALIGN=1

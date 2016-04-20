@@ -8926,6 +8926,7 @@ N#define BRG_DISABLE					(P30 = 0)
 N
 N#define LED_PORT					P5
 N#define LED_PIN						BIT4
+N#define LED_OUTPUT					P54
 N
 N#define BATTERY_V_PORT				P3
 N#define BATTERY_V_PIN				BIT1
@@ -8983,10 +8984,10 @@ N
 N#define ROTATE_CLOCKWISE		0
 N#define ROTATE_ANTICLOCKWISE	1
 N
-N#define ADC_CURRENT_CHN_MSK		0x01
-N#define ADC_BATTERY_CHN_MSK		0x80
 N#define ADC_CURRENT_CHN_IDX		0
 N#define ADC_BATTERY_CHN_IDX		7
+N#define ADC_CURRENT_CHN_MSK		(0x01 << ADC_CURRENT_CHN_IDX)
+N#define ADC_BATTERY_CHN_MSK		(0x01 << ADC_BATTERY_CHN_IDX)
 N#define ADC_CURRENT_CMP_MSK		ADC_CMP0_INT
 N#define ADC_BATTERY_CMP_MSK		ADC_CMP1_INT
 N#define ADC_ADF_MSK				ADC_ADF_INT
@@ -9055,8 +9056,8 @@ N
 Nextern __IO uint32_t iSystemTick;
 Xextern volatile uint32_t iSystemTick;
 N
-N#include "BLDCSensorless.h"
-L 1 "User\BLDCSensorless.h" 1
+N#include "BLDCSensorLess.h"
+L 1 "User\BLDCSensorLess.h" 1
 N#ifndef __BLDC_SENSOR_LESS_H__
 S#define __BLDC_SENSOR_LESS_H__
 S
@@ -9300,12 +9301,14 @@ S
 SEXTERNAL_BLDC uint8_t iCurrentPhase;
 SEXTERNAL_BLDC uint8_t FLAG_PHASE_CHANGED;
 SEXTERNAL_BLDC __INLINE void stopMotor(void);
+SEXTERNAL_BLDC void checkMotor(void);
+SEXTERNAL_BLDC void BLDCSensorLessManager(void);
 N#endif
-L 143 "User\global.h" 2
-N#include "Error.h"
-L 1 "User\Error.h" 1
-N#ifndef __ERROR_H__
-N#define __ERROR_H__
+L 144 "User\global.h" 2
+N#include "Communication.h"
+L 1 "User\Communication.h" 1
+N#ifndef __COMMUNICATION_H__
+N#define __COMMUNICATION_H__
 N
 N#include "global.h"
 L 1 "User\global.h" 1
@@ -9327,6 +9330,7 @@ S#define BRG_DISABLE					(P30 = 0)
 S
 S#define LED_PORT					P5
 S#define LED_PIN						BIT4
+S#define LED_OUTPUT					P54
 S
 S#define BATTERY_V_PORT				P3
 S#define BATTERY_V_PIN				BIT1
@@ -9384,10 +9388,10 @@ S
 S#define ROTATE_CLOCKWISE		0
 S#define ROTATE_ANTICLOCKWISE	1
 S
-S#define ADC_CURRENT_CHN_MSK		0x01
-S#define ADC_BATTERY_CHN_MSK		0x80
 S#define ADC_CURRENT_CHN_IDX		0
 S#define ADC_BATTERY_CHN_IDX		7
+S#define ADC_CURRENT_CHN_MSK		(0x01 << ADC_CURRENT_CHN_IDX)
+S#define ADC_BATTERY_CHN_MSK		(0x01 << ADC_BATTERY_CHN_IDX)
 S#define ADC_CURRENT_CMP_MSK		ADC_CMP0_INT
 S#define ADC_BATTERY_CMP_MSK		ADC_CMP1_INT
 S#define ADC_ADF_MSK				ADC_ADF_INT
@@ -9455,18 +9459,62 @@ S} ENUM_ERROR_LEVEL;
 S
 Sextern __IO uint32_t iSystemTick;
 S
-S#include "BLDCSensorless.h"
-S#include "Error.h"
+S#include "BLDCSensorLess.h"
 S#include "Communication.h"
+S#include "Error.h"
+S
 N#endif 
-L 5 "User\Error.h" 2
+L 5 "User\Communication.h" 2
+N
+N	#ifdef __USED_BY_COMMUNICATION_C__
+S		#define EXTERNAL_COMM  
+S
+N	#else 
+N		#define EXTERNAL_COMM extern
+N	#endif
+Ntypedef enum{
+N	MOTOR_MCR = 0,	/*!<  Motor Control  */
+N	MOTOR_MSR,		/*!<  Motor Status  */
+N	MOTOR_LCT_DUTY,		/*!<  PWM Locating Duty  */
+N	MOTOR_RU_DUTY,		/*!<  PWM Ramp Up Start Duty  */
+N	MOTOR_TGT_DUTY,		/*!<  PWM Target (Locked State) Duty  */
+N	MOTOR_ACT_DUTY,		/*!<  PWM Actual Duty  */
+N	MOTOR_LCT_PERIOD,	/*!<  Locating State One Phase Period  */
+N	MOTOR_RU_PERIOD_LOW,	/*!<  Ramp Up Start One Phase Period  */
+N	MOTOR_RU_PERIOD_HIGH,	/*!<  Ramp Up Start One Phase Period  */
+N	MOTOR_ACT_PERIOD_LOW,	/*!<  Actual One Phase Period  */
+N	MOTOR_ACT_PERIOD_HIGH,	/*!<  Actual One Phase Period  */
+N	MOTOR_RPM,			/*!<  Actual RPM  */
+N	MOTOR_RESERVE,		/*!<  Reserve for future use (round up 32bits) */
+N	MOTOR_BATTERY,		/*!<  Battery Voltage  */
+N	MOTOR_CURRENT		/*!<  Current  */
+N} ENUM_COMM_REG;
+NEXTERNAL_COMM uint16_t iSPI_ReadData;	// 0 or 0xFFFF means no data
+Xextern uint16_t iSPI_ReadData;	
+NEXTERNAL_COMM uint16_t iRegisterValue;	// 0 or 0xFFFF means no data
+Xextern uint16_t iRegisterValue;	
+NEXTERNAL_COMM ENUM_COMM_REG enumRegister;
+Xextern ENUM_COMM_REG enumRegister;
+NEXTERNAL_COMM uint8_t FlagRegisterNeedWrite;
+Xextern uint8_t FlagRegisterNeedWrite;
+N
+NEXTERNAL_COMM void CommunicationManager(void);
+Xextern void CommunicationManager(void);
+N#endif
+L 145 "User\global.h" 2
+N#include "Error.h"
+L 1 "User\Error.h" 1
+N#ifndef __ERROR_H__
+N#define __ERROR_H__
+N
+N#include "global.h"
 N
 N#ifdef __USED_BY_ERROR_C__
 S	#define EXTERNAL_ERROR  
 S
-S	#define LED_ON					(P54 = 0)
-S	#define LED_OFF 				(P54 = 1)
-S	#define LED_TOGGLE 				(GPIO_TOGGLE(P54))
+S	#define LED_ON					(LED_OUTPUT = 0)
+S	#define LED_OFF 				(LED_OUTPUT = 1)
+S	#define LED_TOGGLE 				(GPIO_TOGGLE(LED_OUTPUT))
 S	#define LED_PATTERN_INTERVAL	4000  //4s
 S	#define LED_BLINK_ON_TIME		200  //0.2s
 S	#define LED_BLINK_OFF_TIME		200  //0.2s, so 6 times is (0.4x6 = 2.4s)
@@ -9478,10 +9526,15 @@ N#endif
 N
 NEXTERNAL_ERROR uint32_t iErrorMaster;
 Xextern uint32_t iErrorMaster;
-NEXTERNAL_ERROR void clearError(ENUM_ERROR_LEVEL enumErrorType);
-Xextern void clearError(ENUM_ERROR_LEVEL enumErrorType);
+NEXTERNAL_ERROR void resetError(ENUM_ERROR_LEVEL enumErrorType);
+Xextern void resetError(ENUM_ERROR_LEVEL enumErrorType);
 NEXTERNAL_ERROR void setError(ENUM_ERROR_LEVEL enumErrorType);
 Xextern void setError(ENUM_ERROR_LEVEL enumErrorType);
+NEXTERNAL_ERROR void clearError(void);
+Xextern void clearError(void);
+NEXTERNAL_ERROR void ErrorManager(void);
+Xextern void ErrorManager(void);
+N	
 N#define GET_SPECIFIED_EEROR(x)		((iErrorMaster & (1L << (x)) == 0) ? FALSE : TRUE)
 N#define IS_ANY_EEROR				((iErrorMaster == 0) ? FALSE : TRUE)
 N/*
@@ -9492,52 +9545,13 @@ N	ERR_RAMPUP_FAIL,
 N	ERR_BATTERY_LOW,
 N	ERR_INTERNAL,	// Loss lock, single phase duration too long
 N	ERR_CURRENT_BURNING,	// Current > 15A
-N    ERR_BRD_FAULT
-N    */
+N	ERR_BRD_FAULT
+N	*/
 N#define MOTOR_ERROR_MSK				0xFFFFFFFEul
 N#define NO_MOTOR_EEROR				(((iErrorMaster & MOTOR_ERROR_MSK) == 0) ? TRUE : FALSE)
 N#endif
-L 144 "User\global.h" 2
-N#include "Communication.h"
-L 1 "User\Communication.h" 1
-N#ifndef __COMMUNICATION_H__
-N#define __COMMUNICATION_H__
+L 146 "User\global.h" 2
 N
-N#include "global.h"
-N
-N	#ifdef __USED_BY_COMMUNICATION_C__
-S		#define EXTERNAL_COMM  
-S
-N	#else 
-N		#define EXTERNAL_COMM extern
-N	#endif
-N	typedef enum{
-N		MOTOR_MCR = 0,	/*!<  Motor Control  */
-N		MOTOR_MSR,		/*!<  Motor Status  */
-N		MOTOR_LCT_DUTY,		/*!<  PWM Locating Duty  */
-N		MOTOR_RU_DUTY,		/*!<  PWM Ramp Up Start Duty  */
-N		MOTOR_TGT_DUTY,		/*!<  PWM Target (Locked State) Duty  */
-N		MOTOR_ACT_DUTY,		/*!<  PWM Actual Duty  */
-N		MOTOR_LCT_PERIOD,	/*!<  Locating State One Phase Period  */
-N		MOTOR_RU_PERIOD_LOW,	/*!<  Ramp Up Start One Phase Period  */
-N		MOTOR_RU_PERIOD_HIGH,	/*!<  Ramp Up Start One Phase Period  */
-N		MOTOR_ACT_PERIOD_LOW,	/*!<  Actual One Phase Period  */
-N		MOTOR_ACT_PERIOD_HIGH,	/*!<  Actual One Phase Period  */
-N		MOTOR_RPM,			/*!<  Actual RPM  */
-N		MOTOR_RESERVE,		/*!<  Reserve for future use (round up 32bits) */
-N		MOTOR_BATTERY,		/*!<  Battery Voltage  */
-N		MOTOR_CURRENT		/*!<  Current  */
-N	} ENUM_COMM_REG;
-N	EXTERNAL_COMM uint16_t iSPI_ReadData;	// 0 or 0xFFFF means no data
-X	extern uint16_t iSPI_ReadData;	
-N	EXTERNAL_COMM uint16_t iRegisterValue;	// 0 or 0xFFFF means no data
-X	extern uint16_t iRegisterValue;	
-N	EXTERNAL_COMM ENUM_COMM_REG enumRegister;
-X	extern ENUM_COMM_REG enumRegister;
-N	EXTERNAL_COMM uint8_t FlagRegisterNeedWrite;
-X	extern uint8_t FlagRegisterNeedWrite;
-N#endif
-L 145 "User\global.h" 2
 N#endif 
 L 5 "User\BLDCSensorLess.h" 2
 N	typedef struct
@@ -9817,6 +9831,10 @@ NEXTERNAL_BLDC uint8_t FLAG_PHASE_CHANGED;
 X uint8_t FLAG_PHASE_CHANGED;
 NEXTERNAL_BLDC __INLINE void stopMotor(void);
 X __inline void stopMotor(void);
+NEXTERNAL_BLDC void checkMotor(void);
+X void checkMotor(void);
+NEXTERNAL_BLDC void BLDCSensorLessManager(void);
+X void BLDCSensorLessManager(void);
 N#endif
 L 13 "User\BLDCSensorLess.c" 2
 N
@@ -9914,11 +9932,24 @@ N}
 N
 Nvoid checkMotor(void)
 N{
+N	clearError();
 N	// Battery check
+N	// Battery voltage check will be done in ADC interrupt on the fly, so no need to check here.
 N
 N	// LED check
+N	// Check what?
 N
 N	// MOSFET check
+N	// Open each MOSFET one by one to see if there is any current.
+N	// If yes means some MOSFET is short
+N	if (IS_ANY_EEROR == TRUE)
+X	if (((iErrorMaster == 0) ? (0) : (1)) == (1))
+N	{
+N		while (1)
+N		{
+N			ErrorManager();
+N		}
+N	}
 N}
 N
 N/* return STATUS_WORKING: still detecting
@@ -9933,7 +9964,7 @@ N// Then stop it while rotating to measure the waveform
 N// Manually rotate it is too slow 
 N	return 0;
 N
-W "User\BLDCSensorLess.c" 112 2 statement is unreachable
+W "User\BLDCSensorLess.c" 124 2 statement is unreachable
 N	if ((uint32_t)(iSystemTick - iRotateDetectStartTime) > MAX_ALREADY_ROTATING_DETECT_TIME)
 X	if ((uint32_t)(iSystemTick - iRotateDetectStartTime) > 200)
 N	{
@@ -10221,7 +10252,7 @@ N	case MOTOR_WAIT_AFTER_LOCATE:
 N		if (mMotor.structMotor.MCR.MotorNeedToRun && NO_MOTOR_EEROR)
 X		if (mMotor.structMotor.MCR.MotorNeedToRun && (((iErrorMaster & 0xFFFFFFFEul) == 0) ? (1) : (0)))
 N		{
-W "User\BLDCSensorLess.c" 361 55 pointless comparison of unsigned integer with zero
+W "User\BLDCSensorLess.c" 373 55 pointless comparison of unsigned integer with zero
 N			if ((uint32_t)(iSystemTick - iEnterTimeBeforeWait) >= WAIT_AFTER_LOCATE_TIME)
 X			if ((uint32_t)(iSystemTick - iEnterTimeBeforeWait) >= 0)
 N			{

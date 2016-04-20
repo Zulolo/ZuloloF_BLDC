@@ -8962,7 +8962,7 @@ S */
 Svoid AssertError(uint8_t * file, uint32_t line)
 S{
 S  
-S    printf("[%s] line %d : wrong parameters.\r\n", file, line);
+S//    printf("[%s] line %d : wrong parameters.\r\n", file, line);
 S
 S    /* Infinite loop */
 S    while(1) ;

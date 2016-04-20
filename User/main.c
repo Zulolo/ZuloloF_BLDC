@@ -392,7 +392,7 @@ int main()
     mMotor.structMotor.RU_PERIOD = 8000;	// Unit 2MH, 20ms, 500rpm
 	mMotor.structMotor.TGT_DUTY = 400;
 	mMotor.structMotor.MCR.RotateDirection = ROTATE_CLOCKWISE;	// Clockwise
-    mMotor.structMotor.MCR.MotorNeedToRun = ZF_TRUE;
+    mMotor.structMotor.MCR.MotorNeedToRun = TRUE;
     /* ----=============== Test End ================---- */
 
     while(1)
@@ -410,7 +410,7 @@ int main()
 	ErrorManager();
 
 		// For test
-	if (ZF_TRUE == mMotor.structMotor.MSR.Locked)
+	if (TRUE == mMotor.structMotor.MSR.Locked)
 	{
 		if (iSystemTick%5000 == 0)
 		{

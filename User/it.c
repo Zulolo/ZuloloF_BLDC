@@ -27,7 +27,7 @@ void TMR0_IRQHandler(void)
 	PWM_INT_DISABLE;
 
 
-	if (ZF_TRUE == mMotor.structMotor.MSR.ZeroCrossDetecting)
+	if (TRUE == mMotor.structMotor.MSR.ZeroCrossDetecting)
 	{
 		// In case TIM1 interrupt happened but preeempted by TIM0
 		TIMER_DisableInt(TIMER1);
@@ -118,7 +118,7 @@ uint32_t DetectdTimeWhenPWMHigh(void)
 //	return iMin;
 //}
 
-boolean PhaseZXDedHandler(uint32_t iThisZXDetectedTime)
+int32_t PhaseZXDedHandler(uint32_t iThisZXDetectedTime)
 {
 	static uint32_t iTempDeltaZXD = 0;
 	static uint32_t iHalfPeriod = 0;
@@ -131,19 +131,19 @@ boolean PhaseZXDedHandler(uint32_t iThisZXDetectedTime)
 	if ((iTempDeltaZXD > MIN_PHASE_TIME) && (iTempDeltaZXD < MAX_PHASE_TIME))
 	{
 		iLastZXDetectedTime = iThisZXDetectedTime;
-		mMotor.structMotor.MSR.ThisPhaseDetectedZX = ZF_TRUE;
+		mMotor.structMotor.MSR.ThisPhaseDetectedZX = TRUE;
 //		iTestDetectedZX++;
-		if (ZF_TRUE == mMotor.structMotor.MSR.Locked)
+		if (TRUE == mMotor.structMotor.MSR.Locked)
 		{
 			mMotor.structMotor.ACT_PERIOD = (iTempDeltaZXD + mMotor.structMotor.ACT_PERIOD) >> 1;
 			iHalfPeriod = mMotor.structMotor.ACT_PERIOD >> 1;
 			TIMER_SET_CMP_VALUE(TIMER0, TIMER0->TDR + (iHalfPeriod > TIME_DEBT) ? (iHalfPeriod - TIME_DEBT) : ZXD_BEFORE_PHCHG);
 		}
-		return ZF_TRUE;
+		return TRUE;
 	}
 	else
 	{
-		return ZF_FALSE;
+		return FALSE;
 	}
 }
 
@@ -169,7 +169,7 @@ void TMR1_IRQHandler(void)
 		}
 		else
 		{
-			if (PhaseZXDedHandler(iZXTimeDuringPWMHigh) == ZF_FALSE)
+			if (PhaseZXDedHandler(iZXTimeDuringPWMHigh) == FALSE)
 			{	// The value has some problem, still open interrupt of PWM to detect ZX when PWM high
 				PWM->PIIR = ~0;
 				PWM_INT_ENABLE;
@@ -211,7 +211,7 @@ void TMR1_IRQHandler(void)
 		if (ACMP0_EDGE_MATCH)
 		{	
 			// No need to find the real ZXD time, we only care the delta 
-			if (ZF_TRUE == PhaseZXDedHandler(TIMER_GetCounter(TIMER1)))	//GET_TIMER_DIFF(ZXD_FILTER_TIME, TIMER_GetCounter(TIMER1))))
+			if (TRUE == PhaseZXDedHandler(TIMER_GetCounter(TIMER1)))	//GET_TIMER_DIFF(ZXD_FILTER_TIME, TIMER_GetCounter(TIMER1))))
 			{
 				ACMP0_INT_DISABLE;  // This phase ACMP job done
 				TIMER_DisableInt(TIMER1);
@@ -247,11 +247,11 @@ void TMR1_IRQHandler(void)
 //				// We can consider ZX detected, and USE IT!!!!
 //				// To get stable and solide ZXD, more filter will be added in the TIM0 (phase change) interrupt
 //				// Only after continuously some number of ThisPhaseDetectedZX or miss ThisPhaseDetectedZX, it will enter or loss lock
-//				mMotor.structMotor.MSR.ThisPhaseDetectedZX = ZF_TRUE;
+//				mMotor.structMotor.MSR.ThisPhaseDetectedZX = TRUE;
 //				iLastZXDetectedTime = iThisZXDetectedTime;
 //
 //				// Incase the counter of TIM0 is already in front of iTempDeltaZXD
-//				if ((ZF_TRUE == mMotor.structMotor.MSR.Locked))	// && (iTargetNewPeriod > (TIMER_GetCounter(TIMER0) + ZXD_BEFORE_PHCHG)))
+//				if ((TRUE == mMotor.structMotor.MSR.Locked))	// && (iTargetNewPeriod > (TIMER_GetCounter(TIMER0) + ZXD_BEFORE_PHCHG)))
 //				{	// Still have time to change CMP in TIM0
 //					// You can have a rest, now the only thing left is T0 trigger phase change
 //
@@ -290,7 +290,7 @@ void TMR1_IRQHandler(void)
 //		iZXTimeDuringPWMHigh = DetectdTimeWhenPWMHigh();
 //		if (iZXTimeDuringPWMHigh != TIMER_INVALID_CNT)
 //		{
-//			if (PhaseZXDedHandler(iZXTimeDuringPWMHigh) == ZF_TRUE)
+//			if (PhaseZXDedHandler(iZXTimeDuringPWMHigh) == TRUE)
 //			{
 //				// Found it
 //				PWM_INT_DISABLE;
@@ -370,11 +370,11 @@ void ACMP_IRQHandler(void)
 //				// We can consider ZX detected, and USE IT!!!!
 //				// To get stable and solide ZXD, more filter will be added in the TIM0 (phase change) interrupt
 //				// Only after continuously some number of ThisPhaseDetectedZX or miss ThisPhaseDetectedZX, it will enter or loss lock
-//				mMotor.structMotor.MSR.ThisPhaseDetectedZX = ZF_TRUE;
+//				mMotor.structMotor.MSR.ThisPhaseDetectedZX = TRUE;
 //				iLastZXDetectedTime = iThisZXDetectedTime;
 //
 //				// Incase the counter of TIM0 is already in front of iTempDeltaZXD
-//				if ((ZF_TRUE == mMotor.structMotor.MSR.Locked))	// && (iTargetNewPeriod > (TIMER_GetCounter(TIMER0) + ZXD_BEFORE_PHCHG)))
+//				if ((TRUE == mMotor.structMotor.MSR.Locked))	// && (iTargetNewPeriod > (TIMER_GetCounter(TIMER0) + ZXD_BEFORE_PHCHG)))
 //				{	// Still have time to change CMP in TIM0
 //					// You can have a rest, now the only thing left is T0 trigger phase change
 //

@@ -7233,7 +7233,8 @@ void WDT_DisableInt(void);
 
 
 
-#line 33 "User\\global.h"
+
+#line 34 "User\\global.h"
 
 
 
@@ -7241,13 +7242,13 @@ void WDT_DisableInt(void);
 
 
 
-#line 48 "User\\global.h"
+#line 49 "User\\global.h"
 
-#line 55 "User\\global.h"
+#line 56 "User\\global.h"
 
 
 
-#line 64 "User\\global.h"
+#line 65 "User\\global.h"
 
 
 
@@ -7260,7 +7261,7 @@ void WDT_DisableInt(void);
 
 
 
-#line 83 "User\\global.h"
+#line 84 "User\\global.h"
 
 
 
@@ -7279,7 +7280,7 @@ void WDT_DisableInt(void);
 
 
 
-#line 110 "User\\global.h"
+#line 111 "User\\global.h"
 
 
 
@@ -7312,12 +7313,12 @@ typedef enum {
 
 extern volatile uint32_t iSystemTick;
 
-#line 1 "User\\BLDCSensorless.h"
+#line 1 "User\\BLDCSensorLess.h"
 
 
 
 #line 1 "User\\global.h"
-#line 5 "User\\BLDCSensorless.h"
+#line 5 "User\\BLDCSensorLess.h"
 	typedef struct
 	{
 		struct
@@ -7368,7 +7369,7 @@ extern volatile uint32_t iSystemTick;
 
 
 
-#line 69 "User\\BLDCSensorless.h"
+#line 69 "User\\BLDCSensorLess.h"
 
 
 
@@ -7376,7 +7377,7 @@ extern volatile uint32_t iSystemTick;
 
 
 
-#line 234 "User\\BLDCSensorless.h"
+#line 234 "User\\BLDCSensorLess.h"
 extern MOTOR_UNION_T mMotor;	
 extern ENUM_TIM1_USAGE FLAG_TIM1_USEAGE;
 extern uint32_t iLastZXDetectedTime;
@@ -7387,8 +7388,8 @@ extern uint32_t iLastZXDetectedTime;
 extern uint8_t iCurrentPhase;
 extern uint8_t FLAG_PHASE_CHANGED;
 extern __inline void stopMotor(void);
-#line 143 "User\\global.h"
-#line 1 "User\\Error.h"
+extern void checkMotor(void);
+extern void BLDCSensorLessManager(void);
 #line 144 "User\\global.h"
 #line 1 "User\\Communication.h"
 
@@ -7397,28 +7398,33 @@ extern __inline void stopMotor(void);
 #line 5 "User\\Communication.h"
 
 #line 12 "User\\Communication.h"
-	typedef enum{
-		MOTOR_MCR = 0,	 
-		MOTOR_MSR,		 
-		MOTOR_LCT_DUTY,		 
-		MOTOR_RU_DUTY,		 
-		MOTOR_TGT_DUTY,		 
-		MOTOR_ACT_DUTY,		 
-		MOTOR_LCT_PERIOD,	 
-		MOTOR_RU_PERIOD_LOW,	 
-		MOTOR_RU_PERIOD_HIGH,	 
-		MOTOR_ACT_PERIOD_LOW,	 
-		MOTOR_ACT_PERIOD_HIGH,	 
-		MOTOR_RPM,			 
-		MOTOR_RESERVE,		 
-		MOTOR_BATTERY,		 
-		MOTOR_CURRENT		 
-	} ENUM_COMM_REG;
-	extern uint16_t iSPI_ReadData;	
-	extern uint16_t iRegisterValue;	
-	extern ENUM_COMM_REG enumRegister;
-	extern uint8_t FlagRegisterNeedWrite;
+typedef enum{
+	MOTOR_MCR = 0,	 
+	MOTOR_MSR,		 
+	MOTOR_LCT_DUTY,		 
+	MOTOR_RU_DUTY,		 
+	MOTOR_TGT_DUTY,		 
+	MOTOR_ACT_DUTY,		 
+	MOTOR_LCT_PERIOD,	 
+	MOTOR_RU_PERIOD_LOW,	 
+	MOTOR_RU_PERIOD_HIGH,	 
+	MOTOR_ACT_PERIOD_LOW,	 
+	MOTOR_ACT_PERIOD_HIGH,	 
+	MOTOR_RPM,			 
+	MOTOR_RESERVE,		 
+	MOTOR_BATTERY,		 
+	MOTOR_CURRENT		 
+} ENUM_COMM_REG;
+extern uint16_t iSPI_ReadData;	
+extern uint16_t iRegisterValue;	
+extern ENUM_COMM_REG enumRegister;
+extern uint8_t FlagRegisterNeedWrite;
+
+extern void CommunicationManager(void);
 #line 145 "User\\global.h"
+#line 1 "User\\Error.h"
+#line 146 "User\\global.h"
+
 #line 5 "User\\Error.h"
 
 
@@ -7431,8 +7437,11 @@ extern __inline void stopMotor(void);
 
 
  uint32_t iErrorMaster;
- void clearError(ENUM_ERROR_LEVEL enumErrorType);
+ void resetError(ENUM_ERROR_LEVEL enumErrorType);
  void setError(ENUM_ERROR_LEVEL enumErrorType);
+ void clearError(void);
+ void ErrorManager(void);
+	
 
 
 
@@ -7447,7 +7456,12 @@ extern __inline void stopMotor(void);
  
 #line 13 "User\\Error.c"
 
-void clearError(ENUM_ERROR_LEVEL enumErrorType)
+void clearError(void)
+{
+	iErrorMaster = 0;
+}
+
+void resetError(ENUM_ERROR_LEVEL enumErrorType)
 {
 	if (ERR_NULL != enumErrorType)
 	{	

@@ -29,18 +29,18 @@ __INLINE PhaseChangedRoutine(void)
 	FLAG_PHASE_CHANGED = RESET;
 	mMotor.structMotor.PHASE_CHANGE_CNT++;
 	
-	if (ZF_TRUE == mMotor.structMotor.MSR.ZeroCrossDetecting)
+	if (TRUE == mMotor.structMotor.MSR.ZeroCrossDetecting)
 	{
 //		iPhaseChangeTime = TIMER_GetCounter(TIMER1);
 		// Miss ZXD or ZXD success filter
 		// If continuously detected more than MIN_SUCC_ZXD_THRESHOLD ZX, OK! GOOD!!
-		if (ZF_TRUE == mMotor.structMotor.MSR.ThisPhaseDetectedZX)
+		if (TRUE == mMotor.structMotor.MSR.ThisPhaseDetectedZX)
 		{
 			mMotor.structMotor.MSR.MissedZXD_CNT = 0;
 
 			if (mMotor.structMotor.MSR.SuccessZXD_CNT > MIN_SUCC_ZXD_THRESHOLD)
 			{
-				mMotor.structMotor.MSR.Locked = ZF_TRUE;
+				mMotor.structMotor.MSR.Locked = TRUE;
 //				BRG_DISABLE;
 //				P50 = 1;
 //				stopMotor();
@@ -61,9 +61,9 @@ __INLINE PhaseChangedRoutine(void)
 			iLastZXDetectedTime = GET_TIMER_DIFF((mMotor.structMotor.ACT_PERIOD >> 2), TIMER_GetCounter(TIMER1));
 			if (mMotor.structMotor.MSR.MissedZXD_CNT > MAX_MISS_ZXD_THRESHOLD)
 			{
-				if (ZF_TRUE == mMotor.structMotor.MSR.Locked)
+				if (TRUE == mMotor.structMotor.MSR.Locked)
 				{	
-					mMotor.structMotor.MSR.Locked = ZF_FALSE;
+					mMotor.structMotor.MSR.Locked = FALSE;
 					MOTOR_SHUT_DOWN;
 					setError(ERR_INTERNAL);
 				}
@@ -76,25 +76,37 @@ __INLINE PhaseChangedRoutine(void)
 
 	}
 
-	if (ZF_TRUE == mMotor.structMotor.MSR.Locked)
+	if (TRUE == mMotor.structMotor.MSR.Locked)
 	{
 		// Set a rough next phase change time as the same with last phase
 		// After detected ZX in TIM1 interrupt, next phase change time will be re-configured
 		TIMER_SET_CMP_VALUE(TIMER0, mMotor.structMotor.ACT_PERIOD << 1);
 	}
 
-	mMotor.structMotor.MSR.ThisPhaseDetectedZX = ZF_FALSE;
+	mMotor.structMotor.MSR.ThisPhaseDetectedZX = FALSE;
 	// For debug
 	GPIO_TOGGLE(P50);
 }
 
 void checkMotor(void)
 {
+	clearError();
 	// Battery check
+	// Battery voltage check will be done in ADC interrupt on the fly, so no need to check here.
 
 	// LED check
+	// Check what?
 
 	// MOSFET check
+	// Open each MOSFET one by one to see if there is any current.
+	// If yes means some MOSFET is short
+	if (IS_ANY_EEROR == TRUE)
+	{
+		while (1)
+		{
+			ErrorManager();
+		}
+	}
 }
 
 /* return STATUS_WORKING: still detecting
@@ -203,8 +215,8 @@ void BLDCSpeedManager(void)
 __INLINE void stopMotor(void)
 {
 	MOTOR_SHUT_DOWN;
-	mMotor.structMotor.MCR.MotorNeedToRun = ZF_FALSE;
-	mMotor.structMotor.MSR.MotorPowerOn = ZF_FALSE;
+	mMotor.structMotor.MCR.MotorNeedToRun = FALSE;
+	mMotor.structMotor.MSR.MotorPowerOn = FALSE;
 	enumMotorState = MOTOR_IDLE;
 }
 
@@ -227,7 +239,7 @@ ENUM_STATUS BLDCLocatingManager(void)
 		else
 		{
 			MOTOR_SHUT_DOWN;
-			mMotor.structMotor.MSR.MotorPowerOn = ZF_FALSE;
+			mMotor.structMotor.MSR.MotorPowerOn = FALSE;
 			iCurrentPhase = iLocatePhaseSequencyTable[iLocateIndex - 1];
 			return STATUS_FINISHED;
 		}
@@ -274,7 +286,7 @@ void BLDCSensorLessManager(void)
 	}
 
 	// Single phase duration too long protection 
-	if (ZF_TRUE == mMotor.structMotor.MSR.MotorPowerOn)
+	if (TRUE == mMotor.structMotor.MSR.MotorPowerOn)
 	{
 		if (iCurrentPHCHG != PWM->PHCHG)
 		{
@@ -324,10 +336,10 @@ void BLDCSensorLessManager(void)
 					iLocateIndex = 0;
 					mMotor.structMotor.MSR.MissedZXD_CNT = 0;
 					iLastPhaseChangeTime = iSystemTick;
-					mMotor.structMotor.MSR.MotorPowerOn = ZF_TRUE;
+					mMotor.structMotor.MSR.MotorPowerOn = TRUE;
 					// Clear start detect zero cross flag
-					mMotor.structMotor.MSR.ZeroCrossDetecting = ZF_FALSE;
-					mMotor.structMotor.MSR.Locked = ZF_FALSE;
+					mMotor.structMotor.MSR.ZeroCrossDetecting = FALSE;
+					mMotor.structMotor.MSR.Locked = FALSE;
 					//setPhaseManually(mMotor.structMotor.LCT_DUTY, iCurrentPhase);
 					BRG_ENABLE;
 					enumMotorState = MOTOR_LOCATE;
@@ -362,7 +374,7 @@ void BLDCSensorLessManager(void)
 			{
 				mMotor.structMotor.ACT_DUTY = mMotor.structMotor.RU_DUTY;
 				mMotor.structMotor.ACT_PERIOD = mMotor.structMotor.RU_PERIOD;
-				mMotor.structMotor.MSR.MotorPowerOn = ZF_TRUE;
+				mMotor.structMotor.MSR.MotorPowerOn = TRUE;
 				PHASE_INCREASE(iCurrentPhase);
 				setPhaseManually(mMotor.structMotor.ACT_DUTY, iCurrentPhase);
 				BRG_ENABLE;
@@ -397,8 +409,8 @@ void BLDCSensorLessManager(void)
 			BLDCRampUp_Manager();
 			if (mMotor.structMotor.ACT_PERIOD <= MOTOR_START_ZXD_SPEED)	//(iRampUpPeriodMiniCNT > MOTOR_START_ZXD_MINROT_CNT)  //
 			{
-				mMotor.structMotor.MSR.ThisPhaseDetectedZX = ZF_FALSE;
-				mMotor.structMotor.MSR.ZeroCrossDetecting = ZF_TRUE;
+				mMotor.structMotor.MSR.ThisPhaseDetectedZX = FALSE;
+				mMotor.structMotor.MSR.ZeroCrossDetecting = TRUE;
 				// Speed is enough for zero cross detecting
 				// Prepare everything
 				// T0 used to change phase automatically -- already configured
@@ -424,7 +436,7 @@ void BLDCSensorLessManager(void)
 	case MOTOR_RAMPUP_W_ZXD:	// with zero cross detection
 		if (mMotor.structMotor.MCR.MotorNeedToRun && NO_MOTOR_EEROR)
 		{
-			if (ZF_TRUE == mMotor.structMotor.MSR.Locked)
+			if (TRUE == mMotor.structMotor.MSR.Locked)
 			{
 				// Finally, everything was prepared:
 				// T0 used to change phase automatically
