@@ -47,6 +47,13 @@
 #define MOSFET_DRV_4_PIN			BIT6
 #define MOSFET_DRV_5_PIN			BIT4
 
+#define MOSFET_AS_PIN_ADDR      	GPIO_PIN_ADDR(2, 2)
+#define MOSFET_BS_PIN_ADDR     		GPIO_PIN_ADDR(2, 4)
+#define MOSFET_CS_PIN_ADDR     		GPIO_PIN_ADDR(2, 6)
+#define MOSFET_AD_PIN_ADDR      	GPIO_PIN_ADDR(2, 3)
+#define MOSFET_BD_PIN_ADDR          GPIO_PIN_ADDR(2, 5)
+#define MOSFET_CD_PIN_ADDR			GPIO_PIN_ADDR(0, 4)
+
 #define GPIO_OFFD_OFF_SET			16
 #define ZERO_DETECT_PORT			P1
 #define ZERO_DETECT_A_PIN			BIT0
@@ -63,7 +70,7 @@
 #define COMM_VALUE_MASK				(0x7FFFul)
 #define COMM_BAUT_RATE				5000000 
 
-//#define iSystemTick 				SysTick->VAL
+//#define unSystemTick 				SysTick->VAL
 
 #define PWM_PHCHG_PWM_MASK			(0x00003F00ul)
 #define PWM_PHCHG_D0_7_MASK			(0x000000FFul) 
@@ -138,7 +145,7 @@ typedef enum {
 	ERR_BRD_FAULT
 } ENUM_ERROR_LEVEL;
 
-extern __IO uint32_t iSystemTick;
+extern __IO uint32_t unSystemTick;
 
 #include "BLDCSensorLess.h"
 #include "Communication.h"

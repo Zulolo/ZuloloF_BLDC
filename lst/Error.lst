@@ -6915,53 +6915,54 @@ N *          P00 = 0;
 N *  
 N *  If P0.0 pin status is high, then set P0.0 data output to low.
 N */
-N#define GPIO_PIN_ADDR(port, pin)    (*((volatile uint32_t *)((GPIOBIT0_BASE+(0x20*(port))) + ((pin)<<2)))) 
-N#define P00             GPIO_PIN_ADDR(0, 0) /*!< Specify P00 Pin Data Input/Output */
-N#define P01             GPIO_PIN_ADDR(0, 1) /*!< Specify P01 Pin Data Input/Output */
-N#define P02             GPIO_PIN_ADDR(0, 2) /*!< Specify P02 Pin Data Input/Output */
-N#define P03             GPIO_PIN_ADDR(0, 3) /*!< Specify P03 Pin Data Input/Output */
-N#define P04             GPIO_PIN_ADDR(0, 4) /*!< Specify P04 Pin Data Input/Output */
-N#define P05             GPIO_PIN_ADDR(0, 5) /*!< Specify P05 Pin Data Input/Output */
-N#define P06             GPIO_PIN_ADDR(0, 6) /*!< Specify P06 Pin Data Input/Output */
-N#define P07             GPIO_PIN_ADDR(0, 7) /*!< Specify P07 Pin Data Input/Output */
-N#define P10             GPIO_PIN_ADDR(1, 0) /*!< Specify P10 Pin Data Input/Output */
-N#define P11             GPIO_PIN_ADDR(1, 1) /*!< Specify P11 Pin Data Input/Output */
-N#define P12             GPIO_PIN_ADDR(1, 2) /*!< Specify P12 Pin Data Input/Output */
-N#define P13             GPIO_PIN_ADDR(1, 3) /*!< Specify P13 Pin Data Input/Output */
-N#define P14             GPIO_PIN_ADDR(1, 4) /*!< Specify P14 Pin Data Input/Output */
-N#define P15             GPIO_PIN_ADDR(1, 5) /*!< Specify P15 Pin Data Input/Output */
-N#define P16             GPIO_PIN_ADDR(1, 6) /*!< Specify P16 Pin Data Input/Output */
-N#define P17             GPIO_PIN_ADDR(1, 7) /*!< Specify P17 Pin Data Input/Output */
-N#define P20             GPIO_PIN_ADDR(2, 0) /*!< Specify P20 Pin Data Input/Output */
-N#define P21             GPIO_PIN_ADDR(2, 1) /*!< Specify P21 Pin Data Input/Output */
-N#define P22             GPIO_PIN_ADDR(2, 2) /*!< Specify P22 Pin Data Input/Output */
-N#define P23             GPIO_PIN_ADDR(2, 3) /*!< Specify P23 Pin Data Input/Output */
-N#define P24             GPIO_PIN_ADDR(2, 4) /*!< Specify P24 Pin Data Input/Output */
-N#define P25             GPIO_PIN_ADDR(2, 5) /*!< Specify P25 Pin Data Input/Output */
-N#define P26             GPIO_PIN_ADDR(2, 6) /*!< Specify P26 Pin Data Input/Output */
-N#define P27             GPIO_PIN_ADDR(2, 7) /*!< Specify P27 Pin Data Input/Output */
-N#define P30             GPIO_PIN_ADDR(3, 0) /*!< Specify P30 Pin Data Input/Output */
-N#define P31             GPIO_PIN_ADDR(3, 1) /*!< Specify P31 Pin Data Input/Output */
-N#define P32             GPIO_PIN_ADDR(3, 2) /*!< Specify P32 Pin Data Input/Output */
-N#define P33             GPIO_PIN_ADDR(3, 3) /*!< Specify P33 Pin Data Input/Output */
-N#define P34             GPIO_PIN_ADDR(3, 4) /*!< Specify P34 Pin Data Input/Output */
-N#define P35             GPIO_PIN_ADDR(3, 5) /*!< Specify P35 Pin Data Input/Output */
-N#define P36             GPIO_PIN_ADDR(3, 6) /*!< Specify P36 Pin Data Input/Output */
-N#define P37             GPIO_PIN_ADDR(3, 7) /*!< Specify P37 Pin Data Input/Output */
-N#define P40             GPIO_PIN_ADDR(4, 0) /*!< Specify P40 Pin Data Input/Output */
-N#define P41             GPIO_PIN_ADDR(4, 1) /*!< Specify P41 Pin Data Input/Output */
-N#define P42             GPIO_PIN_ADDR(4, 2) /*!< Specify P42 Pin Data Input/Output */
-N#define P43             GPIO_PIN_ADDR(4, 3) /*!< Specify P43 Pin Data Input/Output */
-N#define P44             GPIO_PIN_ADDR(4, 4) /*!< Specify P44 Pin Data Input/Output */
-N#define P45             GPIO_PIN_ADDR(4, 5) /*!< Specify P45 Pin Data Input/Output */
-N#define P46             GPIO_PIN_ADDR(4, 6) /*!< Specify P46 Pin Data Input/Output */
-N#define P47             GPIO_PIN_ADDR(4, 7) /*!< Specify P47 Pin Data Input/Output */
-N#define P50             GPIO_PIN_ADDR(5, 0) /*!< Specify P50 Pin Data Input/Output */
-N#define P51             GPIO_PIN_ADDR(5, 1) /*!< Specify P51 Pin Data Input/Output */
-N#define P52             GPIO_PIN_ADDR(5, 2) /*!< Specify P52 Pin Data Input/Output */
-N#define P53             GPIO_PIN_ADDR(5, 3) /*!< Specify P53 Pin Data Input/Output */
-N#define P54             GPIO_PIN_ADDR(5, 4) /*!< Specify P54 Pin Data Input/Output */
-N#define P55             GPIO_PIN_ADDR(5, 5) /*!< Specify P55 Pin Data Input/Output */
+N#define GPIO_PIN_ADDR(port, pin)	((volatile uint32_t *)((GPIOBIT0_BASE+(0x20*(port))) + ((pin)<<2)))
+N#define GPIO_PIN_VALUE(port, pin)	(*((volatile uint32_t *)((GPIOBIT0_BASE+(0x20*(port))) + ((pin)<<2))))
+N#define P00             GPIO_PIN_VALUE(0, 0) /*!< Specify P00 Pin Data Input/Output */
+N#define P01             GPIO_PIN_VALUE(0, 1) /*!< Specify P01 Pin Data Input/Output */
+N#define P02             GPIO_PIN_VALUE(0, 2) /*!< Specify P02 Pin Data Input/Output */
+N#define P03             GPIO_PIN_VALUE(0, 3) /*!< Specify P03 Pin Data Input/Output */
+N#define P04             GPIO_PIN_VALUE(0, 4) /*!< Specify P04 Pin Data Input/Output */
+N#define P05             GPIO_PIN_VALUE(0, 5) /*!< Specify P05 Pin Data Input/Output */
+N#define P06             GPIO_PIN_VALUE(0, 6) /*!< Specify P06 Pin Data Input/Output */
+N#define P07             GPIO_PIN_VALUE(0, 7) /*!< Specify P07 Pin Data Input/Output */
+N#define P10             GPIO_PIN_VALUE(1, 0) /*!< Specify P10 Pin Data Input/Output */
+N#define P11             GPIO_PIN_VALUE(1, 1) /*!< Specify P11 Pin Data Input/Output */
+N#define P12             GPIO_PIN_VALUE(1, 2) /*!< Specify P12 Pin Data Input/Output */
+N#define P13             GPIO_PIN_VALUE(1, 3) /*!< Specify P13 Pin Data Input/Output */
+N#define P14             GPIO_PIN_VALUE(1, 4) /*!< Specify P14 Pin Data Input/Output */
+N#define P15             GPIO_PIN_VALUE(1, 5) /*!< Specify P15 Pin Data Input/Output */
+N#define P16             GPIO_PIN_VALUE(1, 6) /*!< Specify P16 Pin Data Input/Output */
+N#define P17             GPIO_PIN_VALUE(1, 7) /*!< Specify P17 Pin Data Input/Output */
+N#define P20             GPIO_PIN_VALUE(2, 0) /*!< Specify P20 Pin Data Input/Output */
+N#define P21             GPIO_PIN_VALUE(2, 1) /*!< Specify P21 Pin Data Input/Output */
+N#define P22             GPIO_PIN_VALUE(2, 2) /*!< Specify P22 Pin Data Input/Output */
+N#define P23             GPIO_PIN_VALUE(2, 3) /*!< Specify P23 Pin Data Input/Output */
+N#define P24             GPIO_PIN_VALUE(2, 4) /*!< Specify P24 Pin Data Input/Output */
+N#define P25             GPIO_PIN_VALUE(2, 5) /*!< Specify P25 Pin Data Input/Output */
+N#define P26             GPIO_PIN_VALUE(2, 6) /*!< Specify P26 Pin Data Input/Output */
+N#define P27             GPIO_PIN_VALUE(2, 7) /*!< Specify P27 Pin Data Input/Output */
+N#define P30             GPIO_PIN_VALUE(3, 0) /*!< Specify P30 Pin Data Input/Output */
+N#define P31             GPIO_PIN_VALUE(3, 1) /*!< Specify P31 Pin Data Input/Output */
+N#define P32             GPIO_PIN_VALUE(3, 2) /*!< Specify P32 Pin Data Input/Output */
+N#define P33             GPIO_PIN_VALUE(3, 3) /*!< Specify P33 Pin Data Input/Output */
+N#define P34             GPIO_PIN_VALUE(3, 4) /*!< Specify P34 Pin Data Input/Output */
+N#define P35             GPIO_PIN_VALUE(3, 5) /*!< Specify P35 Pin Data Input/Output */
+N#define P36             GPIO_PIN_VALUE(3, 6) /*!< Specify P36 Pin Data Input/Output */
+N#define P37             GPIO_PIN_VALUE(3, 7) /*!< Specify P37 Pin Data Input/Output */
+N#define P40             GPIO_PIN_VALUE(4, 0) /*!< Specify P40 Pin Data Input/Output */
+N#define P41             GPIO_PIN_VALUE(4, 1) /*!< Specify P41 Pin Data Input/Output */
+N#define P42             GPIO_PIN_VALUE(4, 2) /*!< Specify P42 Pin Data Input/Output */
+N#define P43             GPIO_PIN_VALUE(4, 3) /*!< Specify P43 Pin Data Input/Output */
+N#define P44             GPIO_PIN_VALUE(4, 4) /*!< Specify P44 Pin Data Input/Output */
+N#define P45             GPIO_PIN_VALUE(4, 5) /*!< Specify P45 Pin Data Input/Output */
+N#define P46             GPIO_PIN_VALUE(4, 6) /*!< Specify P46 Pin Data Input/Output */
+N#define P47             GPIO_PIN_VALUE(4, 7) /*!< Specify P47 Pin Data Input/Output */
+N#define P50             GPIO_PIN_VALUE(5, 0) /*!< Specify P50 Pin Data Input/Output */
+N#define P51             GPIO_PIN_VALUE(5, 1) /*!< Specify P51 Pin Data Input/Output */
+N#define P52             GPIO_PIN_VALUE(5, 2) /*!< Specify P52 Pin Data Input/Output */
+N#define P53             GPIO_PIN_VALUE(5, 3) /*!< Specify P53 Pin Data Input/Output */
+N#define P54             GPIO_PIN_VALUE(5, 4) /*!< Specify P54 Pin Data Input/Output */
+N#define P55             GPIO_PIN_VALUE(5, 5) /*!< Specify P55 Pin Data Input/Output */
 N
 N/*@}*/ /* end of group MINI51_GPIO_EXPORTED_CONSTANTS */
 N
@@ -8957,6 +8958,13 @@ N#define MOSFET_DRV_3_PIN			BIT5
 N#define MOSFET_DRV_4_PIN			BIT6
 N#define MOSFET_DRV_5_PIN			BIT4
 N
+N#define MOSFET_AS_PIN_ADDR      	GPIO_PIN_ADDR(2, 2)
+N#define MOSFET_BS_PIN_ADDR     		GPIO_PIN_ADDR(2, 4)
+N#define MOSFET_CS_PIN_ADDR     		GPIO_PIN_ADDR(2, 6)
+N#define MOSFET_AD_PIN_ADDR      	GPIO_PIN_ADDR(2, 3)
+N#define MOSFET_BD_PIN_ADDR          GPIO_PIN_ADDR(2, 5)
+N#define MOSFET_CD_PIN_ADDR			GPIO_PIN_ADDR(0, 4)
+N
 N#define GPIO_OFFD_OFF_SET			16
 N#define ZERO_DETECT_PORT			P1
 N#define ZERO_DETECT_A_PIN			BIT0
@@ -8973,7 +8981,7 @@ N#define IS_COMM_CMD_WR(x)			((x)&(0x8000ul))
 N#define COMM_VALUE_MASK				(0x7FFFul)
 N#define COMM_BAUT_RATE				5000000 
 N
-N//#define iSystemTick 				SysTick->VAL
+N//#define unSystemTick 				SysTick->VAL
 N
 N#define PWM_PHCHG_PWM_MASK			(0x00003F00ul)
 N#define PWM_PHCHG_D0_7_MASK			(0x000000FFul) 
@@ -9053,8 +9061,8 @@ N	ERR_CURRENT_BURNING,	// Current > 15A
 N	ERR_BRD_FAULT
 N} ENUM_ERROR_LEVEL;
 N
-Nextern __IO uint32_t iSystemTick;
-Xextern volatile uint32_t iSystemTick;
+Nextern __IO uint32_t unSystemTick;
+Xextern volatile uint32_t unSystemTick;
 N
 N#include "BLDCSensorLess.h"
 L 1 "User\BLDCSensorLess.h" 1
@@ -9112,6 +9120,13 @@ S#define MOSFET_DRV_3_PIN			BIT5
 S#define MOSFET_DRV_4_PIN			BIT6
 S#define MOSFET_DRV_5_PIN			BIT4
 S
+S#define MOSFET_AS_PIN_ADDR      	GPIO_PIN_ADDR(2, 2)
+S#define MOSFET_BS_PIN_ADDR     		GPIO_PIN_ADDR(2, 4)
+S#define MOSFET_CS_PIN_ADDR     		GPIO_PIN_ADDR(2, 6)
+S#define MOSFET_AD_PIN_ADDR      	GPIO_PIN_ADDR(2, 3)
+S#define MOSFET_BD_PIN_ADDR          GPIO_PIN_ADDR(2, 5)
+S#define MOSFET_CD_PIN_ADDR			GPIO_PIN_ADDR(0, 4)
+S
 S#define GPIO_OFFD_OFF_SET			16
 S#define ZERO_DETECT_PORT			P1
 S#define ZERO_DETECT_A_PIN			BIT0
@@ -9128,7 +9143,7 @@ S#define IS_COMM_CMD_WR(x)			((x)&(0x8000ul))
 S#define COMM_VALUE_MASK				(0x7FFFul)
 S#define COMM_BAUT_RATE				5000000 
 S
-S//#define iSystemTick 				SysTick->VAL
+S//#define unSystemTick 				SysTick->VAL
 S
 S#define PWM_PHCHG_PWM_MASK			(0x00003F00ul)
 S#define PWM_PHCHG_D0_7_MASK			(0x000000FFul) 
@@ -9208,7 +9223,7 @@ S	ERR_CURRENT_BURNING,	// Current > 15A
 S	ERR_BRD_FAULT
 S} ENUM_ERROR_LEVEL;
 S
-Sextern __IO uint32_t iSystemTick;
+Sextern __IO uint32_t unSystemTick;
 S
 S#include "BLDCSensorLess.h"
 S#include "Communication.h"
@@ -9395,7 +9410,9 @@ S			STATUS_FINISHED,
 S			STATUS_WORKING = 0xFFFF
 S		} ENUM_STATUS;
 S
-S		const uint8_t iLocatePhaseSequencyTable[] = {0, 1, 2, 1};
+S		const uint8_t unLocatePhaseSequencyTable[] = {0, 1, 2, 1};
+S		volatile uint32_t* unMosfetTestTable[] = {MOSFET_AS_PIN_ADDR, MOSFET_BS_PIN_ADDR, MOSFET_CS_PIN_ADDR,
+S				MOSFET_AD_PIN_ADDR, MOSFET_BD_PIN_ADDR, MOSFET_CD_PIN_ADDR};
 S
 S		#define ALREADY_ROTATING_DETECTING			0xFFFF
 S		#define MAX_ROTATING_DETECT_PHASE_TIME		30	// half phase max 30ms
@@ -9406,33 +9423,34 @@ S		#define MAX_MOTOR_PWR_DUTY 					(PWM_PERIOD - 150)
 S		#define CHANGE_DUTY_PERIOD_THR				9		// Used in ramp up
 S		#define CHANGE_DUTY_CNT_THR					5		// Used after locked
 S
-S//		#define MOTOR_RUNNING_MSK		(0x01ul)
-S//		#define MOTOR_R_DIRECTION_MSK	(0x02ul)
-S//		#define IS_MOTOR_NEED_TO_RUN(x)	((x) & MOTOR_RUNNING_MSK)
+S//		#define MOTOR_RUNNING_MSK					(0x01ul)
+S//		#define MOTOR_R_DIRECTION_MSK				(0x02ul)
+S//		#define IS_MOTOR_NEED_TO_RUN(x)				((x) & MOTOR_RUNNING_MSK)
 S
-S//		#define IS_MOTOR_R_CLOCKWISE	(((mMotor.structMotor.MCR & MOTOR_R_DIRECTION_MSK) == 0) ? TRUE : FALSE)
-S		#define GET_PHASE_VALUE(x)		((mMotor.structMotor.MCR.RotateDirection == ROTATE_CLOCKWISE) ? PHASE_TAB_CLOCKWISE[(x)] : PHASE_TAB_ANTICLOCKWISE[(x)])
-S		#define PHASE_NUMBER			(sizeof(PHASE_TAB_CLOCKWISE)/sizeof(uint32_t))
-S		#define PHASE_INCREASE(x) 		INDEX_INCREASE((x), PHASE_NUMBER) //((x) = (((x) == (PHASE_NUMBER - 1)) ? 0 : ((x) + 1)))
+S//		#define IS_MOTOR_R_CLOCKWISE				(((mMotor.structMotor.MCR & MOTOR_R_DIRECTION_MSK) == 0) ? TRUE : FALSE)
+S		#define GET_PHASE_VALUE(x)					((mMotor.structMotor.MCR.RotateDirection == ROTATE_CLOCKWISE) ? PHASE_TAB_CLOCKWISE[(x)] : PHASE_TAB_ANTICLOCKWISE[(x)])
+S		#define PHASE_NUMBER						(sizeof(PHASE_TAB_CLOCKWISE)/sizeof(uint32_t))
+S		#define PHASE_INCREASE(x) 					INDEX_INCREASE((x), PHASE_NUMBER) //((x) = (((x) == (PHASE_NUMBER - 1)) ? 0 : ((x) + 1)))
 S
-S//		#define RESET_MOTOR_SR_BIT(x)	(mMotor.structMotor.MSR &= (~(1ul << (x))))
-S//		#define SET_MOTOR_SR_BIT(x)		(mMotor.structMotor.MSR |= (1ul << (x)))
-S//		#define IS_MOTOR_STATUS_SET(x)	(mMotor.structMotor.MSR & (1ul << (x)))
+S//		#define RESET_MOTOR_SR_BIT(x)				(mMotor.structMotor.MSR &= (~(1ul << (x))))
+S//		#define SET_MOTOR_SR_BIT(x)					(mMotor.structMotor.MSR |= (1ul << (x)))
+S//		#define IS_MOTOR_STATUS_SET(x)				(mMotor.structMotor.MSR & (1ul << (x)))
 S
-S		#define WAIT_AFTER_LOCATE_TIME		0	// ms
+S		#define WAIT_AFTER_LOCATE_TIME				0	// ms
 S
-S		#define MOTOR_RAMPUP_DT_MAX			(PWM_PERIOD - 200)
-S		#define MOTOR_RAMPUP_DT_FACTOR		(1.02)
-S//		#define MOTOR_RAMPUP_DT_INCR(x)		((x) = (((x) > MOTOR_RAMPUP_DT_MAX) ? (x) : (uint16_t)((x) * MOTOR_RAMPUP_DT_FACTOR)))
-S		#define MOTOR_RAMPUP_DT_INCR(x)		((x) = (((x) > MOTOR_RAMPUP_DT_MAX) ? (x) : ((x) + 1)))
+S		#define MOTOR_RAMPUP_DT_MAX					(PWM_PERIOD - 200)
+S		#define MOTOR_RAMPUP_DT_FACTOR				(1.02)
+S//		#define MOTOR_RAMPUP_DT_INCR(x)				((x) = (((x) > MOTOR_RAMPUP_DT_MAX) ? (x) : (uint16_t)((x) * MOTOR_RAMPUP_DT_FACTOR)))
+S		#define MOTOR_RAMPUP_DT_INCR(x)				((x) = (((x) > MOTOR_RAMPUP_DT_MAX) ? (x) : ((x) + 1)))
 S
-S		#define MOTOR_RAMPUP_PR_MIN			(1000 - 1)	// frequency 2M, 2857RPM if 1MC==7EC==42PC
-S		#define MOTOR_RAMPUP_PR_FACTOR		(0.98)
-S		#define MOTOR_RAMPUP_PR_DCR(x)		((x) = (((x) < MOTOR_RAMPUP_PR_MIN) ? (x) : (uint16_t)((x) * MOTOR_RAMPUP_PR_FACTOR)))
-S//		#define MOTOR_RAMPUP_PR_DCR(x)		((x) = (((x) < MOTOR_RAMPUP_PR_MIN) ? (x) : ((x) - 100)))
-S		#define MOTOR_START_ZXD_SPEED		(1600 - 1)	// frequency 2M, 
-S//		#define MOTOR_START_ZXD_MINROT_CNT	200	// After phase change xxx times at max speed of rampup, start to detect ZX
-S
+S		#define MOTOR_RAMPUP_PR_MIN					(1000 - 1)	// frequency 2M, 2857RPM if 1MC==7EC==42PC
+S		#define MOTOR_RAMPUP_PR_FACTOR				(0.98)
+S		#define MOTOR_RAMPUP_PR_DCR(x)				((x) = (((x) < MOTOR_RAMPUP_PR_MIN) ? (x) : (uint16_t)((x) * MOTOR_RAMPUP_PR_FACTOR)))
+S//		#define MOTOR_RAMPUP_PR_DCR(x)				((x) = (((x) < MOTOR_RAMPUP_PR_MIN) ? (x) : ((x) - 100)))
+S		#define MOTOR_START_ZXD_SPEED				(1600 - 1)	// frequency 2M,
+S//		#define MOTOR_START_ZXD_MINROT_CNT			200	// After phase change xxx times at max speed of rampup, start to detect ZX
+S		#define SET_MOSFET_ON_MANUAL(pinAddr)		(*(pinAddr) = 0)
+S		#define SET_MOSFET_OFF_MANUAL(pinAddr)		(*(pinAddr) = 1)
 S//		typedef enum {
 S//			PHASE_AB = 0,
 S//			PHASE_AC,
@@ -9486,7 +9504,7 @@ Xextern void checkMotor(void);
 NEXTERNAL_BLDC void BLDCSensorLessManager(void);
 Xextern void BLDCSensorLessManager(void);
 N#endif
-L 144 "User\global.h" 2
+L 151 "User\global.h" 2
 N#include "Communication.h"
 L 1 "User\Communication.h" 1
 N#ifndef __COMMUNICATION_H__
@@ -9529,7 +9547,7 @@ N
 NEXTERNAL_COMM void CommunicationManager(void);
 Xextern void CommunicationManager(void);
 N#endif
-L 145 "User\global.h" 2
+L 152 "User\global.h" 2
 N#include "Error.h"
 L 1 "User\Error.h" 1
 N#ifndef __ERROR_H__
@@ -9552,14 +9570,15 @@ S#else
 S	#define EXTERNAL_ERROR extern
 S#endif
 S
-SEXTERNAL_ERROR uint32_t iErrorMaster;
+SEXTERNAL_ERROR uint32_t unErrorMaster;
+SEXTERNAL_ERROR void delay(uint32_t unDelayMs);
 SEXTERNAL_ERROR void resetError(ENUM_ERROR_LEVEL enumErrorType);
 SEXTERNAL_ERROR void setError(ENUM_ERROR_LEVEL enumErrorType);
 SEXTERNAL_ERROR void clearError(void);
 SEXTERNAL_ERROR void ErrorManager(void);
 S	
-S#define GET_SPECIFIED_EEROR(x)		((iErrorMaster & (1L << (x)) == 0) ? FALSE : TRUE)
-S#define IS_ANY_EEROR				((iErrorMaster == 0) ? FALSE : TRUE)
+S#define GET_SPECIFIED_EEROR(x)		((unErrorMaster & (1L << (x)) == 0) ? FALSE : TRUE)
+S#define IS_ANY_EEROR				((unErrorMaster == 0) ? FALSE : TRUE)
 S/*
 S	ERR_NULL = 0,
 S	ERR_CURRENT_WARNING,	// Current > 5A
@@ -9571,9 +9590,9 @@ S	ERR_CURRENT_BURNING,	// Current > 15A
 S	ERR_BRD_FAULT
 S	*/
 S#define MOTOR_ERROR_MSK				0xFFFFFFFEul
-S#define NO_MOTOR_EEROR				(((iErrorMaster & MOTOR_ERROR_MSK) == 0) ? TRUE : FALSE)
+S#define NO_MOTOR_EEROR				(((unErrorMaster & MOTOR_ERROR_MSK) == 0) ? TRUE : FALSE)
 N#endif
-L 146 "User\global.h" 2
+L 153 "User\global.h" 2
 N
 N#endif 
 L 5 "User\Error.h" 2
@@ -9593,8 +9612,10 @@ N#else
 S	#define EXTERNAL_ERROR extern
 N#endif
 N
-NEXTERNAL_ERROR uint32_t iErrorMaster;
-X uint32_t iErrorMaster;
+NEXTERNAL_ERROR uint32_t unErrorMaster;
+X uint32_t unErrorMaster;
+NEXTERNAL_ERROR void delay(uint32_t unDelayMs);
+X void delay(uint32_t unDelayMs);
 NEXTERNAL_ERROR void resetError(ENUM_ERROR_LEVEL enumErrorType);
 X void resetError(ENUM_ERROR_LEVEL enumErrorType);
 NEXTERNAL_ERROR void setError(ENUM_ERROR_LEVEL enumErrorType);
@@ -9604,8 +9625,8 @@ X void clearError(void);
 NEXTERNAL_ERROR void ErrorManager(void);
 X void ErrorManager(void);
 N	
-N#define GET_SPECIFIED_EEROR(x)		((iErrorMaster & (1L << (x)) == 0) ? FALSE : TRUE)
-N#define IS_ANY_EEROR				((iErrorMaster == 0) ? FALSE : TRUE)
+N#define GET_SPECIFIED_EEROR(x)		((unErrorMaster & (1L << (x)) == 0) ? FALSE : TRUE)
+N#define IS_ANY_EEROR				((unErrorMaster == 0) ? FALSE : TRUE)
 N/*
 N	ERR_NULL = 0,
 N	ERR_CURRENT_WARNING,	// Current > 5A
@@ -9617,20 +9638,30 @@ N	ERR_CURRENT_BURNING,	// Current > 15A
 N	ERR_BRD_FAULT
 N	*/
 N#define MOTOR_ERROR_MSK				0xFFFFFFFEul
-N#define NO_MOTOR_EEROR				(((iErrorMaster & MOTOR_ERROR_MSK) == 0) ? TRUE : FALSE)
+N#define NO_MOTOR_EEROR				(((unErrorMaster & MOTOR_ERROR_MSK) == 0) ? TRUE : FALSE)
 N#endif
 L 13 "User\Error.c" 2
 N
+Nvoid delay(uint32_t unDelayMs)
+N{
+N	uint32_t unEntryTime = unSystemTick;
+N	while (((uint32_t)(unSystemTick - unEntryTime)) < unDelayMs)
+N	{
+N		__NOP();
+X		__nop();
+N	}
+N}
+N
 Nvoid clearError(void)
 N{
-N	iErrorMaster = 0;
+N	unErrorMaster = 0;
 N}
 N
 Nvoid resetError(ENUM_ERROR_LEVEL enumErrorType)
 N{
 N	if (ERR_NULL != enumErrorType)
 N	{	
-N		iErrorMaster &= ~(1UL << (enumErrorType - 1));
+N		unErrorMaster &= ~(1UL << (enumErrorType - 1));
 N	}
 N}
 N
@@ -9638,11 +9669,11 @@ Nvoid setError(ENUM_ERROR_LEVEL enumErrorType)
 N{
 N	if (ERR_NULL == enumErrorType)
 N	{
-N		iErrorMaster = 0;
+N		unErrorMaster = 0;
 N	}
 N	else
 N	{
-N		iErrorMaster |= 1UL << (enumErrorType - 1); 
+N		unErrorMaster |= 1UL << (enumErrorType - 1); 
 N	}
 N}
 N
@@ -9652,9 +9683,8 @@ N	register ENUM_ERROR_LEVEL iVernier = ERR_BRD_FAULT;
 N	while (iVernier)
 N	{
 N		iVernier--; 
-N		if (iErrorMaster >> iVernier)
+N		if (unErrorMaster >> iVernier)
 N		{
-W "User\Error.c" 47 11 enumerated type mixed with another type
 N			return (iVernier + 1);
 N		}		
 N	}
@@ -9678,8 +9708,8 @@ X		((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(5))) + (
 N	}
 N	else
 N	{
-N		iLEDTime = (uint16_t)(((uint32_t)(iSystemTick - iErrorStartTime)) % LED_PATTERN_INTERVAL);
-X		iLEDTime = (uint16_t)(((uint32_t)(iSystemTick - iErrorStartTime)) % 4000);
+N		iLEDTime = (uint16_t)(((uint32_t)(unSystemTick - iErrorStartTime)) % LED_PATTERN_INTERVAL);
+X		iLEDTime = (uint16_t)(((uint32_t)(unSystemTick - iErrorStartTime)) % 4000);
 N		if (iLEDTime >= errorType * (LED_BLINK_INTERVAL))
 X		if (iLEDTime >= errorType * ((200 + 200)))
 N		{
@@ -9719,7 +9749,7 @@ N	if (lastErrorType != errorFetched)
 N	{
 N		lastErrorType = errorFetched;
 N		// error type changed (maybe changed to no error)
-N		staLastErrorChangeTime = iSystemTick;
+N		staLastErrorChangeTime = unSystemTick;
 N		// No matter there is error or not, process!!
 N		LEDBlinkHandler(errorFetched, staLastErrorChangeTime);
 N	}

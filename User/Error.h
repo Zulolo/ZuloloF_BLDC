@@ -18,14 +18,15 @@
 	#define EXTERNAL_ERROR extern
 #endif
 
-EXTERNAL_ERROR uint32_t iErrorMaster;
+EXTERNAL_ERROR uint32_t unErrorMaster;
+EXTERNAL_ERROR void delay(uint32_t unDelayMs);
 EXTERNAL_ERROR void resetError(ENUM_ERROR_LEVEL enumErrorType);
 EXTERNAL_ERROR void setError(ENUM_ERROR_LEVEL enumErrorType);
 EXTERNAL_ERROR void clearError(void);
 EXTERNAL_ERROR void ErrorManager(void);
 	
-#define GET_SPECIFIED_EEROR(x)		((iErrorMaster & (1L << (x)) == 0) ? FALSE : TRUE)
-#define IS_ANY_EEROR				((iErrorMaster == 0) ? FALSE : TRUE)
+#define GET_SPECIFIED_EEROR(x)		((unErrorMaster & (1L << (x)) == 0) ? FALSE : TRUE)
+#define IS_ANY_EEROR				((unErrorMaster == 0) ? FALSE : TRUE)
 /*
 	ERR_NULL = 0,
 	ERR_CURRENT_WARNING,	// Current > 5A
@@ -37,5 +38,5 @@ EXTERNAL_ERROR void ErrorManager(void);
 	ERR_BRD_FAULT
 	*/
 #define MOTOR_ERROR_MSK				0xFFFFFFFEul
-#define NO_MOTOR_EEROR				(((iErrorMaster & MOTOR_ERROR_MSK) == 0) ? TRUE : FALSE)
+#define NO_MOTOR_EEROR				(((unErrorMaster & MOTOR_ERROR_MSK) == 0) ? TRUE : FALSE)
 #endif

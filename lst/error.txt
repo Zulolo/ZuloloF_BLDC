@@ -4,233 +4,255 @@
 
                           AREA ||.text||, CODE, READONLY, ALIGN=2
 
-                  clearError PROC
+                  delay PROC
 ;;;13     
-;;;14     void clearError(void)
-000000  492e              LDR      r1,|L1.188|
+;;;14     void delay(uint32_t unDelayMs)
+000000  4932              LDR      r1,|L1.204|
 ;;;15     {
-;;;16     	iErrorMaster = 0;
-000002  2000              MOVS     r0,#0
-000004  6088              STR      r0,[r1,#8]  ; iErrorMaster
-;;;17     }
-000006  4770              BX       lr
-;;;18     
+;;;16     	uint32_t unEntryTime = unSystemTick;
+000002  680a              LDR      r2,[r1,#0]  ; unSystemTick
+000004  e000              B        |L1.8|
+                  |L1.6|
+;;;17     	while (((uint32_t)(unSystemTick - unEntryTime)) < unDelayMs)
+;;;18     	{
+;;;19     		__NOP();
+000006  bf00              NOP      
+                  |L1.8|
+000008  680b              LDR      r3,[r1,#0]            ;17  ; unSystemTick
+00000a  1a9b              SUBS     r3,r3,r2              ;17
+00000c  4283              CMP      r3,r0                 ;17
+00000e  d3fa              BCC      |L1.6|
+;;;20     	}
+;;;21     }
+000010  4770              BX       lr
+;;;22     
+                          ENDP
+
+                  clearError PROC
+;;;23     void clearError(void)
+000012  492f              LDR      r1,|L1.208|
+;;;24     {
+;;;25     	unErrorMaster = 0;
+000014  2000              MOVS     r0,#0
+000016  6088              STR      r0,[r1,#8]  ; unErrorMaster
+;;;26     }
+000018  4770              BX       lr
+;;;27     
                           ENDP
 
                   resetError PROC
-;;;19     void resetError(ENUM_ERROR_LEVEL enumErrorType)
-000008  2800              CMP      r0,#0
-;;;20     {
-00000a  d006              BEQ      |L1.26|
-;;;21     	if (ERR_NULL != enumErrorType)
-;;;22     	{	
-;;;23     		iErrorMaster &= ~(1UL << (enumErrorType - 1));
-00000c  2101              MOVS     r1,#1
-00000e  1e40              SUBS     r0,r0,#1
-000010  4081              LSLS     r1,r1,r0
-000012  482a              LDR      r0,|L1.188|
-000014  6882              LDR      r2,[r0,#8]  ; iErrorMaster
-000016  438a              BICS     r2,r2,r1
-000018  6082              STR      r2,[r0,#8]  ; iErrorMaster
-                  |L1.26|
-;;;24     	}
-;;;25     }
-00001a  4770              BX       lr
-;;;26     
+;;;28     void resetError(ENUM_ERROR_LEVEL enumErrorType)
+00001a  2800              CMP      r0,#0
+;;;29     {
+00001c  d006              BEQ      |L1.44|
+;;;30     	if (ERR_NULL != enumErrorType)
+;;;31     	{	
+;;;32     		unErrorMaster &= ~(1UL << (enumErrorType - 1));
+00001e  2101              MOVS     r1,#1
+000020  1e40              SUBS     r0,r0,#1
+000022  4081              LSLS     r1,r1,r0
+000024  482a              LDR      r0,|L1.208|
+000026  6882              LDR      r2,[r0,#8]  ; unErrorMaster
+000028  438a              BICS     r2,r2,r1
+00002a  6082              STR      r2,[r0,#8]  ; unErrorMaster
+                  |L1.44|
+;;;33     	}
+;;;34     }
+00002c  4770              BX       lr
+;;;35     
                           ENDP
 
                   setError PROC
-;;;27     void setError(ENUM_ERROR_LEVEL enumErrorType)
-00001c  4927              LDR      r1,|L1.188|
-;;;28     {
-;;;29     	if (ERR_NULL == enumErrorType)
-00001e  2800              CMP      r0,#0
-000020  d006              BEQ      |L1.48|
-;;;30     	{
-;;;31     		iErrorMaster = 0;
-;;;32     	}
-;;;33     	else
-;;;34     	{
-;;;35     		iErrorMaster |= 1UL << (enumErrorType - 1); 
-000022  2201              MOVS     r2,#1
-000024  1e40              SUBS     r0,r0,#1
-000026  4082              LSLS     r2,r2,r0
-000028  6888              LDR      r0,[r1,#8]  ; iErrorMaster
-00002a  4302              ORRS     r2,r2,r0
-00002c  608a              STR      r2,[r1,#8]  ; iErrorMaster
-;;;36     	}
-;;;37     }
-00002e  4770              BX       lr
-                  |L1.48|
-000030  2000              MOVS     r0,#0                 ;31
-000032  6088              STR      r0,[r1,#8]            ;31  ; iErrorMaster
-000034  4770              BX       lr
-;;;38     
+;;;36     void setError(ENUM_ERROR_LEVEL enumErrorType)
+00002e  4928              LDR      r1,|L1.208|
+;;;37     {
+;;;38     	if (ERR_NULL == enumErrorType)
+000030  2800              CMP      r0,#0
+000032  d006              BEQ      |L1.66|
+;;;39     	{
+;;;40     		unErrorMaster = 0;
+;;;41     	}
+;;;42     	else
+;;;43     	{
+;;;44     		unErrorMaster |= 1UL << (enumErrorType - 1); 
+000034  2201              MOVS     r2,#1
+000036  1e40              SUBS     r0,r0,#1
+000038  4082              LSLS     r2,r2,r0
+00003a  6888              LDR      r0,[r1,#8]  ; unErrorMaster
+00003c  4302              ORRS     r2,r2,r0
+00003e  608a              STR      r2,[r1,#8]  ; unErrorMaster
+;;;45     	}
+;;;46     }
+000040  4770              BX       lr
+                  |L1.66|
+000042  2000              MOVS     r0,#0                 ;40
+000044  6088              STR      r0,[r1,#8]            ;40  ; unErrorMaster
+000046  4770              BX       lr
+;;;47     
                           ENDP
 
                   getPrecedenceError PROC
-;;;39     ENUM_ERROR_LEVEL getPrecedenceError(void)
-000036  4921              LDR      r1,|L1.188|
-;;;40     {
-;;;41     	register ENUM_ERROR_LEVEL iVernier = ERR_BRD_FAULT;
-000038  2007              MOVS     r0,#7
-;;;42     	while (iVernier)
-;;;43     	{
-;;;44     		iVernier--; 
-;;;45     		if (iErrorMaster >> iVernier)
-00003a  688a              LDR      r2,[r1,#8]
-                  |L1.60|
-00003c  1e40              SUBS     r0,r0,#1
-00003e  b2c0              UXTB     r0,r0                 ;44
-000040  4611              MOV      r1,r2                 ;44
-000042  40c1              LSRS     r1,r1,r0
-000044  d002              BEQ      |L1.76|
-000046  1c40              ADDS     r0,r0,#1
-;;;46     		{
-;;;47     			return (iVernier + 1);
-000048  b2c0              UXTB     r0,r0
-;;;48     		}		
-;;;49     	}
-;;;50     	return iVernier;
-;;;51     }
-00004a  4770              BX       lr
-                  |L1.76|
-00004c  2800              CMP      r0,#0                 ;42
-00004e  d1f5              BNE      |L1.60|
-000050  4770              BX       lr
-;;;52     
+;;;48     ENUM_ERROR_LEVEL getPrecedenceError(void)
+000048  4921              LDR      r1,|L1.208|
+;;;49     {
+;;;50     	register ENUM_ERROR_LEVEL iVernier = ERR_BRD_FAULT;
+00004a  2007              MOVS     r0,#7
+;;;51     	while (iVernier)
+;;;52     	{
+;;;53     		iVernier--; 
+;;;54     		if (unErrorMaster >> iVernier)
+00004c  688a              LDR      r2,[r1,#8]
+                  |L1.78|
+00004e  1e40              SUBS     r0,r0,#1
+000050  b2c0              UXTB     r0,r0                 ;53
+000052  4611              MOV      r1,r2                 ;53
+000054  40c1              LSRS     r1,r1,r0
+000056  d002              BEQ      |L1.94|
+000058  1c40              ADDS     r0,r0,#1
+;;;55     		{
+;;;56     			return (iVernier + 1);
+00005a  b2c0              UXTB     r0,r0
+;;;57     		}		
+;;;58     	}
+;;;59     	return iVernier;
+;;;60     }
+00005c  4770              BX       lr
+                  |L1.94|
+00005e  2800              CMP      r0,#0                 ;51
+000060  d1f5              BNE      |L1.78|
+000062  4770              BX       lr
+;;;61     
                           ENDP
 
                   LEDBlinkHandler PROC
-;;;53     void LEDBlinkHandler(ENUM_ERROR_LEVEL errorType, uint32_t iErrorStartTime)
-000052  b5f8              PUSH     {r3-r7,lr}
-;;;54     {
-000054  2700              MOVS     r7,#0
-;;;55     	uint16_t iLEDTime;
-;;;56     	if (ERR_BRD_FAULT == errorType)
-;;;57     	{
-;;;58     		// Always ON
-;;;59     		LED_ON;
-000056  4c1a              LDR      r4,|L1.192|
-000058  4605              MOV      r5,r0                 ;54
-00005a  2807              CMP      r0,#7                 ;56
-00005c  d010              BEQ      |L1.128|
-;;;60     	}
-;;;61     	else if (ERR_NULL == errorType)
-;;;62     	{
-;;;63     		// Always off
-;;;64     		LED_OFF;
-00005e  2601              MOVS     r6,#1
-000060  2d00              CMP      r5,#0                 ;61
-000062  d00f              BEQ      |L1.132|
-;;;65     	}
-;;;66     	else
-;;;67     	{
-;;;68     		iLEDTime = (uint16_t)(((uint32_t)(iSystemTick - iErrorStartTime)) % LED_PATTERN_INTERVAL);
-000064  4817              LDR      r0,|L1.196|
-000066  6800              LDR      r0,[r0,#0]  ; iSystemTick
-000068  1a40              SUBS     r0,r0,r1
-00006a  217d              MOVS     r1,#0x7d
-00006c  0149              LSLS     r1,r1,#5
-00006e  f7fffffe          BL       __aeabi_uidivmod
-000072  4608              MOV      r0,r1
-;;;69     		if (iLEDTime >= errorType * (LED_BLINK_INTERVAL))
-000074  21ff              MOVS     r1,#0xff
-000076  3191              ADDS     r1,r1,#0x91
-000078  434d              MULS     r5,r1,r5
-00007a  4285              CMP      r5,r0
-00007c  d902              BLS      |L1.132|
-00007e  e003              B        |L1.136|
-                  |L1.128|
-000080  6327              STR      r7,[r4,#0x30]         ;59
-;;;70     		{
-;;;71     			LED_OFF;
-;;;72     		}
-;;;73     		else
-;;;74     		{
-;;;75     			iLEDTime %= LED_BLINK_INTERVAL;
-;;;76     			if (iLEDTime < LED_BLINK_ON_TIME)
-;;;77     			{
-;;;78     				LED_ON;
-;;;79     			}
-;;;80     			else
-;;;81     			{
-;;;82     				LED_OFF;
-;;;83     			}
-;;;84     		}
-;;;85     	}
-;;;86     }
-000082  bdf8              POP      {r3-r7,pc}
-                  |L1.132|
-000084  6326              STR      r6,[r4,#0x30]         ;64
-000086  bdf8              POP      {r3-r7,pc}
-                  |L1.136|
-000088  21ff              MOVS     r1,#0xff              ;75
-00008a  3191              ADDS     r1,r1,#0x91           ;75
-00008c  f7fffffe          BL       __aeabi_uidivmod
-000090  29c8              CMP      r1,#0xc8              ;76
-000092  d2f7              BCS      |L1.132|
-000094  e7f4              B        |L1.128|
-;;;87     
+;;;62     void LEDBlinkHandler(ENUM_ERROR_LEVEL errorType, uint32_t iErrorStartTime)
+000064  b5f8              PUSH     {r3-r7,lr}
+;;;63     {
+000066  2700              MOVS     r7,#0
+;;;64     	uint16_t iLEDTime;
+;;;65     	if (ERR_BRD_FAULT == errorType)
+;;;66     	{
+;;;67     		// Always ON
+;;;68     		LED_ON;
+000068  4c1a              LDR      r4,|L1.212|
+00006a  4605              MOV      r5,r0                 ;63
+00006c  2807              CMP      r0,#7                 ;65
+00006e  d010              BEQ      |L1.146|
+;;;69     	}
+;;;70     	else if (ERR_NULL == errorType)
+;;;71     	{
+;;;72     		// Always off
+;;;73     		LED_OFF;
+000070  2601              MOVS     r6,#1
+000072  2d00              CMP      r5,#0                 ;70
+000074  d00f              BEQ      |L1.150|
+;;;74     	}
+;;;75     	else
+;;;76     	{
+;;;77     		iLEDTime = (uint16_t)(((uint32_t)(unSystemTick - iErrorStartTime)) % LED_PATTERN_INTERVAL);
+000076  4815              LDR      r0,|L1.204|
+000078  6800              LDR      r0,[r0,#0]  ; unSystemTick
+00007a  1a40              SUBS     r0,r0,r1
+00007c  217d              MOVS     r1,#0x7d
+00007e  0149              LSLS     r1,r1,#5
+000080  f7fffffe          BL       __aeabi_uidivmod
+000084  4608              MOV      r0,r1
+;;;78     		if (iLEDTime >= errorType * (LED_BLINK_INTERVAL))
+000086  21ff              MOVS     r1,#0xff
+000088  3191              ADDS     r1,r1,#0x91
+00008a  434d              MULS     r5,r1,r5
+00008c  4285              CMP      r5,r0
+00008e  d902              BLS      |L1.150|
+000090  e003              B        |L1.154|
+                  |L1.146|
+000092  6327              STR      r7,[r4,#0x30]         ;68
+;;;79     		{
+;;;80     			LED_OFF;
+;;;81     		}
+;;;82     		else
+;;;83     		{
+;;;84     			iLEDTime %= LED_BLINK_INTERVAL;
+;;;85     			if (iLEDTime < LED_BLINK_ON_TIME)
+;;;86     			{
+;;;87     				LED_ON;
+;;;88     			}
+;;;89     			else
+;;;90     			{
+;;;91     				LED_OFF;
+;;;92     			}
+;;;93     		}
+;;;94     	}
+;;;95     }
+000094  bdf8              POP      {r3-r7,pc}
+                  |L1.150|
+000096  6326              STR      r6,[r4,#0x30]         ;73
+000098  bdf8              POP      {r3-r7,pc}
+                  |L1.154|
+00009a  21ff              MOVS     r1,#0xff              ;84
+00009c  3191              ADDS     r1,r1,#0x91           ;84
+00009e  f7fffffe          BL       __aeabi_uidivmod
+0000a2  29c8              CMP      r1,#0xc8              ;85
+0000a4  d2f7              BCS      |L1.150|
+0000a6  e7f4              B        |L1.146|
+;;;96     
                           ENDP
 
                   ErrorManager PROC
-;;;90     // to make sure then responding time will not burn the board
-;;;91     void ErrorManager(void)
-000096  b510              PUSH     {r4,lr}
-;;;92     {
-;;;93     	static uint32_t staLastErrorChangeTime;
-;;;94     	static ENUM_ERROR_LEVEL lastErrorType = ERR_NULL;
-;;;95     	ENUM_ERROR_LEVEL errorFetched;
-;;;96     	errorFetched = getPrecedenceError();
-000098  f7fffffe          BL       getPrecedenceError
-;;;97     
-;;;98     	if (lastErrorType != errorFetched)
-00009c  4a07              LDR      r2,|L1.188|
-00009e  7811              LDRB     r1,[r2,#0]  ; lastErrorType
-0000a0  4281              CMP      r1,r0
-0000a2  d004              BEQ      |L1.174|
-;;;99     	{
-;;;100    		lastErrorType = errorFetched;
-;;;101    		// error type changed (maybe changed to no error)
-;;;102    		staLastErrorChangeTime = iSystemTick;
-0000a4  4907              LDR      r1,|L1.196|
-0000a6  7010              STRB     r0,[r2,#0]            ;100
-0000a8  6809              LDR      r1,[r1,#0]  ; iSystemTick
-;;;103    		// No matter there is error or not, process!!
-;;;104    		LEDBlinkHandler(errorFetched, staLastErrorChangeTime);
-0000aa  6051              STR      r1,[r2,#4]  ; staLastErrorChangeTime
-0000ac  e002              B        |L1.180|
-                  |L1.174|
-;;;105    	}
-;;;106    	else
-;;;107    	{
-;;;108    		// Still same error (maybe no error)
-;;;109    		// Only process when there is some error
-;;;110    		if (ERR_NULL != errorFetched)
-0000ae  2800              CMP      r0,#0
-0000b0  d002              BEQ      |L1.184|
-;;;111    		{
-;;;112    			LEDBlinkHandler(errorFetched, staLastErrorChangeTime);
-0000b2  6851              LDR      r1,[r2,#4]  ; staLastErrorChangeTime
-                  |L1.180|
-0000b4  f7fffffe          BL       LEDBlinkHandler
-                  |L1.184|
-;;;113    		}	
+;;;99     // to make sure then responding time will not burn the board
+;;;100    void ErrorManager(void)
+0000a8  b510              PUSH     {r4,lr}
+;;;101    {
+;;;102    	static uint32_t staLastErrorChangeTime;
+;;;103    	static ENUM_ERROR_LEVEL lastErrorType = ERR_NULL;
+;;;104    	ENUM_ERROR_LEVEL errorFetched;
+;;;105    	errorFetched = getPrecedenceError();
+0000aa  f7fffffe          BL       getPrecedenceError
+;;;106    
+;;;107    	if (lastErrorType != errorFetched)
+0000ae  4a08              LDR      r2,|L1.208|
+0000b0  7811              LDRB     r1,[r2,#0]  ; lastErrorType
+0000b2  4281              CMP      r1,r0
+0000b4  d004              BEQ      |L1.192|
+;;;108    	{
+;;;109    		lastErrorType = errorFetched;
+;;;110    		// error type changed (maybe changed to no error)
+;;;111    		staLastErrorChangeTime = unSystemTick;
+0000b6  4905              LDR      r1,|L1.204|
+0000b8  7010              STRB     r0,[r2,#0]            ;109
+0000ba  6809              LDR      r1,[r1,#0]  ; unSystemTick
+;;;112    		// No matter there is error or not, process!!
+;;;113    		LEDBlinkHandler(errorFetched, staLastErrorChangeTime);
+0000bc  6051              STR      r1,[r2,#4]  ; staLastErrorChangeTime
+0000be  e002              B        |L1.198|
+                  |L1.192|
 ;;;114    	}
-;;;115    	
-;;;116    }
-0000b8  bd10              POP      {r4,pc}
-;;;117    
+;;;115    	else
+;;;116    	{
+;;;117    		// Still same error (maybe no error)
+;;;118    		// Only process when there is some error
+;;;119    		if (ERR_NULL != errorFetched)
+0000c0  2800              CMP      r0,#0
+0000c2  d002              BEQ      |L1.202|
+;;;120    		{
+;;;121    			LEDBlinkHandler(errorFetched, staLastErrorChangeTime);
+0000c4  6851              LDR      r1,[r2,#4]  ; staLastErrorChangeTime
+                  |L1.198|
+0000c6  f7fffffe          BL       LEDBlinkHandler
+                  |L1.202|
+;;;122    		}	
+;;;123    	}
+;;;124    	
+;;;125    }
+0000ca  bd10              POP      {r4,pc}
+;;;126    
                           ENDP
 
-0000ba  0000              DCW      0x0000
-                  |L1.188|
+                  |L1.204|
+                          DCD      unSystemTick
+                  |L1.208|
                           DCD      ||.data||
-                  |L1.192|
+                  |L1.212|
                           DCD      0x50004280
-                  |L1.196|
-                          DCD      iSystemTick
 
                           AREA ||.data||, DATA, ALIGN=2
 
@@ -238,7 +260,7 @@
 000000  00000000          DCB      0x00,0x00,0x00,0x00
                   staLastErrorChangeTime
                           DCD      0x00000000
-                  iErrorMaster
+                  unErrorMaster
                           DCD      0x00000000
 
 ;*** Start embedded assembler ***
@@ -246,9 +268,9 @@
 #line 1 "User\\Error.c"
 	AREA ||.rev16_text||, CODE
 	THUMB
-	EXPORT |__asm___7_Error_c_ca138499____REV16|
+	EXPORT |__asm___7_Error_c_delay____REV16|
 #line 118 ".\\CMSIS\\core_cmInstr.h"
-|__asm___7_Error_c_ca138499____REV16| PROC
+|__asm___7_Error_c_delay____REV16| PROC
 #line 119
 
  rev16 r0, r0
@@ -256,9 +278,9 @@
 	ENDP
 	AREA ||.revsh_text||, CODE
 	THUMB
-	EXPORT |__asm___7_Error_c_ca138499____REVSH|
+	EXPORT |__asm___7_Error_c_delay____REVSH|
 #line 132
-|__asm___7_Error_c_ca138499____REVSH| PROC
+|__asm___7_Error_c_delay____REVSH| PROC
 #line 133
 
  revsh r0, r0

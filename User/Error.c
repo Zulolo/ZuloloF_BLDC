@@ -11,16 +11,25 @@
 #define __USED_BY_ERROR_C__
 #include "Error.h"
 
+void delay(uint32_t unDelayMs)
+{
+	uint32_t unEntryTime = unSystemTick;
+	while (((uint32_t)(unSystemTick - unEntryTime)) < unDelayMs)
+	{
+		__NOP();
+	}
+}
+
 void clearError(void)
 {
-	iErrorMaster = 0;
+	unErrorMaster = 0;
 }
 
 void resetError(ENUM_ERROR_LEVEL enumErrorType)
 {
 	if (ERR_NULL != enumErrorType)
 	{	
-		iErrorMaster &= ~(1UL << (enumErrorType - 1));
+		unErrorMaster &= ~(1UL << (enumErrorType - 1));
 	}
 }
 
@@ -28,11 +37,11 @@ void setError(ENUM_ERROR_LEVEL enumErrorType)
 {
 	if (ERR_NULL == enumErrorType)
 	{
-		iErrorMaster = 0;
+		unErrorMaster = 0;
 	}
 	else
 	{
-		iErrorMaster |= 1UL << (enumErrorType - 1); 
+		unErrorMaster |= 1UL << (enumErrorType - 1); 
 	}
 }
 
@@ -42,7 +51,7 @@ ENUM_ERROR_LEVEL getPrecedenceError(void)
 	while (iVernier)
 	{
 		iVernier--; 
-		if (iErrorMaster >> iVernier)
+		if (unErrorMaster >> iVernier)
 		{
 			return (iVernier + 1);
 		}		
@@ -65,7 +74,7 @@ void LEDBlinkHandler(ENUM_ERROR_LEVEL errorType, uint32_t iErrorStartTime)
 	}
 	else
 	{
-		iLEDTime = (uint16_t)(((uint32_t)(iSystemTick - iErrorStartTime)) % LED_PATTERN_INTERVAL);
+		iLEDTime = (uint16_t)(((uint32_t)(unSystemTick - iErrorStartTime)) % LED_PATTERN_INTERVAL);
 		if (iLEDTime >= errorType * (LED_BLINK_INTERVAL))
 		{
 			LED_OFF;
@@ -99,7 +108,7 @@ void ErrorManager(void)
 	{
 		lastErrorType = errorFetched;
 		// error type changed (maybe changed to no error)
-		staLastErrorChangeTime = iSystemTick;
+		staLastErrorChangeTime = unSystemTick;
 		// No matter there is error or not, process!!
 		LEDBlinkHandler(errorFetched, staLastErrorChangeTime);
 	}

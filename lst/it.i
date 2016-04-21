@@ -5440,7 +5440,7 @@ extern int32_t FMC_WriteConfig(uint32_t *u32Config, uint32_t u32Count);
 
 
  
-#line 143 ".\\StdDriver\\inc\\gpio.h"
+#line 144 ".\\StdDriver\\inc\\gpio.h"
 
    
 
@@ -7246,9 +7246,11 @@ void WDT_DisableInt(void);
 
 #line 56 "User\\global.h"
 
+#line 63 "User\\global.h"
 
 
-#line 65 "User\\global.h"
+
+#line 72 "User\\global.h"
 
 
 
@@ -7261,7 +7263,7 @@ void WDT_DisableInt(void);
 
 
 
-#line 84 "User\\global.h"
+#line 91 "User\\global.h"
 
 
 
@@ -7280,7 +7282,7 @@ void WDT_DisableInt(void);
 
 
 
-#line 111 "User\\global.h"
+#line 118 "User\\global.h"
 
 
 
@@ -7311,7 +7313,7 @@ typedef enum {
 	ERR_BRD_FAULT
 } ENUM_ERROR_LEVEL;
 
-extern volatile uint32_t iSystemTick;
+extern volatile uint32_t unSystemTick;
 
 #line 1 "User\\BLDCSensorLess.h"
 
@@ -7377,7 +7379,7 @@ extern volatile uint32_t iSystemTick;
 
 
 
-#line 234 "User\\BLDCSensorLess.h"
+#line 237 "User\\BLDCSensorLess.h"
 extern MOTOR_UNION_T mMotor;	
 extern ENUM_TIM1_USAGE FLAG_TIM1_USEAGE;
 extern uint32_t iLastZXDetectedTime;
@@ -7390,7 +7392,7 @@ extern uint8_t FLAG_PHASE_CHANGED;
 extern __inline void stopMotor(void);
 extern void checkMotor(void);
 extern void BLDCSensorLessManager(void);
-#line 144 "User\\global.h"
+#line 151 "User\\global.h"
 #line 1 "User\\Communication.h"
 
 
@@ -7421,7 +7423,7 @@ extern ENUM_COMM_REG enumRegister;
 extern uint8_t FlagRegisterNeedWrite;
 
 extern void CommunicationManager(void);
-#line 145 "User\\global.h"
+#line 152 "User\\global.h"
 #line 1 "User\\Error.h"
 
 
@@ -7430,7 +7432,8 @@ extern void CommunicationManager(void);
 
 #line 20 "User\\Error.h"
 
-extern uint32_t iErrorMaster;
+extern uint32_t unErrorMaster;
+extern void delay(uint32_t unDelayMs);
 extern void resetError(ENUM_ERROR_LEVEL enumErrorType);
 extern void setError(ENUM_ERROR_LEVEL enumErrorType);
 extern void clearError(void);
@@ -7448,7 +7451,7 @@ extern void ErrorManager(void);
 
 
  
-#line 146 "User\\global.h"
+#line 153 "User\\global.h"
 
 #line 5 "User\\it.h"
 
@@ -7906,9 +7909,10 @@ void ADC_IRQHandler(void)
 	}
     if(iADC_ComparatorFlag & ((1ul << 2)))
 	{
+    	
 		
 		
-		iSystemTickTemp = iSystemTick;
+		iSystemTickTemp = unSystemTick;
 		if ((uint32_t)(iSystemTickTemp - iBatteryLowLastTimeRCD) < 10)
 		{
 			if (iBatteryLowCNT < 50)
@@ -7971,5 +7975,5 @@ void SPI_IRQHandler(void)
 
 void SysTick_Handler(void)
 {
-	iSystemTick += 5;
+	unSystemTick += 5;
 }

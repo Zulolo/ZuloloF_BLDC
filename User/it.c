@@ -429,9 +429,10 @@ void ADC_IRQHandler(void)
 	}
     if(iADC_ComparatorFlag & ADC_BATTERY_CMP_MSK)
 	{
+    	// Longer filter for battery voltage
 		// if this time's battery low is near to the last one
 		// 0.64ms interval of each measurement
-		iSystemTickTemp = iSystemTick;
+		iSystemTickTemp = unSystemTick;
 		if ((uint32_t)(iSystemTickTemp - iBatteryLowLastTimeRCD) < BATTERY_LOW_MIN_INTERVAL)
 		{
 			if (iBatteryLowCNT < MAX_BATT_LOW_CNT)
@@ -494,5 +495,5 @@ void SPI_IRQHandler(void)
 
 void SysTick_Handler(void)
 {
-	iSystemTick += 5;
+	unSystemTick += 5;
 }

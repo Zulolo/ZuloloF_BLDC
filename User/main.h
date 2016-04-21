@@ -52,7 +52,7 @@ uint8_t iTestSpeedSequenIndex = 0;
 uint32_t iTestSpeedLastTime = 0;
 const uint16_t iTestSpeedSequence[] = {250, 300, 350, 400, 450, 300, 400, 250, 200, 450, 200};
 #define TEST_SPEED_SEQUENCE_NUM		(sizeof(iTestSpeedSequence)/sizeof(uint16_t))
-__IO uint32_t iSystemTick = 0;
+__IO uint32_t unSystemTick = 0;
 
 //extern void BLDCSensorLessManager(void);
 //extern void CommunicationManager(void);

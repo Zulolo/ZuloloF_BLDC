@@ -6904,53 +6904,54 @@ N *          P00 = 0;
 N *  
 N *  If P0.0 pin status is high, then set P0.0 data output to low.
 N */
-N#define GPIO_PIN_ADDR(port, pin)    (*((volatile uint32_t *)((GPIOBIT0_BASE+(0x20*(port))) + ((pin)<<2)))) 
-N#define P00             GPIO_PIN_ADDR(0, 0) /*!< Specify P00 Pin Data Input/Output */
-N#define P01             GPIO_PIN_ADDR(0, 1) /*!< Specify P01 Pin Data Input/Output */
-N#define P02             GPIO_PIN_ADDR(0, 2) /*!< Specify P02 Pin Data Input/Output */
-N#define P03             GPIO_PIN_ADDR(0, 3) /*!< Specify P03 Pin Data Input/Output */
-N#define P04             GPIO_PIN_ADDR(0, 4) /*!< Specify P04 Pin Data Input/Output */
-N#define P05             GPIO_PIN_ADDR(0, 5) /*!< Specify P05 Pin Data Input/Output */
-N#define P06             GPIO_PIN_ADDR(0, 6) /*!< Specify P06 Pin Data Input/Output */
-N#define P07             GPIO_PIN_ADDR(0, 7) /*!< Specify P07 Pin Data Input/Output */
-N#define P10             GPIO_PIN_ADDR(1, 0) /*!< Specify P10 Pin Data Input/Output */
-N#define P11             GPIO_PIN_ADDR(1, 1) /*!< Specify P11 Pin Data Input/Output */
-N#define P12             GPIO_PIN_ADDR(1, 2) /*!< Specify P12 Pin Data Input/Output */
-N#define P13             GPIO_PIN_ADDR(1, 3) /*!< Specify P13 Pin Data Input/Output */
-N#define P14             GPIO_PIN_ADDR(1, 4) /*!< Specify P14 Pin Data Input/Output */
-N#define P15             GPIO_PIN_ADDR(1, 5) /*!< Specify P15 Pin Data Input/Output */
-N#define P16             GPIO_PIN_ADDR(1, 6) /*!< Specify P16 Pin Data Input/Output */
-N#define P17             GPIO_PIN_ADDR(1, 7) /*!< Specify P17 Pin Data Input/Output */
-N#define P20             GPIO_PIN_ADDR(2, 0) /*!< Specify P20 Pin Data Input/Output */
-N#define P21             GPIO_PIN_ADDR(2, 1) /*!< Specify P21 Pin Data Input/Output */
-N#define P22             GPIO_PIN_ADDR(2, 2) /*!< Specify P22 Pin Data Input/Output */
-N#define P23             GPIO_PIN_ADDR(2, 3) /*!< Specify P23 Pin Data Input/Output */
-N#define P24             GPIO_PIN_ADDR(2, 4) /*!< Specify P24 Pin Data Input/Output */
-N#define P25             GPIO_PIN_ADDR(2, 5) /*!< Specify P25 Pin Data Input/Output */
-N#define P26             GPIO_PIN_ADDR(2, 6) /*!< Specify P26 Pin Data Input/Output */
-N#define P27             GPIO_PIN_ADDR(2, 7) /*!< Specify P27 Pin Data Input/Output */
-N#define P30             GPIO_PIN_ADDR(3, 0) /*!< Specify P30 Pin Data Input/Output */
-N#define P31             GPIO_PIN_ADDR(3, 1) /*!< Specify P31 Pin Data Input/Output */
-N#define P32             GPIO_PIN_ADDR(3, 2) /*!< Specify P32 Pin Data Input/Output */
-N#define P33             GPIO_PIN_ADDR(3, 3) /*!< Specify P33 Pin Data Input/Output */
-N#define P34             GPIO_PIN_ADDR(3, 4) /*!< Specify P34 Pin Data Input/Output */
-N#define P35             GPIO_PIN_ADDR(3, 5) /*!< Specify P35 Pin Data Input/Output */
-N#define P36             GPIO_PIN_ADDR(3, 6) /*!< Specify P36 Pin Data Input/Output */
-N#define P37             GPIO_PIN_ADDR(3, 7) /*!< Specify P37 Pin Data Input/Output */
-N#define P40             GPIO_PIN_ADDR(4, 0) /*!< Specify P40 Pin Data Input/Output */
-N#define P41             GPIO_PIN_ADDR(4, 1) /*!< Specify P41 Pin Data Input/Output */
-N#define P42             GPIO_PIN_ADDR(4, 2) /*!< Specify P42 Pin Data Input/Output */
-N#define P43             GPIO_PIN_ADDR(4, 3) /*!< Specify P43 Pin Data Input/Output */
-N#define P44             GPIO_PIN_ADDR(4, 4) /*!< Specify P44 Pin Data Input/Output */
-N#define P45             GPIO_PIN_ADDR(4, 5) /*!< Specify P45 Pin Data Input/Output */
-N#define P46             GPIO_PIN_ADDR(4, 6) /*!< Specify P46 Pin Data Input/Output */
-N#define P47             GPIO_PIN_ADDR(4, 7) /*!< Specify P47 Pin Data Input/Output */
-N#define P50             GPIO_PIN_ADDR(5, 0) /*!< Specify P50 Pin Data Input/Output */
-N#define P51             GPIO_PIN_ADDR(5, 1) /*!< Specify P51 Pin Data Input/Output */
-N#define P52             GPIO_PIN_ADDR(5, 2) /*!< Specify P52 Pin Data Input/Output */
-N#define P53             GPIO_PIN_ADDR(5, 3) /*!< Specify P53 Pin Data Input/Output */
-N#define P54             GPIO_PIN_ADDR(5, 4) /*!< Specify P54 Pin Data Input/Output */
-N#define P55             GPIO_PIN_ADDR(5, 5) /*!< Specify P55 Pin Data Input/Output */
+N#define GPIO_PIN_ADDR(port, pin)	((volatile uint32_t *)((GPIOBIT0_BASE+(0x20*(port))) + ((pin)<<2)))
+N#define GPIO_PIN_VALUE(port, pin)	(*((volatile uint32_t *)((GPIOBIT0_BASE+(0x20*(port))) + ((pin)<<2))))
+N#define P00             GPIO_PIN_VALUE(0, 0) /*!< Specify P00 Pin Data Input/Output */
+N#define P01             GPIO_PIN_VALUE(0, 1) /*!< Specify P01 Pin Data Input/Output */
+N#define P02             GPIO_PIN_VALUE(0, 2) /*!< Specify P02 Pin Data Input/Output */
+N#define P03             GPIO_PIN_VALUE(0, 3) /*!< Specify P03 Pin Data Input/Output */
+N#define P04             GPIO_PIN_VALUE(0, 4) /*!< Specify P04 Pin Data Input/Output */
+N#define P05             GPIO_PIN_VALUE(0, 5) /*!< Specify P05 Pin Data Input/Output */
+N#define P06             GPIO_PIN_VALUE(0, 6) /*!< Specify P06 Pin Data Input/Output */
+N#define P07             GPIO_PIN_VALUE(0, 7) /*!< Specify P07 Pin Data Input/Output */
+N#define P10             GPIO_PIN_VALUE(1, 0) /*!< Specify P10 Pin Data Input/Output */
+N#define P11             GPIO_PIN_VALUE(1, 1) /*!< Specify P11 Pin Data Input/Output */
+N#define P12             GPIO_PIN_VALUE(1, 2) /*!< Specify P12 Pin Data Input/Output */
+N#define P13             GPIO_PIN_VALUE(1, 3) /*!< Specify P13 Pin Data Input/Output */
+N#define P14             GPIO_PIN_VALUE(1, 4) /*!< Specify P14 Pin Data Input/Output */
+N#define P15             GPIO_PIN_VALUE(1, 5) /*!< Specify P15 Pin Data Input/Output */
+N#define P16             GPIO_PIN_VALUE(1, 6) /*!< Specify P16 Pin Data Input/Output */
+N#define P17             GPIO_PIN_VALUE(1, 7) /*!< Specify P17 Pin Data Input/Output */
+N#define P20             GPIO_PIN_VALUE(2, 0) /*!< Specify P20 Pin Data Input/Output */
+N#define P21             GPIO_PIN_VALUE(2, 1) /*!< Specify P21 Pin Data Input/Output */
+N#define P22             GPIO_PIN_VALUE(2, 2) /*!< Specify P22 Pin Data Input/Output */
+N#define P23             GPIO_PIN_VALUE(2, 3) /*!< Specify P23 Pin Data Input/Output */
+N#define P24             GPIO_PIN_VALUE(2, 4) /*!< Specify P24 Pin Data Input/Output */
+N#define P25             GPIO_PIN_VALUE(2, 5) /*!< Specify P25 Pin Data Input/Output */
+N#define P26             GPIO_PIN_VALUE(2, 6) /*!< Specify P26 Pin Data Input/Output */
+N#define P27             GPIO_PIN_VALUE(2, 7) /*!< Specify P27 Pin Data Input/Output */
+N#define P30             GPIO_PIN_VALUE(3, 0) /*!< Specify P30 Pin Data Input/Output */
+N#define P31             GPIO_PIN_VALUE(3, 1) /*!< Specify P31 Pin Data Input/Output */
+N#define P32             GPIO_PIN_VALUE(3, 2) /*!< Specify P32 Pin Data Input/Output */
+N#define P33             GPIO_PIN_VALUE(3, 3) /*!< Specify P33 Pin Data Input/Output */
+N#define P34             GPIO_PIN_VALUE(3, 4) /*!< Specify P34 Pin Data Input/Output */
+N#define P35             GPIO_PIN_VALUE(3, 5) /*!< Specify P35 Pin Data Input/Output */
+N#define P36             GPIO_PIN_VALUE(3, 6) /*!< Specify P36 Pin Data Input/Output */
+N#define P37             GPIO_PIN_VALUE(3, 7) /*!< Specify P37 Pin Data Input/Output */
+N#define P40             GPIO_PIN_VALUE(4, 0) /*!< Specify P40 Pin Data Input/Output */
+N#define P41             GPIO_PIN_VALUE(4, 1) /*!< Specify P41 Pin Data Input/Output */
+N#define P42             GPIO_PIN_VALUE(4, 2) /*!< Specify P42 Pin Data Input/Output */
+N#define P43             GPIO_PIN_VALUE(4, 3) /*!< Specify P43 Pin Data Input/Output */
+N#define P44             GPIO_PIN_VALUE(4, 4) /*!< Specify P44 Pin Data Input/Output */
+N#define P45             GPIO_PIN_VALUE(4, 5) /*!< Specify P45 Pin Data Input/Output */
+N#define P46             GPIO_PIN_VALUE(4, 6) /*!< Specify P46 Pin Data Input/Output */
+N#define P47             GPIO_PIN_VALUE(4, 7) /*!< Specify P47 Pin Data Input/Output */
+N#define P50             GPIO_PIN_VALUE(5, 0) /*!< Specify P50 Pin Data Input/Output */
+N#define P51             GPIO_PIN_VALUE(5, 1) /*!< Specify P51 Pin Data Input/Output */
+N#define P52             GPIO_PIN_VALUE(5, 2) /*!< Specify P52 Pin Data Input/Output */
+N#define P53             GPIO_PIN_VALUE(5, 3) /*!< Specify P53 Pin Data Input/Output */
+N#define P54             GPIO_PIN_VALUE(5, 4) /*!< Specify P54 Pin Data Input/Output */
+N#define P55             GPIO_PIN_VALUE(5, 5) /*!< Specify P55 Pin Data Input/Output */
 N
 N/*@}*/ /* end of group MINI51_GPIO_EXPORTED_CONSTANTS */
 N

@@ -11,6 +11,7 @@
 #define __USED_BY_BLDC_SENSOR_LESS_C__
 #include "BLDCSensorLess.h"
 
+#define MOTOR_TEST_MOSFET_ON_DURATION	10	// 10ms
 /* After change phase and wait a filter time,
    the zero cross detect window will be opened.
    1. In this window the comparator's interrupt will be enabled.
@@ -24,7 +25,7 @@
    1. Because the phase duration variable is uint16_t, max one phase is 32ms,
 	  so min rotation speed is about 180RMP (12 e-phase).*/
 
-__INLINE PhaseChangedRoutine(void)
+__INLINE void PhaseChangedRoutine(void)
 {
 	FLAG_PHASE_CHANGED = RESET;
 	mMotor.structMotor.PHASE_CHANGE_CNT++;
@@ -90,6 +91,7 @@ __INLINE PhaseChangedRoutine(void)
 
 void checkMotor(void)
 {
+	uint8_t unCheckIndex;
 	clearError();
 	// Battery check
 	// Battery voltage check will be done in ADC interrupt on the fly, so no need to check here.
@@ -100,13 +102,20 @@ void checkMotor(void)
 	// MOSFET check
 	// Open each MOSFET one by one to see if there is any current.
 	// If yes means some MOSFET is short
-	if (IS_ANY_EEROR == TRUE)
+	for (unCheckIndex = 0; unCheckIndex < (sizeof(unMosfetTestTable) / sizeof(uint32_t*)); unCheckIndex++)
 	{
-		while (1)
+		SET_MOSFET_ON_MANUAL(unMosfetTestTable[unCheckIndex]);
+		delay(MOTOR_TEST_MOSFET_ON_DURATION);
+		SET_MOSFET_OFF_MANUAL(unMosfetTestTable[unCheckIndex]);
+		if (IS_ANY_EEROR == TRUE)
 		{
-			ErrorManager();
+			while (1)
+			{
+				ErrorManager();
+			}
 		}
 	}
+
 }
 
 /* return STATUS_WORKING: still detecting
@@ -121,19 +130,19 @@ uint16_t canMotorContinueRunning(void)
 // Manually rotate it is too slow 
 	return 0;
 
-	if ((uint32_t)(iSystemTick - iRotateDetectStartTime) > MAX_ALREADY_ROTATING_DETECT_TIME)
+	if ((uint32_t)(unSystemTick - iRotateDetectStartTime) > MAX_ALREADY_ROTATING_DETECT_TIME)
 	{
 		return 0;
 	}
 	switch (enumRotateDetectState)
 	{
 	case DETECT_START: 
-		iStateEnterTime = iSystemTick;
+		iStateEnterTime = unSystemTick;
 		enumRotateDetectState = DETECT_PHASE_1_P;
 		break;
 
 	case DETECT_PHASE_1_P:
-		if ((uint32_t)(iSystemTick - iStateEnterTime) > MAX_ROTATING_DETECT_PHASE_TIME)
+		if ((uint32_t)(unSystemTick - iStateEnterTime) > MAX_ROTATING_DETECT_PHASE_TIME)
 		{
 			return (uint16_t)0;
 		}
@@ -228,19 +237,19 @@ __INLINE void setPhaseManually(uint16_t iPWMDuty, uint8_t iPhase)
 
 ENUM_STATUS BLDCLocatingManager(void)
 {
-	if ((uint32_t)(iSystemTick - iLastPhaseChangeTime) > mMotor.structMotor.LCT_PERIOD)
+	if ((uint32_t)(unSystemTick - iLastPhaseChangeTime) > mMotor.structMotor.LCT_PERIOD)
 	{
-		if (iLocateIndex < (sizeof(iLocatePhaseSequencyTable)/sizeof(uint8_t)))
+		if (iLocateIndex < (sizeof(unLocatePhaseSequencyTable)/sizeof(uint8_t)))
 		{
-			//iLastPhaseChangeTime = iSystemTick; 
-			setPhaseManually(mMotor.structMotor.LCT_DUTY, iLocatePhaseSequencyTable[iLocateIndex]);
+			//iLastPhaseChangeTime = unSystemTick; 
+			setPhaseManually(mMotor.structMotor.LCT_DUTY, unLocatePhaseSequencyTable[iLocateIndex]);
 			iLocateIndex++;
 		}
 		else
 		{
 			MOTOR_SHUT_DOWN;
 			mMotor.structMotor.MSR.MotorPowerOn = FALSE;
-			iCurrentPhase = iLocatePhaseSequencyTable[iLocateIndex - 1];
+			iCurrentPhase = unLocatePhaseSequencyTable[iLocateIndex - 1];
 			return STATUS_FINISHED;
 		}
 	}
@@ -291,11 +300,11 @@ void BLDCSensorLessManager(void)
 		if (iCurrentPHCHG != PWM->PHCHG)
 		{
 			iCurrentPHCHG = PWM->PHCHG;
-			iLastPhaseChangeTime = iSystemTick;
+			iLastPhaseChangeTime = unSystemTick;
 		}
 		else
 		{
-			if ((uint32_t)(iSystemTick - iLastPhaseChangeTime) > MAX_SINGLE_PHASE_DURATION) 
+			if ((uint32_t)(unSystemTick - iLastPhaseChangeTime) > MAX_SINGLE_PHASE_DURATION) 
 			{
 				stopMotor();
 				setError(ERR_INTERNAL);
@@ -308,7 +317,7 @@ void BLDCSensorLessManager(void)
 	case MOTOR_IDLE:
 		if (mMotor.structMotor.MCR.MotorNeedToRun && NO_MOTOR_EEROR)
 		{
-			iRotateDetectStartTime = iSystemTick;
+			iRotateDetectStartTime = unSystemTick;
 			enumRotateDetectState = DETECT_START;
 			enumMotorState = MOTOR_START;
 		}
@@ -335,7 +344,7 @@ void BLDCSensorLessManager(void)
 					iCurrentPhase = 0;
 					iLocateIndex = 0;
 					mMotor.structMotor.MSR.MissedZXD_CNT = 0;
-					iLastPhaseChangeTime = iSystemTick;
+					iLastPhaseChangeTime = unSystemTick;
 					mMotor.structMotor.MSR.MotorPowerOn = TRUE;
 					// Clear start detect zero cross flag
 					mMotor.structMotor.MSR.ZeroCrossDetecting = FALSE;
@@ -357,7 +366,7 @@ void BLDCSensorLessManager(void)
 		{
 			if (BLDCLocatingManager() == STATUS_FINISHED)
 			{
-				iEnterTimeBeforeWait = iSystemTick;
+				iEnterTimeBeforeWait = unSystemTick;
 				enumMotorState = MOTOR_WAIT_AFTER_LOCATE;
 			}
 		}
@@ -370,7 +379,7 @@ void BLDCSensorLessManager(void)
 	case MOTOR_WAIT_AFTER_LOCATE:
 		if (mMotor.structMotor.MCR.MotorNeedToRun && NO_MOTOR_EEROR)
 		{
-			if ((uint32_t)(iSystemTick - iEnterTimeBeforeWait) >= WAIT_AFTER_LOCATE_TIME)
+			if ((uint32_t)(unSystemTick - iEnterTimeBeforeWait) >= WAIT_AFTER_LOCATE_TIME)
 			{
 				mMotor.structMotor.ACT_DUTY = mMotor.structMotor.RU_DUTY;
 				mMotor.structMotor.ACT_PERIOD = mMotor.structMotor.RU_PERIOD;

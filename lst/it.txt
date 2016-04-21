@@ -673,33 +673,34 @@
 000222  0740              LSLS     r0,r0,#29
 000224  d529              BPL      |L1.634|
 ;;;431    	{
-;;;432    		// if this time's battery low is near to the last one
-;;;433    		// 0.64ms interval of each measurement
-;;;434    		iSystemTickTemp = iSystemTick;
+;;;432        	// Longer filter for battery voltage
+;;;433    		// if this time's battery low is near to the last one
+;;;434    		// 0.64ms interval of each measurement
+;;;435    		iSystemTickTemp = unSystemTick;
 000226  4830              LDR      r0,|L1.744|
-000228  6800              LDR      r0,[r0,#0]  ; iSystemTick
-;;;435    		if ((uint32_t)(iSystemTickTemp - iBatteryLowLastTimeRCD) < BATTERY_LOW_MIN_INTERVAL)
+000228  6800              LDR      r0,[r0,#0]  ; unSystemTick
+;;;436    		if ((uint32_t)(iSystemTickTemp - iBatteryLowLastTimeRCD) < BATTERY_LOW_MIN_INTERVAL)
 00022a  6160              STR      r0,[r4,#0x14]  ; iSystemTickTemp
 00022c  69a1              LDR      r1,[r4,#0x18]  ; iBatteryLowLastTimeRCD
 00022e  1a40              SUBS     r0,r0,r1
 000230  280a              CMP      r0,#0xa
 000232  d21f              BCS      |L1.628|
-;;;436    		{
-;;;437    			if (iBatteryLowCNT < MAX_BATT_LOW_CNT)
+;;;437    		{
+;;;438    			if (iBatteryLowCNT < MAX_BATT_LOW_CNT)
 000234  8820              LDRH     r0,[r4,#0]  ; iBatteryLowCNT
 000236  2832              CMP      r0,#0x32
 000238  d202              BCS      |L1.576|
 00023a  1c40              ADDS     r0,r0,#1
-;;;438    			{
-;;;439    				iBatteryLowCNT++;
+;;;439    			{
+;;;440    				iBatteryLowCNT++;
 00023c  8020              STRH     r0,[r4,#0]
 00023e  e01a              B        |L1.630|
                   |L1.576|
-;;;440    			}
-;;;441    			else
-;;;442    			{
-;;;443    				// battery really too low
-;;;444    				MOTOR_SHUT_DOWN;
+;;;441    			}
+;;;442    			else
+;;;443    			{
+;;;444    				// battery really too low
+;;;445    				MOTOR_SHUT_DOWN;
 000240  4828              LDR      r0,|L1.740|
 000242  6207              STR      r7,[r0,#0x20]
 000244  491d              LDR      r1,|L1.700|
@@ -722,93 +723,93 @@
 000266  20ff              MOVS     r0,#0xff
 000268  63c8              STR      r0,[r1,#0x3c]
 00026a  6388              STR      r0,[r1,#0x38]
-;;;445    				setError(ERR_BATTERY_LOW);
+;;;446    				setError(ERR_BATTERY_LOW);
 00026c  2004              MOVS     r0,#4
 00026e  f7fffffe          BL       setError
 000272  e000              B        |L1.630|
                   |L1.628|
-;;;446    			}
-;;;447    		}
-;;;448    		else
-;;;449    		{
-;;;450    			iBatteryLowCNT = 0;
+;;;447    			}
+;;;448    		}
+;;;449    		else
+;;;450    		{
+;;;451    			iBatteryLowCNT = 0;
 000274  8027              STRH     r7,[r4,#0]
                   |L1.630|
-;;;451    		}
-;;;452    		iBatteryLowLastTimeRCD = iSystemTickTemp; 
+;;;452    		}
+;;;453    		iBatteryLowLastTimeRCD = iSystemTickTemp; 
 000276  6960              LDR      r0,[r4,#0x14]  ; iSystemTickTemp
 000278  61a0              STR      r0,[r4,#0x18]  ; iBatteryLowLastTimeRCD
                   |L1.634|
-;;;453    	}
-;;;454        
-;;;455        ADC_CLR_INT_FLAG(ADC, iADC_ComparatorFlag);
+;;;454    	}
+;;;455        
+;;;456        ADC_CLR_INT_FLAG(ADC, iADC_ComparatorFlag);
 00027a  6b30              LDR      r0,[r6,#0x30]
 00027c  6921              LDR      r1,[r4,#0x10]  ; iADC_ComparatorFlag
 00027e  08c0              LSRS     r0,r0,#3
 000280  00c0              LSLS     r0,r0,#3
 000282  4308              ORRS     r0,r0,r1
 000284  6330              STR      r0,[r6,#0x30]
-;;;456    }
+;;;457    }
 000286  bdf8              POP      {r3-r7,pc}
-;;;457    
+;;;458    
                           ENDP
 
                   SPI_IRQHandler PROC
-;;;468    
-;;;469    void SPI_IRQHandler(void)
+;;;469    
+;;;470    void SPI_IRQHandler(void)
 000288  4918              LDR      r1,|L1.748|
-;;;470    {
-;;;471    	iSPI_ReadData = SPI->RX;
+;;;471    {
+;;;472    	iSPI_ReadData = SPI->RX;
 00028a  6908              LDR      r0,[r1,#0x10]
 00028c  4a18              LDR      r2,|L1.752|
-;;;472    	if(IS_COMM_CMD(iSPI_ReadData))
-;;;473    	{
-;;;474    		if(IS_COMM_CMD_WR(iSPI_ReadData))
-;;;475    		{
-;;;476    			// Write register command
-;;;477    			enumRegister = (ENUM_COMM_REG)(COMM_VALUE_MASK & iSPI_ReadData);
-;;;478    		}
-;;;479    		else
-;;;480    		{
-;;;481    			// Read register command
-;;;482    			SPI_WRITE_TX(SPI, mMotor.iValue[enumRegister]);
-;;;483    			SPI_TRIGGER(SPI);
-;;;484    		}
-;;;485    	}
-;;;486    	else
-;;;487    	{
-;;;488    		// write register value, which register was pointed in CMD (last transmision)
-;;;489    		mMotor.iValue[enumRegister] = COMM_VALUE_MASK & iSPI_ReadData;
+;;;473    	if(IS_COMM_CMD(iSPI_ReadData))
+;;;474    	{
+;;;475    		if(IS_COMM_CMD_WR(iSPI_ReadData))
+;;;476    		{
+;;;477    			// Write register command
+;;;478    			enumRegister = (ENUM_COMM_REG)(COMM_VALUE_MASK & iSPI_ReadData);
+;;;479    		}
+;;;480    		else
+;;;481    		{
+;;;482    			// Read register command
+;;;483    			SPI_WRITE_TX(SPI, mMotor.iValue[enumRegister]);
+;;;484    			SPI_TRIGGER(SPI);
+;;;485    		}
+;;;486    	}
+;;;487    	else
+;;;488    	{
+;;;489    		// write register value, which register was pointed in CMD (last transmision)
+;;;490    		mMotor.iValue[enumRegister] = COMM_VALUE_MASK & iSPI_ReadData;
 00028e  4b0c              LDR      r3,|L1.704|
-000290  8010              STRH     r0,[r2,#0]            ;471
+000290  8010              STRH     r0,[r2,#0]            ;472
 000292  4a18              LDR      r2,|L1.756|
 000294  0440              LSLS     r0,r0,#17
 000296  7812              LDRB     r2,[r2,#0]  ; enumRegister
 000298  0c40              LSRS     r0,r0,#17
 00029a  0052              LSLS     r2,r2,#1
 00029c  5298              STRH     r0,[r3,r2]
-;;;490    	}
-;;;491    	// Clear unit transfer interrupt flag IF (SPI_CNTRL[16])
-;;;492    	SPI->CNTRL |= SPI_CNTRL_IF_Msk;
+;;;491    	}
+;;;492    	// Clear unit transfer interrupt flag IF (SPI_CNTRL[16])
+;;;493    	SPI->CNTRL |= SPI_CNTRL_IF_Msk;
 00029e  6808              LDR      r0,[r1,#0]
 0002a0  2201              MOVS     r2,#1
 0002a2  0412              LSLS     r2,r2,#16
 0002a4  4310              ORRS     r0,r0,r2
 0002a6  6008              STR      r0,[r1,#0]
-;;;493    }
+;;;494    }
 0002a8  4770              BX       lr
-;;;494    
+;;;495    
                           ENDP
 
                   SysTick_Handler PROC
-;;;495    void SysTick_Handler(void)
+;;;496    void SysTick_Handler(void)
 0002aa  480f              LDR      r0,|L1.744|
-;;;496    {
-;;;497    	iSystemTick += 5;
-0002ac  6801              LDR      r1,[r0,#0]  ; iSystemTick
+;;;497    {
+;;;498    	unSystemTick += 5;
+0002ac  6801              LDR      r1,[r0,#0]  ; unSystemTick
 0002ae  1d49              ADDS     r1,r1,#5
-0002b0  6001              STR      r1,[r0,#0]  ; iSystemTick
-;;;498    }
+0002b0  6001              STR      r1,[r0,#0]  ; unSystemTick
+;;;499    }
 0002b2  4770              BX       lr
                           ENDP
 
@@ -839,7 +840,7 @@
                   |L1.740|
                           DCD      0x50004240
                   |L1.744|
-                          DCD      iSystemTick
+                          DCD      unSystemTick
                   |L1.748|
                           DCD      0x40030000
                   |L1.752|

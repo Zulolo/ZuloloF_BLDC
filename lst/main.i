@@ -6342,7 +6342,7 @@ extern int32_t FMC_WriteConfig(uint32_t *u32Config, uint32_t u32Count);
 
 
  
-#line 143 ".\\StdDriver\\inc\\gpio.h"
+#line 144 ".\\StdDriver\\inc\\gpio.h"
 
    
 
@@ -8148,9 +8148,11 @@ void WDT_DisableInt(void);
 
 #line 56 "User\\global.h"
 
+#line 63 "User\\global.h"
 
 
-#line 65 "User\\global.h"
+
+#line 72 "User\\global.h"
 
 
 
@@ -8163,7 +8165,7 @@ void WDT_DisableInt(void);
 
 
 
-#line 84 "User\\global.h"
+#line 91 "User\\global.h"
 
 
 
@@ -8182,7 +8184,7 @@ void WDT_DisableInt(void);
 
 
 
-#line 111 "User\\global.h"
+#line 118 "User\\global.h"
 
 
 
@@ -8213,7 +8215,7 @@ typedef enum {
 	ERR_BRD_FAULT
 } ENUM_ERROR_LEVEL;
 
-extern volatile uint32_t iSystemTick;
+extern volatile uint32_t unSystemTick;
 
 #line 1 "User\\BLDCSensorLess.h"
 
@@ -8279,7 +8281,7 @@ extern volatile uint32_t iSystemTick;
 
 
 
-#line 234 "User\\BLDCSensorLess.h"
+#line 237 "User\\BLDCSensorLess.h"
 extern MOTOR_UNION_T mMotor;	
 extern ENUM_TIM1_USAGE FLAG_TIM1_USEAGE;
 extern uint32_t iLastZXDetectedTime;
@@ -8292,7 +8294,7 @@ extern uint8_t FLAG_PHASE_CHANGED;
 extern __inline void stopMotor(void);
 extern void checkMotor(void);
 extern void BLDCSensorLessManager(void);
-#line 144 "User\\global.h"
+#line 151 "User\\global.h"
 #line 1 "User\\Communication.h"
 
 
@@ -8323,7 +8325,7 @@ extern ENUM_COMM_REG enumRegister;
 extern uint8_t FlagRegisterNeedWrite;
 
 extern void CommunicationManager(void);
-#line 145 "User\\global.h"
+#line 152 "User\\global.h"
 #line 1 "User\\Error.h"
 
 
@@ -8332,7 +8334,8 @@ extern void CommunicationManager(void);
 
 #line 20 "User\\Error.h"
 
-extern uint32_t iErrorMaster;
+extern uint32_t unErrorMaster;
+extern void delay(uint32_t unDelayMs);
 extern void resetError(ENUM_ERROR_LEVEL enumErrorType);
 extern void setError(ENUM_ERROR_LEVEL enumErrorType);
 extern void clearError(void);
@@ -8350,7 +8353,7 @@ extern void ErrorManager(void);
 
 
  
-#line 146 "User\\global.h"
+#line 153 "User\\global.h"
 
 #line 5 "User\\main.h"
 
@@ -8386,7 +8389,7 @@ uint8_t iTestSpeedSequenIndex = 0;
 uint32_t iTestSpeedLastTime = 0;
 const uint16_t iTestSpeedSequence[] = {250, 300, 350, 400, 450, 300, 400, 250, 200, 450, 200};
 
-volatile uint32_t iSystemTick = 0;
+volatile uint32_t unSystemTick = 0;
 
 
 
@@ -8723,43 +8726,6 @@ int main()
 
     SYS_Init();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-     
-
-    
-    
-    
-    
-
-     
-     
-     
-
-
-
-
     checkMotor();
 
      
@@ -8786,23 +8752,23 @@ int main()
 
 
 
-	BLDCSensorLessManager(); 
+		BLDCSensorLessManager();
 		
-	ErrorManager();
+		ErrorManager();
 
 		
-	if ((1) == mMotor.structMotor.MSR.Locked)
-	{
-		if (iSystemTick%5000 == 0)
+		if ((1) == mMotor.structMotor.MSR.Locked)
 		{
-			if (iTestSpeedLastTime != iSystemTick)
+			if (unSystemTick%5000 == 0)
 			{
-				iTestSpeedLastTime = iSystemTick;
-				mMotor.structMotor.TGT_DUTY = iTestSpeedSequence[iTestSpeedSequenIndex];
-				((iTestSpeedSequenIndex) = (((iTestSpeedSequenIndex) < (((sizeof(iTestSpeedSequence)/sizeof(uint16_t))) - 1)) ? ((iTestSpeedSequenIndex) + 1) : 0));
+				if (iTestSpeedLastTime != unSystemTick)
+				{
+					iTestSpeedLastTime = unSystemTick;
+					mMotor.structMotor.TGT_DUTY = iTestSpeedSequence[iTestSpeedSequenIndex];
+					((iTestSpeedSequenIndex) = (((iTestSpeedSequenIndex) < (((sizeof(iTestSpeedSequence)/sizeof(uint16_t))) - 1)) ? ((iTestSpeedSequenIndex) + 1) : 0));
+				}
 			}
 		}
-	}
 	}
 
 }

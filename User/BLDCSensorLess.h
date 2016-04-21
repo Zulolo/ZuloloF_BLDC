@@ -161,7 +161,9 @@
 			STATUS_WORKING = 0xFFFF
 		} ENUM_STATUS;
 
-		const uint8_t iLocatePhaseSequencyTable[] = {0, 1, 2, 1};
+		const uint8_t unLocatePhaseSequencyTable[] = {0, 1, 2, 1};
+		volatile uint32_t* unMosfetTestTable[] = {MOSFET_AS_PIN_ADDR, MOSFET_BS_PIN_ADDR, MOSFET_CS_PIN_ADDR,
+				MOSFET_AD_PIN_ADDR, MOSFET_BD_PIN_ADDR, MOSFET_CD_PIN_ADDR};
 
 		#define ALREADY_ROTATING_DETECTING			0xFFFF
 		#define MAX_ROTATING_DETECT_PHASE_TIME		30	// half phase max 30ms
@@ -172,33 +174,34 @@
 		#define CHANGE_DUTY_PERIOD_THR				9		// Used in ramp up
 		#define CHANGE_DUTY_CNT_THR					5		// Used after locked
 
-//		#define MOTOR_RUNNING_MSK		(0x01ul)
-//		#define MOTOR_R_DIRECTION_MSK	(0x02ul)
-//		#define IS_MOTOR_NEED_TO_RUN(x)	((x) & MOTOR_RUNNING_MSK)
+//		#define MOTOR_RUNNING_MSK					(0x01ul)
+//		#define MOTOR_R_DIRECTION_MSK				(0x02ul)
+//		#define IS_MOTOR_NEED_TO_RUN(x)				((x) & MOTOR_RUNNING_MSK)
 
-//		#define IS_MOTOR_R_CLOCKWISE	(((mMotor.structMotor.MCR & MOTOR_R_DIRECTION_MSK) == 0) ? TRUE : FALSE)
-		#define GET_PHASE_VALUE(x)		((mMotor.structMotor.MCR.RotateDirection == ROTATE_CLOCKWISE) ? PHASE_TAB_CLOCKWISE[(x)] : PHASE_TAB_ANTICLOCKWISE[(x)])
-		#define PHASE_NUMBER			(sizeof(PHASE_TAB_CLOCKWISE)/sizeof(uint32_t))
-		#define PHASE_INCREASE(x) 		INDEX_INCREASE((x), PHASE_NUMBER) //((x) = (((x) == (PHASE_NUMBER - 1)) ? 0 : ((x) + 1)))
+//		#define IS_MOTOR_R_CLOCKWISE				(((mMotor.structMotor.MCR & MOTOR_R_DIRECTION_MSK) == 0) ? TRUE : FALSE)
+		#define GET_PHASE_VALUE(x)					((mMotor.structMotor.MCR.RotateDirection == ROTATE_CLOCKWISE) ? PHASE_TAB_CLOCKWISE[(x)] : PHASE_TAB_ANTICLOCKWISE[(x)])
+		#define PHASE_NUMBER						(sizeof(PHASE_TAB_CLOCKWISE)/sizeof(uint32_t))
+		#define PHASE_INCREASE(x) 					INDEX_INCREASE((x), PHASE_NUMBER) //((x) = (((x) == (PHASE_NUMBER - 1)) ? 0 : ((x) + 1)))
 
-//		#define RESET_MOTOR_SR_BIT(x)	(mMotor.structMotor.MSR &= (~(1ul << (x))))
-//		#define SET_MOTOR_SR_BIT(x)		(mMotor.structMotor.MSR |= (1ul << (x)))
-//		#define IS_MOTOR_STATUS_SET(x)	(mMotor.structMotor.MSR & (1ul << (x)))
+//		#define RESET_MOTOR_SR_BIT(x)				(mMotor.structMotor.MSR &= (~(1ul << (x))))
+//		#define SET_MOTOR_SR_BIT(x)					(mMotor.structMotor.MSR |= (1ul << (x)))
+//		#define IS_MOTOR_STATUS_SET(x)				(mMotor.structMotor.MSR & (1ul << (x)))
 
-		#define WAIT_AFTER_LOCATE_TIME		0	// ms
+		#define WAIT_AFTER_LOCATE_TIME				0	// ms
 
-		#define MOTOR_RAMPUP_DT_MAX			(PWM_PERIOD - 200)
-		#define MOTOR_RAMPUP_DT_FACTOR		(1.02)
-//		#define MOTOR_RAMPUP_DT_INCR(x)		((x) = (((x) > MOTOR_RAMPUP_DT_MAX) ? (x) : (uint16_t)((x) * MOTOR_RAMPUP_DT_FACTOR)))
-		#define MOTOR_RAMPUP_DT_INCR(x)		((x) = (((x) > MOTOR_RAMPUP_DT_MAX) ? (x) : ((x) + 1)))
+		#define MOTOR_RAMPUP_DT_MAX					(PWM_PERIOD - 200)
+		#define MOTOR_RAMPUP_DT_FACTOR				(1.02)
+//		#define MOTOR_RAMPUP_DT_INCR(x)				((x) = (((x) > MOTOR_RAMPUP_DT_MAX) ? (x) : (uint16_t)((x) * MOTOR_RAMPUP_DT_FACTOR)))
+		#define MOTOR_RAMPUP_DT_INCR(x)				((x) = (((x) > MOTOR_RAMPUP_DT_MAX) ? (x) : ((x) + 1)))
 
-		#define MOTOR_RAMPUP_PR_MIN			(1000 - 1)	// frequency 2M, 2857RPM if 1MC==7EC==42PC
-		#define MOTOR_RAMPUP_PR_FACTOR		(0.98)
-		#define MOTOR_RAMPUP_PR_DCR(x)		((x) = (((x) < MOTOR_RAMPUP_PR_MIN) ? (x) : (uint16_t)((x) * MOTOR_RAMPUP_PR_FACTOR)))
-//		#define MOTOR_RAMPUP_PR_DCR(x)		((x) = (((x) < MOTOR_RAMPUP_PR_MIN) ? (x) : ((x) - 100)))
-		#define MOTOR_START_ZXD_SPEED		(1600 - 1)	// frequency 2M, 
-//		#define MOTOR_START_ZXD_MINROT_CNT	200	// After phase change xxx times at max speed of rampup, start to detect ZX
-
+		#define MOTOR_RAMPUP_PR_MIN					(1000 - 1)	// frequency 2M, 2857RPM if 1MC==7EC==42PC
+		#define MOTOR_RAMPUP_PR_FACTOR				(0.98)
+		#define MOTOR_RAMPUP_PR_DCR(x)				((x) = (((x) < MOTOR_RAMPUP_PR_MIN) ? (x) : (uint16_t)((x) * MOTOR_RAMPUP_PR_FACTOR)))
+//		#define MOTOR_RAMPUP_PR_DCR(x)				((x) = (((x) < MOTOR_RAMPUP_PR_MIN) ? (x) : ((x) - 100)))
+		#define MOTOR_START_ZXD_SPEED				(1600 - 1)	// frequency 2M,
+//		#define MOTOR_START_ZXD_MINROT_CNT			200	// After phase change xxx times at max speed of rampup, start to detect ZX
+		#define SET_MOSFET_ON_MANUAL(pinAddr)		(*(pinAddr) = 0)
+		#define SET_MOSFET_OFF_MANUAL(pinAddr)		(*(pinAddr) = 1)
 //		typedef enum {
 //			PHASE_AB = 0,
 //			PHASE_AC,

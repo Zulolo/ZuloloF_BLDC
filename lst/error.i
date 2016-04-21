@@ -5440,7 +5440,7 @@ extern int32_t FMC_WriteConfig(uint32_t *u32Config, uint32_t u32Count);
 
 
  
-#line 143 ".\\StdDriver\\inc\\gpio.h"
+#line 144 ".\\StdDriver\\inc\\gpio.h"
 
    
 
@@ -7246,9 +7246,11 @@ void WDT_DisableInt(void);
 
 #line 56 "User\\global.h"
 
+#line 63 "User\\global.h"
 
 
-#line 65 "User\\global.h"
+
+#line 72 "User\\global.h"
 
 
 
@@ -7261,7 +7263,7 @@ void WDT_DisableInt(void);
 
 
 
-#line 84 "User\\global.h"
+#line 91 "User\\global.h"
 
 
 
@@ -7280,7 +7282,7 @@ void WDT_DisableInt(void);
 
 
 
-#line 111 "User\\global.h"
+#line 118 "User\\global.h"
 
 
 
@@ -7311,7 +7313,7 @@ typedef enum {
 	ERR_BRD_FAULT
 } ENUM_ERROR_LEVEL;
 
-extern volatile uint32_t iSystemTick;
+extern volatile uint32_t unSystemTick;
 
 #line 1 "User\\BLDCSensorLess.h"
 
@@ -7377,7 +7379,7 @@ extern volatile uint32_t iSystemTick;
 
 
 
-#line 234 "User\\BLDCSensorLess.h"
+#line 237 "User\\BLDCSensorLess.h"
 extern MOTOR_UNION_T mMotor;	
 extern ENUM_TIM1_USAGE FLAG_TIM1_USEAGE;
 extern uint32_t iLastZXDetectedTime;
@@ -7390,7 +7392,7 @@ extern uint8_t FLAG_PHASE_CHANGED;
 extern __inline void stopMotor(void);
 extern void checkMotor(void);
 extern void BLDCSensorLessManager(void);
-#line 144 "User\\global.h"
+#line 151 "User\\global.h"
 #line 1 "User\\Communication.h"
 
 
@@ -7421,9 +7423,9 @@ extern ENUM_COMM_REG enumRegister;
 extern uint8_t FlagRegisterNeedWrite;
 
 extern void CommunicationManager(void);
-#line 145 "User\\global.h"
+#line 152 "User\\global.h"
 #line 1 "User\\Error.h"
-#line 146 "User\\global.h"
+#line 153 "User\\global.h"
 
 #line 5 "User\\Error.h"
 
@@ -7436,7 +7438,8 @@ extern void CommunicationManager(void);
 
 
 
- uint32_t iErrorMaster;
+ uint32_t unErrorMaster;
+ void delay(uint32_t unDelayMs);
  void resetError(ENUM_ERROR_LEVEL enumErrorType);
  void setError(ENUM_ERROR_LEVEL enumErrorType);
  void clearError(void);
@@ -7456,16 +7459,25 @@ extern void CommunicationManager(void);
  
 #line 13 "User\\Error.c"
 
+void delay(uint32_t unDelayMs)
+{
+	uint32_t unEntryTime = unSystemTick;
+	while (((uint32_t)(unSystemTick - unEntryTime)) < unDelayMs)
+	{
+		__nop();
+	}
+}
+
 void clearError(void)
 {
-	iErrorMaster = 0;
+	unErrorMaster = 0;
 }
 
 void resetError(ENUM_ERROR_LEVEL enumErrorType)
 {
 	if (ERR_NULL != enumErrorType)
 	{	
-		iErrorMaster &= ~(1UL << (enumErrorType - 1));
+		unErrorMaster &= ~(1UL << (enumErrorType - 1));
 	}
 }
 
@@ -7473,11 +7485,11 @@ void setError(ENUM_ERROR_LEVEL enumErrorType)
 {
 	if (ERR_NULL == enumErrorType)
 	{
-		iErrorMaster = 0;
+		unErrorMaster = 0;
 	}
 	else
 	{
-		iErrorMaster |= 1UL << (enumErrorType - 1); 
+		unErrorMaster |= 1UL << (enumErrorType - 1); 
 	}
 }
 
@@ -7487,7 +7499,7 @@ ENUM_ERROR_LEVEL getPrecedenceError(void)
 	while (iVernier)
 	{
 		iVernier--; 
-		if (iErrorMaster >> iVernier)
+		if (unErrorMaster >> iVernier)
 		{
 			return (iVernier + 1);
 		}		
@@ -7510,7 +7522,7 @@ void LEDBlinkHandler(ENUM_ERROR_LEVEL errorType, uint32_t iErrorStartTime)
 	}
 	else
 	{
-		iLEDTime = (uint16_t)(((uint32_t)(iSystemTick - iErrorStartTime)) % 4000);
+		iLEDTime = (uint16_t)(((uint32_t)(unSystemTick - iErrorStartTime)) % 4000);
 		if (iLEDTime >= errorType * ((200 + 200)))
 		{
 			((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(5))) + ((4)<<2)))) = 1);
@@ -7544,7 +7556,7 @@ void ErrorManager(void)
 	{
 		lastErrorType = errorFetched;
 		
-		staLastErrorChangeTime = iSystemTick;
+		staLastErrorChangeTime = unSystemTick;
 		
 		LEDBlinkHandler(errorFetched, staLastErrorChangeTime);
 	}

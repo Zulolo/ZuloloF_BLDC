@@ -341,43 +341,6 @@ int main()
 {
 
     SYS_Init();
-//	TIMER_Start(TIMER1);
-//	imsTest = 0;
-//
-//	iEntreTime = TIMER_GetCounter(TIMER1);
-//	while ((PWM->PIIR & PWM_PIIR_PWMPIF1_Msk))
-//	{
-////		BRG_DISABLE;
-////		stopMotor();
-//		if (imsTest > 1000)
-//		{
-//			break;
-//		}
-//
-//		if (ACMP0_EDGE_MATCH)
-//		{
-//			imsTest = 0;
-//		}
-//		else
-//		{
-//			imsTest++;
-//		}
-//
-//	}
-//	iLeaveTime = TIMER_GetCounter(TIMER1);
-    /* ---=== Interrupt already enabled so communication can start ===--- */
-
-    // reset motor state machine to stop
-    // power was already stopped providing to motor and 
-    // enumMotorState was already initialized in PWM_Init()
-    //stopMotor();
-
-    /* Init UART to 115200-8n1 for print message */
-    /* This MCU don't have DMA, need to use interrupt to make un-polling UART TX */
-    /* Now better not to use printf after motor was started, in future if needed will write one */
-//    UART_Open(UART, 115200);
-//   
-//    printf("Hello World\n");
 
     checkMotor();
 
@@ -399,29 +362,29 @@ int main()
     {
 //	if (TIMER_GetCounter(TIMER0) > 100 && TIMER_GetCounter(TIMER0) < 1000)
 //	{
-//	    imsTest = iSystemTick;
+//	    imsTest = unSystemTick;
 //	}
 //	if (TIMER_GetCounter(TIMER0) > 30000 && TIMER_GetCounter(TIMER0) < 31000)
 //	{
-//	    imsTest = iSystemTick;
+//	    imsTest = unSystemTick;
 //	}
-	BLDCSensorLessManager(); 
+		BLDCSensorLessManager();
 		//	CommunicationManager();
-	ErrorManager();
+		ErrorManager();
 
 		// For test
-	if (TRUE == mMotor.structMotor.MSR.Locked)
-	{
-		if (iSystemTick%5000 == 0)
+		if (TRUE == mMotor.structMotor.MSR.Locked)
 		{
-			if (iTestSpeedLastTime != iSystemTick)
+			if (unSystemTick%5000 == 0)
 			{
-				iTestSpeedLastTime = iSystemTick;
-				mMotor.structMotor.TGT_DUTY = iTestSpeedSequence[iTestSpeedSequenIndex];
-				INDEX_INCREASE(iTestSpeedSequenIndex, TEST_SPEED_SEQUENCE_NUM);
+				if (iTestSpeedLastTime != unSystemTick)
+				{
+					iTestSpeedLastTime = unSystemTick;
+					mMotor.structMotor.TGT_DUTY = iTestSpeedSequence[iTestSpeedSequenIndex];
+					INDEX_INCREASE(iTestSpeedSequenIndex, TEST_SPEED_SEQUENCE_NUM);
+				}
 			}
 		}
-	}
 	}
 
 }
