@@ -15,4 +15,9 @@
 void CommunicationManager(void)
 {
 	// All transactions are handled in interrupt
+	if (tMotor.structMotor.MSR.bNewComFrameReceived == TRUE)
+	{
+		tMotor.structMotor.MSR.bNewComFrameReceived = FALSE;
+
+	}
 }

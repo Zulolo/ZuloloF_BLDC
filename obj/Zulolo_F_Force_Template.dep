@@ -237,10 +237,10 @@ I (.\StdDriver\inc\spi.h)(0x54884108)
 I (.\StdDriver\inc\timer.h)(0x54884108)
 I (.\StdDriver\inc\uart.h)(0x54884108)
 I (.\StdDriver\inc\wdt.h)(0x54884108)
-F (.\User\main.c)(0x5718C7C1)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I G:\Geek\Projects\Zulolo_F\Force\Code\Zulolo_F_Force\RTE-I D:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.0.2\Device\Mini51\Include-I D:\Keil_v5\ARM\CMSIS\Include-I \-D__UVISION_VERSION="518"-o .\obj\main.o --list_dir ".\\lst\\" --list --omf_browse .\obj\main.crf --depend .\obj\main.d)
+F (.\User\main.c)(0x571B2FAE)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I G:\Geek\Projects\Zulolo_F\Force\Code\Zulolo_F_Force\RTE-I D:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.0.2\Device\Mini51\Include-I D:\Keil_v5\ARM\CMSIS\Include-I \-D__UVISION_VERSION="518"-o .\obj\main.o --list_dir ".\\lst\\" --list --omf_browse .\obj\main.crf --depend .\obj\main.d)
 I (D:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x55DB2B76)
-I (User\main.h)(0x5718C7C1)
-I (User\global.h)(0x5718DC34)
+I (User\main.h)(0x571B1F92)
+I (User\global.h)(0x571B25AD)
 I (.\CMSIS\Mini51Series.h)(0x54884132)
 I (.\CMSIS\core_cm0.h)(0x5488410C)
 I (D:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
@@ -258,12 +258,13 @@ I (.\StdDriver\inc\spi.h)(0x54884108)
 I (.\StdDriver\inc\timer.h)(0x54884108)
 I (.\StdDriver\inc\uart.h)(0x54884108)
 I (.\StdDriver\inc\wdt.h)(0x54884108)
-I (User\BLDCSensorLess.h)(0x5718DD01)
-I (User\Communication.h)(0x57178683)
-I (User\Error.h)(0x5718C87B)
-F (.\User\BLDCSensorLess.c)(0x5718DD31)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I G:\Geek\Projects\Zulolo_F\Force\Code\Zulolo_F_Force\RTE-I D:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.0.2\Device\Mini51\Include-I D:\Keil_v5\ARM\CMSIS\Include-I \-D__UVISION_VERSION="518"-o .\obj\bldcsensorless.o --list_dir ".\\lst\\" --list --omf_browse .\obj\bldcsensorless.crf --depend .\obj\bldcsensorless.d)
-I (User\BLDCSensorLess.h)(0x5718DD01)
-I (User\global.h)(0x5718DC34)
+I (User\BLDCSensorLess.h)(0x571B2FB4)
+I (User\Communication.h)(0x571B2465)
+I (User\Error.h)(0x571B22DA)
+I (User\Protection.h)(0x571B2FB4)
+F (.\User\BLDCSensorLess.c)(0x571B2599)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I G:\Geek\Projects\Zulolo_F\Force\Code\Zulolo_F_Force\RTE-I D:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.0.2\Device\Mini51\Include-I D:\Keil_v5\ARM\CMSIS\Include-I \-D__UVISION_VERSION="518"-o .\obj\bldcsensorless.o --list_dir ".\\lst\\" --list --omf_browse .\obj\bldcsensorless.crf --depend .\obj\bldcsensorless.d)
+I (User\BLDCSensorLess.h)(0x571B2FB4)
+I (User\global.h)(0x571B25AD)
 I (.\CMSIS\Mini51Series.h)(0x54884132)
 I (.\CMSIS\core_cm0.h)(0x5488410C)
 I (D:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
@@ -281,11 +282,12 @@ I (.\StdDriver\inc\spi.h)(0x54884108)
 I (.\StdDriver\inc\timer.h)(0x54884108)
 I (.\StdDriver\inc\uart.h)(0x54884108)
 I (.\StdDriver\inc\wdt.h)(0x54884108)
-I (User\Communication.h)(0x57178683)
-I (User\Error.h)(0x5718C87B)
-F (.\User\Communication.c)(0x54BB60D5)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I G:\Geek\Projects\Zulolo_F\Force\Code\Zulolo_F_Force\RTE-I D:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.0.2\Device\Mini51\Include-I D:\Keil_v5\ARM\CMSIS\Include-I \-D__UVISION_VERSION="518"-o .\obj\communication.o --list_dir ".\\lst\\" --list --omf_browse .\obj\communication.crf --depend .\obj\communication.d)
-I (User\Communication.h)(0x57178683)
-I (User\global.h)(0x5718DC34)
+I (User\Communication.h)(0x571B2465)
+I (User\Error.h)(0x571B22DA)
+I (User\Protection.h)(0x571B2FB4)
+F (.\User\Communication.c)(0x571B2F43)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I G:\Geek\Projects\Zulolo_F\Force\Code\Zulolo_F_Force\RTE-I D:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.0.2\Device\Mini51\Include-I D:\Keil_v5\ARM\CMSIS\Include-I \-D__UVISION_VERSION="518"-o .\obj\communication.o --list_dir ".\\lst\\" --list --omf_browse .\obj\communication.crf --depend .\obj\communication.d)
+I (User\Communication.h)(0x571B2465)
+I (User\global.h)(0x571B25AD)
 I (.\CMSIS\Mini51Series.h)(0x54884132)
 I (.\CMSIS\core_cm0.h)(0x5488410C)
 I (D:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
@@ -303,11 +305,12 @@ I (.\StdDriver\inc\spi.h)(0x54884108)
 I (.\StdDriver\inc\timer.h)(0x54884108)
 I (.\StdDriver\inc\uart.h)(0x54884108)
 I (.\StdDriver\inc\wdt.h)(0x54884108)
-I (User\BLDCSensorLess.h)(0x5718DD01)
-I (User\Error.h)(0x5718C87B)
-F (.\User\it.c)(0x5718C7C1)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I G:\Geek\Projects\Zulolo_F\Force\Code\Zulolo_F_Force\RTE-I D:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.0.2\Device\Mini51\Include-I D:\Keil_v5\ARM\CMSIS\Include-I \-D__UVISION_VERSION="518"-o .\obj\it.o --list_dir ".\\lst\\" --list --omf_browse .\obj\it.crf --depend .\obj\it.d)
-I (User\it.h)(0x551D4263)
-I (User\global.h)(0x5718DC34)
+I (User\BLDCSensorLess.h)(0x571B2FB4)
+I (User\Error.h)(0x571B22DA)
+I (User\Protection.h)(0x571B2FB4)
+F (.\User\it.c)(0x571B2F5C)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I G:\Geek\Projects\Zulolo_F\Force\Code\Zulolo_F_Force\RTE-I D:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.0.2\Device\Mini51\Include-I D:\Keil_v5\ARM\CMSIS\Include-I \-D__UVISION_VERSION="518"-o .\obj\it.o --list_dir ".\\lst\\" --list --omf_browse .\obj\it.crf --depend .\obj\it.d)
+I (User\it.h)(0x571B1EE6)
+I (User\global.h)(0x571B25AD)
 I (.\CMSIS\Mini51Series.h)(0x54884132)
 I (.\CMSIS\core_cm0.h)(0x5488410C)
 I (D:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
@@ -325,12 +328,13 @@ I (.\StdDriver\inc\spi.h)(0x54884108)
 I (.\StdDriver\inc\timer.h)(0x54884108)
 I (.\StdDriver\inc\uart.h)(0x54884108)
 I (.\StdDriver\inc\wdt.h)(0x54884108)
-I (User\BLDCSensorLess.h)(0x5718DD01)
-I (User\Communication.h)(0x57178683)
-I (User\Error.h)(0x5718C87B)
-F (.\User\Error.c)(0x5718C867)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I G:\Geek\Projects\Zulolo_F\Force\Code\Zulolo_F_Force\RTE-I D:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.0.2\Device\Mini51\Include-I D:\Keil_v5\ARM\CMSIS\Include-I \-D__UVISION_VERSION="518"-o .\obj\error.o --list_dir ".\\lst\\" --list --omf_browse .\obj\error.crf --depend .\obj\error.d)
-I (User\Error.h)(0x5718C87B)
-I (User\global.h)(0x5718DC34)
+I (User\BLDCSensorLess.h)(0x571B2FB4)
+I (User\Communication.h)(0x571B2465)
+I (User\Error.h)(0x571B22DA)
+I (User\Protection.h)(0x571B2FB4)
+F (.\User\Error.c)(0x571B224C)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I G:\Geek\Projects\Zulolo_F\Force\Code\Zulolo_F_Force\RTE-I D:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.0.2\Device\Mini51\Include-I D:\Keil_v5\ARM\CMSIS\Include-I \-D__UVISION_VERSION="518"-o .\obj\error.o --list_dir ".\\lst\\" --list --omf_browse .\obj\error.crf --depend .\obj\error.d)
+I (User\Error.h)(0x571B22DA)
+I (User\global.h)(0x571B25AD)
 I (.\CMSIS\Mini51Series.h)(0x54884132)
 I (.\CMSIS\core_cm0.h)(0x5488410C)
 I (D:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
@@ -348,5 +352,29 @@ I (.\StdDriver\inc\spi.h)(0x54884108)
 I (.\StdDriver\inc\timer.h)(0x54884108)
 I (.\StdDriver\inc\uart.h)(0x54884108)
 I (.\StdDriver\inc\wdt.h)(0x54884108)
-I (User\BLDCSensorLess.h)(0x5718DD01)
-I (User\Communication.h)(0x57178683)
+I (User\BLDCSensorLess.h)(0x571B2FB4)
+I (User\Communication.h)(0x571B2465)
+I (User\Protection.h)(0x571B2FB4)
+F (.\User\Protection.c)(0x571AE1CB)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I G:\Geek\Projects\Zulolo_F\Force\Code\Zulolo_F_Force\RTE-I D:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.0.2\Device\Mini51\Include-I D:\Keil_v5\ARM\CMSIS\Include-I \-D__UVISION_VERSION="518"-o .\obj\protection.o --list_dir ".\\lst\\" --list --omf_browse .\obj\protection.crf --depend .\obj\protection.d)
+I (User\Protection.h)(0x571B2FB4)
+I (User\global.h)(0x571B25AD)
+I (.\CMSIS\Mini51Series.h)(0x54884132)
+I (.\CMSIS\core_cm0.h)(0x5488410C)
+I (D:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x55DB2B80)
+I (.\CMSIS\core_cmInstr.h)(0x5488410D)
+I (.\CMSIS\core_cmFunc.h)(0x5488410D)
+I (.\CMSIS\system_Mini51Series.h)(0x54884132)
+I (.\StdDriver\inc\sys.h)(0x54884108)
+I (.\StdDriver\inc\clk.h)(0x54D0D7A8)
+I (.\StdDriver\inc\adc.h)(0x54884108)
+I (.\StdDriver\inc\fmc.h)(0x54884108)
+I (.\StdDriver\inc\gpio.h)(0x5718DB6B)
+I (.\StdDriver\inc\i2c.h)(0x54884108)
+I (.\StdDriver\inc\pwm.h)(0x54884108)
+I (.\StdDriver\inc\spi.h)(0x54884108)
+I (.\StdDriver\inc\timer.h)(0x54884108)
+I (.\StdDriver\inc\uart.h)(0x54884108)
+I (.\StdDriver\inc\wdt.h)(0x54884108)
+I (User\BLDCSensorLess.h)(0x571B2FB4)
+I (User\Communication.h)(0x571B2465)
+I (User\Error.h)(0x571B22DA)

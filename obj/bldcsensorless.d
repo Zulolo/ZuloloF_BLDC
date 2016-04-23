@@ -22,3 +22,4 @@
 .\obj\bldcsensorless.o: User\Communication.h
 .\obj\bldcsensorless.o: User\global.h
 .\obj\bldcsensorless.o: User\Error.h
+.\obj\bldcsensorless.o: User\Protection.h

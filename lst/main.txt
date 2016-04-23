@@ -49,9 +49,9 @@
 ;;;580    
                           ENDP
 
-                  CLK_Init PROC
+                  initClk PROC
 ;;;15     
-;;;16     void CLK_Init()
+;;;16     void initClk()
 00003c  b5f8              PUSH     {r3-r7,lr}
 ;;;17     {
 ;;;18         /* Enable internal 22.1184MHz */
@@ -166,8 +166,8 @@
 ;;;54     
                           ENDP
 
-                  IRQ_Init PROC
-;;;55     void IRQ_Init()
+                  initIRQ PROC
+;;;55     void initIRQ()
 0000fa  b510              PUSH     {r4,lr}
 ;;;56     {
 ;;;57         NVIC_EnableIRQ(TMR0_IRQn);
@@ -226,8 +226,8 @@
 ;;;75     
                           ENDP
 
-                  GPIO_Init PROC
-;;;76     void GPIO_Init()
+                  initGPIO PROC
+;;;76     void initGPIO()
 00015c  b5f8              PUSH     {r3-r7,lr}
 ;;;77     {
 ;;;78     /*---------------------------------------------------------------------------------------------------------*/
@@ -492,8 +492,8 @@
 ;;;166    
                           ENDP
 
-                  TIM_Config PROC
-;;;167    void TIM_Config(void)
+                  configTIM PROC
+;;;167    void configTIM(void)
 0002d0  486a              LDR      r0,|L1.1148|
 ;;;168    {
 ;;;169    	// T0 used to change phase automatically
@@ -512,8 +512,8 @@
 ;;;177    
                           ENDP
 
-                  ADC_Config PROC
-;;;178    void ADC_Config(void)
+                  configADC PROC
+;;;178    void configADC(void)
 0002dc  b510              PUSH     {r4,lr}
 ;;;179    {
 ;;;180    
@@ -578,8 +578,8 @@
 ;;;207    
                           ENDP
 
-                  SPI_Config PROC
-;;;208    void SPI_Config(void)
+                  configSPI PROC
+;;;208    void configSPI(void)
 000326  b538              PUSH     {r3-r5,lr}
 ;;;209    {
 ;;;210    /*---------------------------------------------------------------------------------------------------------*/
@@ -599,178 +599,168 @@
 000338  f7fffffe          BL       SPI_ClearTxFIFO
 ;;;218        // peripheral clock frequency of slave device must be faster than the bus clock frequency of the master
 ;;;219        SPI_Open(SPI, SPI_SLAVE, SPI_MODE_0, COMM_BIT_LENTH, COMM_BAUT_RATE);
-00033c  4955              LDR      r1,|L1.1172|
+00033c  4855              LDR      r0,|L1.1172|
 00033e  2204              MOVS     r2,#4
-000340  9100              STR      r1,[sp,#0]
-000342  2311              MOVS     r3,#0x11
+000340  9000              STR      r0,[sp,#0]
+000342  2310              MOVS     r3,#0x10
 000344  0411              LSLS     r1,r2,#16
 000346  4620              MOV      r0,r4
 000348  f7fffffe          BL       SPI_Open
+00034c  6820              LDR      r0,[r4,#0]
+00034e  1521              ASRS     r1,r4,#20
+000350  4308              ORRS     r0,r0,r1
+000352  6020              STR      r0,[r4,#0]
+000354  68a0              LDR      r0,[r4,#8]
+000356  2108              MOVS     r1,#8
+000358  4388              BICS     r0,r0,r1
+00035a  60a0              STR      r0,[r4,#8]
+00035c  68a0              LDR      r0,[r4,#8]
+00035e  2125              MOVS     r1,#0x25
+000360  4308              ORRS     r0,r0,r1
+000362  60a0              STR      r0,[r4,#8]
 ;;;220    
-;;;221        /* Enable the automatic hardware slave select function. Select the SS pin and configure as low-active. */
-;;;222        SPI_EnableAutoSS(SPI, SPI_SS, SPI_SS_ACTIVE_LOW);
-00034c  2200              MOVS     r2,#0
-00034e  2101              MOVS     r1,#1
-000350  4620              MOV      r0,r4
-000352  f7fffffe          BL       SPI_EnableAutoSS
+;;;221        SPI_SET_LSB_FIRST(SPI);
+;;;222        SPI_SET_SS_LOW(SPI);
 ;;;223    
-;;;224        /* Use FIFO */
-;;;225        //SPI_EnableFIFO(SPI, SPI_TX_FIFO_THRE, SPI_RX_FIFO_THRE);
-;;;226        /* Enable SPI Unit Transfer Interrupt */
-;;;227        SPI_EnableInt(SPI, SPI_IE_MASK);
-000356  2101              MOVS     r1,#1
-000358  4620              MOV      r0,r4
-00035a  f7fffffe          BL       SPI_EnableInt
-;;;228    }
-00035e  bd38              POP      {r3-r5,pc}
+;;;224        /* Enable the automatic hardware slave select function. Select the SS pin and configure as low-active. */
+;;;225        SPI_EnableAutoSS(SPI, SPI_SS, SPI_SS_ACTIVE_LOW);
+000364  2200              MOVS     r2,#0
+000366  2101              MOVS     r1,#1
+000368  4620              MOV      r0,r4
+00036a  f7fffffe          BL       SPI_EnableAutoSS
+;;;226    
+;;;227        /* Use FIFO */
+;;;228        SPI_EnableFIFO(SPI, COMM_LENGTH, COMM_LENGTH - 1);
+00036e  2203              MOVS     r2,#3
+000370  2104              MOVS     r1,#4
+000372  4620              MOV      r0,r4
+000374  f7fffffe          BL       SPI_EnableFIFO
 ;;;229    
+;;;230        /* Enable SPI Receive FIFO interrupt (interrupt when FIFO count is 4) */
+;;;231        SPI_EnableInt(SPI, SPI_FIFO_RX_INTEN_MASK);
+000378  2110              MOVS     r1,#0x10
+00037a  4620              MOV      r0,r4
+00037c  f7fffffe          BL       SPI_EnableInt
+;;;232    }
+000380  bd38              POP      {r3-r5,pc}
+;;;233    
                           ENDP
 
-                  PWM_Init PROC
-;;;235    
-;;;236    void PWM_Init(void)
-000360  b570              PUSH     {r4-r6,lr}
-;;;237    {
-;;;238        PWM_Stop(PWM, PWM_CHN_ALL_MSK);
-000362  4c4d              LDR      r4,|L1.1176|
-000364  213f              MOVS     r1,#0x3f
-000366  4620              MOV      r0,r4
-000368  f7fffffe          BL       PWM_Stop
-;;;239        PWM_SET_PRESCALER(PWM, 0, PWM_CHN01_PRESCALER);
-00036c  6820              LDR      r0,[r4,#0]
-00036e  0a00              LSRS     r0,r0,#8
-000370  0200              LSLS     r0,r0,#8
-000372  1c40              ADDS     r0,r0,#1
-000374  6020              STR      r0,[r4,#0]
-;;;240    //    PWM_SET_PRESCALER(PWM, 1, PWM_CHN01_PRESCALER);
-;;;241        PWM_SET_PRESCALER(PWM, 2, PWM_CHN23_PRESCALER);
-000376  6820              LDR      r0,[r4,#0]
-000378  21ff              MOVS     r1,#0xff
-00037a  0209              LSLS     r1,r1,#8
-00037c  4388              BICS     r0,r0,r1
-00037e  30ff              ADDS     r0,r0,#0xff
-000380  3001              ADDS     r0,#1
-000382  6020              STR      r0,[r4,#0]
-;;;242    //    PWM_SET_PRESCALER(PWM, 3, PWM_CHN23_PRESCALER);
-;;;243        PWM_SET_PRESCALER(PWM, 4, PWM_CHN45_PRESCALER);
-000384  6820              LDR      r0,[r4,#0]
-000386  0209              LSLS     r1,r1,#8
-000388  4388              BICS     r0,r0,r1
-00038a  2101              MOVS     r1,#1
-00038c  0409              LSLS     r1,r1,#16
-00038e  1840              ADDS     r0,r0,r1
-000390  6020              STR      r0,[r4,#0]
-;;;244    //    PWM_SET_PRESCALER(PWM, 5, PWM_CHN45_PRESCALER);
-;;;245        PWM_SET_DIVIDER(PWM, 0, PWM_CLK_DIV_1);
-000392  6860              LDR      r0,[r4,#4]
-000394  08c0              LSRS     r0,r0,#3
-000396  00c0              LSLS     r0,r0,#3
-000398  1d00              ADDS     r0,r0,#4
-00039a  6060              STR      r0,[r4,#4]
-;;;246        PWM_SET_DIVIDER(PWM, 1, PWM_CLK_DIV_1);
-00039c  6860              LDR      r0,[r4,#4]
-00039e  2170              MOVS     r1,#0x70
-0003a0  4388              BICS     r0,r0,r1
-0003a2  3040              ADDS     r0,r0,#0x40
-0003a4  6060              STR      r0,[r4,#4]
-;;;247        PWM_SET_DIVIDER(PWM, 2, PWM_CLK_DIV_1);
-0003a6  6860              LDR      r0,[r4,#4]
-0003a8  0109              LSLS     r1,r1,#4
+                  initPWM PROC
+;;;239    
+;;;240    void initPWM(void)
+000382  b570              PUSH     {r4-r6,lr}
+;;;241    {
+;;;242        PWM_Stop(PWM, PWM_CHN_ALL_MSK);
+000384  4c44              LDR      r4,|L1.1176|
+000386  213f              MOVS     r1,#0x3f
+000388  4620              MOV      r0,r4
+00038a  f7fffffe          BL       PWM_Stop
+;;;243        PWM_SET_PRESCALER(PWM, 0, PWM_CHN01_PRESCALER);
+00038e  6820              LDR      r0,[r4,#0]
+000390  0a00              LSRS     r0,r0,#8
+000392  0200              LSLS     r0,r0,#8
+000394  1c40              ADDS     r0,r0,#1
+000396  6020              STR      r0,[r4,#0]
+;;;244    //    PWM_SET_PRESCALER(PWM, 1, PWM_CHN01_PRESCALER);
+;;;245        PWM_SET_PRESCALER(PWM, 2, PWM_CHN23_PRESCALER);
+000398  6820              LDR      r0,[r4,#0]
+00039a  21ff              MOVS     r1,#0xff
+00039c  0209              LSLS     r1,r1,#8
+00039e  4388              BICS     r0,r0,r1
+0003a0  30ff              ADDS     r0,r0,#0xff
+0003a2  3001              ADDS     r0,#1
+0003a4  6020              STR      r0,[r4,#0]
+;;;246    //    PWM_SET_PRESCALER(PWM, 3, PWM_CHN23_PRESCALER);
+;;;247        PWM_SET_PRESCALER(PWM, 4, PWM_CHN45_PRESCALER);
+0003a6  6820              LDR      r0,[r4,#0]
+0003a8  0209              LSLS     r1,r1,#8
 0003aa  4388              BICS     r0,r0,r1
-0003ac  1521              ASRS     r1,r4,#20
-0003ae  1840              ADDS     r0,r0,r1
-0003b0  6060              STR      r0,[r4,#4]
-;;;248        PWM_SET_DIVIDER(PWM, 3, PWM_CLK_DIV_1);
-0003b2  6860              LDR      r0,[r4,#4]
-0003b4  2107              MOVS     r1,#7
-0003b6  0309              LSLS     r1,r1,#12
-0003b8  4388              BICS     r0,r0,r1
-0003ba  2101              MOVS     r1,#1
-0003bc  0389              LSLS     r1,r1,#14
-0003be  1840              ADDS     r0,r0,r1
-0003c0  6060              STR      r0,[r4,#4]
-;;;249        PWM_SET_DIVIDER(PWM, 4, PWM_CLK_DIV_1);
-0003c2  6860              LDR      r0,[r4,#4]
-0003c4  2107              MOVS     r1,#7
-0003c6  0409              LSLS     r1,r1,#16
-0003c8  4388              BICS     r0,r0,r1
-0003ca  2101              MOVS     r1,#1
-0003cc  0489              LSLS     r1,r1,#18
-0003ce  1840              ADDS     r0,r0,r1
-0003d0  6060              STR      r0,[r4,#4]
-;;;250        PWM_SET_DIVIDER(PWM, 5, PWM_CLK_DIV_1);
-0003d2  6860              LDR      r0,[r4,#4]
-0003d4  2107              MOVS     r1,#7
-0003d6  0509              LSLS     r1,r1,#20
-0003d8  4388              BICS     r0,r0,r1
-0003da  0121              LSLS     r1,r4,#4
-0003dc  1840              ADDS     r0,r0,r1
-0003de  6060              STR      r0,[r4,#4]
-;;;251    
-;;;252    //    PWM->PCR = PCR_CLR_COUNTER | PCR_DEBUG_MODE | PCR_CH_EN(0) | PCR_PERIOD_MODE(0) |
-;;;253    //		PCR_CH_EN(1) | PCR_PERIOD_MODE(1) | PCR_CH_EN(2) | PCR_PERIOD_MODE(2) |
-;;;254    //		PCR_CH_EN(3) | PCR_PERIOD_MODE(3) | PCR_CH_EN(4) | PCR_PERIOD_MODE(4) |
-;;;255    //		PCR_CH_EN(5) | PCR_PERIOD_MODE(5) |
-;;;256    //		PCR_INV_EN(0) | PCR_INV_EN(2) | PCR_INV_EN(4) |
-;;;257    //		PCR_INV_EN(1) | PCR_INV_EN(3) | PCR_INV_EN(5);
-;;;258        PWM->PCR = PCR_CLR_COUNTER | PCR_DEBUG_MODE |
-0003e0  482e              LDR      r0,|L1.1180|
-0003e2  60a0              STR      r0,[r4,#8]
-;;;259    		PCR_CH_EN(0) | PCR_PERIOD_MODE(0) |  
-;;;260    		PCR_CH_EN(1) | PCR_PERIOD_MODE(1) | 
-;;;261    		PCR_CH_EN(2) | PCR_PERIOD_MODE(2) | 
-;;;262    		PCR_CH_EN(3) | PCR_PERIOD_MODE(3) | 
-;;;263    		PCR_CH_EN(4) | PCR_PERIOD_MODE(4) | 
-;;;264    		PCR_CH_EN(5) | PCR_PERIOD_MODE(5) |
-;;;265    		PCR_INV_EN(0) | PCR_INV_EN(2) | PCR_INV_EN(4) |
-;;;266    		PCR_INV_EN(1) | PCR_INV_EN(3) | PCR_INV_EN(5);
-;;;267    //    PWM_SET_ALIGNED_TYPE(PWM_EDGE_ALIGNED);
-;;;268    //    PWM_ENABLE_GROUP_MODE(PWM);
-;;;269        PWM->CMR[0] = 0;
-0003e4  2500              MOVS     r5,#0
-0003e6  6265              STR      r5,[r4,#0x24]
-;;;270        PWM->CMR[1] = 0;
-0003e8  62a5              STR      r5,[r4,#0x28]
-;;;271        PWM->CMR[2] = 0;
-0003ea  62e5              STR      r5,[r4,#0x2c]
-;;;272        PWM->CMR[3] = 0;
-0003ec  6325              STR      r5,[r4,#0x30]
-;;;273        PWM->CMR[4] = 0;
-0003ee  6365              STR      r5,[r4,#0x34]
-;;;274        PWM->CMR[5] = 0;
-0003f0  63a5              STR      r5,[r4,#0x38]
-;;;275        PWM->CNR[0] = PWM_PERIOD; 
-0003f2  482b              LDR      r0,|L1.1184|
-0003f4  60e0              STR      r0,[r4,#0xc]
-;;;276        PWM->CNR[1] = PWM_PERIOD;    
-0003f6  6120              STR      r0,[r4,#0x10]
-;;;277        PWM->CNR[2] = PWM_PERIOD;                                    
-0003f8  6160              STR      r0,[r4,#0x14]
-;;;278        PWM->CNR[3] = PWM_PERIOD;
-0003fa  61a0              STR      r0,[r4,#0x18]
-;;;279        PWM->CNR[4] = PWM_PERIOD; 
-0003fc  61e0              STR      r0,[r4,#0x1c]
-;;;280        PWM->CNR[5] = PWM_PERIOD;
-0003fe  6220              STR      r0,[r4,#0x20]
-;;;281        PWM_EnableOutput(PWM, PWM_CHN_ALL_MSK);
-000400  213f              MOVS     r1,#0x3f
-000402  4620              MOV      r0,r4
-000404  f7fffffe          BL       PWM_EnableOutput
-;;;282        PWM_INT_DISABLE;	// Disable all PWM interrupt 
-000408  4823              LDR      r0,|L1.1176|
-00040a  3040              ADDS     r0,r0,#0x40
-00040c  6145              STR      r5,[r0,#0x14]
-;;;283        stopMotor();
-00040e  f7fffffe          BL       stopMotor
-;;;284        //MOTOR_SHUT_DOWN;
-;;;285    
-;;;286        // PWM duty change every each phase for both ramp up and locked state
-;;;287    //    PWM->INTACCUCTL = 0x41; // Every 4 PWM periods change duty
-;;;288    			    // this will be used in locked time
-;;;289    			    // During startup ramp, duty change every x E-Circle
-;;;290        PWM->PHCHGMASK = PHCHG_CTL_CMP0;	// Input of ACMP0 is controlled by PHCHG
-000412  15a0              ASRS     r0,r4,#22
-000414  4920              LDR      r1,|L1.1176|
+0003ac  2101              MOVS     r1,#1
+0003ae  0409              LSLS     r1,r1,#16
+0003b0  1840              ADDS     r0,r0,r1
+0003b2  6020              STR      r0,[r4,#0]
+;;;248    //    PWM_SET_PRESCALER(PWM, 5, PWM_CHN45_PRESCALER);
+;;;249        PWM_SET_DIVIDER(PWM, 0, PWM_CLK_DIV_1);
+0003b4  6860              LDR      r0,[r4,#4]
+0003b6  08c0              LSRS     r0,r0,#3
+0003b8  00c0              LSLS     r0,r0,#3
+0003ba  1d00              ADDS     r0,r0,#4
+0003bc  6060              STR      r0,[r4,#4]
+;;;250        PWM_SET_DIVIDER(PWM, 1, PWM_CLK_DIV_1);
+0003be  6860              LDR      r0,[r4,#4]
+0003c0  2170              MOVS     r1,#0x70
+0003c2  4388              BICS     r0,r0,r1
+0003c4  3040              ADDS     r0,r0,#0x40
+0003c6  6060              STR      r0,[r4,#4]
+;;;251        PWM_SET_DIVIDER(PWM, 2, PWM_CLK_DIV_1);
+0003c8  6860              LDR      r0,[r4,#4]
+0003ca  0109              LSLS     r1,r1,#4
+0003cc  4388              BICS     r0,r0,r1
+0003ce  1521              ASRS     r1,r4,#20
+0003d0  1840              ADDS     r0,r0,r1
+0003d2  6060              STR      r0,[r4,#4]
+;;;252        PWM_SET_DIVIDER(PWM, 3, PWM_CLK_DIV_1);
+0003d4  6860              LDR      r0,[r4,#4]
+0003d6  2107              MOVS     r1,#7
+0003d8  0309              LSLS     r1,r1,#12
+0003da  4388              BICS     r0,r0,r1
+0003dc  2101              MOVS     r1,#1
+0003de  0389              LSLS     r1,r1,#14
+0003e0  1840              ADDS     r0,r0,r1
+0003e2  6060              STR      r0,[r4,#4]
+;;;253        PWM_SET_DIVIDER(PWM, 4, PWM_CLK_DIV_1);
+0003e4  6860              LDR      r0,[r4,#4]
+0003e6  2107              MOVS     r1,#7
+0003e8  0409              LSLS     r1,r1,#16
+0003ea  4388              BICS     r0,r0,r1
+0003ec  2101              MOVS     r1,#1
+0003ee  0489              LSLS     r1,r1,#18
+0003f0  1840              ADDS     r0,r0,r1
+0003f2  6060              STR      r0,[r4,#4]
+;;;254        PWM_SET_DIVIDER(PWM, 5, PWM_CLK_DIV_1);
+0003f4  6860              LDR      r0,[r4,#4]
+0003f6  2107              MOVS     r1,#7
+0003f8  0509              LSLS     r1,r1,#20
+0003fa  4388              BICS     r0,r0,r1
+0003fc  0121              LSLS     r1,r4,#4
+0003fe  1840              ADDS     r0,r0,r1
+000400  6060              STR      r0,[r4,#4]
+;;;255    
+;;;256    //    PWM->PCR = PCR_CLR_COUNTER | PCR_DEBUG_MODE | PCR_CH_EN(0) | PCR_PERIOD_MODE(0) |
+;;;257    //		PCR_CH_EN(1) | PCR_PERIOD_MODE(1) | PCR_CH_EN(2) | PCR_PERIOD_MODE(2) |
+;;;258    //		PCR_CH_EN(3) | PCR_PERIOD_MODE(3) | PCR_CH_EN(4) | PCR_PERIOD_MODE(4) |
+;;;259    //		PCR_CH_EN(5) | PCR_PERIOD_MODE(5) |
+;;;260    //		PCR_INV_EN(0) | PCR_INV_EN(2) | PCR_INV_EN(4) |
+;;;261    //		PCR_INV_EN(1) | PCR_INV_EN(3) | PCR_INV_EN(5);
+;;;262        PWM->PCR = PCR_CLR_COUNTER | PCR_DEBUG_MODE |
+000402  4826              LDR      r0,|L1.1180|
+000404  60a0              STR      r0,[r4,#8]
+;;;263    		PCR_CH_EN(0) | PCR_PERIOD_MODE(0) |  
+;;;264    		PCR_CH_EN(1) | PCR_PERIOD_MODE(1) | 
+;;;265    		PCR_CH_EN(2) | PCR_PERIOD_MODE(2) | 
+;;;266    		PCR_CH_EN(3) | PCR_PERIOD_MODE(3) | 
+;;;267    		PCR_CH_EN(4) | PCR_PERIOD_MODE(4) | 
+;;;268    		PCR_CH_EN(5) | PCR_PERIOD_MODE(5) |
+;;;269    		PCR_INV_EN(0) | PCR_INV_EN(2) | PCR_INV_EN(4) |
+;;;270    		PCR_INV_EN(1) | PCR_INV_EN(3) | PCR_INV_EN(5);
+;;;271    //    PWM_SET_ALIGNED_TYPE(PWM_EDGE_ALIGNED);
+;;;272    //    PWM_ENABLE_GROUP_MODE(PWM);
+;;;273        PWM->CMR[0] = 0;
+000406  2500              MOVS     r5,#0
+000408  6265              STR      r5,[r4,#0x24]
+;;;274        PWM->CMR[1] = 0;
+00040a  62a5              STR      r5,[r4,#0x28]
+;;;275        PWM->CMR[2] = 0;
+00040c  62e5              STR      r5,[r4,#0x2c]
+;;;276        PWM->CMR[3] = 0;
+00040e  6325              STR      r5,[r4,#0x30]
+;;;277        PWM->CMR[4] = 0;
+000410  6365              STR      r5,[r4,#0x34]
+;;;278        PWM->CMR[5] = 0;
+000412  63a5              STR      r5,[r4,#0x38]
+;;;279        PWM->CNR[0] = PWM_PERIOD; 
+000414  4822              LDR      r0,|L1.1184|
 000416  e045              B        |L1.1188|
                   |L1.1048|
                           DCD      0xe000ed00
@@ -843,254 +833,309 @@
                   |L1.1184|
                           DCD      0x00000373
                   |L1.1188|
-0004a4  3180              ADDS     r1,r1,#0x80
-0004a6  6008              STR      r0,[r1,#0]
-;;;291    }
-0004a8  bd70              POP      {r4-r6,pc}
-;;;292    
+0004a4  60e0              STR      r0,[r4,#0xc]
+;;;280        PWM->CNR[1] = PWM_PERIOD;    
+0004a6  6120              STR      r0,[r4,#0x10]
+;;;281        PWM->CNR[2] = PWM_PERIOD;                                    
+0004a8  6160              STR      r0,[r4,#0x14]
+;;;282        PWM->CNR[3] = PWM_PERIOD;
+0004aa  61a0              STR      r0,[r4,#0x18]
+;;;283        PWM->CNR[4] = PWM_PERIOD; 
+0004ac  61e0              STR      r0,[r4,#0x1c]
+;;;284        PWM->CNR[5] = PWM_PERIOD;
+0004ae  6220              STR      r0,[r4,#0x20]
+;;;285        PWM_EnableOutput(PWM, PWM_CHN_ALL_MSK);
+0004b0  213f              MOVS     r1,#0x3f
+0004b2  4620              MOV      r0,r4
+0004b4  f7fffffe          BL       PWM_EnableOutput
+;;;286        PWM_INT_DISABLE;	// Disable all PWM interrupt 
+0004b8  4846              LDR      r0,|L1.1492|
+0004ba  6145              STR      r5,[r0,#0x14]
+;;;287        BLDC_stopMotor();
+0004bc  f7fffffe          BL       BLDC_stopMotor
+;;;288        //MOTOR_SHUT_DOWN;
+;;;289    
+;;;290        // PWM duty change every each phase for both ramp up and locked state
+;;;291    //    PWM->INTACCUCTL = 0x41; // Every 4 PWM periods change duty
+;;;292    			    // this will be used in locked time
+;;;293    			    // During startup ramp, duty change every x E-Circle
+;;;294        PWM->PHCHGMASK = PHCHG_CTL_CMP0;	// Input of ACMP0 is controlled by PHCHG
+0004c0  4944              LDR      r1,|L1.1492|
+0004c2  15a0              ASRS     r0,r4,#22
+0004c4  3140              ADDS     r1,r1,#0x40
+0004c6  6008              STR      r0,[r1,#0]
+;;;295    }
+0004c8  bd70              POP      {r4-r6,pc}
+;;;296    
                           ENDP
 
-                  SYS_Init PROC
-;;;293    void SYS_Init(void)
-0004aa  b510              PUSH     {r4,lr}
-;;;294    {
-;;;295        /* Unlock protected registers */
-;;;296        SYS_UnlockReg();
-0004ac  f7fffffe          BL       SYS_UnlockReg
-;;;297        
-;;;298        /* Clock initialization, Enable PWM, ADC, TIM, UART clock */
-;;;299        CLK_Init();
-0004b0  f7fffffe          BL       CLK_Init
-;;;300        //CLK->APBCLK = CLK_APBCLK_UART_EN_Msk;
+                  initSys PROC
+;;;297    void initSys(void)
+0004ca  b510              PUSH     {r4,lr}
+;;;298    {
+;;;299        /* Unlock protected registers */
+;;;300        SYS_UnlockReg();
+0004cc  f7fffffe          BL       SYS_UnlockReg
 ;;;301        
-;;;302        /* Update System Core Clock */
-;;;303        /* User can use SystemCoreClockUpdate() to calculate SystemCoreClock and cyclesPerUs automatically. */
-;;;304        SystemCoreClockUpdate(); 
-0004b4  f7fffffe          BL       SystemCoreClockUpdate
-0004b8  4c3a              LDR      r4,|L1.1444|
-0004ba  4839              LDR      r0,|L1.1440|
-0004bc  6160              STR      r0,[r4,#0x14]
-0004be  2103              MOVS     r1,#3
-0004c0  1f08              SUBS     r0,r1,#4
-0004c2  f7fffffe          BL       NVIC_SetPriority
-0004c6  2000              MOVS     r0,#0
-0004c8  61a0              STR      r0,[r4,#0x18]
-0004ca  2007              MOVS     r0,#7
-0004cc  6120              STR      r0,[r4,#0x10]
-;;;305    
-;;;306        /* System tick Configuration */
-;;;307        // SYS TICK interrupt will be entered every 5ms
-;;;308        SysTick_Config(SYS_TICK_RELOAD_VALUE);
-;;;309        
-;;;310        /* PWM Configuration */
-;;;311        // Close all MOSFET here first, then output GPIO
-;;;312        PWM_Init();
-0004ce  f7fffffe          BL       PWM_Init
-;;;313          
-;;;314        /* IO Configuration */
-;;;315        GPIO_Init();
-0004d2  f7fffffe          BL       GPIO_Init
-;;;316    
-;;;317        /* ACMP initialization */
-;;;318        //ACMP_Config();
-;;;319    
-;;;320        /* ADC initialization */
-;;;321        ADC_Config();
-0004d6  f7fffffe          BL       ADC_Config
-;;;322    
-;;;323        /* TIM initialization */
-;;;324        TIM_Config();
-0004da  f7fffffe          BL       TIM_Config
-;;;325    
-;;;326        /* SPI initialization */
-;;;327        SPI_Config();
-0004de  f7fffffe          BL       SPI_Config
-;;;328    
-;;;329        /* Enable all interrupt from NVIC */
-;;;330        IRQ_Init();
-0004e2  f7fffffe          BL       IRQ_Init
-;;;331    
-;;;332        /* Lock protected registers */
-;;;333        SYS_LockReg();
-0004e6  f7fffffe          BL       SYS_LockReg
-;;;334                             
-;;;335    }    
-0004ea  bd10              POP      {r4,pc}
-;;;336    
+;;;302        /* Clock initialization, Enable PWM, ADC, TIM, UART clock */
+;;;303        initClk();
+0004d0  f7fffffe          BL       initClk
+;;;304        //CLK->APBCLK = CLK_APBCLK_UART_EN_Msk;
+;;;305        
+;;;306        /* Update System Core Clock */
+;;;307        /* User can use SystemCoreClockUpdate() to calculate SystemCoreClock and cyclesPerUs automatically. */
+;;;308        SystemCoreClockUpdate(); 
+0004d4  f7fffffe          BL       SystemCoreClockUpdate
+0004d8  4c40              LDR      r4,|L1.1500|
+0004da  483f              LDR      r0,|L1.1496|
+0004dc  6160              STR      r0,[r4,#0x14]
+0004de  2103              MOVS     r1,#3
+0004e0  1f08              SUBS     r0,r1,#4
+0004e2  f7fffffe          BL       NVIC_SetPriority
+0004e6  2000              MOVS     r0,#0
+0004e8  61a0              STR      r0,[r4,#0x18]
+0004ea  2007              MOVS     r0,#7
+0004ec  6120              STR      r0,[r4,#0x10]
+;;;309    
+;;;310        /* System tick Configuration */
+;;;311        // SYS TICK interrupt will be entered every 5ms
+;;;312        SysTick_Config(SYS_TICK_RELOAD_VALUE);
+;;;313        
+;;;314        /* PWM Configuration */
+;;;315        // Close all MOSFET here first, then output GPIO
+;;;316        initPWM();
+0004ee  f7fffffe          BL       initPWM
+;;;317          
+;;;318        /* IO Configuration */
+;;;319        initGPIO();
+0004f2  f7fffffe          BL       initGPIO
+;;;320    
+;;;321        /* ACMP initialization */
+;;;322        //ACMP_Config();
+;;;323    
+;;;324        /* ADC initialization */
+;;;325        configADC();
+0004f6  f7fffffe          BL       configADC
+;;;326    
+;;;327        /* TIM initialization */
+;;;328        configTIM();
+0004fa  f7fffffe          BL       configTIM
+;;;329    
+;;;330        /* SPI initialization */
+;;;331        configSPI();
+0004fe  f7fffffe          BL       configSPI
+;;;332    
+;;;333        /* Enable all interrupt from NVIC */
+;;;334        initIRQ();
+000502  f7fffffe          BL       initIRQ
+;;;335    
+;;;336        /* Lock protected registers */
+;;;337        SYS_LockReg();
+000506  f7fffffe          BL       SYS_LockReg
+;;;338                             
+;;;339    }    
+00050a  bd10              POP      {r4,pc}
+;;;340    
+                          ENDP
+
+                  initEnv PROC
+;;;341    void initEnv(void)
+00050c  4934              LDR      r1,|L1.1504|
+;;;342    {
+;;;343    	unCOM_SPI_TransCNT = 0;
+00050e  2000              MOVS     r0,#0
+;;;344    	unCOM_SPI_TransErrCNT = 0;
+000510  6008              STR      r0,[r1,#0]  ; unCOM_SPI_TransCNT
+000512  4934              LDR      r1,|L1.1508|
+;;;345    	unZXMatchCNT = 0;
+000514  6008              STR      r0,[r1,#0]  ; unCOM_SPI_TransErrCNT
+000516  4934              LDR      r1,|L1.1512|
+000518  6008              STR      r0,[r1,#0]  ; unZXMatchCNT
+;;;346    }
+00051a  4770              BX       lr
+;;;347    
                           ENDP
 
                   main PROC
-;;;339    //	uint32_t iLeaveTime;
-;;;340    int main()
-0004ec  f7fffffe          BL       SYS_Init
-;;;341    {
-;;;342    
-;;;343        SYS_Init();
-;;;344    
-;;;345        checkMotor();
-0004f0  f7fffffe          BL       checkMotor
-;;;346    
-;;;347        /* ----==== Here is the parameter used for test ====----*/
-;;;348        // Max PWM Duty is: PWM_PERIOD = 441
-;;;349        // Max Period is:
-;;;350        MOTOR_SHUT_DOWN;
-0004f4  492c              LDR      r1,|L1.1448|
-0004f6  2000              MOVS     r0,#0
-0004f8  6208              STR      r0,[r1,#0x20]
-0004fa  4a2c              LDR      r2,|L1.1452|
-0004fc  6150              STR      r0,[r2,#0x14]
-0004fe  482c              LDR      r0,|L1.1456|
-000500  6801              LDR      r1,[r0,#0]
-000502  0383              LSLS     r3,r0,#14
-000504  4399              BICS     r1,r1,r3
-000506  6001              STR      r1,[r0,#0]
-000508  4929              LDR      r1,|L1.1456|
-00050a  3120              ADDS     r1,r1,#0x20
-00050c  680c              LDR      r4,[r1,#0]
-00050e  439c              BICS     r4,r4,r3
-000510  600c              STR      r4,[r1,#0]
-000512  6804              LDR      r4,[r0,#0]
-000514  0343              LSLS     r3,r0,#13
-000516  439c              BICS     r4,r4,r3
-000518  6004              STR      r4,[r0,#0]
-00051a  6808              LDR      r0,[r1,#0]
-00051c  4398              BICS     r0,r0,r3
-00051e  6008              STR      r0,[r1,#0]
-000520  20ff              MOVS     r0,#0xff
-000522  63d0              STR      r0,[r2,#0x3c]
-000524  6390              STR      r0,[r2,#0x38]
-;;;351    
-;;;352        mMotor.structMotor.LCT_DUTY = 200;
-000526  4c23              LDR      r4,|L1.1460|
-000528  20c8              MOVS     r0,#0xc8
-00052a  80e0              STRH     r0,[r4,#6]
-;;;353        mMotor.structMotor.LCT_PERIOD = 10;	// Unit ms
-00052c  200a              MOVS     r0,#0xa
-00052e  81e0              STRH     r0,[r4,#0xe]
-;;;354        mMotor.structMotor.RU_DUTY = 320;
-000530  0140              LSLS     r0,r0,#5
-000532  8120              STRH     r0,[r4,#8]
-;;;355        mMotor.structMotor.RU_PERIOD = 8000;	// Unit 2MH, 20ms, 500rpm
-000534  207d              MOVS     r0,#0x7d
-000536  0180              LSLS     r0,r0,#6
-000538  6120              STR      r0,[r4,#0x10]  ; mMotor
-;;;356    	mMotor.structMotor.TGT_DUTY = 400;
-00053a  20ff              MOVS     r0,#0xff
-00053c  3091              ADDS     r0,r0,#0x91
-00053e  8160              STRH     r0,[r4,#0xa]
-;;;357    	mMotor.structMotor.MCR.RotateDirection = ROTATE_CLOCKWISE;	// Clockwise
-000540  8820              LDRH     r0,[r4,#0]  ; mMotor
-000542  2102              MOVS     r1,#2
-000544  4388              BICS     r0,r0,r1
-000546  8020              STRH     r0,[r4,#0]
-;;;358        mMotor.structMotor.MCR.MotorNeedToRun = TRUE;
-000548  8820              LDRH     r0,[r4,#0]  ; mMotor
-00054a  2101              MOVS     r1,#1
-00054c  4308              ORRS     r0,r0,r1
-00054e  8020              STRH     r0,[r4,#0]
-;;;359        /* ----=============== Test End ================---- */
-;;;360    
-;;;361        while(1)
-;;;362        {
-;;;363    //	if (TIMER_GetCounter(TIMER0) > 100 && TIMER_GetCounter(TIMER0) < 1000)
-;;;364    //	{
-;;;365    //	    imsTest = unSystemTick;
-;;;366    //	}
-;;;367    //	if (TIMER_GetCounter(TIMER0) > 30000 && TIMER_GetCounter(TIMER0) < 31000)
-;;;368    //	{
-;;;369    //	    imsTest = unSystemTick;
-;;;370    //	}
-;;;371    		BLDCSensorLessManager();
-;;;372    		//	CommunicationManager();
-;;;373    		ErrorManager();
-;;;374    
-;;;375    		// For test
-;;;376    		if (TRUE == mMotor.structMotor.MSR.Locked)
-;;;377    		{
-;;;378    			if (unSystemTick%5000 == 0)
-000550  4f19              LDR      r7,|L1.1464|
-;;;379    			{
-;;;380    				if (iTestSpeedLastTime != unSystemTick)
-;;;381    				{
-;;;382    					iTestSpeedLastTime = unSystemTick;
-;;;383    					mMotor.structMotor.TGT_DUTY = iTestSpeedSequence[iTestSpeedSequenIndex];
-000552  4e1a              LDR      r6,|L1.1468|
-000554  4d1a              LDR      r5,|L1.1472|
-                  |L1.1366|
-000556  f7fffffe          BL       BLDCSensorLessManager
-00055a  f7fffffe          BL       ErrorManager
-00055e  8860              LDRH     r0,[r4,#2]            ;376  ; mMotor
-000560  0740              LSLS     r0,r0,#29             ;376
-000562  d5f8              BPL      |L1.1366|
-000564  4639              MOV      r1,r7                 ;378
-000566  68a8              LDR      r0,[r5,#8]            ;378  ; unSystemTick
-000568  f7fffffe          BL       __aeabi_uidivmod
-00056c  2900              CMP      r1,#0                 ;378
-00056e  d1f2              BNE      |L1.1366|
-000570  68a9              LDR      r1,[r5,#8]            ;380  ; unSystemTick
-000572  6868              LDR      r0,[r5,#4]            ;380  ; iTestSpeedLastTime
-000574  4288              CMP      r0,r1                 ;380
-000576  d0ee              BEQ      |L1.1366|
-000578  68a8              LDR      r0,[r5,#8]            ;382  ; unSystemTick
-00057a  6068              STR      r0,[r5,#4]  ; iTestSpeedLastTime
-00057c  7828              LDRB     r0,[r5,#0]  ; iTestSpeedSequenIndex
-00057e  0042              LSLS     r2,r0,#1
-000580  5ab2              LDRH     r2,[r6,r2]
-000582  8162              STRH     r2,[r4,#0xa]
-;;;384    					INDEX_INCREASE(iTestSpeedSequenIndex, TEST_SPEED_SEQUENCE_NUM);
-000584  280a              CMP      r0,#0xa
-000586  d201              BCS      |L1.1420|
-000588  1c40              ADDS     r0,r0,#1
-00058a  e000              B        |L1.1422|
-                  |L1.1420|
-00058c  2000              MOVS     r0,#0
-                  |L1.1422|
-00058e  7028              STRB     r0,[r5,#0]
-000590  e7e1              B        |L1.1366|
-;;;385    				}
-;;;386    			}
-;;;387    		}
-;;;388    	}
-;;;389    
-;;;390    }
-;;;391    
+;;;350    //	uint32_t iLeaveTime;
+;;;351    int main()
+00051c  f7fffffe          BL       initSys
+;;;352    {
+;;;353    
+;;;354        initSys();
+;;;355        initEnv();
+000520  f7fffffe          BL       initEnv
+;;;356    
+;;;357        PTC_checkMotor();
+000524  f7fffffe          BL       PTC_checkMotor
+;;;358    
+;;;359        /* ----==== Here is the parameter used for test ====----*/
+;;;360        // Max PWM Duty is: PWM_PERIOD = 441
+;;;361        // Max Period is:
+;;;362        MOTOR_SHUT_DOWN;
+000528  4930              LDR      r1,|L1.1516|
+00052a  2000              MOVS     r0,#0
+00052c  6208              STR      r0,[r1,#0x20]
+00052e  4a29              LDR      r2,|L1.1492|
+000530  6150              STR      r0,[r2,#0x14]
+000532  482f              LDR      r0,|L1.1520|
+000534  6801              LDR      r1,[r0,#0]
+000536  0383              LSLS     r3,r0,#14
+000538  4399              BICS     r1,r1,r3
+00053a  6001              STR      r1,[r0,#0]
+00053c  492c              LDR      r1,|L1.1520|
+00053e  3120              ADDS     r1,r1,#0x20
+000540  680c              LDR      r4,[r1,#0]
+000542  439c              BICS     r4,r4,r3
+000544  600c              STR      r4,[r1,#0]
+000546  6804              LDR      r4,[r0,#0]
+000548  0343              LSLS     r3,r0,#13
+00054a  439c              BICS     r4,r4,r3
+00054c  6004              STR      r4,[r0,#0]
+00054e  6808              LDR      r0,[r1,#0]
+000550  4398              BICS     r0,r0,r3
+000552  6008              STR      r0,[r1,#0]
+000554  20ff              MOVS     r0,#0xff
+000556  63d0              STR      r0,[r2,#0x3c]
+000558  6390              STR      r0,[r2,#0x38]
+;;;363    
+;;;364        tMotor.structMotor.unLCT_DUTY = 200;
+00055a  4c26              LDR      r4,|L1.1524|
+00055c  20c8              MOVS     r0,#0xc8
+00055e  80e0              STRH     r0,[r4,#6]
+;;;365        tMotor.structMotor.unLCT_PERIOD = 10;	// Unit ms
+000560  200a              MOVS     r0,#0xa
+000562  81e0              STRH     r0,[r4,#0xe]
+;;;366        tMotor.structMotor.unRU_DUTY = 320;
+000564  0140              LSLS     r0,r0,#5
+000566  8120              STRH     r0,[r4,#8]
+;;;367        tMotor.structMotor.unRU_PERIOD = 8000;	// Unit 2MH, 20ms, 500rpm
+000568  207d              MOVS     r0,#0x7d
+00056a  0180              LSLS     r0,r0,#6
+00056c  6120              STR      r0,[r4,#0x10]  ; tMotor
+;;;368    	tMotor.structMotor.unTGT_DUTY = 400;
+00056e  20ff              MOVS     r0,#0xff
+000570  3091              ADDS     r0,r0,#0x91
+000572  8160              STRH     r0,[r4,#0xa]
+;;;369    	tMotor.structMotor.MCR.bRotateDirection = ROTATE_CLOCKWISE;	// Clockwise
+000574  8820              LDRH     r0,[r4,#0]  ; tMotor
+000576  2102              MOVS     r1,#2
+000578  4388              BICS     r0,r0,r1
+00057a  8020              STRH     r0,[r4,#0]
+;;;370        tMotor.structMotor.MCR.bMotorNeedToRun = TRUE;
+00057c  8820              LDRH     r0,[r4,#0]  ; tMotor
+00057e  2101              MOVS     r1,#1
+000580  4308              ORRS     r0,r0,r1
+000582  8020              STRH     r0,[r4,#0]
+;;;371        /* ----=============== Test End ================---- */
+;;;372    
+;;;373        while(1)
+;;;374        {
+;;;375    //	if (TIMER_GetCounter(TIMER0) > 100 && TIMER_GetCounter(TIMER0) < 1000)
+;;;376    //	{
+;;;377    //	    imsTest = unSystemTick;
+;;;378    //	}
+;;;379    //	if (TIMER_GetCounter(TIMER0) > 30000 && TIMER_GetCounter(TIMER0) < 31000)
+;;;380    //	{
+;;;381    //	    imsTest = unSystemTick;
+;;;382    //	}
+;;;383    		BLDC_SensorLessManager();
+;;;384    		//	CommunicationManager();
+;;;385    		ErrorManager();
+;;;386    
+;;;387    		// For test
+;;;388    		if (TRUE == tMotor.structMotor.MSR.bLocked)
+;;;389    		{
+;;;390    			if (unSystemTick%5000 == 0)
+000584  4f1c              LDR      r7,|L1.1528|
+;;;391    			{
+;;;392    				if (iTestSpeedLastTime != unSystemTick)
+;;;393    				{
+;;;394    					iTestSpeedLastTime = unSystemTick;
+;;;395    					tMotor.structMotor.unTGT_DUTY = iTestSpeedSequence[iTestSpeedSequenIndex];
+000586  4e1d              LDR      r6,|L1.1532|
+000588  4d1d              LDR      r5,|L1.1536|
+                  |L1.1418|
+00058a  f7fffffe          BL       BLDC_SensorLessManager
+00058e  f7fffffe          BL       ErrorManager
+000592  8860              LDRH     r0,[r4,#2]            ;388  ; tMotor
+000594  0740              LSLS     r0,r0,#29             ;388
+000596  d5f8              BPL      |L1.1418|
+000598  4639              MOV      r1,r7                 ;390
+00059a  68a8              LDR      r0,[r5,#8]            ;390  ; unSystemTick
+00059c  f7fffffe          BL       __aeabi_uidivmod
+0005a0  2900              CMP      r1,#0                 ;390
+0005a2  d1f2              BNE      |L1.1418|
+0005a4  68a9              LDR      r1,[r5,#8]            ;392  ; unSystemTick
+0005a6  6868              LDR      r0,[r5,#4]            ;392  ; iTestSpeedLastTime
+0005a8  4288              CMP      r0,r1                 ;392
+0005aa  d0ee              BEQ      |L1.1418|
+0005ac  68a8              LDR      r0,[r5,#8]            ;394  ; unSystemTick
+0005ae  6068              STR      r0,[r5,#4]  ; iTestSpeedLastTime
+0005b0  7828              LDRB     r0,[r5,#0]  ; iTestSpeedSequenIndex
+0005b2  0042              LSLS     r2,r0,#1
+0005b4  5ab2              LDRH     r2,[r6,r2]
+0005b6  8162              STRH     r2,[r4,#0xa]
+;;;396    					INDEX_INCREASE(iTestSpeedSequenIndex, TEST_SPEED_SEQUENCE_NUM);
+0005b8  280a              CMP      r0,#0xa
+0005ba  d201              BCS      |L1.1472|
+0005bc  1c40              ADDS     r0,r0,#1
+0005be  e000              B        |L1.1474|
+                  |L1.1472|
+0005c0  2000              MOVS     r0,#0
+                  |L1.1474|
+0005c2  7028              STRB     r0,[r5,#0]
+0005c4  e7e1              B        |L1.1418|
+;;;397    				}
+;;;398    			}
+;;;399    		}
+;;;400    	}
+;;;401    
+;;;402    }
+;;;403    
                           ENDP
 
                   NVIC_EnableIRQ PROC
 ;;;503     */
 ;;;504    __STATIC_INLINE void NVIC_EnableIRQ(IRQn_Type IRQn)
-000592  06c1              LSLS     r1,r0,#27
+0005c6  06c1              LSLS     r1,r0,#27
 ;;;505    {
 ;;;506      NVIC->ISER[0] = (1 << ((uint32_t)(IRQn) & 0x1F));
-000594  0ec9              LSRS     r1,r1,#27
-000596  2001              MOVS     r0,#1
-000598  4088              LSLS     r0,r0,r1
-00059a  490a              LDR      r1,|L1.1476|
-00059c  6008              STR      r0,[r1,#0]
+0005c8  0ec9              LSRS     r1,r1,#27
+0005ca  2001              MOVS     r0,#1
+0005cc  4088              LSLS     r0,r0,r1
+0005ce  490d              LDR      r1,|L1.1540|
+0005d0  6008              STR      r0,[r1,#0]
 ;;;507    }
-00059e  4770              BX       lr
+0005d2  4770              BX       lr
 ;;;508    
                           ENDP
 
-                  |L1.1440|
-                          DCD      0x0001affe
-                  |L1.1444|
-                          DCD      0xe000e000
-                  |L1.1448|
-                          DCD      0x50004240
-                  |L1.1452|
+                  |L1.1492|
                           DCD      0x40040040
-                  |L1.1456|
+                  |L1.1496|
+                          DCD      0x0001affe
+                  |L1.1500|
+                          DCD      0xe000e000
+                  |L1.1504|
+                          DCD      unCOM_SPI_TransCNT
+                  |L1.1508|
+                          DCD      unCOM_SPI_TransErrCNT
+                  |L1.1512|
+                          DCD      unZXMatchCNT
+                  |L1.1516|
+                          DCD      0x50004240
+                  |L1.1520|
                           DCD      0x40010000
-                  |L1.1460|
-                          DCD      mMotor
-                  |L1.1464|
+                  |L1.1524|
+                          DCD      tMotor
+                  |L1.1528|
                           DCD      0x00001388
-                  |L1.1468|
+                  |L1.1532|
                           DCD      ||.constdata||
-                  |L1.1472|
+                  |L1.1536|
                           DCD      ||.data||
-                  |L1.1476|
+                  |L1.1540|
                           DCD      0xe000e100
 
                           AREA ||.constdata||, DATA, READONLY, ALIGN=1

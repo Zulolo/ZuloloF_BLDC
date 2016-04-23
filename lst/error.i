@@ -7222,7 +7222,6 @@ void WDT_DisableInt(void);
 
 
 
-
 #line 16 "User\\global.h"
 
 
@@ -7234,86 +7233,43 @@ void WDT_DisableInt(void);
 
 
 
-#line 34 "User\\global.h"
-
-
-
-
-
-
-
-#line 49 "User\\global.h"
-
-#line 56 "User\\global.h"
-
-#line 63 "User\\global.h"
-
-
-
-#line 72 "User\\global.h"
-
-
-
-
-
-
-											
-											
-
-
-
-
-#line 91 "User\\global.h"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#line 118 "User\\global.h"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-typedef enum {	
-	ERR_NULL = 0,
-	ERR_CURRENT_WARNING,	
-	ERR_LOCATE_FAIL,
-	ERR_RAMPUP_FAIL,
-	ERR_BATTERY_LOW,
-	ERR_INTERNAL,	
-	ERR_CURRENT_BURNING,	
-	ERR_BRD_FAULT
-} ENUM_ERROR_LEVEL;
-
 extern volatile uint32_t unSystemTick;
+
+typedef struct
+{
+	struct
+	{
+		volatile uint16_t bMotorNeedToRun:1;
+		volatile uint16_t bRotateDirection:1;
+	}MCR;
+	struct
+	{
+		volatile uint16_t bMotorPowerOn:1;
+		volatile uint16_t bZeroCrossDetecting:1;
+		volatile uint16_t bLocked:1;
+		volatile uint16_t bThisPhaseDetectedZX:1;
+		volatile uint16_t bNewComFrameReceived:1;
+		volatile uint16_t unMissedZXD_CNT:8;
+		volatile uint16_t unSuccessZXD_CNT:8;
+	}MSR;
+
+
+	
+	
+	
+	volatile uint16_t  unLCT_DUTY;	 
+	volatile uint16_t  unRU_DUTY;		 
+	volatile uint16_t  unTGT_DUTY;	 
+	volatile uint16_t  unACT_DUTY;	 
+	volatile uint16_t  unLCT_PERIOD;	 
+	volatile uint32_t  unRU_PERIOD;	 
+	volatile uint32_t  unACT_PERIOD;	 
+	volatile uint32_t  unPHASE_CHANGE_CNT;	 
+	volatile uint16_t  unRPM;			 
+	volatile uint16_t  unRESERVE;		 
+	volatile uint16_t  unBATTERY;		 
+	volatile uint16_t  unCURRENT;		 
+} MOTOR_T;
 
 #line 1 "User\\BLDCSensorLess.h"
 
@@ -7321,57 +7277,26 @@ extern volatile uint32_t unSystemTick;
 
 #line 1 "User\\global.h"
 #line 5 "User\\BLDCSensorLess.h"
-	typedef struct
-	{
-		struct
-		{
-			volatile uint16_t MotorNeedToRun:1;
-			volatile uint16_t RotateDirection:1;
-		}MCR;
-		struct
-		{
-			volatile uint16_t MotorPowerOn:1;
-			volatile uint16_t ZeroCrossDetecting:1;
-			volatile uint16_t Locked:1;
-			volatile uint16_t ThisPhaseDetectedZX:1;
-			volatile uint16_t MissedZXD_CNT:8;
-			volatile uint16_t SuccessZXD_CNT:8;
-		}MSR;
+
+typedef union
+{
+	uint16_t iValue[sizeof(MOTOR_T)/sizeof(uint16_t)];
+	MOTOR_T structMotor;
+} MOTOR_UNION_T;
+
+typedef enum {
+	ENUM_TIM1_AVOID_ZXD = 0,
+	ENUM_TIM1_ZXD_FILTER
+
+}ENUM_TIM1_USAGE;
 
 
-		
-		
-		
-		volatile uint16_t  LCT_DUTY;	 
-		volatile uint16_t  RU_DUTY;		 
-		volatile uint16_t  TGT_DUTY;	 
-		volatile uint16_t  ACT_DUTY;	 
-		volatile uint16_t  LCT_PERIOD;	 
-		volatile uint32_t  RU_PERIOD;	 
-		volatile uint32_t  ACT_PERIOD;	 
-		volatile uint32_t  PHASE_CHANGE_CNT;	 
-		volatile uint16_t  RPM;			 
-		volatile uint16_t  RESERVE;		 
-		volatile uint16_t  BATTERY;		 
-		volatile uint16_t  CURRENT;		 
-	} MOTOR_T;
-
-	typedef union
-	{
-		uint16_t iValue[sizeof(MOTOR_T)/sizeof(uint16_t)];
-		MOTOR_T structMotor;
-	} MOTOR_UNION_T;
-
-	typedef enum {
-		ENUM_TIM1_AVOID_ZXD = 0,
-		ENUM_TIM1_ZXD_FILTER
-
-	}ENUM_TIM1_USAGE;
+#line 26 "User\\BLDCSensorLess.h"
 
 
 
 
-#line 69 "User\\BLDCSensorLess.h"
+#line 44 "User\\BLDCSensorLess.h"
 
 
 
@@ -7379,20 +7304,65 @@ extern volatile uint32_t unSystemTick;
 
 
 
-#line 237 "User\\BLDCSensorLess.h"
-extern MOTOR_UNION_T mMotor;	
-extern ENUM_TIM1_USAGE FLAG_TIM1_USEAGE;
-extern uint32_t iLastZXDetectedTime;
+#line 59 "User\\BLDCSensorLess.h"
+
+#line 66 "User\\BLDCSensorLess.h"
+
+#line 73 "User\\BLDCSensorLess.h"
+
+
+
 
 											
 											
 
-extern uint8_t iCurrentPhase;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#line 105 "User\\BLDCSensorLess.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#line 279 "User\\BLDCSensorLess.h"
+extern volatile MOTOR_UNION_T tMotor;	
+extern volatile ENUM_TIM1_USAGE FLAG_TIM1_USEAGE;
+extern volatile uint32_t unLastZXDetectedTime;
+extern volatile uint32_t unZXMatchCNT;
+
+											
+											
+
+extern uint8_t unCurrentPhase;
 extern uint8_t FLAG_PHASE_CHANGED;
-extern __inline void stopMotor(void);
-extern void checkMotor(void);
-extern void BLDCSensorLessManager(void);
-#line 151 "User\\global.h"
+extern __inline void BLDC_stopMotor(void);
+extern void BLDC_SensorLessManager(void);
+#line 65 "User\\global.h"
 #line 1 "User\\Communication.h"
 
 
@@ -7400,6 +7370,21 @@ extern void BLDCSensorLessManager(void);
 #line 5 "User\\Communication.h"
 
 #line 12 "User\\Communication.h"
+
+
+
+
+
+
+
+
+
+										
+
+
+
+
+
 typedef enum{
 	MOTOR_MCR = 0,	 
 	MOTOR_MSR,		 
@@ -7417,34 +7402,58 @@ typedef enum{
 	MOTOR_BATTERY,		 
 	MOTOR_CURRENT		 
 } ENUM_COMM_REG;
-extern uint16_t iSPI_ReadData;	
-extern uint16_t iRegisterValue;	
-extern ENUM_COMM_REG enumRegister;
+extern uint32_t unCOM_SPI_TransCNT;
+extern uint32_t unCOM_SPI_TransErrCNT;
+extern uint16_t unCOM_SPI_ReadData[4];	
+extern uint16_t unRegisterValue;	
+extern ENUM_COMM_REG tRegister;
 extern uint8_t FlagRegisterNeedWrite;
 
 extern void CommunicationManager(void);
-#line 152 "User\\global.h"
+#line 66 "User\\global.h"
 #line 1 "User\\Error.h"
-#line 153 "User\\global.h"
+#line 67 "User\\global.h"
+#line 1 "User\\Protection.h"
 
+
+
+#line 5 "User\\Protection.h"
+
+#line 16 "User\\Protection.h"
+
+
+
+
+
+
+#line 29 "User\\Protection.h"
+
+
+
+
+
+									
+
+
+											
+
+
+
+
+
+
+
+
+
+
+extern void PTC_checkMotor(void);
+#line 68 "User\\global.h"
 #line 5 "User\\Error.h"
 
 
 
 
-#line 16 "User\\Error.h"
 
-
-
-
-
- uint32_t unErrorMaster;
- void delay(uint32_t unDelayMs);
- void resetError(ENUM_ERROR_LEVEL enumErrorType);
- void setError(ENUM_ERROR_LEVEL enumErrorType);
- void clearError(void);
- void ErrorManager(void);
-	
 
 
 
@@ -7457,6 +7466,46 @@ extern void CommunicationManager(void);
 
 
  
+
+
+
+
+typedef enum {
+	ERR_NULL = 0,
+	ERR_CURRENT_WARNING,	
+	ERR_COMMUNICATION_FAIL,
+	ERR_LOCATE_FAIL,
+	ERR_RAMPUP_FAIL,
+	ERR_BATTERY_LOW,
+	ERR_INTERNAL,	
+	ERR_CURRENT_BURNING,	
+	ERR_BRD_FAULT
+} ENUM_ERROR_LEVEL;
+
+
+
+
+#line 48 "User\\Error.h"
+	
+	
+	const uint32_t unLED_BLINK_PATTERN_TABLE[ERR_BRD_FAULT] = {1 * (200 + 200),
+			1 * (200 + 200),
+			2 * (200 + 200),
+			2 * (200 + 200),
+			2 * (200 + 200),
+			2 * (200 + 200),
+			3 * (200 + 200)};
+
+
+
+
+ uint32_t unErrorMaster;
+ void delay(uint32_t unDelayMs);
+ void resetError(ENUM_ERROR_LEVEL enumErrorType);
+ void setError(ENUM_ERROR_LEVEL enumErrorType);
+ void clearError(void);
+ void ErrorManager(void);
+
 #line 13 "User\\Error.c"
 
 void delay(uint32_t unDelayMs)
@@ -7507,23 +7556,23 @@ ENUM_ERROR_LEVEL getPrecedenceError(void)
 	return iVernier;
 }
 
-void LEDBlinkHandler(ENUM_ERROR_LEVEL errorType, uint32_t iErrorStartTime)
+void LEDBlinkHandler(ENUM_ERROR_LEVEL tErrorType, uint32_t unErrorStartTime)
 {
 	uint16_t iLEDTime;
-	if (ERR_BRD_FAULT == errorType)
+	if (ERR_BRD_FAULT == tErrorType)
 	{
 		
 		((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(5))) + ((4)<<2)))) = 0);
 	}
-	else if (ERR_NULL == errorType)
+	else if (ERR_NULL == tErrorType)
 	{
 		
 		((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(5))) + ((4)<<2)))) = 1);
 	}
 	else
 	{
-		iLEDTime = (uint16_t)(((uint32_t)(unSystemTick - iErrorStartTime)) % 4000);
-		if (iLEDTime >= errorType * ((200 + 200)))
+		iLEDTime = (uint16_t)(((uint32_t)(unSystemTick - unErrorStartTime)) % 2000);
+		if (iLEDTime >= unLED_BLINK_PATTERN_TABLE[tErrorType])
 		{
 			((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(5))) + ((4)<<2)))) = 1);
 		}
@@ -7547,26 +7596,26 @@ void LEDBlinkHandler(ENUM_ERROR_LEVEL errorType, uint32_t iErrorStartTime)
 
 void ErrorManager(void)
 {
-	static uint32_t staLastErrorChangeTime;
-	static ENUM_ERROR_LEVEL lastErrorType = ERR_NULL;
-	ENUM_ERROR_LEVEL errorFetched;
-	errorFetched = getPrecedenceError();
+	static uint32_t unLastErrorChangeTime;
+	static ENUM_ERROR_LEVEL tLastErrorType = ERR_NULL;
+	ENUM_ERROR_LEVEL tErrorFetched;
+	tErrorFetched = getPrecedenceError();
 
-	if (lastErrorType != errorFetched)
+	if (tLastErrorType != tErrorFetched)
 	{
-		lastErrorType = errorFetched;
+		tLastErrorType = tErrorFetched;
 		
-		staLastErrorChangeTime = unSystemTick;
+		unLastErrorChangeTime = unSystemTick;
 		
-		LEDBlinkHandler(errorFetched, staLastErrorChangeTime);
+		LEDBlinkHandler(tErrorFetched, unLastErrorChangeTime);
 	}
 	else
 	{
 		
 		
-		if (ERR_NULL != errorFetched)
+		if (ERR_NULL != tErrorFetched)
 		{
-			LEDBlinkHandler(errorFetched, staLastErrorChangeTime);
+			LEDBlinkHandler(tErrorFetched, unLastErrorChangeTime);
 		}	
 	}
 	

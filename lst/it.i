@@ -7222,7 +7222,6 @@ void WDT_DisableInt(void);
 
 
 
-
 #line 16 "User\\global.h"
 
 
@@ -7234,86 +7233,43 @@ void WDT_DisableInt(void);
 
 
 
-#line 34 "User\\global.h"
-
-
-
-
-
-
-
-#line 49 "User\\global.h"
-
-#line 56 "User\\global.h"
-
-#line 63 "User\\global.h"
-
-
-
-#line 72 "User\\global.h"
-
-
-
-
-
-
-											
-											
-
-
-
-
-#line 91 "User\\global.h"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#line 118 "User\\global.h"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-typedef enum {	
-	ERR_NULL = 0,
-	ERR_CURRENT_WARNING,	
-	ERR_LOCATE_FAIL,
-	ERR_RAMPUP_FAIL,
-	ERR_BATTERY_LOW,
-	ERR_INTERNAL,	
-	ERR_CURRENT_BURNING,	
-	ERR_BRD_FAULT
-} ENUM_ERROR_LEVEL;
-
 extern volatile uint32_t unSystemTick;
+
+typedef struct
+{
+	struct
+	{
+		volatile uint16_t bMotorNeedToRun:1;
+		volatile uint16_t bRotateDirection:1;
+	}MCR;
+	struct
+	{
+		volatile uint16_t bMotorPowerOn:1;
+		volatile uint16_t bZeroCrossDetecting:1;
+		volatile uint16_t bLocked:1;
+		volatile uint16_t bThisPhaseDetectedZX:1;
+		volatile uint16_t bNewComFrameReceived:1;
+		volatile uint16_t unMissedZXD_CNT:8;
+		volatile uint16_t unSuccessZXD_CNT:8;
+	}MSR;
+
+
+	
+	
+	
+	volatile uint16_t  unLCT_DUTY;	 
+	volatile uint16_t  unRU_DUTY;		 
+	volatile uint16_t  unTGT_DUTY;	 
+	volatile uint16_t  unACT_DUTY;	 
+	volatile uint16_t  unLCT_PERIOD;	 
+	volatile uint32_t  unRU_PERIOD;	 
+	volatile uint32_t  unACT_PERIOD;	 
+	volatile uint32_t  unPHASE_CHANGE_CNT;	 
+	volatile uint16_t  unRPM;			 
+	volatile uint16_t  unRESERVE;		 
+	volatile uint16_t  unBATTERY;		 
+	volatile uint16_t  unCURRENT;		 
+} MOTOR_T;
 
 #line 1 "User\\BLDCSensorLess.h"
 
@@ -7321,57 +7277,26 @@ extern volatile uint32_t unSystemTick;
 
 #line 1 "User\\global.h"
 #line 5 "User\\BLDCSensorLess.h"
-	typedef struct
-	{
-		struct
-		{
-			volatile uint16_t MotorNeedToRun:1;
-			volatile uint16_t RotateDirection:1;
-		}MCR;
-		struct
-		{
-			volatile uint16_t MotorPowerOn:1;
-			volatile uint16_t ZeroCrossDetecting:1;
-			volatile uint16_t Locked:1;
-			volatile uint16_t ThisPhaseDetectedZX:1;
-			volatile uint16_t MissedZXD_CNT:8;
-			volatile uint16_t SuccessZXD_CNT:8;
-		}MSR;
+
+typedef union
+{
+	uint16_t iValue[sizeof(MOTOR_T)/sizeof(uint16_t)];
+	MOTOR_T structMotor;
+} MOTOR_UNION_T;
+
+typedef enum {
+	ENUM_TIM1_AVOID_ZXD = 0,
+	ENUM_TIM1_ZXD_FILTER
+
+}ENUM_TIM1_USAGE;
 
 
-		
-		
-		
-		volatile uint16_t  LCT_DUTY;	 
-		volatile uint16_t  RU_DUTY;		 
-		volatile uint16_t  TGT_DUTY;	 
-		volatile uint16_t  ACT_DUTY;	 
-		volatile uint16_t  LCT_PERIOD;	 
-		volatile uint32_t  RU_PERIOD;	 
-		volatile uint32_t  ACT_PERIOD;	 
-		volatile uint32_t  PHASE_CHANGE_CNT;	 
-		volatile uint16_t  RPM;			 
-		volatile uint16_t  RESERVE;		 
-		volatile uint16_t  BATTERY;		 
-		volatile uint16_t  CURRENT;		 
-	} MOTOR_T;
-
-	typedef union
-	{
-		uint16_t iValue[sizeof(MOTOR_T)/sizeof(uint16_t)];
-		MOTOR_T structMotor;
-	} MOTOR_UNION_T;
-
-	typedef enum {
-		ENUM_TIM1_AVOID_ZXD = 0,
-		ENUM_TIM1_ZXD_FILTER
-
-	}ENUM_TIM1_USAGE;
+#line 26 "User\\BLDCSensorLess.h"
 
 
 
 
-#line 69 "User\\BLDCSensorLess.h"
+#line 44 "User\\BLDCSensorLess.h"
 
 
 
@@ -7379,20 +7304,65 @@ extern volatile uint32_t unSystemTick;
 
 
 
-#line 237 "User\\BLDCSensorLess.h"
-extern MOTOR_UNION_T mMotor;	
-extern ENUM_TIM1_USAGE FLAG_TIM1_USEAGE;
-extern uint32_t iLastZXDetectedTime;
+#line 59 "User\\BLDCSensorLess.h"
+
+#line 66 "User\\BLDCSensorLess.h"
+
+#line 73 "User\\BLDCSensorLess.h"
+
+
+
 
 											
 											
 
-extern uint8_t iCurrentPhase;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#line 105 "User\\BLDCSensorLess.h"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#line 279 "User\\BLDCSensorLess.h"
+extern volatile MOTOR_UNION_T tMotor;	
+extern volatile ENUM_TIM1_USAGE FLAG_TIM1_USEAGE;
+extern volatile uint32_t unLastZXDetectedTime;
+extern volatile uint32_t unZXMatchCNT;
+
+											
+											
+
+extern uint8_t unCurrentPhase;
 extern uint8_t FLAG_PHASE_CHANGED;
-extern __inline void stopMotor(void);
-extern void checkMotor(void);
-extern void BLDCSensorLessManager(void);
-#line 151 "User\\global.h"
+extern __inline void BLDC_stopMotor(void);
+extern void BLDC_SensorLessManager(void);
+#line 65 "User\\global.h"
 #line 1 "User\\Communication.h"
 
 
@@ -7400,6 +7370,21 @@ extern void BLDCSensorLessManager(void);
 #line 5 "User\\Communication.h"
 
 #line 12 "User\\Communication.h"
+
+
+
+
+
+
+
+
+
+										
+
+
+
+
+
 typedef enum{
 	MOTOR_MCR = 0,	 
 	MOTOR_MSR,		 
@@ -7417,28 +7402,25 @@ typedef enum{
 	MOTOR_BATTERY,		 
 	MOTOR_CURRENT		 
 } ENUM_COMM_REG;
-extern uint16_t iSPI_ReadData;	
-extern uint16_t iRegisterValue;	
-extern ENUM_COMM_REG enumRegister;
+extern uint32_t unCOM_SPI_TransCNT;
+extern uint32_t unCOM_SPI_TransErrCNT;
+extern uint16_t unCOM_SPI_ReadData[4];	
+extern uint16_t unRegisterValue;	
+extern ENUM_COMM_REG tRegister;
 extern uint8_t FlagRegisterNeedWrite;
 
 extern void CommunicationManager(void);
-#line 152 "User\\global.h"
+#line 66 "User\\global.h"
 #line 1 "User\\Error.h"
 
 
 
 #line 5 "User\\Error.h"
 
-#line 20 "User\\Error.h"
 
-extern uint32_t unErrorMaster;
-extern void delay(uint32_t unDelayMs);
-extern void resetError(ENUM_ERROR_LEVEL enumErrorType);
-extern void setError(ENUM_ERROR_LEVEL enumErrorType);
-extern void clearError(void);
-extern void ErrorManager(void);
-	
+
+
+
 
 
 
@@ -7451,8 +7433,67 @@ extern void ErrorManager(void);
 
 
  
-#line 153 "User\\global.h"
 
+
+
+
+typedef enum {
+	ERR_NULL = 0,
+	ERR_CURRENT_WARNING,	
+	ERR_COMMUNICATION_FAIL,
+	ERR_LOCATE_FAIL,
+	ERR_RAMPUP_FAIL,
+	ERR_BATTERY_LOW,
+	ERR_INTERNAL,	
+	ERR_CURRENT_BURNING,	
+	ERR_BRD_FAULT
+} ENUM_ERROR_LEVEL;
+
+#line 60 "User\\Error.h"
+
+extern uint32_t unErrorMaster;
+extern void delay(uint32_t unDelayMs);
+extern void resetError(ENUM_ERROR_LEVEL enumErrorType);
+extern void setError(ENUM_ERROR_LEVEL enumErrorType);
+extern void clearError(void);
+extern void ErrorManager(void);
+
+#line 67 "User\\global.h"
+#line 1 "User\\Protection.h"
+
+
+
+#line 5 "User\\Protection.h"
+
+#line 16 "User\\Protection.h"
+
+
+
+
+
+
+#line 29 "User\\Protection.h"
+
+
+
+
+
+									
+
+
+											
+
+
+
+
+
+
+
+
+
+
+extern void PTC_checkMotor(void);
+#line 68 "User\\global.h"
 #line 5 "User\\it.h"
 
 
@@ -7467,7 +7508,7 @@ extern void ErrorManager(void);
 
 	
 
-	volatile uint32_t iZXMatchCNT = 0;
+
 
 
 
@@ -7507,7 +7548,7 @@ void TMR0_IRQHandler(void)
 	(((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->PIER = 0);
 
 
-	if ((1) == mMotor.structMotor.MSR.ZeroCrossDetecting)
+	if ((1) == tMotor.structMotor.MSR.bZeroCrossDetecting)
 	{
 		
 		TIMER_DisableInt(((TIMER_T *) (((uint32_t)0x40000000) + 0x10020)));
@@ -7550,18 +7591,18 @@ uint32_t DetectdTimeWhenPWMHigh(void)
 	{
 
 
-		if (iZXMatchCNT > 36)
+		if (unZXMatchCNT > 36)
 		{
 			return TIMER_GetCounter(((TIMER_T *) (((uint32_t)0x40000000) + 0x10020)));	
 		}
 
 		if ((((((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->PHCHG & (1ul << 7)) >> 7) == (( ((ACMP_T *) (((uint32_t)0x40000000) + 0xD0000))->CMPSR & (1ul << 2)) >> 2)))
 		{
-			iZXMatchCNT++; 
+			unZXMatchCNT++; 
 		}
 		else
 		{
-			iZXMatchCNT = 0;
+			unZXMatchCNT = 0;
 		}
 		
 	}
@@ -7606,17 +7647,17 @@ int32_t PhaseZXDedHandler(uint32_t iThisZXDetectedTime)
 
 	
 
-	iTempDeltaZXD = (((iThisZXDetectedTime) > (iLastZXDetectedTime)) ? ((iThisZXDetectedTime) - (iLastZXDetectedTime)) : ((iThisZXDetectedTime) + (0xFFFFFF - (iLastZXDetectedTime))));
+	iTempDeltaZXD = (((iThisZXDetectedTime) > (unLastZXDetectedTime)) ? ((iThisZXDetectedTime) - (unLastZXDetectedTime)) : ((iThisZXDetectedTime) + (0xFFFFFF - (unLastZXDetectedTime))));
 
 	if ((iTempDeltaZXD > 500) && (iTempDeltaZXD < (10000)))
 	{
-		iLastZXDetectedTime = iThisZXDetectedTime;
-		mMotor.structMotor.MSR.ThisPhaseDetectedZX = (1);
+		unLastZXDetectedTime = iThisZXDetectedTime;
+		tMotor.structMotor.MSR.bThisPhaseDetectedZX = (1);
 
-		if ((1) == mMotor.structMotor.MSR.Locked)
+		if ((1) == tMotor.structMotor.MSR.bLocked)
 		{
-			mMotor.structMotor.ACT_PERIOD = (iTempDeltaZXD + mMotor.structMotor.ACT_PERIOD) >> 1;
-			iHalfPeriod = mMotor.structMotor.ACT_PERIOD >> 1;
+			tMotor.structMotor.unACT_PERIOD = (iTempDeltaZXD + tMotor.structMotor.unACT_PERIOD) >> 1;
+			iHalfPeriod = tMotor.structMotor.unACT_PERIOD >> 1;
 			((((TIMER_T *) (((uint32_t)0x40000000) + 0x10000)))->TCMPR = (((TIMER_T *) (((uint32_t)0x40000000) + 0x10000))->TDR + (iHalfPeriod > (200 + 60)) ? (iHalfPeriod - (200 + 60)) : 50));
 		}
 		return (1);
@@ -7891,12 +7932,12 @@ void ADC_IRQHandler(void)
 		
 		if (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCHER & (0x01 << 0))
 		{
-			mMotor.structMotor.CURRENT = (uint16_t)((((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADDR & (0x3FFul << 0)));
+			tMotor.structMotor.unCURRENT = (uint16_t)((((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADDR & (0x3FFul << 0)));
 			(((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCHER = (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCHER & ~(0xFFul << 0)) | ((0x01 << 7)));		
 		}
 		else if (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCHER & (0x01 << 7))
 		{
-			mMotor.structMotor.BATTERY = (uint16_t)((((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADDR & (0x3FFul << 0)));
+			tMotor.structMotor.unBATTERY = (uint16_t)((((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADDR & (0x3FFul << 0)));
 			(((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCHER = (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCHER & ~(0xFFul << 0)) | ((0x01 << 0)));
 		}
 		(((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCR |= (1ul << 11));
@@ -7949,28 +7990,33 @@ void ADC_IRQHandler(void)
 
 void SPI_IRQHandler(void)
 {
-	iSPI_ReadData = ((SPI_T *) (((uint32_t)0x40000000) + 0x30000))->RX;
-	if(((iSPI_ReadData)&(0x10000ul)))
+	static uint8_t unValueIndex;
+	if ((((SPI_T *) (((uint32_t)0x40000000) + 0x30000))->STATUS & (1ul << 0)) != 0)
 	{
-		if(((iSPI_ReadData)&(0x8000ul)))
+		if (SPI_GET_RX_FIFO_COUNT(((SPI_T *) (((uint32_t)0x40000000) + 0x30000))) != 4)
 		{
-			
-			enumRegister = (ENUM_COMM_REG)((0x7FFFul) & iSPI_ReadData);
+			unCOM_SPI_TransErrCNT++;
 		}
 		else
 		{
 			
-			SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), mMotor.iValue[enumRegister]);
-			SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+			for (unValueIndex = 0; unValueIndex < 4; unValueIndex++)
+			{
+				unCOM_SPI_ReadData[unValueIndex] = SPI_READ_RX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+			}
+			tMotor.structMotor.MSR.bNewComFrameReceived = (1);
 		}
+
+		
+		
+		SPI_ClearRxFIFO(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+		SPI_ClearTxFIFO(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 	}
 	else
-	{
+	{	
 		
-		mMotor.iValue[enumRegister] = (0x7FFFul) & iSPI_ReadData;
+		unCOM_SPI_TransErrCNT++;
 	}
-	
-	((SPI_T *) (((uint32_t)0x40000000) + 0x30000))->CNTRL |= (1ul << 16);
 }
 
 void SysTick_Handler(void)

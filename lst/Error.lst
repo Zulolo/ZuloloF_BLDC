@@ -8916,24 +8916,6 @@ L 5 "User\global.h" 2
 N
 N#define WHAT_EVER_DO_NOT_CARE		1
 N
-N// GPIOs
-N#define BRG_FAULT_PORT				P3
-N#define BRG_FAULT_PIN_NUM			2
-N#define BRG_FAULT_PIN				BIT2
-N#define BRG_EN_PORT					P3
-N#define BRG_EN_PIN					BIT0
-N#define BRG_ENABLE					(P30 = 1)
-N#define BRG_DISABLE					(P30 = 0)
-N
-N#define LED_PORT					P5
-N#define LED_PIN						BIT4
-N#define LED_OUTPUT					P54
-N
-N#define BATTERY_V_PORT				P3
-N#define BATTERY_V_PIN				BIT1
-N#define CURRENT_PORT				P5
-N#define CURRENT_PIN					BIT3
-N
 N#define DEBUG_ACMP_OUT_PORT			P3
 N#define DEBUG_ACMP_OUT_PIN			BIT6
 N#define DEBUG_GPIO_PORT				P5
@@ -8943,11 +8925,196 @@ N#define DEBUG_TX_PIN				BIT0
 N#define DEBUG_RX_PORT				P1
 N#define DEBUG_RX_PIN				BIT2
 N
-N#define COMM_PORT					P0
-N#define COMM_CLK_PIN				BIT7
-N#define COMM_CS_PIN					BIT1
-N#define COMM_TX_PIN					BIT6
-N#define COMM_RX_PIN					BIT5
+N#define TIMER_INVALID_CNT 			0xFFFFFFFF
+N
+N//#define unSystemTick 				SysTick->VAL
+N
+N#define SET           			(1)     
+N#define RESET          			(0)      
+N
+N#define INDEX_INCREASE(INDEX, MAX)	((INDEX) = (((INDEX) < ((MAX) - 1)) ? ((INDEX) + 1) : 0))
+N
+Nextern __IO uint32_t unSystemTick;
+Xextern volatile uint32_t unSystemTick;
+N
+Ntypedef struct
+N{
+N	struct
+N	{
+N		__IO uint16_t bMotorNeedToRun:1;
+X		volatile uint16_t bMotorNeedToRun:1;
+N		__IO uint16_t bRotateDirection:1;
+X		volatile uint16_t bRotateDirection:1;
+N	}MCR;
+N	struct
+N	{
+N		__IO uint16_t bMotorPowerOn:1;
+X		volatile uint16_t bMotorPowerOn:1;
+N		__IO uint16_t bZeroCrossDetecting:1;
+X		volatile uint16_t bZeroCrossDetecting:1;
+N		__IO uint16_t bLocked:1;
+X		volatile uint16_t bLocked:1;
+N		__IO uint16_t bThisPhaseDetectedZX:1;
+X		volatile uint16_t bThisPhaseDetectedZX:1;
+N		__IO uint16_t bNewComFrameReceived:1;
+X		volatile uint16_t bNewComFrameReceived:1;
+N		__IO uint16_t unMissedZXD_CNT:8;
+X		volatile uint16_t unMissedZXD_CNT:8;
+N		__IO uint16_t unSuccessZXD_CNT:8;
+X		volatile uint16_t unSuccessZXD_CNT:8;
+N	}MSR;
+N//		__IO uint16_t  MCR;		/*!<  Motor Control  */
+N//		__IO uint16_t  MSR;		/*!<  Motor Status  */
+N	//  __IO uint32_t  ACNR;       /*!<  PWM Actual Counter Register  */
+N	//  __IO uint32_t  STCNR;        /*!<  PWM Start Counter Register  */
+N	//  __IO uint32_t  SBCNR;        /*!<  PWM Stable Counter Register  */
+N	__IO uint16_t  unLCT_DUTY;	/*!<  PWM Locating Duty  */
+X	volatile uint16_t  unLCT_DUTY;	 
+N	__IO uint16_t  unRU_DUTY;		/*!<  PWM Ramp Up Start Duty  */
+X	volatile uint16_t  unRU_DUTY;		 
+N	__IO uint16_t  unTGT_DUTY;	/*!<  PWM Target (Locked State) Duty  */
+X	volatile uint16_t  unTGT_DUTY;	 
+N	__IO uint16_t  unACT_DUTY;	/*!<  PWM Actual Duty  */
+X	volatile uint16_t  unACT_DUTY;	 
+N	__IO uint16_t  unLCT_PERIOD;	/*!<  Locating State One Phase Period  */
+X	volatile uint16_t  unLCT_PERIOD;	 
+N	__IO uint32_t  unRU_PERIOD;	/*!<  Ramp Up Start One Phase Period  */
+X	volatile uint32_t  unRU_PERIOD;	 
+N	__IO uint32_t  unACT_PERIOD;	/*!<  Actual One Phase Period  */
+X	volatile uint32_t  unACT_PERIOD;	 
+N	__IO uint32_t  unPHASE_CHANGE_CNT;	/*!<  Phase changed counter  */
+X	volatile uint32_t  unPHASE_CHANGE_CNT;	 
+N	__IO uint16_t  unRPM;			/*!<  Actual RPM  */
+X	volatile uint16_t  unRPM;			 
+N	__IO uint16_t  unRESERVE;		/*!<  Reserve for future use (round up 32bits) */
+X	volatile uint16_t  unRESERVE;		 
+N	__IO uint16_t  unBATTERY;		/*!<  Battery Voltage  */
+X	volatile uint16_t  unBATTERY;		 
+N	__IO uint16_t  unCURRENT;		/*!<  Current  */
+X	volatile uint16_t  unCURRENT;		 
+N} MOTOR_T;
+N
+N#include "BLDCSensorLess.h"
+L 1 "User\BLDCSensorLess.h" 1
+N#ifndef __BLDC_SENSOR_LESS_H__
+N#define __BLDC_SENSOR_LESS_H__
+N
+N#include "global.h"
+L 1 "User\global.h" 1
+N#ifndef __GLOBAL_H__
+S#define __GLOBAL_H__
+S
+S#include "Mini51Series.h"
+S
+S#define WHAT_EVER_DO_NOT_CARE		1
+S
+S#define DEBUG_ACMP_OUT_PORT			P3
+S#define DEBUG_ACMP_OUT_PIN			BIT6
+S#define DEBUG_GPIO_PORT				P5
+S#define DEBUG_GPIO_PIN				BIT0
+S#define DEBUG_TX_PORT				P0
+S#define DEBUG_TX_PIN				BIT0
+S#define DEBUG_RX_PORT				P1
+S#define DEBUG_RX_PIN				BIT2
+S
+S#define TIMER_INVALID_CNT 			0xFFFFFFFF
+S
+S//#define unSystemTick 				SysTick->VAL
+S
+S#define SET           			(1)     
+S#define RESET          			(0)      
+S
+S#define INDEX_INCREASE(INDEX, MAX)	((INDEX) = (((INDEX) < ((MAX) - 1)) ? ((INDEX) + 1) : 0))
+S
+Sextern __IO uint32_t unSystemTick;
+S
+Stypedef struct
+S{
+S	struct
+S	{
+S		__IO uint16_t bMotorNeedToRun:1;
+S		__IO uint16_t bRotateDirection:1;
+S	}MCR;
+S	struct
+S	{
+S		__IO uint16_t bMotorPowerOn:1;
+S		__IO uint16_t bZeroCrossDetecting:1;
+S		__IO uint16_t bLocked:1;
+S		__IO uint16_t bThisPhaseDetectedZX:1;
+S		__IO uint16_t bNewComFrameReceived:1;
+S		__IO uint16_t unMissedZXD_CNT:8;
+S		__IO uint16_t unSuccessZXD_CNT:8;
+S	}MSR;
+S//		__IO uint16_t  MCR;		/*!<  Motor Control  */
+S//		__IO uint16_t  MSR;		/*!<  Motor Status  */
+S	//  __IO uint32_t  ACNR;       /*!<  PWM Actual Counter Register  */
+S	//  __IO uint32_t  STCNR;        /*!<  PWM Start Counter Register  */
+S	//  __IO uint32_t  SBCNR;        /*!<  PWM Stable Counter Register  */
+S	__IO uint16_t  unLCT_DUTY;	/*!<  PWM Locating Duty  */
+S	__IO uint16_t  unRU_DUTY;		/*!<  PWM Ramp Up Start Duty  */
+S	__IO uint16_t  unTGT_DUTY;	/*!<  PWM Target (Locked State) Duty  */
+S	__IO uint16_t  unACT_DUTY;	/*!<  PWM Actual Duty  */
+S	__IO uint16_t  unLCT_PERIOD;	/*!<  Locating State One Phase Period  */
+S	__IO uint32_t  unRU_PERIOD;	/*!<  Ramp Up Start One Phase Period  */
+S	__IO uint32_t  unACT_PERIOD;	/*!<  Actual One Phase Period  */
+S	__IO uint32_t  unPHASE_CHANGE_CNT;	/*!<  Phase changed counter  */
+S	__IO uint16_t  unRPM;			/*!<  Actual RPM  */
+S	__IO uint16_t  unRESERVE;		/*!<  Reserve for future use (round up 32bits) */
+S	__IO uint16_t  unBATTERY;		/*!<  Battery Voltage  */
+S	__IO uint16_t  unCURRENT;		/*!<  Current  */
+S} MOTOR_T;
+S
+S#include "BLDCSensorLess.h"
+S#include "Communication.h"
+S#include "Error.h"
+S#include "Protection.h"
+N#endif 
+L 5 "User\BLDCSensorLess.h" 2
+N
+Ntypedef union
+N{
+N	uint16_t iValue[sizeof(MOTOR_T)/sizeof(uint16_t)];
+N	MOTOR_T structMotor;
+N} MOTOR_UNION_T;
+N
+Ntypedef enum {
+N	ENUM_TIM1_AVOID_ZXD = 0,
+N	ENUM_TIM1_ZXD_FILTER//,
+N//		ENUM_TIM1_START_ZXD
+N}ENUM_TIM1_USAGE;
+N
+N// GPIOs
+N#define BRG_FAULT_PORT				P3
+N#define BRG_FAULT_PIN_NUM			2
+N#define BRG_FAULT_PIN				BIT2
+N#define BRG_EN_PORT					P3
+N#define BRG_EN_PIN					BIT0
+N#define BRG_ENABLE					(P30 = 1)
+N#define BRG_DISABLE					(P30 = 0)
+N
+N//	#define ACMP0_FALLING_ENABLE		(ACMP->CMPCR[0] = ACMP_CMPCR_FALLING_Msk | ACMP_CMPCR_HYSEN_Msk | ACMP_CMPCR_ACMPIE_Msk | ACMP_CMPCR_ACMPEN_Msk)
+N//	#define ACMP0_RISING_ENABLE			(ACMP->CMPCR[0] = ACMP_CMPCR_RISING_Msk | ACMP_CMPCR_HYSEN_Msk | ACMP_CMPCR_ACMPIE_Msk | ACMP_CMPCR_ACMPEN_Msk)
+N//	#define ACMP0_EDGE_SELECT			((PWM->PHCHG & DETEC_UP) ? (ACMP_CMPCR_RISING_Msk) : (ACMP_CMPCR_FALLING_Msk))
+N#define DETEC_UP_POS				7
+N#define DETEC_UP					(1ul << DETEC_UP_POS)
+N#define ACMP0_EDGE_MATCH			(((PWM->PHCHG & DETEC_UP) >> DETEC_UP_POS) == (( ACMP->CMPSR & ACMP_CMPSR_ACMPCO0_Msk) >> ACMP_CMPSR_ACMPCO0_Pos))
+N#define ACMP0_ENABLE				(ACMP->CMPCR[0] |= ACMP_CMPCR_HYSEN_Msk | ACMP_CMPCR_ACMPEN_Msk)
+N#define ACMP0_INT_ENABLE			(ACMP->CMPCR[0] |= ACMP_CMPCR_ACMPIE_Msk)
+N#define ACMP0_INT_DISABLE			(ACMP->CMPCR[0] &= (~ACMP_CMPCR_ACMPIE_Msk))
+N#define AVOID_ZXD_AFTER_PHCHG		160	// 160/2M = 80us
+N#define ZXD_FILTER_TIME				200	// 200/2M = 100us
+N#define CALC_TIME_BT_ZXD_SET_TIM	60	// calculation time between after confirmed ZX and set TIMER0
+N#define TIME_DEBT					(ZXD_FILTER_TIME + CALC_TIME_BT_ZXD_SET_TIM)	// Included ZXD filter time and calculation time between after confirmed ZX and set TIMER0
+N#define ZXD_BEFORE_PHCHG			50	// 50/2M = 25us	// If it already need change phase when ZX was confirmed ZX, give some time to TIM0 to response
+N#define ACMP_HYS_AVG_TIME			20	// Average Hysteresis time 20/2M = 10us
+N#define MIN_PHASE_TIME				500	//(AVOID_ZXD_AFTER_PHCHG + ZXD_FILTER_TIME + 100)	// 1200/2M=0.6ms, 8333RPM if 42PC=1MC==7EC
+N#define MAX_PHASE_TIME				(10000)	// Unit 2MH, 5ms, 286rpm if 42PC=1MC==7EC
+N
+N#define MINI51_TIM_CNT_MAX			0xFFFFFF
+N#define GET_TIM1_CMP_VALUE(x)		(((x) >= MINI51_TIM_CNT_MAX) ? ((x) - MINI51_TIM_CNT_MAX) : (x))
+N#define GET_TIMER_DIFF(iLast, iThis)	(((iThis) > (iLast)) ? ((iThis) - (iLast)) : ((iThis) + (MINI51_TIM_CNT_MAX - (iLast))))
+N#define MAX_MISS_ZXD_THRESHOLD		12
+N#define MIN_SUCC_ZXD_THRESHOLD		4
 N
 N#define MOSFET_DRV_0_4_PORT			P2
 N#define MOSFET_DRV_5_PORT			P0
@@ -8972,37 +9139,14 @@ N#define ZERO_DETECT_B_PIN			BIT3
 N#define ZERO_DETECT_C_PIN			BIT5
 N#define ZERO_DETECT_M_PIN			BIT4
 N
-N#define TIMER_INVALID_CNT 			0xFFFFFFFF
-N
-N#define COMM_BIT_LENTH				17	// highest bit is used to indicate command or data
-N#define COMM_MASK					(0x1FFFFul)	
-N#define IS_COMM_CMD(x)				((x)&(0x10000ul))
-N#define IS_COMM_CMD_WR(x)			((x)&(0x8000ul))	
-N#define COMM_VALUE_MASK				(0x7FFFul)
-N#define COMM_BAUT_RATE				5000000 
-N
-N//#define unSystemTick 				SysTick->VAL
-N
 N#define PWM_PHCHG_PWM_MASK			(0x00003F00ul)
-N#define PWM_PHCHG_D0_7_MASK			(0x000000FFul) 
+N#define PWM_PHCHG_D0_7_MASK			(0x000000FFul)
 N#define PWM_PERIOD 					(884-1)	// PWM T=0.08ms, if target is 3K PRM, 42 E-Circle per M-Circle,
-N											// each PC should less than 0.5 ms. 
+N											// each PC should less than 0.5 ms.
 N											// So each E-Circle at least has 6 PWM circle
 N
 N#define ROTATE_CLOCKWISE		0
 N#define ROTATE_ANTICLOCKWISE	1
-N
-N#define ADC_CURRENT_CHN_IDX		0
-N#define ADC_BATTERY_CHN_IDX		7
-N#define ADC_CURRENT_CHN_MSK		(0x01 << ADC_CURRENT_CHN_IDX)
-N#define ADC_BATTERY_CHN_MSK		(0x01 << ADC_BATTERY_CHN_IDX)
-N#define ADC_CURRENT_CMP_MSK		ADC_CMP0_INT
-N#define ADC_BATTERY_CMP_MSK		ADC_CMP1_INT
-N#define ADC_ADF_MSK				ADC_ADF_INT
-N
-N#define SET           			(1)     
-N#define RESET          			(0)      
-N
 N
 N#define PWM_INT_ENABLE				(PWM_EnableDutyInt(PWM, 1, WHAT_EVER_DO_NOT_CARE))
 N
@@ -9013,11 +9157,11 @@ N
 N// To increase shut down speed we can just directly write a constant number into PHCHG register
 N// But since we also have protection form driver IC, it is not so critical here
 N// So better just shut down, not change other bit in the register
-N// First write PHCHGNXT because between write PHCHG and PHCHGNXT time, PHCHG may be updated by PHCHGNXT                                 
+N// First write PHCHGNXT because between write PHCHG and PHCHGNXT time, PHCHG may be updated by PHCHGNXT
 N//#define	MOSFET_ALL_OFF			(PWM->PHCHGNXT = (PWM->PHCHGNXT & (~PWM_PHCHG_PWM_MASK)) | PWM_PHCHG_D0_7_MASK); /
 N//								(PWM->PHCHG = (PWM->PHCHG & (~PWM_PHCHG_PWM_MASK)) | PWM_PHCHG_D0_7_MASK);
 N// After shut down all MOSFET you need to re-initialize all PHCHG register bits
-N#define MOSFET_SHUT_DOWN_VAL		(0x000000FFul)	
+N#define MOSFET_SHUT_DOWN_VAL		(0x000000FFul)
 N#define	MOTOR_SHUT_DOWN				BRG_DISABLE; \
 N									PWM_INT_DISABLE; \
 N									(TIMER_Stop(TIMER0)); \
@@ -9046,281 +9190,6 @@ N//									(PWM->CMR[3] = (x)); \
 N//									(PWM->CMR[4] = (x)); \
 N//									(PWM->CMR[5] = (x))
 X
-N
-N#define INDEX_INCREASE(INDEX, MAX)	((INDEX) = (((INDEX) < ((MAX) - 1)) ? ((INDEX) + 1) : 0))
-N// Max 32 type of error because used uint32_t's bit to mark each error
-N// Since LED can not blink to fast (for human watchable), 6 type of blink make sense
-Ntypedef enum {	
-N	ERR_NULL = 0,
-N	ERR_CURRENT_WARNING,	// Current > 5A
-N	ERR_LOCATE_FAIL,
-N	ERR_RAMPUP_FAIL,
-N	ERR_BATTERY_LOW,
-N	ERR_INTERNAL,	// Loss lock, single phase duration too long
-N	ERR_CURRENT_BURNING,	// Current > 15A
-N	ERR_BRD_FAULT
-N} ENUM_ERROR_LEVEL;
-N
-Nextern __IO uint32_t unSystemTick;
-Xextern volatile uint32_t unSystemTick;
-N
-N#include "BLDCSensorLess.h"
-L 1 "User\BLDCSensorLess.h" 1
-N#ifndef __BLDC_SENSOR_LESS_H__
-N#define __BLDC_SENSOR_LESS_H__
-N
-N#include "global.h"
-L 1 "User\global.h" 1
-N#ifndef __GLOBAL_H__
-S#define __GLOBAL_H__
-S
-S#include "Mini51Series.h"
-S
-S#define WHAT_EVER_DO_NOT_CARE		1
-S
-S// GPIOs
-S#define BRG_FAULT_PORT				P3
-S#define BRG_FAULT_PIN_NUM			2
-S#define BRG_FAULT_PIN				BIT2
-S#define BRG_EN_PORT					P3
-S#define BRG_EN_PIN					BIT0
-S#define BRG_ENABLE					(P30 = 1)
-S#define BRG_DISABLE					(P30 = 0)
-S
-S#define LED_PORT					P5
-S#define LED_PIN						BIT4
-S#define LED_OUTPUT					P54
-S
-S#define BATTERY_V_PORT				P3
-S#define BATTERY_V_PIN				BIT1
-S#define CURRENT_PORT				P5
-S#define CURRENT_PIN					BIT3
-S
-S#define DEBUG_ACMP_OUT_PORT			P3
-S#define DEBUG_ACMP_OUT_PIN			BIT6
-S#define DEBUG_GPIO_PORT				P5
-S#define DEBUG_GPIO_PIN				BIT0
-S#define DEBUG_TX_PORT				P0
-S#define DEBUG_TX_PIN				BIT0
-S#define DEBUG_RX_PORT				P1
-S#define DEBUG_RX_PIN				BIT2
-S
-S#define COMM_PORT					P0
-S#define COMM_CLK_PIN				BIT7
-S#define COMM_CS_PIN					BIT1
-S#define COMM_TX_PIN					BIT6
-S#define COMM_RX_PIN					BIT5
-S
-S#define MOSFET_DRV_0_4_PORT			P2
-S#define MOSFET_DRV_5_PORT			P0
-S#define MOSFET_DRV_0_PIN			BIT2
-S#define MOSFET_DRV_1_PIN			BIT3
-S#define MOSFET_DRV_2_PIN			BIT4
-S#define MOSFET_DRV_3_PIN			BIT5
-S#define MOSFET_DRV_4_PIN			BIT6
-S#define MOSFET_DRV_5_PIN			BIT4
-S
-S#define MOSFET_AS_PIN_ADDR      	GPIO_PIN_ADDR(2, 2)
-S#define MOSFET_BS_PIN_ADDR     		GPIO_PIN_ADDR(2, 4)
-S#define MOSFET_CS_PIN_ADDR     		GPIO_PIN_ADDR(2, 6)
-S#define MOSFET_AD_PIN_ADDR      	GPIO_PIN_ADDR(2, 3)
-S#define MOSFET_BD_PIN_ADDR          GPIO_PIN_ADDR(2, 5)
-S#define MOSFET_CD_PIN_ADDR			GPIO_PIN_ADDR(0, 4)
-S
-S#define GPIO_OFFD_OFF_SET			16
-S#define ZERO_DETECT_PORT			P1
-S#define ZERO_DETECT_A_PIN			BIT0
-S#define ZERO_DETECT_B_PIN			BIT3
-S#define ZERO_DETECT_C_PIN			BIT5
-S#define ZERO_DETECT_M_PIN			BIT4
-S
-S#define TIMER_INVALID_CNT 			0xFFFFFFFF
-S
-S#define COMM_BIT_LENTH				17	// highest bit is used to indicate command or data
-S#define COMM_MASK					(0x1FFFFul)	
-S#define IS_COMM_CMD(x)				((x)&(0x10000ul))
-S#define IS_COMM_CMD_WR(x)			((x)&(0x8000ul))	
-S#define COMM_VALUE_MASK				(0x7FFFul)
-S#define COMM_BAUT_RATE				5000000 
-S
-S//#define unSystemTick 				SysTick->VAL
-S
-S#define PWM_PHCHG_PWM_MASK			(0x00003F00ul)
-S#define PWM_PHCHG_D0_7_MASK			(0x000000FFul) 
-S#define PWM_PERIOD 					(884-1)	// PWM T=0.08ms, if target is 3K PRM, 42 E-Circle per M-Circle,
-S											// each PC should less than 0.5 ms. 
-S											// So each E-Circle at least has 6 PWM circle
-S
-S#define ROTATE_CLOCKWISE		0
-S#define ROTATE_ANTICLOCKWISE	1
-S
-S#define ADC_CURRENT_CHN_IDX		0
-S#define ADC_BATTERY_CHN_IDX		7
-S#define ADC_CURRENT_CHN_MSK		(0x01 << ADC_CURRENT_CHN_IDX)
-S#define ADC_BATTERY_CHN_MSK		(0x01 << ADC_BATTERY_CHN_IDX)
-S#define ADC_CURRENT_CMP_MSK		ADC_CMP0_INT
-S#define ADC_BATTERY_CMP_MSK		ADC_CMP1_INT
-S#define ADC_ADF_MSK				ADC_ADF_INT
-S
-S#define SET           			(1)     
-S#define RESET          			(0)      
-S
-S
-S#define PWM_INT_ENABLE				(PWM_EnableDutyInt(PWM, 1, WHAT_EVER_DO_NOT_CARE))
-S
-S#define PWM_INT_DISABLE				(PWM->PIER = 0)
-S
-S#define IS_PWM_IRQ_ENABLED			(PWM->PIER)
-S
-S// To increase shut down speed we can just directly write a constant number into PHCHG register
-S// But since we also have protection form driver IC, it is not so critical here
-S// So better just shut down, not change other bit in the register
-S// First write PHCHGNXT because between write PHCHG and PHCHGNXT time, PHCHG may be updated by PHCHGNXT                                 
-S//#define	MOSFET_ALL_OFF			(PWM->PHCHGNXT = (PWM->PHCHGNXT & (~PWM_PHCHG_PWM_MASK)) | PWM_PHCHG_D0_7_MASK); /
-S//								(PWM->PHCHG = (PWM->PHCHG & (~PWM_PHCHG_PWM_MASK)) | PWM_PHCHG_D0_7_MASK);
-S// After shut down all MOSFET you need to re-initialize all PHCHG register bits
-S#define MOSFET_SHUT_DOWN_VAL		(0x000000FFul)	
-S#define	MOTOR_SHUT_DOWN				BRG_DISABLE; \
-S									PWM_INT_DISABLE; \
-S									(TIMER_Stop(TIMER0)); \
-S									(TIMER_Stop(TIMER1)); \
-S									(TIMER_DisableInt(TIMER0)); \
-S									(TIMER_DisableInt(TIMER1)); \
-S									(PWM->PHCHGNXT = MOSFET_SHUT_DOWN_VAL); \
-S									(PWM->PHCHG = MOSFET_SHUT_DOWN_VAL)
-X#define	MOTOR_SHUT_DOWN				BRG_DISABLE; 									PWM_INT_DISABLE; 									(TIMER_Stop(TIMER0)); 									(TIMER_Stop(TIMER1)); 									(TIMER_DisableInt(TIMER0)); 									(TIMER_DisableInt(TIMER1)); 									(PWM->PHCHGNXT = MOSFET_SHUT_DOWN_VAL); 									(PWM->PHCHG = MOSFET_SHUT_DOWN_VAL)
-S
-S//(ACMP->CMPCR[0] &= ~(ACMP_CMPCR_ACMPIE_Msk | ACMP_CMPCR_ACMPEN_Msk)); \
-S
-X
-S#define MOTOR_SET_DUTY(x)			(PWM->CMR[1] = (x)); \
-S									(PWM->CMR[3] = (x)); \
-S									(PWM->CMR[5] = (x))
-X#define MOTOR_SET_DUTY(x)			(PWM->CMR[1] = (x)); 									(PWM->CMR[3] = (x)); 									(PWM->CMR[5] = (x))
-S//#define MOTOR_SET_DUTY(x)			(PWM->CMR[0] = (x)); \
-S//									(PWM->CMR[2] = (x)); \
-S//									(PWM->CMR[4] = (x))
-X
-S//#define MOTOR_SET_DUTY(x)			(PWM->CMR[0] = (x)); \
-S//									(PWM->CMR[1] = (x)); \
-S//									(PWM->CMR[2] = (x)); \
-S//									(PWM->CMR[3] = (x)); \
-S//									(PWM->CMR[4] = (x)); \
-S//									(PWM->CMR[5] = (x))
-X
-S
-S#define INDEX_INCREASE(INDEX, MAX)	((INDEX) = (((INDEX) < ((MAX) - 1)) ? ((INDEX) + 1) : 0))
-S// Max 32 type of error because used uint32_t's bit to mark each error
-S// Since LED can not blink to fast (for human watchable), 6 type of blink make sense
-Stypedef enum {	
-S	ERR_NULL = 0,
-S	ERR_CURRENT_WARNING,	// Current > 5A
-S	ERR_LOCATE_FAIL,
-S	ERR_RAMPUP_FAIL,
-S	ERR_BATTERY_LOW,
-S	ERR_INTERNAL,	// Loss lock, single phase duration too long
-S	ERR_CURRENT_BURNING,	// Current > 15A
-S	ERR_BRD_FAULT
-S} ENUM_ERROR_LEVEL;
-S
-Sextern __IO uint32_t unSystemTick;
-S
-S#include "BLDCSensorLess.h"
-S#include "Communication.h"
-S#include "Error.h"
-S
-N#endif 
-L 5 "User\BLDCSensorLess.h" 2
-N	typedef struct
-N	{
-N		struct
-N		{
-N			__IO uint16_t MotorNeedToRun:1;
-X			volatile uint16_t MotorNeedToRun:1;
-N			__IO uint16_t RotateDirection:1;
-X			volatile uint16_t RotateDirection:1;
-N		}MCR;
-N		struct
-N		{
-N			__IO uint16_t MotorPowerOn:1;
-X			volatile uint16_t MotorPowerOn:1;
-N			__IO uint16_t ZeroCrossDetecting:1;
-X			volatile uint16_t ZeroCrossDetecting:1;
-N			__IO uint16_t Locked:1;
-X			volatile uint16_t Locked:1;
-N			__IO uint16_t ThisPhaseDetectedZX:1;
-X			volatile uint16_t ThisPhaseDetectedZX:1;
-N			__IO uint16_t MissedZXD_CNT:8;
-X			volatile uint16_t MissedZXD_CNT:8;
-N			__IO uint16_t SuccessZXD_CNT:8;
-X			volatile uint16_t SuccessZXD_CNT:8;
-N		}MSR;
-N//		__IO uint16_t  MCR;		/*!<  Motor Control  */
-N//		__IO uint16_t  MSR;		/*!<  Motor Status  */
-N		//  __IO uint32_t  ACNR;       /*!<  PWM Actual Counter Register  */
-N		//  __IO uint32_t  STCNR;        /*!<  PWM Start Counter Register  */
-N		//  __IO uint32_t  SBCNR;        /*!<  PWM Stable Counter Register  */
-N		__IO uint16_t  LCT_DUTY;	/*!<  PWM Locating Duty  */
-X		volatile uint16_t  LCT_DUTY;	 
-N		__IO uint16_t  RU_DUTY;		/*!<  PWM Ramp Up Start Duty  */
-X		volatile uint16_t  RU_DUTY;		 
-N		__IO uint16_t  TGT_DUTY;	/*!<  PWM Target (Locked State) Duty  */
-X		volatile uint16_t  TGT_DUTY;	 
-N		__IO uint16_t  ACT_DUTY;	/*!<  PWM Actual Duty  */
-X		volatile uint16_t  ACT_DUTY;	 
-N		__IO uint16_t  LCT_PERIOD;	/*!<  Locating State One Phase Period  */
-X		volatile uint16_t  LCT_PERIOD;	 
-N		__IO uint32_t  RU_PERIOD;	/*!<  Ramp Up Start One Phase Period  */
-X		volatile uint32_t  RU_PERIOD;	 
-N		__IO uint32_t  ACT_PERIOD;	/*!<  Actual One Phase Period  */
-X		volatile uint32_t  ACT_PERIOD;	 
-N		__IO uint32_t  PHASE_CHANGE_CNT;	/*!<  Phase changed counter  */
-X		volatile uint32_t  PHASE_CHANGE_CNT;	 
-N		__IO uint16_t  RPM;			/*!<  Actual RPM  */
-X		volatile uint16_t  RPM;			 
-N		__IO uint16_t  RESERVE;		/*!<  Reserve for future use (round up 32bits) */
-X		volatile uint16_t  RESERVE;		 
-N		__IO uint16_t  BATTERY;		/*!<  Battery Voltage  */
-X		volatile uint16_t  BATTERY;		 
-N		__IO uint16_t  CURRENT;		/*!<  Current  */
-X		volatile uint16_t  CURRENT;		 
-N	} MOTOR_T;
-N
-N	typedef union
-N	{
-N		uint16_t iValue[sizeof(MOTOR_T)/sizeof(uint16_t)];
-N		MOTOR_T structMotor;
-N	} MOTOR_UNION_T;
-N
-N	typedef enum {
-N		ENUM_TIM1_AVOID_ZXD = 0,
-N		ENUM_TIM1_ZXD_FILTER//,
-N//		ENUM_TIM1_START_ZXD
-N	}ENUM_TIM1_USAGE;
-N
-N//	#define ACMP0_FALLING_ENABLE		(ACMP->CMPCR[0] = ACMP_CMPCR_FALLING_Msk | ACMP_CMPCR_HYSEN_Msk | ACMP_CMPCR_ACMPIE_Msk | ACMP_CMPCR_ACMPEN_Msk)
-N//	#define ACMP0_RISING_ENABLE			(ACMP->CMPCR[0] = ACMP_CMPCR_RISING_Msk | ACMP_CMPCR_HYSEN_Msk | ACMP_CMPCR_ACMPIE_Msk | ACMP_CMPCR_ACMPEN_Msk)
-N//	#define ACMP0_EDGE_SELECT			((PWM->PHCHG & DETEC_UP) ? (ACMP_CMPCR_RISING_Msk) : (ACMP_CMPCR_FALLING_Msk))
-N	#define DETEC_UP_POS				7
-N	#define DETEC_UP					(1ul << DETEC_UP_POS)
-N	#define ACMP0_EDGE_MATCH			(((PWM->PHCHG & DETEC_UP) >> DETEC_UP_POS) == (( ACMP->CMPSR & ACMP_CMPSR_ACMPCO0_Msk) >> ACMP_CMPSR_ACMPCO0_Pos))
-N	#define ACMP0_ENABLE				(ACMP->CMPCR[0] |= ACMP_CMPCR_HYSEN_Msk | ACMP_CMPCR_ACMPEN_Msk)
-N	#define ACMP0_INT_ENABLE			(ACMP->CMPCR[0] |= ACMP_CMPCR_ACMPIE_Msk)
-N	#define ACMP0_INT_DISABLE			(ACMP->CMPCR[0] &= (~ACMP_CMPCR_ACMPIE_Msk))
-N	#define AVOID_ZXD_AFTER_PHCHG		160	// 160/2M = 80us
-N	#define ZXD_FILTER_TIME				200	// 200/2M = 100us
-N	#define CALC_TIME_BT_ZXD_SET_TIM	60	// calculation time between after confirmed ZX and set TIMER0
-N	#define TIME_DEBT					(ZXD_FILTER_TIME + CALC_TIME_BT_ZXD_SET_TIM)	// Included ZXD filter time and calculation time between after confirmed ZX and set TIMER0
-N	#define ZXD_BEFORE_PHCHG			50	// 50/2M = 25us	// If it already need change phase when ZX was confirmed ZX, give some time to TIM0 to response
-N	#define ACMP_HYS_AVG_TIME			20	// Average Hysteresis time 20/2M = 10us
-N	#define MIN_PHASE_TIME				500	//(AVOID_ZXD_AFTER_PHCHG + ZXD_FILTER_TIME + 100)	// 1200/2M=0.6ms, 8333RPM if 42PC=1MC==7EC
-N	#define MAX_PHASE_TIME				(10000)	// Unit 2MH, 5ms, 286rpm if 42PC=1MC==7EC
-N
-N	#define MINI51_TIM_CNT_MAX			0xFFFFFF
-N	#define GET_TIM1_CMP_VALUE(x)		(((x) >= MINI51_TIM_CNT_MAX) ? ((x) - MINI51_TIM_CNT_MAX) : (x))
-N	#define GET_TIMER_DIFF(iLast, iThis)	(((iThis) > (iLast)) ? ((iThis) - (iLast)) : ((iThis) + (MINI51_TIM_CNT_MAX - (iLast))))
-N	#define MAX_MISS_ZXD_THRESHOLD		12
-N	#define MIN_SUCC_ZXD_THRESHOLD		4
 N
 N	#ifdef __USED_BY_BLDC_SENSOR_LESS_C__
 S		#define EXTERNAL_BLDC  
@@ -9411,8 +9280,6 @@ S			STATUS_WORKING = 0xFFFF
 S		} ENUM_STATUS;
 S
 S		const uint8_t unLocatePhaseSequencyTable[] = {0, 1, 2, 1};
-S		volatile uint32_t* unMosfetTestTable[] = {MOSFET_AS_PIN_ADDR, MOSFET_BS_PIN_ADDR, MOSFET_CS_PIN_ADDR,
-S				MOSFET_AD_PIN_ADDR, MOSFET_BD_PIN_ADDR, MOSFET_CD_PIN_ADDR};
 S
 S		#define ALREADY_ROTATING_DETECTING			0xFFFF
 S		#define MAX_ROTATING_DETECT_PHASE_TIME		30	// half phase max 30ms
@@ -9427,14 +9294,14 @@ S//		#define MOTOR_RUNNING_MSK					(0x01ul)
 S//		#define MOTOR_R_DIRECTION_MSK				(0x02ul)
 S//		#define IS_MOTOR_NEED_TO_RUN(x)				((x) & MOTOR_RUNNING_MSK)
 S
-S//		#define IS_MOTOR_R_CLOCKWISE				(((mMotor.structMotor.MCR & MOTOR_R_DIRECTION_MSK) == 0) ? TRUE : FALSE)
-S		#define GET_PHASE_VALUE(x)					((mMotor.structMotor.MCR.RotateDirection == ROTATE_CLOCKWISE) ? PHASE_TAB_CLOCKWISE[(x)] : PHASE_TAB_ANTICLOCKWISE[(x)])
+S//		#define IS_MOTOR_R_CLOCKWISE				(((tMotor.structMotor.MCR & MOTOR_R_DIRECTION_MSK) == 0) ? TRUE : FALSE)
+S		#define GET_PHASE_VALUE(x)					((tMotor.structMotor.MCR.bRotateDirection == ROTATE_CLOCKWISE) ? PHASE_TAB_CLOCKWISE[(x)] : PHASE_TAB_ANTICLOCKWISE[(x)])
 S		#define PHASE_NUMBER						(sizeof(PHASE_TAB_CLOCKWISE)/sizeof(uint32_t))
 S		#define PHASE_INCREASE(x) 					INDEX_INCREASE((x), PHASE_NUMBER) //((x) = (((x) == (PHASE_NUMBER - 1)) ? 0 : ((x) + 1)))
 S
-S//		#define RESET_MOTOR_SR_BIT(x)				(mMotor.structMotor.MSR &= (~(1ul << (x))))
-S//		#define SET_MOTOR_SR_BIT(x)					(mMotor.structMotor.MSR |= (1ul << (x)))
-S//		#define IS_MOTOR_STATUS_SET(x)				(mMotor.structMotor.MSR & (1ul << (x)))
+S//		#define RESET_MOTOR_SR_BIT(x)				(tMotor.structMotor.MSR &= (~(1ul << (x))))
+S//		#define SET_MOTOR_SR_BIT(x)					(tMotor.structMotor.MSR |= (1ul << (x)))
+S//		#define IS_MOTOR_STATUS_SET(x)				(tMotor.structMotor.MSR & (1ul << (x)))
 S
 S		#define WAIT_AFTER_LOCATE_TIME				0	// ms
 S
@@ -9449,8 +9316,7 @@ S		#define MOTOR_RAMPUP_PR_DCR(x)				((x) = (((x) < MOTOR_RAMPUP_PR_MIN) ? (x) :
 S//		#define MOTOR_RAMPUP_PR_DCR(x)				((x) = (((x) < MOTOR_RAMPUP_PR_MIN) ? (x) : ((x) - 100)))
 S		#define MOTOR_START_ZXD_SPEED				(1600 - 1)	// frequency 2M,
 S//		#define MOTOR_START_ZXD_MINROT_CNT			200	// After phase change xxx times at max speed of rampup, start to detect ZX
-S		#define SET_MOSFET_ON_MANUAL(pinAddr)		(*(pinAddr) = 0)
-S		#define SET_MOSFET_OFF_MANUAL(pinAddr)		(*(pinAddr) = 1)
+S
 S//		typedef enum {
 S//			PHASE_AB = 0,
 S//			PHASE_AC,
@@ -9470,41 +9336,41 @@ S//			PHASE_AC
 S//		} ENUM_MOTOR_ANTICLOCKWISE_PHASE;
 S
 S
-S		static ENUM_MOTOR_STATE enumMotorState = MOTOR_IDLE;
-S		static ENUM_ROTATE_DETECT_STATE enumRotateDetectState = DETECT_START;
-S		static uint8_t iLocateIndex;
-S		static uint8_t iPhaseChangeCNT4Period;
-S		static uint8_t iPhaseChangeCNT4Duty;
-S		static uint16_t iRampUpPeriodMiniCNT;
-S		static uint32_t iCurrentPHCHG;
-S		static uint32_t iLastPhaseChangeTime;
-S		static uint32_t iRotateDetectStartTime;	// Used to record when enter motor start, 
+S		static ENUM_MOTOR_STATE tMotorState = MOTOR_IDLE;
+S		static ENUM_ROTATE_DETECT_STATE tRotateDetectState = DETECT_START;
+S		static uint8_t unLocateIndex;
+S		static uint8_t unPhaseChangeCNT4Period;
+S		static uint8_t unPhaseChangeCNT4Duty;
+S		static uint16_t unRampUpPeriodMiniCNT;
+S		static uint32_t unCurrentPHCHG;
+S		static uint32_t unLastPhaseChangeTime;
+S		static uint32_t unRotateDetectStartTime;	// Used to record when enter motor start, 
 S												// ALready rotating detect end time will be compared with this time
 N	#else 
 N		#define EXTERNAL_BLDC extern
 N	#endif
-NEXTERNAL_BLDC MOTOR_UNION_T mMotor;	// Motor control register
-Xextern MOTOR_UNION_T mMotor;	
-NEXTERNAL_BLDC ENUM_TIM1_USAGE FLAG_TIM1_USEAGE;
-Xextern ENUM_TIM1_USAGE FLAG_TIM1_USEAGE;
-NEXTERNAL_BLDC uint32_t iLastZXDetectedTime;
-Xextern uint32_t iLastZXDetectedTime;
+NEXTERNAL_BLDC __IO MOTOR_UNION_T tMotor;	// Motor control register
+Xextern volatile MOTOR_UNION_T tMotor;	
+NEXTERNAL_BLDC __IO ENUM_TIM1_USAGE FLAG_TIM1_USEAGE;
+Xextern volatile ENUM_TIM1_USAGE FLAG_TIM1_USEAGE;
+NEXTERNAL_BLDC __IO uint32_t unLastZXDetectedTime;
+Xextern volatile uint32_t unLastZXDetectedTime;
+NEXTERNAL_BLDC __IO uint32_t unZXMatchCNT;
+Xextern volatile uint32_t unZXMatchCNT;
 N//EXTERNAL_BLDC uint32_t iPhaseChangeCNT4Period;	// Used to check if phase has been changed after every 60ms.
 N											// If not, force MOSFET OFF. 
 N											// 60ms=1.39rps=83.33rpm, we should make sure 1st startup ramp phase < 60ms
 N
-NEXTERNAL_BLDC uint8_t iCurrentPhase;
-Xextern uint8_t iCurrentPhase;
+NEXTERNAL_BLDC uint8_t unCurrentPhase;
+Xextern uint8_t unCurrentPhase;
 NEXTERNAL_BLDC uint8_t FLAG_PHASE_CHANGED;
 Xextern uint8_t FLAG_PHASE_CHANGED;
-NEXTERNAL_BLDC __INLINE void stopMotor(void);
-Xextern __inline void stopMotor(void);
-NEXTERNAL_BLDC void checkMotor(void);
-Xextern void checkMotor(void);
-NEXTERNAL_BLDC void BLDCSensorLessManager(void);
-Xextern void BLDCSensorLessManager(void);
+NEXTERNAL_BLDC __INLINE void BLDC_stopMotor(void);
+Xextern __inline void BLDC_stopMotor(void);
+NEXTERNAL_BLDC void BLDC_SensorLessManager(void);
+Xextern void BLDC_SensorLessManager(void);
 N#endif
-L 151 "User\global.h" 2
+L 65 "User\global.h" 2
 N#include "Communication.h"
 L 1 "User\Communication.h" 1
 N#ifndef __COMMUNICATION_H__
@@ -9518,6 +9384,21 @@ S
 N	#else 
 N		#define EXTERNAL_COMM extern
 N	#endif
+N
+N#define COMM_PORT					P0
+N#define COMM_CLK_PIN				BIT7
+N#define COMM_CS_PIN					BIT1
+N#define COMM_TX_PIN					BIT6
+N#define COMM_RX_PIN					BIT5
+N
+N#define COMM_LENGTH					4	// Command | Data Low | Data High | 16bits CRC
+N#define COMM_BIT_LENTH				16	// Because STM32F407 can only configure SPI to be 8bits/16bits width
+N										// highest bit in first half word is used to indicate command or data
+N#define COMM_RW_MASK				(0x8000)
+N#define IS_COMM_RD(value)			((value) & COMM_RW_MASK)
+N#define COMM_DATA_MASK				(0x7FFF)
+N#define COMM_BAUT_RATE				5000000
+N
 Ntypedef enum{
 N	MOTOR_MCR = 0,	/*!<  Motor Control  */
 N	MOTOR_MSR,		/*!<  Motor Status  */
@@ -9535,19 +9416,23 @@ N	MOTOR_RESERVE,		/*!<  Reserve for future use (round up 32bits) */
 N	MOTOR_BATTERY,		/*!<  Battery Voltage  */
 N	MOTOR_CURRENT		/*!<  Current  */
 N} ENUM_COMM_REG;
-NEXTERNAL_COMM uint16_t iSPI_ReadData;	// 0 or 0xFFFF means no data
-Xextern uint16_t iSPI_ReadData;	
-NEXTERNAL_COMM uint16_t iRegisterValue;	// 0 or 0xFFFF means no data
-Xextern uint16_t iRegisterValue;	
-NEXTERNAL_COMM ENUM_COMM_REG enumRegister;
-Xextern ENUM_COMM_REG enumRegister;
+NEXTERNAL_COMM uint32_t unCOM_SPI_TransCNT;
+Xextern uint32_t unCOM_SPI_TransCNT;
+NEXTERNAL_COMM uint32_t unCOM_SPI_TransErrCNT;
+Xextern uint32_t unCOM_SPI_TransErrCNT;
+NEXTERNAL_COMM uint16_t unCOM_SPI_ReadData[COMM_LENGTH];	// 0 or 0xFFFF means no data
+Xextern uint16_t unCOM_SPI_ReadData[4];	
+NEXTERNAL_COMM uint16_t unRegisterValue;	// 0 or 0xFFFF means no data
+Xextern uint16_t unRegisterValue;	
+NEXTERNAL_COMM ENUM_COMM_REG tRegister;
+Xextern ENUM_COMM_REG tRegister;
 NEXTERNAL_COMM uint8_t FlagRegisterNeedWrite;
 Xextern uint8_t FlagRegisterNeedWrite;
 N
 NEXTERNAL_COMM void CommunicationManager(void);
 Xextern void CommunicationManager(void);
 N#endif
-L 152 "User\global.h" 2
+L 66 "User\global.h" 2
 N#include "Error.h"
 L 1 "User\Error.h" 1
 N#ifndef __ERROR_H__
@@ -9555,28 +9440,10 @@ S#define __ERROR_H__
 S
 S#include "global.h"
 S
-S#ifdef __USED_BY_ERROR_C__
-S	#define EXTERNAL_ERROR  
+S#define LED_PORT					P5
+S#define LED_PIN						BIT4
+S#define LED_OUTPUT					P54
 S
-S	#define LED_ON					(LED_OUTPUT = 0)
-S	#define LED_OFF 				(LED_OUTPUT = 1)
-S	#define LED_TOGGLE 				(GPIO_TOGGLE(LED_OUTPUT))
-S	#define LED_PATTERN_INTERVAL	4000  //4s
-S	#define LED_BLINK_ON_TIME		200  //0.2s
-S	#define LED_BLINK_OFF_TIME		200  //0.2s, so 6 times is (0.4x6 = 2.4s)
-S	#define LED_BLINK_INTERVAL		(LED_BLINK_ON_TIME + LED_BLINK_OFF_TIME)
-S
-S#else 
-S	#define EXTERNAL_ERROR extern
-S#endif
-S
-SEXTERNAL_ERROR uint32_t unErrorMaster;
-SEXTERNAL_ERROR void delay(uint32_t unDelayMs);
-SEXTERNAL_ERROR void resetError(ENUM_ERROR_LEVEL enumErrorType);
-SEXTERNAL_ERROR void setError(ENUM_ERROR_LEVEL enumErrorType);
-SEXTERNAL_ERROR void clearError(void);
-SEXTERNAL_ERROR void ErrorManager(void);
-S	
 S#define GET_SPECIFIED_EEROR(x)		((unErrorMaster & (1L << (x)) == 0) ? FALSE : TRUE)
 S#define IS_ANY_EEROR				((unErrorMaster == 0) ? FALSE : TRUE)
 S/*
@@ -9591,11 +9458,139 @@ S	ERR_BRD_FAULT
 S	*/
 S#define MOTOR_ERROR_MSK				0xFFFFFFFEul
 S#define NO_MOTOR_EEROR				(((unErrorMaster & MOTOR_ERROR_MSK) == 0) ? TRUE : FALSE)
+S
+S// Max 32 type of error because used uint32_t's bit to mark each error
+Stypedef enum {
+S	ERR_NULL = 0,
+S	ERR_CURRENT_WARNING,	// Current > 5A
+S	ERR_COMMUNICATION_FAIL,
+S	ERR_LOCATE_FAIL,
+S	ERR_RAMPUP_FAIL,
+S	ERR_BATTERY_LOW,
+S	ERR_INTERNAL,	// Loss lock, single phase duration too long
+S	ERR_CURRENT_BURNING,	// Current > 15A
+S	ERR_BRD_FAULT
+S} ENUM_ERROR_LEVEL;
+S
+S#ifdef __USED_BY_ERROR_C__
+S	#define EXTERNAL_ERROR  
+S
+S	#define LED_ON					(LED_OUTPUT = 0)
+S	#define LED_OFF 				(LED_OUTPUT = 1)
+S	#define LED_TOGGLE 				(GPIO_TOGGLE(LED_OUTPUT))
+S	#define LED_PATTERN_INTERVAL	2000  //2s
+S	#define LED_BLINK_ON_TIME		200  //0.2s
+S	#define LED_BLINK_OFF_TIME		200  //0.2s, so 3 times is (0.4x3 = 1.2s)
+S	#define LED_BLINK_INTERVAL		(LED_BLINK_ON_TIME + LED_BLINK_OFF_TIME)
+S	// Since LED can not blink to fast (for human watchable), 3 type of blink make sense
+S	// So this table is introduced. Since ERR_BRD_FAULT is constantly ON, we can use it as array size
+S	const uint32_t unLED_BLINK_PATTERN_TABLE[ERR_BRD_FAULT] = {1 * LED_BLINK_INTERVAL,
+S			1 * LED_BLINK_INTERVAL,
+S			2 * LED_BLINK_INTERVAL,
+S			2 * LED_BLINK_INTERVAL,
+S			2 * LED_BLINK_INTERVAL,
+S			2 * LED_BLINK_INTERVAL,
+S			3 * LED_BLINK_INTERVAL};
+S#else 
+S	#define EXTERNAL_ERROR extern
+S#endif
+S
+SEXTERNAL_ERROR uint32_t unErrorMaster;
+SEXTERNAL_ERROR void delay(uint32_t unDelayMs);
+SEXTERNAL_ERROR void resetError(ENUM_ERROR_LEVEL enumErrorType);
+SEXTERNAL_ERROR void setError(ENUM_ERROR_LEVEL enumErrorType);
+SEXTERNAL_ERROR void clearError(void);
+SEXTERNAL_ERROR void ErrorManager(void);
+S
 N#endif
-L 153 "User\global.h" 2
+L 67 "User\global.h" 2
+N#include "Protection.h"
+L 1 "User\Protection.h" 1
+N#ifndef __PROTECTION_H__
+N#define __PROTECTION_H__
 N
+N#include "global.h"
+N
+N	#ifdef __USED_BY_PTC_C__
+S		#define EXTERNAL_PTC
+S
+S		volatile uint32_t* unMosfetTestTable[] = {MOSFET_AS_PIN_ADDR, MOSFET_BS_PIN_ADDR, MOSFET_CS_PIN_ADDR,
+S				MOSFET_AD_PIN_ADDR, MOSFET_BD_PIN_ADDR, MOSFET_CD_PIN_ADDR};
+S		#define SET_MOSFET_ON_MANUAL(pinAddr)		(*(pinAddr) = 0)
+S		#define SET_MOSFET_OFF_MANUAL(pinAddr)		(*(pinAddr) = 1)
+N	#else
+N		#define EXTERNAL_PTC extern
+N	#endif
+N
+N#define BATTERY_V_PORT				P3
+N#define BATTERY_V_PIN				BIT1
+N#define CURRENT_PORT				P5
+N#define CURRENT_PIN					BIT3
+N
+N#define ADC_CURRENT_CHN_IDX			0
+N#define ADC_BATTERY_CHN_IDX			7
+N#define ADC_CURRENT_CHN_MSK			(0x01 << ADC_CURRENT_CHN_IDX)
+N#define ADC_BATTERY_CHN_MSK			(0x01 << ADC_BATTERY_CHN_IDX)
+N#define ADC_CURRENT_CMP_MSK			ADC_CMP0_INT
+N#define ADC_BATTERY_CMP_MSK			ADC_CMP1_INT
+N#define ADC_ADF_MSK					ADC_ADF_INT
+N
+N// 5x50 m ohm R = 10m ohm, 30A*0.01=0.3V, VCC=3V, (0.3/3)*1024=102
+N// 5x50 m ohm R = 10m ohm, 30A*0.01=0.3V, VCC=5V, (0.3/5)*1024=61
+N#define ADC_CURRENT_HIGH_THRS			68
+N#define ADC_CURRENT_HIGH_CNT			12	// 300us*8*2(one current, one battery)=4.8ms
+N									//16	// 15us*16*2(one current, one battery)=0.48ms interval of measurement
+N// 5x50 m ohm R = 10m ohm, 1A*0.01=0.01V, VCC=5V, (0.01/5)*1024=2
+N#define ADC_CURRENT_HIGH_THRS_MT		5	// For MOSFET check at start up, but 2 can be noise, so maybe 5 is OK
+N											// If it is higher than 5 also maybe ADC is wrong
+N
+N// Set 6.8V as min, (6.8/13.3)*3.3=1.687V, (1.687/3.3)*1024=524	// Actually using 10K and 3.3K R
+N// Set 10.2V as min, (10.2/13.3)*3.3=2.53V, (2.53/3)*1024=864	// Actually using 10K and 3.3K R
+N// Set 10.2V as min, (10.2/13.3)*3.3=2.53V, (2.53/5)*1024=518	// Actually using 10K and 3.3K R
+N// Set 10.2V as min, (10.2/12)*2=1.7V, (1.7/5)*1024=348	// Actually using 10K and 2K R
+N#define ADC_BAT_LOW_THRS				348
+N#define ADC_BAT_LOW_CNT					16	// Battery may need further filter, 300us*16*2(one current, one battery)=9.6ms
+N// Set 11.5V as min, (11.5/12)*2=1.92V, (1.92/5)*1024=393	// Actually using 10K and 2K R
+N#define ADC_BAT_LOW_THRS_MT				393
+N
+NEXTERNAL_PTC void PTC_checkMotor(void);
+Xextern void PTC_checkMotor(void);
+N#endif
+L 68 "User\global.h" 2
 N#endif 
 L 5 "User\Error.h" 2
+N
+N#define LED_PORT					P5
+N#define LED_PIN						BIT4
+N#define LED_OUTPUT					P54
+N
+N#define GET_SPECIFIED_EEROR(x)		((unErrorMaster & (1L << (x)) == 0) ? FALSE : TRUE)
+N#define IS_ANY_EEROR				((unErrorMaster == 0) ? FALSE : TRUE)
+N/*
+N	ERR_NULL = 0,
+N	ERR_CURRENT_WARNING,	// Current > 5A
+N	ERR_LOCATE_FAIL,
+N	ERR_RAMPUP_FAIL,
+N	ERR_BATTERY_LOW,
+N	ERR_INTERNAL,	// Loss lock, single phase duration too long
+N	ERR_CURRENT_BURNING,	// Current > 15A
+N	ERR_BRD_FAULT
+N	*/
+N#define MOTOR_ERROR_MSK				0xFFFFFFFEul
+N#define NO_MOTOR_EEROR				(((unErrorMaster & MOTOR_ERROR_MSK) == 0) ? TRUE : FALSE)
+N
+N// Max 32 type of error because used uint32_t's bit to mark each error
+Ntypedef enum {
+N	ERR_NULL = 0,
+N	ERR_CURRENT_WARNING,	// Current > 5A
+N	ERR_COMMUNICATION_FAIL,
+N	ERR_LOCATE_FAIL,
+N	ERR_RAMPUP_FAIL,
+N	ERR_BATTERY_LOW,
+N	ERR_INTERNAL,	// Loss lock, single phase duration too long
+N	ERR_CURRENT_BURNING,	// Current > 15A
+N	ERR_BRD_FAULT
+N} ENUM_ERROR_LEVEL;
 N
 N#ifdef __USED_BY_ERROR_C__
 N	#define EXTERNAL_ERROR  
@@ -9603,11 +9598,26 @@ N
 N	#define LED_ON					(LED_OUTPUT = 0)
 N	#define LED_OFF 				(LED_OUTPUT = 1)
 N	#define LED_TOGGLE 				(GPIO_TOGGLE(LED_OUTPUT))
-N	#define LED_PATTERN_INTERVAL	4000  //4s
+N	#define LED_PATTERN_INTERVAL	2000  //2s
 N	#define LED_BLINK_ON_TIME		200  //0.2s
-N	#define LED_BLINK_OFF_TIME		200  //0.2s, so 6 times is (0.4x6 = 2.4s)
+N	#define LED_BLINK_OFF_TIME		200  //0.2s, so 3 times is (0.4x3 = 1.2s)
 N	#define LED_BLINK_INTERVAL		(LED_BLINK_ON_TIME + LED_BLINK_OFF_TIME)
-N
+N	// Since LED can not blink to fast (for human watchable), 3 type of blink make sense
+N	// So this table is introduced. Since ERR_BRD_FAULT is constantly ON, we can use it as array size
+N	const uint32_t unLED_BLINK_PATTERN_TABLE[ERR_BRD_FAULT] = {1 * LED_BLINK_INTERVAL,
+X	const uint32_t unLED_BLINK_PATTERN_TABLE[ERR_BRD_FAULT] = {1 * (200 + 200),
+N			1 * LED_BLINK_INTERVAL,
+X			1 * (200 + 200),
+N			2 * LED_BLINK_INTERVAL,
+X			2 * (200 + 200),
+N			2 * LED_BLINK_INTERVAL,
+X			2 * (200 + 200),
+N			2 * LED_BLINK_INTERVAL,
+X			2 * (200 + 200),
+N			2 * LED_BLINK_INTERVAL,
+X			2 * (200 + 200),
+N			3 * LED_BLINK_INTERVAL};
+X			3 * (200 + 200)};
 N#else 
 S	#define EXTERNAL_ERROR extern
 N#endif
@@ -9624,21 +9634,7 @@ NEXTERNAL_ERROR void clearError(void);
 X void clearError(void);
 NEXTERNAL_ERROR void ErrorManager(void);
 X void ErrorManager(void);
-N	
-N#define GET_SPECIFIED_EEROR(x)		((unErrorMaster & (1L << (x)) == 0) ? FALSE : TRUE)
-N#define IS_ANY_EEROR				((unErrorMaster == 0) ? FALSE : TRUE)
-N/*
-N	ERR_NULL = 0,
-N	ERR_CURRENT_WARNING,	// Current > 5A
-N	ERR_LOCATE_FAIL,
-N	ERR_RAMPUP_FAIL,
-N	ERR_BATTERY_LOW,
-N	ERR_INTERNAL,	// Loss lock, single phase duration too long
-N	ERR_CURRENT_BURNING,	// Current > 15A
-N	ERR_BRD_FAULT
-N	*/
-N#define MOTOR_ERROR_MSK				0xFFFFFFFEul
-N#define NO_MOTOR_EEROR				(((unErrorMaster & MOTOR_ERROR_MSK) == 0) ? TRUE : FALSE)
+N
 N#endif
 L 13 "User\Error.c" 2
 N
@@ -9685,22 +9681,23 @@ N	{
 N		iVernier--; 
 N		if (unErrorMaster >> iVernier)
 N		{
+W "User\Error.c" 56 11 enumerated type mixed with another type
 N			return (iVernier + 1);
 N		}		
 N	}
 N	return iVernier;
 N}
 N
-Nvoid LEDBlinkHandler(ENUM_ERROR_LEVEL errorType, uint32_t iErrorStartTime)
+Nvoid LEDBlinkHandler(ENUM_ERROR_LEVEL tErrorType, uint32_t unErrorStartTime)
 N{
 N	uint16_t iLEDTime;
-N	if (ERR_BRD_FAULT == errorType)
+N	if (ERR_BRD_FAULT == tErrorType)
 N	{
 N		// Always ON
 N		LED_ON;
 X		((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(5))) + ((4)<<2)))) = 0);
 N	}
-N	else if (ERR_NULL == errorType)
+N	else if (ERR_NULL == tErrorType)
 N	{
 N		// Always off
 N		LED_OFF;
@@ -9708,10 +9705,9 @@ X		((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(5))) + (
 N	}
 N	else
 N	{
-N		iLEDTime = (uint16_t)(((uint32_t)(unSystemTick - iErrorStartTime)) % LED_PATTERN_INTERVAL);
-X		iLEDTime = (uint16_t)(((uint32_t)(unSystemTick - iErrorStartTime)) % 4000);
-N		if (iLEDTime >= errorType * (LED_BLINK_INTERVAL))
-X		if (iLEDTime >= errorType * ((200 + 200)))
+N		iLEDTime = (uint16_t)(((uint32_t)(unSystemTick - unErrorStartTime)) % LED_PATTERN_INTERVAL);
+X		iLEDTime = (uint16_t)(((uint32_t)(unSystemTick - unErrorStartTime)) % 2000);
+N		if (iLEDTime >= unLED_BLINK_PATTERN_TABLE[tErrorType])
 N		{
 N			LED_OFF;
 X			((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(5))) + ((4)<<2)))) = 1);
@@ -9740,26 +9736,26 @@ N// Shut down all MOSFET was handled as soon as the critical error was found
 N// to make sure then responding time will not burn the board
 Nvoid ErrorManager(void)
 N{
-N	static uint32_t staLastErrorChangeTime;
-N	static ENUM_ERROR_LEVEL lastErrorType = ERR_NULL;
-N	ENUM_ERROR_LEVEL errorFetched;
-N	errorFetched = getPrecedenceError();
+N	static uint32_t unLastErrorChangeTime;
+N	static ENUM_ERROR_LEVEL tLastErrorType = ERR_NULL;
+N	ENUM_ERROR_LEVEL tErrorFetched;
+N	tErrorFetched = getPrecedenceError();
 N
-N	if (lastErrorType != errorFetched)
+N	if (tLastErrorType != tErrorFetched)
 N	{
-N		lastErrorType = errorFetched;
+N		tLastErrorType = tErrorFetched;
 N		// error type changed (maybe changed to no error)
-N		staLastErrorChangeTime = unSystemTick;
+N		unLastErrorChangeTime = unSystemTick;
 N		// No matter there is error or not, process!!
-N		LEDBlinkHandler(errorFetched, staLastErrorChangeTime);
+N		LEDBlinkHandler(tErrorFetched, unLastErrorChangeTime);
 N	}
 N	else
 N	{
 N		// Still same error (maybe no error)
 N		// Only process when there is some error
-N		if (ERR_NULL != errorFetched)
+N		if (ERR_NULL != tErrorFetched)
 N		{
-N			LEDBlinkHandler(errorFetched, staLastErrorChangeTime);
+N			LEDBlinkHandler(tErrorFetched, unLastErrorChangeTime);
 N		}	
 N	}
 N	

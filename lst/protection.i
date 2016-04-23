@@ -1,4 +1,4 @@
-#line 1 "User\\Communication.c"
+#line 1 "User\\Protection.c"
 
 
 
@@ -8,8 +8,9 @@
 
 
 
-    
-#line 1 "User\\Communication.h"
+ 
+
+#line 1 "User\\Protection.h"
 
 
 
@@ -7364,6 +7365,52 @@ extern __inline void BLDC_stopMotor(void);
 extern void BLDC_SensorLessManager(void);
 #line 65 "User\\global.h"
 #line 1 "User\\Communication.h"
+
+
+
+#line 5 "User\\Communication.h"
+
+#line 12 "User\\Communication.h"
+
+
+
+
+
+
+
+
+
+										
+
+
+
+
+
+typedef enum{
+	MOTOR_MCR = 0,	 
+	MOTOR_MSR,		 
+	MOTOR_LCT_DUTY,		 
+	MOTOR_RU_DUTY,		 
+	MOTOR_TGT_DUTY,		 
+	MOTOR_ACT_DUTY,		 
+	MOTOR_LCT_PERIOD,	 
+	MOTOR_RU_PERIOD_LOW,	 
+	MOTOR_RU_PERIOD_HIGH,	 
+	MOTOR_ACT_PERIOD_LOW,	 
+	MOTOR_ACT_PERIOD_HIGH,	 
+	MOTOR_RPM,			 
+	MOTOR_RESERVE,		 
+	MOTOR_BATTERY,		 
+	MOTOR_CURRENT		 
+} ENUM_COMM_REG;
+extern uint32_t unCOM_SPI_TransCNT;
+extern uint32_t unCOM_SPI_TransErrCNT;
+extern uint16_t unCOM_SPI_ReadData[4];	
+extern uint16_t unRegisterValue;	
+extern ENUM_COMM_REG tRegister;
+extern uint8_t FlagRegisterNeedWrite;
+
+extern void CommunicationManager(void);
 #line 66 "User\\global.h"
 #line 1 "User\\Error.h"
 
@@ -7414,12 +7461,19 @@ extern void ErrorManager(void);
 
 #line 67 "User\\global.h"
 #line 1 "User\\Protection.h"
-
-
-
+#line 68 "User\\global.h"
 #line 5 "User\\Protection.h"
 
-#line 16 "User\\Protection.h"
+
+
+
+		volatile uint32_t* unMosfetTestTable[] = {((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(2))) + ((2)<<2))), ((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(2))) + ((4)<<2))), ((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(2))) + ((6)<<2))),
+				((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(2))) + ((3)<<2))), ((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(2))) + ((5)<<2))), ((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((4)<<2)))};
+
+
+
+
+
 
 
 
@@ -7446,65 +7500,45 @@ extern void ErrorManager(void);
 
 
 
-extern void PTC_checkMotor(void);
-#line 68 "User\\global.h"
-#line 5 "User\\Communication.h"
+ void PTC_checkMotor(void);
+#line 14 "User\\Protection.c"
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-										
-
-
-
-
-
-typedef enum{
-	MOTOR_MCR = 0,	 
-	MOTOR_MSR,		 
-	MOTOR_LCT_DUTY,		 
-	MOTOR_RU_DUTY,		 
-	MOTOR_TGT_DUTY,		 
-	MOTOR_ACT_DUTY,		 
-	MOTOR_LCT_PERIOD,	 
-	MOTOR_RU_PERIOD_LOW,	 
-	MOTOR_RU_PERIOD_HIGH,	 
-	MOTOR_ACT_PERIOD_LOW,	 
-	MOTOR_ACT_PERIOD_HIGH,	 
-	MOTOR_RPM,			 
-	MOTOR_RESERVE,		 
-	MOTOR_BATTERY,		 
-	MOTOR_CURRENT		 
-} ENUM_COMM_REG;
- uint32_t unCOM_SPI_TransCNT;
- uint32_t unCOM_SPI_TransErrCNT;
- uint16_t unCOM_SPI_ReadData[4];	
- uint16_t unRegisterValue;	
- ENUM_COMM_REG tRegister;
- uint8_t FlagRegisterNeedWrite;
-
- void CommunicationManager(void);
-#line 13 "User\\Communication.c"
-
-
-void CommunicationManager(void)
+void PTC_checkMotor(void)
 {
+	uint8_t unCheckIndex;
+	clearError();
 	
-	if (tMotor.structMotor.MSR.bNewComFrameReceived == (1))
-	{
-		tMotor.structMotor.MSR.bNewComFrameReceived = (0);
+	
 
+	
+	
+
+	
+	
+	
+	
+	
+    
+    (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCMPR[0] = ((0) << 3) | (((1ul << 2))) | ((5) << 16) | (((12) - 1) << 8) | (1ul << 0));
+    
+    (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCMPR[1] = ((7) << 3) | ((0UL)) | ((393) << 16) | ((16 - 1) << 8) | (1ul << 0));
+	for (unCheckIndex = 0; unCheckIndex < (sizeof(unMosfetTestTable) / sizeof(uint32_t*)); unCheckIndex++)
+	{
+		(*(unMosfetTestTable[unCheckIndex]) = 0);
+		delay(50);
+		(*(unMosfetTestTable[unCheckIndex]) = 1);
+		if (((unErrorMaster == 0) ? (0) : (1)) == (1))
+		{
+			while (1)
+			{
+				ErrorManager();
+			}
+		}
 	}
+    
+    (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCMPR[0] = ((0) << 3) | (((1ul << 2))) | ((68) << 16) | (((12) - 1) << 8) | (1ul << 0));
+    
+    (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCMPR[1] = ((7) << 3) | ((0UL)) | ((348) << 16) | ((16 - 1) << 8) | (1ul << 0));
 }

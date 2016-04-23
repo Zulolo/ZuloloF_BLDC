@@ -15,7 +15,7 @@
 	#define PWM_ZX_FILTER_TIME				40
 	
 //	__IO uint32_t iPhaseChangeTime;
-	__IO uint32_t iZXMatchCNT = 0;
+
 //	__IO uint32_t iTestZXContinueCNT = 0;
 //	__IO uint32_t iTestEnter_TMR1_MATCH = 0;
 //	__IO uint32_t iTestEnter_ACMP_MATCH = 0;

@@ -27,14 +27,14 @@ void TMR0_IRQHandler(void)
 	PWM_INT_DISABLE;
 
 
-	if (TRUE == mMotor.structMotor.MSR.ZeroCrossDetecting)
+	if (TRUE == tMotor.structMotor.MSR.bZeroCrossDetecting)
 	{
 		// In case TIM1 interrupt happened but preeempted by TIM0
 		TIMER_DisableInt(TIMER1);
 		TIMER1->TISR  = ~0;    // Clear interrupt flag
 		TIMER_SET_CMP_VALUE(TIMER1, GET_TIM1_CMP_VALUE(TIMER1->TDR + AVOID_ZXD_AFTER_PHCHG));	
-		//GET_TIMER_DIFF(PWM_ZX_FILTER_TIME, GET_TIM1_CMP_VALUE(TIMER1->TDR + (mMotor.structMotor.ACT_PERIOD >> 1))));	
-		//(mMotor.structMotor.ACT_PERIOD >> 2)));
+		//GET_TIMER_DIFF(PWM_ZX_FILTER_TIME, GET_TIM1_CMP_VALUE(TIMER1->TDR + (tMotor.structMotor.ACT_PERIOD >> 1))));	
+		//(tMotor.structMotor.ACT_PERIOD >> 2)));
 		FLAG_TIM1_USEAGE = ENUM_TIM1_AVOID_ZXD;
 		TIMER_EnableInt(TIMER1);
 	}
@@ -61,7 +61,7 @@ uint32_t DetectdTimeWhenPWMHigh(void)
 	
 
 //	uint32_t iMaxTIM0atThisPWMHigh;
-//	iMaxTIM0atThisPWMHigh = getTIM0atThisPWMHigh(mMotor.structMotor.ACT_DUTY);
+//	iMaxTIM0atThisPWMHigh = getTIM0atThisPWMHigh(tMotor.structMotor.ACT_DUTY);
 
 	// ALready done when enter PWM interrupt
 	//PWM->PIIR |= PWM_PIIR_PWMPIF1_Msk;
@@ -69,19 +69,19 @@ uint32_t DetectdTimeWhenPWMHigh(void)
 	while ((PWM->PIIR & PWM_PIIR_PWMPIF1_Msk) == 0)
 	{
 //		BRG_DISABLE;
-//		stopMotor();
-		if (iZXMatchCNT > MAX_ZX_MATCH_IN_PWM)
+//		BLDC_stopMotor();
+		if (unZXMatchCNT > MAX_ZX_MATCH_IN_PWM)
 		{
 			return TIMER_GetCounter(TIMER1);	//GET_TIMER_DIFF(PWM_ZX_FILTER_TIME, TIMER_GetCounter(TIMER1));
 		}
 
 		if (ACMP0_EDGE_MATCH)
 		{
-			iZXMatchCNT++; 
+			unZXMatchCNT++; 
 		}
 		else
 		{
-			iZXMatchCNT = 0;
+			unZXMatchCNT = 0;
 		}
 		
 	}
@@ -126,17 +126,17 @@ int32_t PhaseZXDedHandler(uint32_t iThisZXDetectedTime)
 
 	//iThisZXDetectedTime = TIMER_GetCounter(TIMER1);
 
-	iTempDeltaZXD = GET_TIMER_DIFF(iLastZXDetectedTime, iThisZXDetectedTime);
+	iTempDeltaZXD = GET_TIMER_DIFF(unLastZXDetectedTime, iThisZXDetectedTime);
 
 	if ((iTempDeltaZXD > MIN_PHASE_TIME) && (iTempDeltaZXD < MAX_PHASE_TIME))
 	{
-		iLastZXDetectedTime = iThisZXDetectedTime;
-		mMotor.structMotor.MSR.ThisPhaseDetectedZX = TRUE;
+		unLastZXDetectedTime = iThisZXDetectedTime;
+		tMotor.structMotor.MSR.bThisPhaseDetectedZX = TRUE;
 //		iTestDetectedZX++;
-		if (TRUE == mMotor.structMotor.MSR.Locked)
+		if (TRUE == tMotor.structMotor.MSR.bLocked)
 		{
-			mMotor.structMotor.ACT_PERIOD = (iTempDeltaZXD + mMotor.structMotor.ACT_PERIOD) >> 1;
-			iHalfPeriod = mMotor.structMotor.ACT_PERIOD >> 1;
+			tMotor.structMotor.unACT_PERIOD = (iTempDeltaZXD + tMotor.structMotor.unACT_PERIOD) >> 1;
+			iHalfPeriod = tMotor.structMotor.unACT_PERIOD >> 1;
 			TIMER_SET_CMP_VALUE(TIMER0, TIMER0->TDR + (iHalfPeriod > TIME_DEBT) ? (iHalfPeriod - TIME_DEBT) : ZXD_BEFORE_PHCHG);
 		}
 		return TRUE;
@@ -158,7 +158,7 @@ void TMR1_IRQHandler(void)
 
 //	TIMER_DisableInt(TIMER1);
 	TIMER1->TISR = ~0;    // Clear interrupt flag
-//	iZXMatchCNT = 0;
+//	unZXMatchCNT = 0;
 
 /*		iZXTimeDuringPWMHigh = DetectdTimeWhenPWMHigh();
 		if (iZXTimeDuringPWMHigh == TIMER_INVALID_CNT)
@@ -218,19 +218,19 @@ void TMR1_IRQHandler(void)
 			}
 
 //			iThisZXDetectedTime = TIMER_GetCounter(TIMER1) - ZXD_FILTER_TIME;
-//			//iTempDeltaZXD = GET_TIMER_DIFF(iLastZXDetectedTime, iThisZXDetectedTime) - ZXD_FILTER_TIME - ACMP_HYS_AVG_TIME;
-//			iTempDeltaZXD = GET_TIMER_DIFF(iLastZXDetectedTime, iThisZXDetectedTime);
+//			//iTempDeltaZXD = GET_TIMER_DIFF(unLastZXDetectedTime, iThisZXDetectedTime) - ZXD_FILTER_TIME - ACMP_HYS_AVG_TIME;
+//			iTempDeltaZXD = GET_TIMER_DIFF(unLastZXDetectedTime, iThisZXDetectedTime);
 ////			iTempPhaseChange2ZX = GET_TIMER_DIFF(iPhaseChangeTime, iThisZXDetectedTime) - ZXD_FILTER_TIME;
 //			//iTargetNewPeriod = (iTempDeltaZXD >> 1) + iTempPhaseChange2ZX;
-//			iTargetNewPeriod = iTempDeltaZXD;	// >> 1 + iTempPhaseChange2ZX;	//(iTempDeltaZXD + mMotor.structMotor.ACT_PERIOD) >> 1;
-////			iTargetNewPeriod = (iTargetNewPeriod + mMotor.structMotor.ACT_PERIOD) >> 1;
+//			iTargetNewPeriod = iTempDeltaZXD;	// >> 1 + iTempPhaseChange2ZX;	//(iTempDeltaZXD + tMotor.structMotor.ACT_PERIOD) >> 1;
+////			iTargetNewPeriod = (iTargetNewPeriod + tMotor.structMotor.ACT_PERIOD) >> 1;
 //			iTestEnter_TMR1_MATCH++;
 ////			RECORD_TEST_VALUE(iTestNewPeriodIndex, iTestZXDPeriodArray, iTargetNewPeriod);
 ////			RECORD_TEST_VALUE(iTestTIM0CNTIndex, iTestTIM0CNTArray, TIMER0->TCMPR);
 ////			if ((iTestNewPeriodIndex == 0) && (iTestZXDPeriodArray[0] != 0))
 ////			{
 ////				BRG_DISABLE;
-////				stopMotor();
+////				BLDC_stopMotor();
 ////				iTestZXDPeriodMax = getMax(iTestZXDPeriodArray, TEST_ARRAY_LEN);
 ////				iTestZXDPeriodMin = getMin(iTestZXDPeriodArray, TEST_ARRAY_LEN);
 ////				iTestTIM0CNTMax = getMax(iTestTIM0CNTArray, TEST_ARRAY_LEN);
@@ -247,32 +247,32 @@ void TMR1_IRQHandler(void)
 //				// We can consider ZX detected, and USE IT!!!!
 //				// To get stable and solide ZXD, more filter will be added in the TIM0 (phase change) interrupt
 //				// Only after continuously some number of ThisPhaseDetectedZX or miss ThisPhaseDetectedZX, it will enter or loss lock
-//				mMotor.structMotor.MSR.ThisPhaseDetectedZX = TRUE;
-//				iLastZXDetectedTime = iThisZXDetectedTime;
+//				tMotor.structMotor.MSR.ThisPhaseDetectedZX = TRUE;
+//				unLastZXDetectedTime = iThisZXDetectedTime;
 //
 //				// Incase the counter of TIM0 is already in front of iTempDeltaZXD
-//				if ((TRUE == mMotor.structMotor.MSR.Locked))	// && (iTargetNewPeriod > (TIMER_GetCounter(TIMER0) + ZXD_BEFORE_PHCHG)))
+//				if ((TRUE == tMotor.structMotor.MSR.Locked))	// && (iTargetNewPeriod > (TIMER_GetCounter(TIMER0) + ZXD_BEFORE_PHCHG)))
 //				{	// Still have time to change CMP in TIM0
 //					// You can have a rest, now the only thing left is T0 trigger phase change
 //
 ////					BRG_DISABLE;
 //					iTestDetectedZX++;
-//					//iTempDeltaZXD = (mMotor.structMotor.ACT_PERIOD * 3 + iTempDeltaZXD) >> 2;
+//					//iTempDeltaZXD = (tMotor.structMotor.ACT_PERIOD * 3 + iTempDeltaZXD) >> 2;
 //					if (iTargetNewPeriod > (TIMER_GetCounter(TIMER0) + ZXD_BEFORE_PHCHG))
 //					{
-//						mMotor.structMotor.ACT_PERIOD = iTargetNewPeriod;   //GET_TIMER_DIFF(iLastZXDetectedTime, TIMER_GetCounter(TIMER1));
+//						tMotor.structMotor.ACT_PERIOD = iTargetNewPeriod;   //GET_TIMER_DIFF(unLastZXDetectedTime, TIMER_GetCounter(TIMER1));
 //					}
 //					else
 //					{
-//						mMotor.structMotor.ACT_PERIOD = TIMER_GetCounter(TIMER0) + (ZXD_BEFORE_PHCHG << 1);
+//						tMotor.structMotor.ACT_PERIOD = TIMER_GetCounter(TIMER0) + (ZXD_BEFORE_PHCHG << 1);
 //					}
-//					TIMER_SET_CMP_VALUE(TIMER0, mMotor.structMotor.ACT_PERIOD);	//TIMER0->TDR + (iTargetNewPeriod >> 2));	//(iTempPhaseChange2ZX >> 1));
+//					TIMER_SET_CMP_VALUE(TIMER0, tMotor.structMotor.ACT_PERIOD);	//TIMER0->TDR + (iTargetNewPeriod >> 2));	//(iTempPhaseChange2ZX >> 1));
 ////					if (TIMER0->TISR & 0x01)
 ////					{	// If TIM0 interrupt was already triggered
 ////						// Clear interrupt flag
 ////						TIMER0->TISR |= 0x01;
 ////					}
-//					//TIMER_SET_CMP_VALUE(TIMER0, mMotor.structMotor.ACT_PERIOD);
+//					//TIMER_SET_CMP_VALUE(TIMER0, tMotor.structMotor.ACT_PERIOD);
 //				}
 //			}
 		}
@@ -312,7 +312,7 @@ void ACMP_IRQHandler(void)
 ////			if (TIMER_GetCounter(TIMER1) < TIMER1->TCMPR)//((iTestNewPeriodIndex == 0) && (iTestZXDPeriodArray[0] != 0))
 ////			{
 ////				BRG_DISABLE;
-////				stopMotor();
+////				BLDC_stopMotor();
 ////				iTestZXDPeriodMax = getMax(iTestZXDPeriodArray, TEST_ARRAY_LEN);
 ////				iTestZXDPeriodMin = getMin(iTestZXDPeriodArray, TEST_ARRAY_LEN);
 ////			}
@@ -341,19 +341,19 @@ void ACMP_IRQHandler(void)
 //		{
 //			ACMP0_INT_DISABLE;	// This phase job done
 //			iThisZXDetectedTime = TIMER_GetCounter(TIMER1);	// - ZXD_FILTER_TIME;
-//			//iTempDeltaZXD = GET_TIMER_DIFF(iLastZXDetectedTime, iThisZXDetectedTime) - ZXD_FILTER_TIME - ACMP_HYS_AVG_TIME;
-//			iTempDeltaZXD = GET_TIMER_DIFF(iLastZXDetectedTime, iThisZXDetectedTime);
+//			//iTempDeltaZXD = GET_TIMER_DIFF(unLastZXDetectedTime, iThisZXDetectedTime) - ZXD_FILTER_TIME - ACMP_HYS_AVG_TIME;
+//			iTempDeltaZXD = GET_TIMER_DIFF(unLastZXDetectedTime, iThisZXDetectedTime);
 ////			iTempPhaseChange2ZX = GET_TIMER_DIFF(iPhaseChangeTime, iThisZXDetectedTime) - ZXD_FILTER_TIME;
 //			//iTargetNewPeriod = (iTempDeltaZXD >> 1) + iTempPhaseChange2ZX;
-//			iTargetNewPeriod = (iTempDeltaZXD + mMotor.structMotor.ACT_PERIOD) >> 1;
-////			iTargetNewPeriod = (iTargetNewPeriod + mMotor.structMotor.ACT_PERIOD) >> 1;
+//			iTargetNewPeriod = (iTempDeltaZXD + tMotor.structMotor.ACT_PERIOD) >> 1;
+////			iTargetNewPeriod = (iTargetNewPeriod + tMotor.structMotor.ACT_PERIOD) >> 1;
 //			iTestEnter_TMR1_MATCH++;
 ////			RECORD_TEST_VALUE(iTestNewPeriodIndex, iTestZXDPeriodArray, iTargetNewPeriod);
 ////			RECORD_TEST_VALUE(iTestTIM0CNTIndex, iTestTIM0CNTArray, TIMER0->TCMPR);
 ////			if ((iTestNewPeriodIndex == 0) && (iTestZXDPeriodArray[0] != 0))
 ////			{
 ////				BRG_DISABLE;
-////				stopMotor();
+////				BLDC_stopMotor();
 ////				iTestZXDPeriodMax = getMax(iTestZXDPeriodArray, TEST_ARRAY_LEN);
 ////				iTestZXDPeriodMin = getMin(iTestZXDPeriodArray, TEST_ARRAY_LEN);
 ////				iTestTIM0CNTMax = getMax(iTestTIM0CNTArray, TEST_ARRAY_LEN);
@@ -370,26 +370,26 @@ void ACMP_IRQHandler(void)
 //				// We can consider ZX detected, and USE IT!!!!
 //				// To get stable and solide ZXD, more filter will be added in the TIM0 (phase change) interrupt
 //				// Only after continuously some number of ThisPhaseDetectedZX or miss ThisPhaseDetectedZX, it will enter or loss lock
-//				mMotor.structMotor.MSR.ThisPhaseDetectedZX = TRUE;
-//				iLastZXDetectedTime = iThisZXDetectedTime;
+//				tMotor.structMotor.MSR.ThisPhaseDetectedZX = TRUE;
+//				unLastZXDetectedTime = iThisZXDetectedTime;
 //
 //				// Incase the counter of TIM0 is already in front of iTempDeltaZXD
-//				if ((TRUE == mMotor.structMotor.MSR.Locked))	// && (iTargetNewPeriod > (TIMER_GetCounter(TIMER0) + ZXD_BEFORE_PHCHG)))
+//				if ((TRUE == tMotor.structMotor.MSR.Locked))	// && (iTargetNewPeriod > (TIMER_GetCounter(TIMER0) + ZXD_BEFORE_PHCHG)))
 //				{	// Still have time to change CMP in TIM0
 //					// You can have a rest, now the only thing left is T0 trigger phase change
 //
 ////					BRG_DISABLE;
 //					iTestDetectedZX++;
-//					//iTempDeltaZXD = (mMotor.structMotor.ACT_PERIOD * 3 + iTempDeltaZXD) >> 2;
+//					//iTempDeltaZXD = (tMotor.structMotor.ACT_PERIOD * 3 + iTempDeltaZXD) >> 2;
 //
-//					mMotor.structMotor.ACT_PERIOD = iTargetNewPeriod;   //GET_TIMER_DIFF(iLastZXDetectedTime, TIMER_GetCounter(TIMER1));
+//					tMotor.structMotor.ACT_PERIOD = iTargetNewPeriod;   //GET_TIMER_DIFF(unLastZXDetectedTime, TIMER_GetCounter(TIMER1));
 //					TIMER_SET_CMP_VALUE(TIMER0, TIMER0->TDR + (iTargetNewPeriod >> 2));	//(iTempPhaseChange2ZX >> 1));
 ////					if (TIMER0->TISR & 0x01)
 ////					{	// If TIM0 interrupt was already triggered
 ////						// Clear interrupt flag
 ////						TIMER0->TISR |= 0x01;
 ////					}
-//					//TIMER_SET_CMP_VALUE(TIMER0, mMotor.structMotor.ACT_PERIOD);
+//					//TIMER_SET_CMP_VALUE(TIMER0, tMotor.structMotor.ACT_PERIOD);
 //				}
 //			}
 //		}
@@ -411,12 +411,12 @@ void ADC_IRQHandler(void)
 		// Change ADC channel
 		if (ADC->ADCHER & ADC_CURRENT_CHN_MSK)
 		{
-			mMotor.structMotor.CURRENT = (uint16_t)(ADC_GET_CONVERSION_DATA(ADC, WHAT_EVER_DO_NOT_CARE));
+			tMotor.structMotor.unCURRENT = (uint16_t)(ADC_GET_CONVERSION_DATA(ADC, WHAT_EVER_DO_NOT_CARE));
 			ADC_SET_INPUT_CHANNEL(ADC, ADC_BATTERY_CHN_MSK);		
 		}
 		else if (ADC->ADCHER & ADC_BATTERY_CHN_MSK)
 		{
-			mMotor.structMotor.BATTERY = (uint16_t)(ADC_GET_CONVERSION_DATA(ADC, WHAT_EVER_DO_NOT_CARE));
+			tMotor.structMotor.unBATTERY = (uint16_t)(ADC_GET_CONVERSION_DATA(ADC, WHAT_EVER_DO_NOT_CARE));
 			ADC_SET_INPUT_CHANNEL(ADC, ADC_CURRENT_CHN_MSK);
 		}
 		ADC_START_CONV(ADC);
@@ -469,28 +469,33 @@ void ADC_IRQHandler(void)
 
 void SPI_IRQHandler(void)
 {
-	iSPI_ReadData = SPI->RX;
-	if(IS_COMM_CMD(iSPI_ReadData))
+	static uint8_t unValueIndex;
+	if ((SPI->STATUS & SPI_STATUS_RX_INTSTS_Msk) != 0)
 	{
-		if(IS_COMM_CMD_WR(iSPI_ReadData))
+		if (SPI_GET_RX_FIFO_COUNT(SPI) != COMM_LENGTH)
 		{
-			// Write register command
-			enumRegister = (ENUM_COMM_REG)(COMM_VALUE_MASK & iSPI_ReadData);
+			unCOM_SPI_TransErrCNT++;
 		}
 		else
 		{
-			// Read register command
-			SPI_WRITE_TX(SPI, mMotor.iValue[enumRegister]);
-			SPI_TRIGGER(SPI);
+			// Received 4 uint16, copy to RAM buffer and infor communication manager
+			for (unValueIndex = 0; unValueIndex < COMM_LENGTH; unValueIndex++)
+			{
+				unCOM_SPI_ReadData[unValueIndex] = SPI_READ_RX(SPI);
+			}
+			tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
 		}
+
+		// Clear Receive FIFO interrupt
+		// I don't know how to clear. Maybe just after I read out the data in FIFO and it is below threshold it will be OK
+		SPI_ClearRxFIFO(SPI);
+		SPI_ClearTxFIFO(SPI);
 	}
 	else
-	{
-		// write register value, which register was pointed in CMD (last transmision)
-		mMotor.iValue[enumRegister] = COMM_VALUE_MASK & iSPI_ReadData;
+	{	// Receive FIFO interrupt should be the only interrupt enabled for SPI
+		// So something strange happened
+		unCOM_SPI_TransErrCNT++;
 	}
-	// Clear unit transfer interrupt flag IF (SPI_CNTRL[16])
-	SPI->CNTRL |= SPI_CNTRL_IF_Msk;
 }
 
 void SysTick_Handler(void)

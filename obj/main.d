@@ -23,3 +23,4 @@
 .\obj\main.o: User\global.h
 .\obj\main.o: User\Communication.h
 .\obj\main.o: User\Error.h
+.\obj\main.o: User\Protection.h

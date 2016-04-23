@@ -96,7 +96,7 @@
 000048  4921              LDR      r1,|L1.208|
 ;;;49     {
 ;;;50     	register ENUM_ERROR_LEVEL iVernier = ERR_BRD_FAULT;
-00004a  2007              MOVS     r0,#7
+00004a  2008              MOVS     r0,#8
 ;;;51     	while (iVernier)
 ;;;52     	{
 ;;;53     		iVernier--; 
@@ -125,21 +125,21 @@
                           ENDP
 
                   LEDBlinkHandler PROC
-;;;62     void LEDBlinkHandler(ENUM_ERROR_LEVEL errorType, uint32_t iErrorStartTime)
+;;;62     void LEDBlinkHandler(ENUM_ERROR_LEVEL tErrorType, uint32_t unErrorStartTime)
 000064  b5f8              PUSH     {r3-r7,lr}
 ;;;63     {
 000066  2700              MOVS     r7,#0
 ;;;64     	uint16_t iLEDTime;
-;;;65     	if (ERR_BRD_FAULT == errorType)
+;;;65     	if (ERR_BRD_FAULT == tErrorType)
 ;;;66     	{
 ;;;67     		// Always ON
 ;;;68     		LED_ON;
 000068  4c1a              LDR      r4,|L1.212|
 00006a  4605              MOV      r5,r0                 ;63
-00006c  2807              CMP      r0,#7                 ;65
+00006c  2808              CMP      r0,#8                 ;65
 00006e  d010              BEQ      |L1.146|
 ;;;69     	}
-;;;70     	else if (ERR_NULL == errorType)
+;;;70     	else if (ERR_NULL == tErrorType)
 ;;;71     	{
 ;;;72     		// Always off
 ;;;73     		LED_OFF;
@@ -149,19 +149,19 @@
 ;;;74     	}
 ;;;75     	else
 ;;;76     	{
-;;;77     		iLEDTime = (uint16_t)(((uint32_t)(unSystemTick - iErrorStartTime)) % LED_PATTERN_INTERVAL);
+;;;77     		iLEDTime = (uint16_t)(((uint32_t)(unSystemTick - unErrorStartTime)) % LED_PATTERN_INTERVAL);
 000076  4815              LDR      r0,|L1.204|
 000078  6800              LDR      r0,[r0,#0]  ; unSystemTick
 00007a  1a40              SUBS     r0,r0,r1
 00007c  217d              MOVS     r1,#0x7d
-00007e  0149              LSLS     r1,r1,#5
+00007e  0109              LSLS     r1,r1,#4
 000080  f7fffffe          BL       __aeabi_uidivmod
 000084  4608              MOV      r0,r1
-;;;78     		if (iLEDTime >= errorType * (LED_BLINK_INTERVAL))
-000086  21ff              MOVS     r1,#0xff
-000088  3191              ADDS     r1,r1,#0x91
-00008a  434d              MULS     r5,r1,r5
-00008c  4285              CMP      r5,r0
+;;;78     		if (iLEDTime >= unLED_BLINK_PATTERN_TABLE[tErrorType])
+000086  4a14              LDR      r2,|L1.216|
+000088  00a9              LSLS     r1,r5,#2
+00008a  5851              LDR      r1,[r2,r1]
+00008c  4281              CMP      r1,r0
 00008e  d902              BLS      |L1.150|
 000090  e003              B        |L1.154|
                   |L1.146|
@@ -202,27 +202,27 @@
 ;;;100    void ErrorManager(void)
 0000a8  b510              PUSH     {r4,lr}
 ;;;101    {
-;;;102    	static uint32_t staLastErrorChangeTime;
-;;;103    	static ENUM_ERROR_LEVEL lastErrorType = ERR_NULL;
-;;;104    	ENUM_ERROR_LEVEL errorFetched;
-;;;105    	errorFetched = getPrecedenceError();
+;;;102    	static uint32_t unLastErrorChangeTime;
+;;;103    	static ENUM_ERROR_LEVEL tLastErrorType = ERR_NULL;
+;;;104    	ENUM_ERROR_LEVEL tErrorFetched;
+;;;105    	tErrorFetched = getPrecedenceError();
 0000aa  f7fffffe          BL       getPrecedenceError
 ;;;106    
-;;;107    	if (lastErrorType != errorFetched)
+;;;107    	if (tLastErrorType != tErrorFetched)
 0000ae  4a08              LDR      r2,|L1.208|
-0000b0  7811              LDRB     r1,[r2,#0]  ; lastErrorType
+0000b0  7811              LDRB     r1,[r2,#0]  ; tLastErrorType
 0000b2  4281              CMP      r1,r0
 0000b4  d004              BEQ      |L1.192|
 ;;;108    	{
-;;;109    		lastErrorType = errorFetched;
+;;;109    		tLastErrorType = tErrorFetched;
 ;;;110    		// error type changed (maybe changed to no error)
-;;;111    		staLastErrorChangeTime = unSystemTick;
+;;;111    		unLastErrorChangeTime = unSystemTick;
 0000b6  4905              LDR      r1,|L1.204|
 0000b8  7010              STRB     r0,[r2,#0]            ;109
 0000ba  6809              LDR      r1,[r1,#0]  ; unSystemTick
 ;;;112    		// No matter there is error or not, process!!
-;;;113    		LEDBlinkHandler(errorFetched, staLastErrorChangeTime);
-0000bc  6051              STR      r1,[r2,#4]  ; staLastErrorChangeTime
+;;;113    		LEDBlinkHandler(tErrorFetched, unLastErrorChangeTime);
+0000bc  6051              STR      r1,[r2,#4]  ; unLastErrorChangeTime
 0000be  e002              B        |L1.198|
                   |L1.192|
 ;;;114    	}
@@ -230,12 +230,12 @@
 ;;;116    	{
 ;;;117    		// Still same error (maybe no error)
 ;;;118    		// Only process when there is some error
-;;;119    		if (ERR_NULL != errorFetched)
+;;;119    		if (ERR_NULL != tErrorFetched)
 0000c0  2800              CMP      r0,#0
 0000c2  d002              BEQ      |L1.202|
 ;;;120    		{
-;;;121    			LEDBlinkHandler(errorFetched, staLastErrorChangeTime);
-0000c4  6851              LDR      r1,[r2,#4]  ; staLastErrorChangeTime
+;;;121    			LEDBlinkHandler(tErrorFetched, unLastErrorChangeTime);
+0000c4  6851              LDR      r1,[r2,#4]  ; unLastErrorChangeTime
                   |L1.198|
 0000c6  f7fffffe          BL       LEDBlinkHandler
                   |L1.202|
@@ -253,12 +253,26 @@
                           DCD      ||.data||
                   |L1.212|
                           DCD      0x50004280
+                  |L1.216|
+                          DCD      ||.constdata||
+
+                          AREA ||.constdata||, DATA, READONLY, ALIGN=2
+
+                  unLED_BLINK_PATTERN_TABLE
+                          DCD      0x00000190
+                          DCD      0x00000190
+                          DCD      0x00000320
+                          DCD      0x00000320
+                          DCD      0x00000320
+                          DCD      0x00000320
+                          DCD      0x000004b0
+                          DCD      0x00000000
 
                           AREA ||.data||, DATA, ALIGN=2
 
-                  lastErrorType
+                  tLastErrorType
 000000  00000000          DCB      0x00,0x00,0x00,0x00
-                  staLastErrorChangeTime
+                  unLastErrorChangeTime
                           DCD      0x00000000
                   unErrorMaster
                           DCD      0x00000000
@@ -268,9 +282,9 @@
 #line 1 "User\\Error.c"
 	AREA ||.rev16_text||, CODE
 	THUMB
-	EXPORT |__asm___7_Error_c_delay____REV16|
+	EXPORT |__asm___7_Error_c_2ab3098d____REV16|
 #line 118 ".\\CMSIS\\core_cmInstr.h"
-|__asm___7_Error_c_delay____REV16| PROC
+|__asm___7_Error_c_2ab3098d____REV16| PROC
 #line 119
 
  rev16 r0, r0
@@ -278,9 +292,9 @@
 	ENDP
 	AREA ||.revsh_text||, CODE
 	THUMB
-	EXPORT |__asm___7_Error_c_delay____REVSH|
+	EXPORT |__asm___7_Error_c_2ab3098d____REVSH|
 #line 132
-|__asm___7_Error_c_delay____REVSH| PROC
+|__asm___7_Error_c_2ab3098d____REVSH| PROC
 #line 133
 
  revsh r0, r0

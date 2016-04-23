@@ -13,7 +13,7 @@
 //#include "Mini5xxDE.h"  
 #include "main.h"
 
-void CLK_Init()
+void initClk()
 {
     /* Enable internal 22.1184MHz */
     CLK->PWRCON |= CLK_PWRCON_IRC22M_EN_Msk;
@@ -52,7 +52,7 @@ void CLK_Init()
     CLK_EnableModuleClock(ACMP_MODULE);
 }
 
-void IRQ_Init()
+void initIRQ()
 {
     NVIC_EnableIRQ(TMR0_IRQn);
     NVIC_EnableIRQ(TMR1_IRQn);
@@ -73,7 +73,7 @@ void IRQ_Init()
     GPIO_EnableEINT0(BRG_FAULT_PORT, BRG_FAULT_PIN, GPIO_INT_FALLING);
 }
 
-void GPIO_Init()
+void initGPIO()
 {
 /*---------------------------------------------------------------------------------------------------------*/
 /* GPIO configuration                                                                                 	   */
@@ -164,7 +164,7 @@ void GPIO_Init()
 	
 }
 
-void TIM_Config(void)
+void configTIM(void)
 {
 	// T0 used to change phase automatically
 	// T1 used to filter ZX
@@ -175,7 +175,7 @@ void TIM_Config(void)
     //TIMER_EnableInt(TIMER1);
 }
 
-void ADC_Config(void)
+void configADC(void)
 {
 
     ADC_SetExtraSampleTime(ADC, 0 , ADC_SAMPLE_CLOCK_16);
@@ -205,7 +205,7 @@ void ADC_Config(void)
     ADC_START_CONV(ADC);
 }
 
-void SPI_Config(void)
+void configSPI(void)
 {
 /*---------------------------------------------------------------------------------------------------------*/
 /* Init SPI                                                                                                */
@@ -218,13 +218,17 @@ void SPI_Config(void)
     // peripheral clock frequency of slave device must be faster than the bus clock frequency of the master
     SPI_Open(SPI, SPI_SLAVE, SPI_MODE_0, COMM_BIT_LENTH, COMM_BAUT_RATE);
 
+    SPI_SET_LSB_FIRST(SPI);
+    SPI_SET_SS_LOW(SPI);
+
     /* Enable the automatic hardware slave select function. Select the SS pin and configure as low-active. */
     SPI_EnableAutoSS(SPI, SPI_SS, SPI_SS_ACTIVE_LOW);
 
     /* Use FIFO */
-    //SPI_EnableFIFO(SPI, SPI_TX_FIFO_THRE, SPI_RX_FIFO_THRE);
-    /* Enable SPI Unit Transfer Interrupt */
-    SPI_EnableInt(SPI, SPI_IE_MASK);
+    SPI_EnableFIFO(SPI, COMM_LENGTH, COMM_LENGTH - 1);
+
+    /* Enable SPI Receive FIFO interrupt (interrupt when FIFO count is 4) */
+    SPI_EnableInt(SPI, SPI_FIFO_RX_INTEN_MASK);
 }
 
 //void ACMP_Config(void)
@@ -233,7 +237,7 @@ void SPI_Config(void)
 //    //ACMP->CR1 = ACMP_CPP1_P31_0 | ACMP_HYST_EN | ACMP_IE | ACMP_EN ;
 //}
 
-void PWM_Init(void)
+void initPWM(void)
 {
     PWM_Stop(PWM, PWM_CHN_ALL_MSK);
     PWM_SET_PRESCALER(PWM, 0, PWM_CHN01_PRESCALER);
@@ -280,7 +284,7 @@ void PWM_Init(void)
     PWM->CNR[5] = PWM_PERIOD;
     PWM_EnableOutput(PWM, PWM_CHN_ALL_MSK);
     PWM_INT_DISABLE;	// Disable all PWM interrupt 
-    stopMotor();
+    BLDC_stopMotor();
     //MOTOR_SHUT_DOWN;
 
     // PWM duty change every each phase for both ramp up and locked state
@@ -290,13 +294,13 @@ void PWM_Init(void)
     PWM->PHCHGMASK = PHCHG_CTL_CMP0;	// Input of ACMP0 is controlled by PHCHG
 }
 
-void SYS_Init(void)
+void initSys(void)
 {
     /* Unlock protected registers */
     SYS_UnlockReg();
     
     /* Clock initialization, Enable PWM, ADC, TIM, UART clock */
-    CLK_Init();
+    initClk();
     //CLK->APBCLK = CLK_APBCLK_UART_EN_Msk;
     
     /* Update System Core Clock */
@@ -309,30 +313,37 @@ void SYS_Init(void)
     
     /* PWM Configuration */
     // Close all MOSFET here first, then output GPIO
-    PWM_Init();
+    initPWM();
       
     /* IO Configuration */
-    GPIO_Init();
+    initGPIO();
 
     /* ACMP initialization */
     //ACMP_Config();
 
     /* ADC initialization */
-    ADC_Config();
+    configADC();
 
     /* TIM initialization */
-    TIM_Config();
+    configTIM();
 
     /* SPI initialization */
-    SPI_Config();
+    configSPI();
 
     /* Enable all interrupt from NVIC */
-    IRQ_Init();
+    initIRQ();
 
     /* Lock protected registers */
     SYS_LockReg();
                          
 }    
+
+void initEnv(void)
+{
+	unCOM_SPI_TransCNT = 0;
+	unCOM_SPI_TransErrCNT = 0;
+	unZXMatchCNT = 0;
+}
 
 //    uint32_t imsTest;
 //	uint32_t iEntreTime;
@@ -340,22 +351,23 @@ void SYS_Init(void)
 int main()
 {
 
-    SYS_Init();
+    initSys();
+    initEnv();
 
-    checkMotor();
+    PTC_checkMotor();
 
     /* ----==== Here is the parameter used for test ====----*/
     // Max PWM Duty is: PWM_PERIOD = 441
     // Max Period is:
     MOTOR_SHUT_DOWN;
 
-    mMotor.structMotor.LCT_DUTY = 200;
-    mMotor.structMotor.LCT_PERIOD = 10;	// Unit ms
-    mMotor.structMotor.RU_DUTY = 320;
-    mMotor.structMotor.RU_PERIOD = 8000;	// Unit 2MH, 20ms, 500rpm
-	mMotor.structMotor.TGT_DUTY = 400;
-	mMotor.structMotor.MCR.RotateDirection = ROTATE_CLOCKWISE;	// Clockwise
-    mMotor.structMotor.MCR.MotorNeedToRun = TRUE;
+    tMotor.structMotor.unLCT_DUTY = 200;
+    tMotor.structMotor.unLCT_PERIOD = 10;	// Unit ms
+    tMotor.structMotor.unRU_DUTY = 320;
+    tMotor.structMotor.unRU_PERIOD = 8000;	// Unit 2MH, 20ms, 500rpm
+	tMotor.structMotor.unTGT_DUTY = 400;
+	tMotor.structMotor.MCR.bRotateDirection = ROTATE_CLOCKWISE;	// Clockwise
+    tMotor.structMotor.MCR.bMotorNeedToRun = TRUE;
     /* ----=============== Test End ================---- */
 
     while(1)
@@ -368,19 +380,19 @@ int main()
 //	{
 //	    imsTest = unSystemTick;
 //	}
-		BLDCSensorLessManager();
+		BLDC_SensorLessManager();
 		//	CommunicationManager();
 		ErrorManager();
 
 		// For test
-		if (TRUE == mMotor.structMotor.MSR.Locked)
+		if (TRUE == tMotor.structMotor.MSR.bLocked)
 		{
 			if (unSystemTick%5000 == 0)
 			{
 				if (iTestSpeedLastTime != unSystemTick)
 				{
 					iTestSpeedLastTime = unSystemTick;
-					mMotor.structMotor.TGT_DUTY = iTestSpeedSequence[iTestSpeedSequenIndex];
+					tMotor.structMotor.unTGT_DUTY = iTestSpeedSequence[iTestSpeedSequenIndex];
 					INDEX_INCREASE(iTestSpeedSequenIndex, TEST_SPEED_SEQUENCE_NUM);
 				}
 			}

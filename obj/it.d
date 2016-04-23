@@ -22,3 +22,4 @@
 .\obj\it.o: User\global.h
 .\obj\it.o: User\Communication.h
 .\obj\it.o: User\Error.h
+.\obj\it.o: User\Protection.h

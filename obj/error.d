@@ -22,3 +22,4 @@
 .\obj\error.o: User\global.h
 .\obj\error.o: User\Communication.h
 .\obj\error.o: User\Error.h
+.\obj\error.o: User\Protection.h

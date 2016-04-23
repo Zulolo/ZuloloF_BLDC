@@ -59,23 +59,23 @@ ENUM_ERROR_LEVEL getPrecedenceError(void)
 	return iVernier;
 }
 
-void LEDBlinkHandler(ENUM_ERROR_LEVEL errorType, uint32_t iErrorStartTime)
+void LEDBlinkHandler(ENUM_ERROR_LEVEL tErrorType, uint32_t unErrorStartTime)
 {
 	uint16_t iLEDTime;
-	if (ERR_BRD_FAULT == errorType)
+	if (ERR_BRD_FAULT == tErrorType)
 	{
 		// Always ON
 		LED_ON;
 	}
-	else if (ERR_NULL == errorType)
+	else if (ERR_NULL == tErrorType)
 	{
 		// Always off
 		LED_OFF;
 	}
 	else
 	{
-		iLEDTime = (uint16_t)(((uint32_t)(unSystemTick - iErrorStartTime)) % LED_PATTERN_INTERVAL);
-		if (iLEDTime >= errorType * (LED_BLINK_INTERVAL))
+		iLEDTime = (uint16_t)(((uint32_t)(unSystemTick - unErrorStartTime)) % LED_PATTERN_INTERVAL);
+		if (iLEDTime >= unLED_BLINK_PATTERN_TABLE[tErrorType])
 		{
 			LED_OFF;
 		}
@@ -99,26 +99,26 @@ void LEDBlinkHandler(ENUM_ERROR_LEVEL errorType, uint32_t iErrorStartTime)
 // to make sure then responding time will not burn the board
 void ErrorManager(void)
 {
-	static uint32_t staLastErrorChangeTime;
-	static ENUM_ERROR_LEVEL lastErrorType = ERR_NULL;
-	ENUM_ERROR_LEVEL errorFetched;
-	errorFetched = getPrecedenceError();
+	static uint32_t unLastErrorChangeTime;
+	static ENUM_ERROR_LEVEL tLastErrorType = ERR_NULL;
+	ENUM_ERROR_LEVEL tErrorFetched;
+	tErrorFetched = getPrecedenceError();
 
-	if (lastErrorType != errorFetched)
+	if (tLastErrorType != tErrorFetched)
 	{
-		lastErrorType = errorFetched;
+		tLastErrorType = tErrorFetched;
 		// error type changed (maybe changed to no error)
-		staLastErrorChangeTime = unSystemTick;
+		unLastErrorChangeTime = unSystemTick;
 		// No matter there is error or not, process!!
-		LEDBlinkHandler(errorFetched, staLastErrorChangeTime);
+		LEDBlinkHandler(tErrorFetched, unLastErrorChangeTime);
 	}
 	else
 	{
 		// Still same error (maybe no error)
 		// Only process when there is some error
-		if (ERR_NULL != errorFetched)
+		if (ERR_NULL != tErrorFetched)
 		{
-			LEDBlinkHandler(errorFetched, staLastErrorChangeTime);
+			LEDBlinkHandler(tErrorFetched, unLastErrorChangeTime);
 		}	
 	}
 	

@@ -2,76 +2,121 @@
 #define __BLDC_SENSOR_LESS_H__
 
 #include "global.h"
-	typedef struct
-	{
-		struct
-		{
-			__IO uint16_t MotorNeedToRun:1;
-			__IO uint16_t RotateDirection:1;
-		}MCR;
-		struct
-		{
-			__IO uint16_t MotorPowerOn:1;
-			__IO uint16_t ZeroCrossDetecting:1;
-			__IO uint16_t Locked:1;
-			__IO uint16_t ThisPhaseDetectedZX:1;
-			__IO uint16_t MissedZXD_CNT:8;
-			__IO uint16_t SuccessZXD_CNT:8;
-		}MSR;
-//		__IO uint16_t  MCR;		/*!<  Motor Control  */
-//		__IO uint16_t  MSR;		/*!<  Motor Status  */
-		//  __IO uint32_t  ACNR;       /*!<  PWM Actual Counter Register  */
-		//  __IO uint32_t  STCNR;        /*!<  PWM Start Counter Register  */
-		//  __IO uint32_t  SBCNR;        /*!<  PWM Stable Counter Register  */
-		__IO uint16_t  LCT_DUTY;	/*!<  PWM Locating Duty  */
-		__IO uint16_t  RU_DUTY;		/*!<  PWM Ramp Up Start Duty  */
-		__IO uint16_t  TGT_DUTY;	/*!<  PWM Target (Locked State) Duty  */
-		__IO uint16_t  ACT_DUTY;	/*!<  PWM Actual Duty  */
-		__IO uint16_t  LCT_PERIOD;	/*!<  Locating State One Phase Period  */
-		__IO uint32_t  RU_PERIOD;	/*!<  Ramp Up Start One Phase Period  */
-		__IO uint32_t  ACT_PERIOD;	/*!<  Actual One Phase Period  */
-		__IO uint32_t  PHASE_CHANGE_CNT;	/*!<  Phase changed counter  */
-		__IO uint16_t  RPM;			/*!<  Actual RPM  */
-		__IO uint16_t  RESERVE;		/*!<  Reserve for future use (round up 32bits) */
-		__IO uint16_t  BATTERY;		/*!<  Battery Voltage  */
-		__IO uint16_t  CURRENT;		/*!<  Current  */
-	} MOTOR_T;
 
-	typedef union
-	{
-		uint16_t iValue[sizeof(MOTOR_T)/sizeof(uint16_t)];
-		MOTOR_T structMotor;
-	} MOTOR_UNION_T;
+typedef union
+{
+	uint16_t iValue[sizeof(MOTOR_T)/sizeof(uint16_t)];
+	MOTOR_T structMotor;
+} MOTOR_UNION_T;
 
-	typedef enum {
-		ENUM_TIM1_AVOID_ZXD = 0,
-		ENUM_TIM1_ZXD_FILTER//,
+typedef enum {
+	ENUM_TIM1_AVOID_ZXD = 0,
+	ENUM_TIM1_ZXD_FILTER//,
 //		ENUM_TIM1_START_ZXD
-	}ENUM_TIM1_USAGE;
+}ENUM_TIM1_USAGE;
+
+// GPIOs
+#define BRG_FAULT_PORT				P3
+#define BRG_FAULT_PIN_NUM			2
+#define BRG_FAULT_PIN				BIT2
+#define BRG_EN_PORT					P3
+#define BRG_EN_PIN					BIT0
+#define BRG_ENABLE					(P30 = 1)
+#define BRG_DISABLE					(P30 = 0)
 
 //	#define ACMP0_FALLING_ENABLE		(ACMP->CMPCR[0] = ACMP_CMPCR_FALLING_Msk | ACMP_CMPCR_HYSEN_Msk | ACMP_CMPCR_ACMPIE_Msk | ACMP_CMPCR_ACMPEN_Msk)
 //	#define ACMP0_RISING_ENABLE			(ACMP->CMPCR[0] = ACMP_CMPCR_RISING_Msk | ACMP_CMPCR_HYSEN_Msk | ACMP_CMPCR_ACMPIE_Msk | ACMP_CMPCR_ACMPEN_Msk)
 //	#define ACMP0_EDGE_SELECT			((PWM->PHCHG & DETEC_UP) ? (ACMP_CMPCR_RISING_Msk) : (ACMP_CMPCR_FALLING_Msk))
-	#define DETEC_UP_POS				7
-	#define DETEC_UP					(1ul << DETEC_UP_POS)
-	#define ACMP0_EDGE_MATCH			(((PWM->PHCHG & DETEC_UP) >> DETEC_UP_POS) == (( ACMP->CMPSR & ACMP_CMPSR_ACMPCO0_Msk) >> ACMP_CMPSR_ACMPCO0_Pos))
-	#define ACMP0_ENABLE				(ACMP->CMPCR[0] |= ACMP_CMPCR_HYSEN_Msk | ACMP_CMPCR_ACMPEN_Msk)
-	#define ACMP0_INT_ENABLE			(ACMP->CMPCR[0] |= ACMP_CMPCR_ACMPIE_Msk)
-	#define ACMP0_INT_DISABLE			(ACMP->CMPCR[0] &= (~ACMP_CMPCR_ACMPIE_Msk))
-	#define AVOID_ZXD_AFTER_PHCHG		160	// 160/2M = 80us
-	#define ZXD_FILTER_TIME				200	// 200/2M = 100us
-	#define CALC_TIME_BT_ZXD_SET_TIM	60	// calculation time between after confirmed ZX and set TIMER0
-	#define TIME_DEBT					(ZXD_FILTER_TIME + CALC_TIME_BT_ZXD_SET_TIM)	// Included ZXD filter time and calculation time between after confirmed ZX and set TIMER0
-	#define ZXD_BEFORE_PHCHG			50	// 50/2M = 25us	// If it already need change phase when ZX was confirmed ZX, give some time to TIM0 to response
-	#define ACMP_HYS_AVG_TIME			20	// Average Hysteresis time 20/2M = 10us
-	#define MIN_PHASE_TIME				500	//(AVOID_ZXD_AFTER_PHCHG + ZXD_FILTER_TIME + 100)	// 1200/2M=0.6ms, 8333RPM if 42PC=1MC==7EC
-	#define MAX_PHASE_TIME				(10000)	// Unit 2MH, 5ms, 286rpm if 42PC=1MC==7EC
+#define DETEC_UP_POS				7
+#define DETEC_UP					(1ul << DETEC_UP_POS)
+#define ACMP0_EDGE_MATCH			(((PWM->PHCHG & DETEC_UP) >> DETEC_UP_POS) == (( ACMP->CMPSR & ACMP_CMPSR_ACMPCO0_Msk) >> ACMP_CMPSR_ACMPCO0_Pos))
+#define ACMP0_ENABLE				(ACMP->CMPCR[0] |= ACMP_CMPCR_HYSEN_Msk | ACMP_CMPCR_ACMPEN_Msk)
+#define ACMP0_INT_ENABLE			(ACMP->CMPCR[0] |= ACMP_CMPCR_ACMPIE_Msk)
+#define ACMP0_INT_DISABLE			(ACMP->CMPCR[0] &= (~ACMP_CMPCR_ACMPIE_Msk))
+#define AVOID_ZXD_AFTER_PHCHG		160	// 160/2M = 80us
+#define ZXD_FILTER_TIME				200	// 200/2M = 100us
+#define CALC_TIME_BT_ZXD_SET_TIM	60	// calculation time between after confirmed ZX and set TIMER0
+#define TIME_DEBT					(ZXD_FILTER_TIME + CALC_TIME_BT_ZXD_SET_TIM)	// Included ZXD filter time and calculation time between after confirmed ZX and set TIMER0
+#define ZXD_BEFORE_PHCHG			50	// 50/2M = 25us	// If it already need change phase when ZX was confirmed ZX, give some time to TIM0 to response
+#define ACMP_HYS_AVG_TIME			20	// Average Hysteresis time 20/2M = 10us
+#define MIN_PHASE_TIME				500	//(AVOID_ZXD_AFTER_PHCHG + ZXD_FILTER_TIME + 100)	// 1200/2M=0.6ms, 8333RPM if 42PC=1MC==7EC
+#define MAX_PHASE_TIME				(10000)	// Unit 2MH, 5ms, 286rpm if 42PC=1MC==7EC
 
-	#define MINI51_TIM_CNT_MAX			0xFFFFFF
-	#define GET_TIM1_CMP_VALUE(x)		(((x) >= MINI51_TIM_CNT_MAX) ? ((x) - MINI51_TIM_CNT_MAX) : (x))
-	#define GET_TIMER_DIFF(iLast, iThis)	(((iThis) > (iLast)) ? ((iThis) - (iLast)) : ((iThis) + (MINI51_TIM_CNT_MAX - (iLast))))
-	#define MAX_MISS_ZXD_THRESHOLD		12
-	#define MIN_SUCC_ZXD_THRESHOLD		4
+#define MINI51_TIM_CNT_MAX			0xFFFFFF
+#define GET_TIM1_CMP_VALUE(x)		(((x) >= MINI51_TIM_CNT_MAX) ? ((x) - MINI51_TIM_CNT_MAX) : (x))
+#define GET_TIMER_DIFF(iLast, iThis)	(((iThis) > (iLast)) ? ((iThis) - (iLast)) : ((iThis) + (MINI51_TIM_CNT_MAX - (iLast))))
+#define MAX_MISS_ZXD_THRESHOLD		12
+#define MIN_SUCC_ZXD_THRESHOLD		4
+
+#define MOSFET_DRV_0_4_PORT			P2
+#define MOSFET_DRV_5_PORT			P0
+#define MOSFET_DRV_0_PIN			BIT2
+#define MOSFET_DRV_1_PIN			BIT3
+#define MOSFET_DRV_2_PIN			BIT4
+#define MOSFET_DRV_3_PIN			BIT5
+#define MOSFET_DRV_4_PIN			BIT6
+#define MOSFET_DRV_5_PIN			BIT4
+
+#define MOSFET_AS_PIN_ADDR      	GPIO_PIN_ADDR(2, 2)
+#define MOSFET_BS_PIN_ADDR     		GPIO_PIN_ADDR(2, 4)
+#define MOSFET_CS_PIN_ADDR     		GPIO_PIN_ADDR(2, 6)
+#define MOSFET_AD_PIN_ADDR      	GPIO_PIN_ADDR(2, 3)
+#define MOSFET_BD_PIN_ADDR          GPIO_PIN_ADDR(2, 5)
+#define MOSFET_CD_PIN_ADDR			GPIO_PIN_ADDR(0, 4)
+
+#define GPIO_OFFD_OFF_SET			16
+#define ZERO_DETECT_PORT			P1
+#define ZERO_DETECT_A_PIN			BIT0
+#define ZERO_DETECT_B_PIN			BIT3
+#define ZERO_DETECT_C_PIN			BIT5
+#define ZERO_DETECT_M_PIN			BIT4
+
+#define PWM_PHCHG_PWM_MASK			(0x00003F00ul)
+#define PWM_PHCHG_D0_7_MASK			(0x000000FFul)
+#define PWM_PERIOD 					(884-1)	// PWM T=0.08ms, if target is 3K PRM, 42 E-Circle per M-Circle,
+											// each PC should less than 0.5 ms.
+											// So each E-Circle at least has 6 PWM circle
+
+#define ROTATE_CLOCKWISE		0
+#define ROTATE_ANTICLOCKWISE	1
+
+#define PWM_INT_ENABLE				(PWM_EnableDutyInt(PWM, 1, WHAT_EVER_DO_NOT_CARE))
+
+#define PWM_INT_DISABLE				(PWM->PIER = 0)
+
+#define IS_PWM_IRQ_ENABLED			(PWM->PIER)
+
+// To increase shut down speed we can just directly write a constant number into PHCHG register
+// But since we also have protection form driver IC, it is not so critical here
+// So better just shut down, not change other bit in the register
+// First write PHCHGNXT because between write PHCHG and PHCHGNXT time, PHCHG may be updated by PHCHGNXT
+//#define	MOSFET_ALL_OFF			(PWM->PHCHGNXT = (PWM->PHCHGNXT & (~PWM_PHCHG_PWM_MASK)) | PWM_PHCHG_D0_7_MASK); /
+//								(PWM->PHCHG = (PWM->PHCHG & (~PWM_PHCHG_PWM_MASK)) | PWM_PHCHG_D0_7_MASK);
+// After shut down all MOSFET you need to re-initialize all PHCHG register bits
+#define MOSFET_SHUT_DOWN_VAL		(0x000000FFul)
+#define	MOTOR_SHUT_DOWN				BRG_DISABLE; \
+									PWM_INT_DISABLE; \
+									(TIMER_Stop(TIMER0)); \
+									(TIMER_Stop(TIMER1)); \
+									(TIMER_DisableInt(TIMER0)); \
+									(TIMER_DisableInt(TIMER1)); \
+									(PWM->PHCHGNXT = MOSFET_SHUT_DOWN_VAL); \
+									(PWM->PHCHG = MOSFET_SHUT_DOWN_VAL)
+
+//(ACMP->CMPCR[0] &= ~(ACMP_CMPCR_ACMPIE_Msk | ACMP_CMPCR_ACMPEN_Msk)); \
+
+#define MOTOR_SET_DUTY(x)			(PWM->CMR[1] = (x)); \
+									(PWM->CMR[3] = (x)); \
+									(PWM->CMR[5] = (x))
+//#define MOTOR_SET_DUTY(x)			(PWM->CMR[0] = (x)); \
+//									(PWM->CMR[2] = (x)); \
+//									(PWM->CMR[4] = (x))
+//#define MOTOR_SET_DUTY(x)			(PWM->CMR[0] = (x)); \
+//									(PWM->CMR[1] = (x)); \
+//									(PWM->CMR[2] = (x)); \
+//									(PWM->CMR[3] = (x)); \
+//									(PWM->CMR[4] = (x)); \
+//									(PWM->CMR[5] = (x))
 
 	#ifdef __USED_BY_BLDC_SENSOR_LESS_C__
 		#define EXTERNAL_BLDC  
@@ -162,8 +207,6 @@
 		} ENUM_STATUS;
 
 		const uint8_t unLocatePhaseSequencyTable[] = {0, 1, 2, 1};
-		volatile uint32_t* unMosfetTestTable[] = {MOSFET_AS_PIN_ADDR, MOSFET_BS_PIN_ADDR, MOSFET_CS_PIN_ADDR,
-				MOSFET_AD_PIN_ADDR, MOSFET_BD_PIN_ADDR, MOSFET_CD_PIN_ADDR};
 
 		#define ALREADY_ROTATING_DETECTING			0xFFFF
 		#define MAX_ROTATING_DETECT_PHASE_TIME		30	// half phase max 30ms
@@ -178,14 +221,14 @@
 //		#define MOTOR_R_DIRECTION_MSK				(0x02ul)
 //		#define IS_MOTOR_NEED_TO_RUN(x)				((x) & MOTOR_RUNNING_MSK)
 
-//		#define IS_MOTOR_R_CLOCKWISE				(((mMotor.structMotor.MCR & MOTOR_R_DIRECTION_MSK) == 0) ? TRUE : FALSE)
-		#define GET_PHASE_VALUE(x)					((mMotor.structMotor.MCR.RotateDirection == ROTATE_CLOCKWISE) ? PHASE_TAB_CLOCKWISE[(x)] : PHASE_TAB_ANTICLOCKWISE[(x)])
+//		#define IS_MOTOR_R_CLOCKWISE				(((tMotor.structMotor.MCR & MOTOR_R_DIRECTION_MSK) == 0) ? TRUE : FALSE)
+		#define GET_PHASE_VALUE(x)					((tMotor.structMotor.MCR.bRotateDirection == ROTATE_CLOCKWISE) ? PHASE_TAB_CLOCKWISE[(x)] : PHASE_TAB_ANTICLOCKWISE[(x)])
 		#define PHASE_NUMBER						(sizeof(PHASE_TAB_CLOCKWISE)/sizeof(uint32_t))
 		#define PHASE_INCREASE(x) 					INDEX_INCREASE((x), PHASE_NUMBER) //((x) = (((x) == (PHASE_NUMBER - 1)) ? 0 : ((x) + 1)))
 
-//		#define RESET_MOTOR_SR_BIT(x)				(mMotor.structMotor.MSR &= (~(1ul << (x))))
-//		#define SET_MOTOR_SR_BIT(x)					(mMotor.structMotor.MSR |= (1ul << (x)))
-//		#define IS_MOTOR_STATUS_SET(x)				(mMotor.structMotor.MSR & (1ul << (x)))
+//		#define RESET_MOTOR_SR_BIT(x)				(tMotor.structMotor.MSR &= (~(1ul << (x))))
+//		#define SET_MOTOR_SR_BIT(x)					(tMotor.structMotor.MSR |= (1ul << (x)))
+//		#define IS_MOTOR_STATUS_SET(x)				(tMotor.structMotor.MSR & (1ul << (x)))
 
 		#define WAIT_AFTER_LOCATE_TIME				0	// ms
 
@@ -200,8 +243,7 @@
 //		#define MOTOR_RAMPUP_PR_DCR(x)				((x) = (((x) < MOTOR_RAMPUP_PR_MIN) ? (x) : ((x) - 100)))
 		#define MOTOR_START_ZXD_SPEED				(1600 - 1)	// frequency 2M,
 //		#define MOTOR_START_ZXD_MINROT_CNT			200	// After phase change xxx times at max speed of rampup, start to detect ZX
-		#define SET_MOSFET_ON_MANUAL(pinAddr)		(*(pinAddr) = 0)
-		#define SET_MOSFET_OFF_MANUAL(pinAddr)		(*(pinAddr) = 1)
+
 //		typedef enum {
 //			PHASE_AB = 0,
 //			PHASE_AC,
@@ -221,29 +263,29 @@
 //		} ENUM_MOTOR_ANTICLOCKWISE_PHASE;
 
 
-		static ENUM_MOTOR_STATE enumMotorState = MOTOR_IDLE;
-		static ENUM_ROTATE_DETECT_STATE enumRotateDetectState = DETECT_START;
-		static uint8_t iLocateIndex;
-		static uint8_t iPhaseChangeCNT4Period;
-		static uint8_t iPhaseChangeCNT4Duty;
-		static uint16_t iRampUpPeriodMiniCNT;
-		static uint32_t iCurrentPHCHG;
-		static uint32_t iLastPhaseChangeTime;
-		static uint32_t iRotateDetectStartTime;	// Used to record when enter motor start, 
+		static ENUM_MOTOR_STATE tMotorState = MOTOR_IDLE;
+		static ENUM_ROTATE_DETECT_STATE tRotateDetectState = DETECT_START;
+		static uint8_t unLocateIndex;
+		static uint8_t unPhaseChangeCNT4Period;
+		static uint8_t unPhaseChangeCNT4Duty;
+		static uint16_t unRampUpPeriodMiniCNT;
+		static uint32_t unCurrentPHCHG;
+		static uint32_t unLastPhaseChangeTime;
+		static uint32_t unRotateDetectStartTime;	// Used to record when enter motor start, 
 												// ALready rotating detect end time will be compared with this time
 	#else 
 		#define EXTERNAL_BLDC extern
 	#endif
-EXTERNAL_BLDC MOTOR_UNION_T mMotor;	// Motor control register
-EXTERNAL_BLDC ENUM_TIM1_USAGE FLAG_TIM1_USEAGE;
-EXTERNAL_BLDC uint32_t iLastZXDetectedTime;
+EXTERNAL_BLDC __IO MOTOR_UNION_T tMotor;	// Motor control register
+EXTERNAL_BLDC __IO ENUM_TIM1_USAGE FLAG_TIM1_USEAGE;
+EXTERNAL_BLDC __IO uint32_t unLastZXDetectedTime;
+EXTERNAL_BLDC __IO uint32_t unZXMatchCNT;
 //EXTERNAL_BLDC uint32_t iPhaseChangeCNT4Period;	// Used to check if phase has been changed after every 60ms.
 											// If not, force MOSFET OFF. 
 											// 60ms=1.39rps=83.33rpm, we should make sure 1st startup ramp phase < 60ms
 
-EXTERNAL_BLDC uint8_t iCurrentPhase;
+EXTERNAL_BLDC uint8_t unCurrentPhase;
 EXTERNAL_BLDC uint8_t FLAG_PHASE_CHANGED;
-EXTERNAL_BLDC __INLINE void stopMotor(void);
-EXTERNAL_BLDC void checkMotor(void);
-EXTERNAL_BLDC void BLDCSensorLessManager(void);
+EXTERNAL_BLDC __INLINE void BLDC_stopMotor(void);
+EXTERNAL_BLDC void BLDC_SensorLessManager(void);
 #endif
