@@ -63,6 +63,6 @@ EXTERNAL_ERROR void delay(uint32_t unDelayMs);
 EXTERNAL_ERROR void resetError(ENUM_ERROR_LEVEL enumErrorType);
 EXTERNAL_ERROR void setError(ENUM_ERROR_LEVEL enumErrorType);
 EXTERNAL_ERROR void clearError(void);
-EXTERNAL_ERROR void ErrorManager(void);
+EXTERNAL_ERROR void ERR_Manager(void);
 
 #endif

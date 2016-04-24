@@ -97,7 +97,7 @@ void LEDBlinkHandler(ENUM_ERROR_LEVEL tErrorType, uint32_t unErrorStartTime)
 // Take charge of all error reporting via LED/UART
 // Shut down all MOSFET was handled as soon as the critical error was found
 // to make sure then responding time will not burn the board
-void ErrorManager(void)
+void ERR_Manager(void)
 {
 	static uint32_t unLastErrorChangeTime;
 	static ENUM_ERROR_LEVEL tLastErrorType = ERR_NULL;

@@ -14,7 +14,7 @@
 // Used to change phase
 void TMR0_IRQHandler(void)                                   
 {
-	TIMER0->TISR  = TIMER0->TISR;	//~0;    // Clear interrupt flag
+	TIMER0->TISR  = TIMER0->TISR;	//~0;    // Write 1 to clear interrupt flag
 
 	//iPhaseChangeCNT4Period++;
 	FLAG_PHASE_CHANGED = SET;
@@ -470,20 +470,32 @@ void ADC_IRQHandler(void)
 void SPI_IRQHandler(void)
 {
 	static uint8_t unValueIndex;
-	if ((SPI->STATUS & SPI_STATUS_RX_INTSTS_Msk) != 0)
+	// Check if it is really finished one unit transfer
+	if ((SPI->SSR & SPI_SSR_LTRIG_FLAG_Msk) == SPI_SSR_LTRIG_FLAG_Msk)
 	{
-		if (SPI_GET_RX_FIFO_COUNT(SPI) != COMM_LENGTH)
+		if (SPI_GET_RX_FIFO_COUNT(SPI) == COMM_RD_CMD_CNT)
 		{
-			unCOM_SPI_TransErrCNT++;
+
+		}
+		else if (SPI_GET_RX_FIFO_COUNT(SPI) == COMM_WR_CMD_CNT)
+		{
+			// Received 4 uint16, copy to RAM buffer and infor communication manager
+			if (tMotor.structMotor.MSR.bNewComFrameReceived == FALSE)
+			{
+				for (unValueIndex = 0; unValueIndex < COMM_FIFO_LENGTH; unValueIndex++)
+				{
+					unCOM_SPI_ReadData[unValueIndex] = SPI_READ_RX(SPI);
+				}
+				tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
+			}
+			else
+			{
+				unCOM_SPI_TransErrCNT++;
+			}
 		}
 		else
 		{
-			// Received 4 uint16, copy to RAM buffer and infor communication manager
-			for (unValueIndex = 0; unValueIndex < COMM_LENGTH; unValueIndex++)
-			{
-				unCOM_SPI_ReadData[unValueIndex] = SPI_READ_RX(SPI);
-			}
-			tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
+			unCOM_SPI_TransErrCNT++;
 		}
 
 		// Clear Receive FIFO interrupt
@@ -496,6 +508,7 @@ void SPI_IRQHandler(void)
 		// So something strange happened
 		unCOM_SPI_TransErrCNT++;
 	}
+	SPI_CLR_UNIT_TRANS_INT_FLAG(SPI);
 }
 
 void SysTick_Handler(void)

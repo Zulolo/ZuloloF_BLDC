@@ -218,17 +218,19 @@ void configSPI(void)
     // peripheral clock frequency of slave device must be faster than the bus clock frequency of the master
     SPI_Open(SPI, SPI_SLAVE, SPI_MODE_0, COMM_BIT_LENTH, COMM_BAUT_RATE);
 
-    SPI_SET_LSB_FIRST(SPI);
-    SPI_SET_SS_LOW(SPI);
+    SPI_SET_MSB_FIRST(SPI);
 
-    /* Enable the automatic hardware slave select function. Select the SS pin and configure as low-active. */
-    SPI_EnableAutoSS(SPI, SPI_SS, SPI_SS_ACTIVE_LOW);
+    // SS edge trigger
+//    // Set input slave select signal to level-trigger
+//    SPI->SSR |= SPI_SSR_SS_LTRIG_Msk;
+//    // Set slave select signal SPISS to be active at Low-level.
+//    SPI->SSR &= (~SPI_SSR_SS_LVL_Msk);
 
     /* Use FIFO */
-    SPI_EnableFIFO(SPI, COMM_LENGTH, COMM_LENGTH - 1);
+    SPI_EnableFIFO(SPI, COMM_FIFO_LENGTH, COMM_FIFO_LENGTH - 1);
 
     /* Enable SPI Receive FIFO interrupt (interrupt when FIFO count is 4) */
-    SPI_EnableInt(SPI, SPI_FIFO_RX_INTEN_MASK);
+    SPI_EnableInt(SPI, SPI_IE_MASK);
 }
 
 //void ACMP_Config(void)
@@ -343,6 +345,7 @@ void initEnv(void)
 	unCOM_SPI_TransCNT = 0;
 	unCOM_SPI_TransErrCNT = 0;
 	unZXMatchCNT = 0;
+	tMotor.structMotor.MSR.bNewComFrameReceived = FALSE;
 }
 
 //    uint32_t imsTest;
@@ -381,8 +384,8 @@ int main()
 //	    imsTest = unSystemTick;
 //	}
 		BLDC_SensorLessManager();
-		//	CommunicationManager();
-		ErrorManager();
+		COMM_Manager();
+		ERR_Manager();
 
 		// For test
 		if (TRUE == tMotor.structMotor.MSR.bLocked)
