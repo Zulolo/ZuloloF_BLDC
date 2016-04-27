@@ -4,49 +4,345 @@
 
                           AREA ||.text||, CODE, READONLY, ALIGN=2
 
-                  CommunicationManager PROC
-;;;14     // Communicating with mast via SPI
-;;;15     void CommunicationManager(void)
-000000  4804              LDR      r0,|L1.20|
-;;;16     {
-;;;17     	// All transactions are handled in interrupt
-;;;18     	if (tMotor.structMotor.MSR.bNewComFrameReceived == TRUE)
-000002  8841              LDRH     r1,[r0,#2]  ; tMotor
-000004  06c9              LSLS     r1,r1,#27
-000006  d503              BPL      |L1.16|
-;;;19     	{
-;;;20     		tMotor.structMotor.MSR.bNewComFrameReceived = FALSE;
-000008  8841              LDRH     r1,[r0,#2]  ; tMotor
-00000a  2210              MOVS     r2,#0x10
-00000c  4391              BICS     r1,r1,r2
-00000e  8041              STRH     r1,[r0,#2]
-                  |L1.16|
-;;;21     
-;;;22     	}
-;;;23     }
-000010  4770              BX       lr
+                  CRC16 PROC
+;;;26     
+;;;27     uint16_t CRC16(uint8_t* pData, uint16_t unLength)
+000000  b570              PUSH     {r4-r6,lr}
+;;;28     {
+;;;29     	uint8_t unCRCHi = 0xFF;
+;;;30     	uint8_t unCRCLo = 0xFF;
+;;;31         int32_t nIndex;
+;;;32     
+;;;33         while(unLength--)
+;;;34         {
+;;;35         	nIndex = unCRCLo ^ (*pData);
+;;;36             unCRCLo = (uint8_t)(unCRCHi ^ CRC_HIGH_FACTOR[nIndex]);
+000002  4d2f              LDR      r5,|L1.192|
+000004  23ff              MOVS     r3,#0xff              ;29
+;;;37             unCRCHi = CRC_LOW_FACTOR[nIndex];
+000006  1dee              ADDS     r6,r5,#7
+000008  461a              MOV      r2,r3                 ;30
+00000a  36f9              ADDS     r6,r6,#0xf9
+00000c  e004              B        |L1.24|
+                  |L1.14|
+00000e  7804              LDRB     r4,[r0,#0]            ;35
+000010  4054              EORS     r4,r4,r2              ;35
+000012  5d2a              LDRB     r2,[r5,r4]            ;36
+000014  405a              EORS     r2,r2,r3              ;36
+000016  5d33              LDRB     r3,[r6,r4]
+                  |L1.24|
+000018  460c              MOV      r4,r1                 ;33
+00001a  1e49              SUBS     r1,r1,#1              ;33
+00001c  b289              UXTH     r1,r1                 ;33
+00001e  2c00              CMP      r4,#0                 ;33
+000020  d1f5              BNE      |L1.14|
+;;;38         }
+;;;39         return (uint16_t)(unCRCHi << 8 | unCRCLo);
+000022  0218              LSLS     r0,r3,#8
+000024  4310              ORRS     r0,r0,r2
+;;;40     }
+000026  bd70              POP      {r4-r6,pc}
+;;;41     
                           ENDP
 
-000012  0000              DCW      0x0000
-                  |L1.20|
+                  nReadCommandHandler PROC
+;;;42     int32_t nReadCommandHandler(uint16_t* pCOM_Buff)
+000028  b510              PUSH     {r4,lr}
+;;;43     {
+;;;44     	if (COMM_GET_DATA(pCOM_Buff[0]) < COMM_READ_MAX)
+00002a  8801              LDRH     r1,[r0,#0]
+00002c  0449              LSLS     r1,r1,#17
+00002e  0c49              LSRS     r1,r1,#17
+000030  2912              CMP      r1,#0x12
+000032  d20e              BCS      |L1.82|
+;;;45     	{
+;;;46     		SPI_WRITE_TX(SPI, tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])]);
+000034  4a23              LDR      r2,|L1.196|
+000036  0049              LSLS     r1,r1,#1
+000038  5a51              LDRH     r1,[r2,r1]
+00003a  4c23              LDR      r4,|L1.200|
+00003c  6221              STR      r1,[r4,#0x20]
+;;;47     		SPI_WRITE_TX(SPI, CRC16((uint8_t*)(&(tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])])), 1));
+00003e  8800              LDRH     r0,[r0,#0]
+000040  2101              MOVS     r1,#1
+000042  0440              LSLS     r0,r0,#17
+000044  0c00              LSRS     r0,r0,#16
+000046  1880              ADDS     r0,r0,r2
+000048  f7fffffe          BL       CRC16
+00004c  6220              STR      r0,[r4,#0x20]
+;;;48     		return 0;
+00004e  2000              MOVS     r0,#0
+;;;49     	}
+;;;50     	else
+;;;51     	{
+;;;52     		return -1;
+;;;53     	}
+;;;54     }
+000050  bd10              POP      {r4,pc}
+                  |L1.82|
+000052  2000              MOVS     r0,#0                 ;52
+000054  43c0              MVNS     r0,r0                 ;52
+000056  bd10              POP      {r4,pc}
+;;;55     
+                          ENDP
+
+                  nWriteCommandHandler PROC
+;;;56     int32_t nWriteCommandHandler(uint16_t* pCOM_Buff)
+000058  2000              MOVS     r0,#0
+;;;57     {
+;;;58     
+;;;59     	return 0;
+;;;60     }
+00005a  4770              BX       lr
+;;;61     
+                          ENDP
+
+                  COMM_Manager PROC
+;;;62     // Communicating with mast via SPI
+;;;63     void COMM_Manager(void)
+00005c  b570              PUSH     {r4-r6,lr}
+;;;64     {
+;;;65     	static uint16_t unCOM_Buff[COMM_FIFO_LENGTH];
+;;;66     	// All transactions are handled in interrupt
+;;;67     	if (tMotor.structMotor.MSR.bNewComFrameReceived == TRUE)
+00005e  4919              LDR      r1,|L1.196|
+000060  8848              LDRH     r0,[r1,#2]  ; tMotor
+;;;68     	{
+;;;69     		memcpy(unCOM_Buff, unCOM_SPI_ReadData, COMM_FIFO_LENGTH);
+000062  4c1a              LDR      r4,|L1.204|
+000064  06c0              LSLS     r0,r0,#27             ;67
+000066  d523              BPL      |L1.176|
+000068  89a0              LDRH     r0,[r4,#0xc]  ; unCOM_SPI_ReadData
+00006a  80a0              STRH     r0,[r4,#4]
+00006c  89e2              LDRH     r2,[r4,#0xe]  ; unCOM_SPI_ReadData
+00006e  80e2              STRH     r2,[r4,#6]
+;;;70     		tMotor.structMotor.MSR.bNewComFrameReceived = FALSE;
+000070  884a              LDRH     r2,[r1,#2]  ; tMotor
+000072  2310              MOVS     r3,#0x10
+000074  439a              BICS     r2,r2,r3
+000076  804a              STRH     r2,[r1,#2]
+;;;71     		if (CRC16((uint8_t *)unCOM_Buff, (IS_COMM_RD(unCOM_Buff[0]) ? (COMM_RD_CMD_CNT - 1) : (COMM_WR_CMD_CNT - 1))) ==
+000078  1d25              ADDS     r5,r4,#4
+00007a  0bc0              LSRS     r0,r0,#15
+00007c  d001              BEQ      |L1.130|
+00007e  2101              MOVS     r1,#1
+000080  e000              B        |L1.132|
+                  |L1.130|
+000082  2103              MOVS     r1,#3
+                  |L1.132|
+000084  4811              LDR      r0,|L1.204|
+000086  1d00              ADDS     r0,r0,#4
+000088  f7fffffe          BL       CRC16
+00008c  8829              LDRH     r1,[r5,#0]  ; unCOM_Buff
+00008e  0bca              LSRS     r2,r1,#15
+000090  d001              BEQ      |L1.150|
+;;;72     				(IS_COMM_RD(unCOM_Buff[0]) ? unCOM_Buff[COMM_RD_CMD_CNT - 1] : unCOM_Buff[COMM_WR_CMD_CNT - 1]))
+000092  886a              LDRH     r2,[r5,#2]  ; unCOM_Buff
+000094  e000              B        |L1.152|
+                  |L1.150|
+000096  88ea              LDRH     r2,[r5,#6]  ; unCOM_Buff
+                  |L1.152|
+000098  4290              CMP      r0,r2
+00009a  d106              BNE      |L1.170|
+;;;73     		{
+;;;74     			// safe zone
+;;;75     			if (IS_COMM_RD(unCOM_Buff[0]))
+00009c  0bc8              LSRS     r0,r1,#15
+00009e  d007              BEQ      |L1.176|
+;;;76     			{
+;;;77     				nReadCommandHandler(unCOM_Buff);
+0000a0  480a              LDR      r0,|L1.204|
+0000a2  1d00              ADDS     r0,r0,#4
+0000a4  f7fffffe          BL       nReadCommandHandler
+0000a8  e002              B        |L1.176|
+                  |L1.170|
+;;;78     			}
+;;;79     			else
+;;;80     			{
+;;;81     				nWriteCommandHandler(unCOM_Buff);
+;;;82     			}
+;;;83     		}
+;;;84     		else
+;;;85     		{
+;;;86     			unCOM_SPI_TransErrCNT++;
+0000aa  6820              LDR      r0,[r4,#0]  ; unCOM_SPI_TransErrCNT
+0000ac  1c40              ADDS     r0,r0,#1
+0000ae  6020              STR      r0,[r4,#0]  ; unCOM_SPI_TransErrCNT
+                  |L1.176|
+;;;87     		}
+;;;88     	}
+;;;89     
+;;;90     	if (unCOM_SPI_TransErrCNT > COM_SPI_TRANS_ERR_THRESHOLD)
+0000b0  6820              LDR      r0,[r4,#0]  ; unCOM_SPI_TransErrCNT
+0000b2  2806              CMP      r0,#6
+0000b4  d902              BLS      |L1.188|
+;;;91     	{
+;;;92     		setError(ERR_COMMUNICATION_FAIL);
+0000b6  2002              MOVS     r0,#2
+0000b8  f7fffffe          BL       setError
+                  |L1.188|
+;;;93     	}
+;;;94     }
+0000bc  bd70              POP      {r4-r6,pc}
+                          ENDP
+
+0000be  0000              DCW      0x0000
+                  |L1.192|
+                          DCD      ||.constdata||
+                  |L1.196|
                           DCD      tMotor
+                  |L1.200|
+                          DCD      0x40030000
+                  |L1.204|
+                          DCD      ||.data||
+
+                          AREA ||.constdata||, DATA, READONLY, ALIGN=0
+
+                  CRC_HIGH_FACTOR
+000000  00c18140          DCB      0x00,0xc1,0x81,0x40
+000004  01c08041          DCB      0x01,0xc0,0x80,0x41
+000008  01c08041          DCB      0x01,0xc0,0x80,0x41
+00000c  00c18140          DCB      0x00,0xc1,0x81,0x40
+000010  01c08041          DCB      0x01,0xc0,0x80,0x41
+000014  00c18140          DCB      0x00,0xc1,0x81,0x40
+000018  00c18140          DCB      0x00,0xc1,0x81,0x40
+00001c  01c08041          DCB      0x01,0xc0,0x80,0x41
+000020  01c08041          DCB      0x01,0xc0,0x80,0x41
+000024  00c18140          DCB      0x00,0xc1,0x81,0x40
+000028  00c18140          DCB      0x00,0xc1,0x81,0x40
+00002c  01c08041          DCB      0x01,0xc0,0x80,0x41
+000030  00c18140          DCB      0x00,0xc1,0x81,0x40
+000034  01c08041          DCB      0x01,0xc0,0x80,0x41
+000038  01c08041          DCB      0x01,0xc0,0x80,0x41
+00003c  00c18140          DCB      0x00,0xc1,0x81,0x40
+000040  01c08041          DCB      0x01,0xc0,0x80,0x41
+000044  00c18140          DCB      0x00,0xc1,0x81,0x40
+000048  00c18140          DCB      0x00,0xc1,0x81,0x40
+00004c  01c08041          DCB      0x01,0xc0,0x80,0x41
+000050  00c18140          DCB      0x00,0xc1,0x81,0x40
+000054  01c08041          DCB      0x01,0xc0,0x80,0x41
+000058  01c08041          DCB      0x01,0xc0,0x80,0x41
+00005c  00c18140          DCB      0x00,0xc1,0x81,0x40
+000060  00c18140          DCB      0x00,0xc1,0x81,0x40
+000064  01c08041          DCB      0x01,0xc0,0x80,0x41
+000068  01c08041          DCB      0x01,0xc0,0x80,0x41
+00006c  00c18140          DCB      0x00,0xc1,0x81,0x40
+000070  01c08041          DCB      0x01,0xc0,0x80,0x41
+000074  00c18140          DCB      0x00,0xc1,0x81,0x40
+000078  00c18140          DCB      0x00,0xc1,0x81,0x40
+00007c  01c08041          DCB      0x01,0xc0,0x80,0x41
+000080  01c08041          DCB      0x01,0xc0,0x80,0x41
+000084  00c18140          DCB      0x00,0xc1,0x81,0x40
+000088  00c18140          DCB      0x00,0xc1,0x81,0x40
+00008c  01c08041          DCB      0x01,0xc0,0x80,0x41
+000090  00c18140          DCB      0x00,0xc1,0x81,0x40
+000094  01c08041          DCB      0x01,0xc0,0x80,0x41
+000098  01c08041          DCB      0x01,0xc0,0x80,0x41
+00009c  00c18140          DCB      0x00,0xc1,0x81,0x40
+0000a0  00c18140          DCB      0x00,0xc1,0x81,0x40
+0000a4  01c08041          DCB      0x01,0xc0,0x80,0x41
+0000a8  01c08041          DCB      0x01,0xc0,0x80,0x41
+0000ac  00c18140          DCB      0x00,0xc1,0x81,0x40
+0000b0  01c08041          DCB      0x01,0xc0,0x80,0x41
+0000b4  00c18140          DCB      0x00,0xc1,0x81,0x40
+0000b8  00c18140          DCB      0x00,0xc1,0x81,0x40
+0000bc  01c08041          DCB      0x01,0xc0,0x80,0x41
+0000c0  00c18140          DCB      0x00,0xc1,0x81,0x40
+0000c4  01c08041          DCB      0x01,0xc0,0x80,0x41
+0000c8  01c08041          DCB      0x01,0xc0,0x80,0x41
+0000cc  00c18140          DCB      0x00,0xc1,0x81,0x40
+0000d0  01c08041          DCB      0x01,0xc0,0x80,0x41
+0000d4  00c18140          DCB      0x00,0xc1,0x81,0x40
+0000d8  00c18140          DCB      0x00,0xc1,0x81,0x40
+0000dc  01c08041          DCB      0x01,0xc0,0x80,0x41
+0000e0  01c08041          DCB      0x01,0xc0,0x80,0x41
+0000e4  00c18140          DCB      0x00,0xc1,0x81,0x40
+0000e8  00c18140          DCB      0x00,0xc1,0x81,0x40
+0000ec  01c08041          DCB      0x01,0xc0,0x80,0x41
+0000f0  00c18140          DCB      0x00,0xc1,0x81,0x40
+0000f4  01c08041          DCB      0x01,0xc0,0x80,0x41
+0000f8  01c08041          DCB      0x01,0xc0,0x80,0x41
+0000fc  00c18140          DCB      0x00,0xc1,0x81,0x40
+                  CRC_LOW_FACTOR
+000100  00c0c101          DCB      0x00,0xc0,0xc1,0x01
+000104  c30302c2          DCB      0xc3,0x03,0x02,0xc2
+000108  c60607c7          DCB      0xc6,0x06,0x07,0xc7
+00010c  05c5c404          DCB      0x05,0xc5,0xc4,0x04
+000110  cc0c0dcd          DCB      0xcc,0x0c,0x0d,0xcd
+000114  0fcfce0e          DCB      0x0f,0xcf,0xce,0x0e
+000118  0acacb0b          DCB      0x0a,0xca,0xcb,0x0b
+00011c  c90908c8          DCB      0xc9,0x09,0x08,0xc8
+000120  d81819d9          DCB      0xd8,0x18,0x19,0xd9
+000124  1bdbda1a          DCB      0x1b,0xdb,0xda,0x1a
+000128  1ededf1f          DCB      0x1e,0xde,0xdf,0x1f
+00012c  dd1d1cdc          DCB      0xdd,0x1d,0x1c,0xdc
+000130  14d4d515          DCB      0x14,0xd4,0xd5,0x15
+000134  d71716d6          DCB      0xd7,0x17,0x16,0xd6
+000138  d21213d3          DCB      0xd2,0x12,0x13,0xd3
+00013c  11d1d010          DCB      0x11,0xd1,0xd0,0x10
+000140  f03031f1          DCB      0xf0,0x30,0x31,0xf1
+000144  33f3f232          DCB      0x33,0xf3,0xf2,0x32
+000148  36f6f737          DCB      0x36,0xf6,0xf7,0x37
+00014c  f53534f4          DCB      0xf5,0x35,0x34,0xf4
+000150  3cfcfd3d          DCB      0x3c,0xfc,0xfd,0x3d
+000154  ff3f3efe          DCB      0xff,0x3f,0x3e,0xfe
+000158  fa3a3bfb          DCB      0xfa,0x3a,0x3b,0xfb
+00015c  39f9f838          DCB      0x39,0xf9,0xf8,0x38
+000160  28e8e929          DCB      0x28,0xe8,0xe9,0x29
+000164  eb2b2aea          DCB      0xeb,0x2b,0x2a,0xea
+000168  ee2e2fef          DCB      0xee,0x2e,0x2f,0xef
+00016c  2dedec2c          DCB      0x2d,0xed,0xec,0x2c
+000170  e42425e5          DCB      0xe4,0x24,0x25,0xe5
+000174  27e7e626          DCB      0x27,0xe7,0xe6,0x26
+000178  22e2e323          DCB      0x22,0xe2,0xe3,0x23
+00017c  e12120e0          DCB      0xe1,0x21,0x20,0xe0
+000180  a06061a1          DCB      0xa0,0x60,0x61,0xa1
+000184  63a3a262          DCB      0x63,0xa3,0xa2,0x62
+000188  66a6a767          DCB      0x66,0xa6,0xa7,0x67
+00018c  a56564a4          DCB      0xa5,0x65,0x64,0xa4
+000190  6cacad6d          DCB      0x6c,0xac,0xad,0x6d
+000194  af6f6eae          DCB      0xaf,0x6f,0x6e,0xae
+000198  aa6a6bab          DCB      0xaa,0x6a,0x6b,0xab
+00019c  69a9a868          DCB      0x69,0xa9,0xa8,0x68
+0001a0  78b8b979          DCB      0x78,0xb8,0xb9,0x79
+0001a4  bb7b7aba          DCB      0xbb,0x7b,0x7a,0xba
+0001a8  be7e7fbf          DCB      0xbe,0x7e,0x7f,0xbf
+0001ac  7dbdbc7c          DCB      0x7d,0xbd,0xbc,0x7c
+0001b0  b47475b5          DCB      0xb4,0x74,0x75,0xb5
+0001b4  77b7b676          DCB      0x77,0xb7,0xb6,0x76
+0001b8  72b2b373          DCB      0x72,0xb2,0xb3,0x73
+0001bc  b17170b0          DCB      0xb1,0x71,0x70,0xb0
+0001c0  50909151          DCB      0x50,0x90,0x91,0x51
+0001c4  93535292          DCB      0x93,0x53,0x52,0x92
+0001c8  96565797          DCB      0x96,0x56,0x57,0x97
+0001cc  55959454          DCB      0x55,0x95,0x94,0x54
+0001d0  9c5c5d9d          DCB      0x9c,0x5c,0x5d,0x9d
+0001d4  5f9f9e5e          DCB      0x5f,0x9f,0x9e,0x5e
+0001d8  5a9a9b5b          DCB      0x5a,0x9a,0x9b,0x5b
+0001dc  99595898          DCB      0x99,0x59,0x58,0x98
+0001e0  88484989          DCB      0x88,0x48,0x49,0x89
+0001e4  4b8b8a4a          DCB      0x4b,0x8b,0x8a,0x4a
+0001e8  4e8e8f4f          DCB      0x4e,0x8e,0x8f,0x4f
+0001ec  8d4d4c8c          DCB      0x8d,0x4d,0x4c,0x8c
+0001f0  44848545          DCB      0x44,0x84,0x85,0x45
+0001f4  87474686          DCB      0x87,0x47,0x46,0x86
+0001f8  82424383          DCB      0x82,0x42,0x43,0x83
+0001fc  41818040          DCB      0x41,0x81,0x80,0x40
 
                           AREA ||.data||, DATA, ALIGN=2
 
-                  unCOM_SPI_TransCNT
-                          DCD      0x00000000
-
-                          AREA ||area_number.5||, DATA, ALIGN=2
-
-                          EXPORTAS ||area_number.5||, ||.data||
                   unCOM_SPI_TransErrCNT
                           DCD      0x00000000
-
-                          AREA ||area_number.6||, DATA, ALIGN=1
-
-                          EXPORTAS ||area_number.6||, ||.data||
+                  unCOM_Buff
+                          %        8
                   unCOM_SPI_ReadData
                           %        8
+
+                          AREA ||area_number.6||, DATA, ALIGN=2
+
+                          EXPORTAS ||area_number.6||, ||.data||
+                  unCOM_SPI_TransCNT
+                          DCD      0x00000000
 
                           AREA ||area_number.7||, DATA, ALIGN=1
 
@@ -71,9 +367,9 @@
 #line 1 "User\\Communication.c"
 	AREA ||.rev16_text||, CODE
 	THUMB
-	EXPORT |__asm___15_Communication_c_6ddc6d6f____REV16|
+	EXPORT |__asm___15_Communication_c_b3a855e6____REV16|
 #line 118 ".\\CMSIS\\core_cmInstr.h"
-|__asm___15_Communication_c_6ddc6d6f____REV16| PROC
+|__asm___15_Communication_c_b3a855e6____REV16| PROC
 #line 119
 
  rev16 r0, r0
@@ -81,9 +377,9 @@
 	ENDP
 	AREA ||.revsh_text||, CODE
 	THUMB
-	EXPORT |__asm___15_Communication_c_6ddc6d6f____REVSH|
+	EXPORT |__asm___15_Communication_c_b3a855e6____REVSH|
 #line 132
-|__asm___15_Communication_c_6ddc6d6f____REVSH| PROC
+|__asm___15_Communication_c_b3a855e6____REVSH| PROC
 #line 133
 
  revsh r0, r0

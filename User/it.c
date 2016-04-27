@@ -135,8 +135,8 @@ int32_t PhaseZXDedHandler(uint32_t iThisZXDetectedTime)
 //		iTestDetectedZX++;
 		if (TRUE == tMotor.structMotor.MSR.bLocked)
 		{
-			tMotor.structMotor.unACT_PERIOD = (iTempDeltaZXD + tMotor.structMotor.unACT_PERIOD) >> 1;
-			iHalfPeriod = tMotor.structMotor.unACT_PERIOD >> 1;
+			tMotor.structMotor.unActualPeriod = (iTempDeltaZXD + tMotor.structMotor.unActualPeriod) >> 1;
+			iHalfPeriod = tMotor.structMotor.unActualPeriod >> 1;
 			TIMER_SET_CMP_VALUE(TIMER0, TIMER0->TDR + (iHalfPeriod > TIME_DEBT) ? (iHalfPeriod - TIME_DEBT) : ZXD_BEFORE_PHCHG);
 		}
 		return TRUE;
@@ -411,12 +411,12 @@ void ADC_IRQHandler(void)
 		// Change ADC channel
 		if (ADC->ADCHER & ADC_CURRENT_CHN_MSK)
 		{
-			tMotor.structMotor.unCURRENT = (uint16_t)(ADC_GET_CONVERSION_DATA(ADC, WHAT_EVER_DO_NOT_CARE));
+			tMotor.structMotor.unCurrent = (uint16_t)(ADC_GET_CONVERSION_DATA(ADC, WHAT_EVER_DO_NOT_CARE));
 			ADC_SET_INPUT_CHANNEL(ADC, ADC_BATTERY_CHN_MSK);		
 		}
 		else if (ADC->ADCHER & ADC_BATTERY_CHN_MSK)
 		{
-			tMotor.structMotor.unBATTERY = (uint16_t)(ADC_GET_CONVERSION_DATA(ADC, WHAT_EVER_DO_NOT_CARE));
+			tMotor.structMotor.unBattery = (uint16_t)(ADC_GET_CONVERSION_DATA(ADC, WHAT_EVER_DO_NOT_CARE));
 			ADC_SET_INPUT_CHANNEL(ADC, ADC_CURRENT_CHN_MSK);
 		}
 		ADC_START_CONV(ADC);
@@ -473,20 +473,39 @@ void SPI_IRQHandler(void)
 	// Check if it is really finished one unit transfer
 	if ((SPI->SSR & SPI_SSR_LTRIG_FLAG_Msk) == SPI_SSR_LTRIG_FLAG_Msk)
 	{
-		if (SPI_GET_RX_FIFO_COUNT(SPI) == COMM_RD_CMD_CNT)
+		if (tMotor.structMotor.MSR.bNewComFrameReceived == FALSE)
 		{
-
-		}
-		else if (SPI_GET_RX_FIFO_COUNT(SPI) == COMM_WR_CMD_CNT)
-		{
-			// Received 4 uint16, copy to RAM buffer and infor communication manager
-			if (tMotor.structMotor.MSR.bNewComFrameReceived == FALSE)
+			if (SPI_GET_RX_FIFO_COUNT(SPI) == COMM_RD_CMD_CNT)
 			{
-				for (unValueIndex = 0; unValueIndex < COMM_FIFO_LENGTH; unValueIndex++)
+				// Received 4 uint16, copy to RAM buffer and infor communication manager
+				for (unValueIndex = 0; unValueIndex < COMM_RD_CMD_CNT; unValueIndex++)
 				{
 					unCOM_SPI_ReadData[unValueIndex] = SPI_READ_RX(SPI);
 				}
-				tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
+				if (IS_COMM_RD(unCOM_SPI_ReadData[0]))
+				{
+					tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
+				}
+				else
+				{
+					unCOM_SPI_TransErrCNT++;
+				}
+			}
+			else if (SPI_GET_RX_FIFO_COUNT(SPI) == COMM_WR_CMD_CNT)
+			{
+				// Received 4 uint16, copy to RAM buffer and infor communication manager
+				for (unValueIndex = 0; unValueIndex < COMM_WR_CMD_CNT; unValueIndex++)
+				{
+					unCOM_SPI_ReadData[unValueIndex] = SPI_READ_RX(SPI);
+				}
+				if (IS_COMM_WR(unCOM_SPI_ReadData[0]))
+				{
+					tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
+				}
+				else
+				{
+					unCOM_SPI_TransErrCNT++;
+				}
 			}
 			else
 			{
@@ -497,7 +516,6 @@ void SPI_IRQHandler(void)
 		{
 			unCOM_SPI_TransErrCNT++;
 		}
-
 		// Clear Receive FIFO interrupt
 		// I don't know how to clear. Maybe just after I read out the data in FIFO and it is below threshold it will be OK
 		SPI_ClearRxFIFO(SPI);

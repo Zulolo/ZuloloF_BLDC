@@ -7253,24 +7253,26 @@ typedef struct
 		volatile uint16_t unMissedZXD_CNT:8;
 		volatile uint16_t unSuccessZXD_CNT:8;
 	}MSR;
-
-
-	
-	
-	
-	volatile uint16_t  unLCT_DUTY;	 
-	volatile uint16_t  unRU_DUTY;		 
-	volatile uint16_t  unTGT_DUTY;	 
-	volatile uint16_t  unACT_DUTY;	 
-	volatile uint16_t  unLCT_PERIOD;	 
-	volatile uint32_t  unRU_PERIOD;	 
-	volatile uint32_t  unACT_PERIOD;	 
-	volatile uint32_t  unPHASE_CHANGE_CNT;	 
-	volatile uint16_t  unRPM;			 
-	volatile uint16_t  unRESERVE;		 
-	volatile uint16_t  unBATTERY;		 
-	volatile uint16_t  unCURRENT;		 
+	volatile uint16_t  unLocatingDuty;		 
+	volatile uint16_t  unRampUpDuty;		 
+	volatile uint16_t  unTargetDuty;		 
+	volatile uint16_t  unActualDuty;		 
+	volatile uint16_t  unLocatingPeriod;	 
+	volatile uint16_t  unRESERVE_1;			 
+	volatile uint32_t  unRampUpPeriod;		 
+	volatile uint32_t  unActualPeriod;		 
+	volatile uint32_t  unPhaseChangeCNT;	 
+	volatile uint16_t  unRPM;				 
+	volatile uint16_t  unBattery;			 
+	volatile uint16_t  unCurrent;			 
+	volatile uint16_t  unRESERVE_2;			
 } MOTOR_T;
+
+typedef union
+{
+	uint16_t unValue[sizeof(MOTOR_T)/sizeof(uint16_t)];
+	MOTOR_T structMotor;
+} MOTOR_UNION_T;
 
 #line 1 "User\\BLDCSensorLess.h"
 
@@ -7279,12 +7281,6 @@ typedef struct
 #line 1 "User\\global.h"
 #line 5 "User\\BLDCSensorLess.h"
 
-typedef union
-{
-	uint16_t iValue[sizeof(MOTOR_T)/sizeof(uint16_t)];
-	MOTOR_T structMotor;
-} MOTOR_UNION_T;
-
 typedef enum {
 	ENUM_TIM1_AVOID_ZXD = 0,
 	ENUM_TIM1_ZXD_FILTER
@@ -7292,12 +7288,12 @@ typedef enum {
 }ENUM_TIM1_USAGE;
 
 
-#line 26 "User\\BLDCSensorLess.h"
+#line 20 "User\\BLDCSensorLess.h"
 
 
 
 
-#line 44 "User\\BLDCSensorLess.h"
+#line 38 "User\\BLDCSensorLess.h"
 
 
 
@@ -7305,11 +7301,11 @@ typedef enum {
 
 
 
-#line 59 "User\\BLDCSensorLess.h"
+#line 53 "User\\BLDCSensorLess.h"
 
-#line 66 "User\\BLDCSensorLess.h"
+#line 60 "User\\BLDCSensorLess.h"
 
-#line 73 "User\\BLDCSensorLess.h"
+#line 67 "User\\BLDCSensorLess.h"
 
 
 
@@ -7333,7 +7329,7 @@ typedef enum {
 
 
 
-#line 105 "User\\BLDCSensorLess.h"
+#line 99 "User\\BLDCSensorLess.h"
 
 
 
@@ -7350,7 +7346,7 @@ typedef enum {
 
 
 
-#line 279 "User\\BLDCSensorLess.h"
+#line 273 "User\\BLDCSensorLess.h"
 extern volatile MOTOR_UNION_T tMotor;	
 extern volatile ENUM_TIM1_USAGE FLAG_TIM1_USEAGE;
 extern volatile uint32_t unLastZXDetectedTime;
@@ -7363,14 +7359,14 @@ extern uint8_t unCurrentPhase;
 extern uint8_t FLAG_PHASE_CHANGED;
 extern __inline void BLDC_stopMotor(void);
 extern void BLDC_SensorLessManager(void);
-#line 65 "User\\global.h"
+#line 67 "User\\global.h"
 #line 1 "User\\Communication.h"
 
 
 
 #line 5 "User\\Communication.h"
 
-#line 12 "User\\Communication.h"
+#line 91 "User\\Communication.h"
 
 
 
@@ -7384,7 +7380,7 @@ extern void BLDC_SensorLessManager(void);
 
 
 
-
+#line 110 "User\\Communication.h"
 
 typedef enum{
 	MOTOR_MCR = 0,	 
@@ -7410,8 +7406,8 @@ extern uint16_t unRegisterValue;
 extern ENUM_COMM_REG tRegister;
 extern uint8_t FlagRegisterNeedWrite;
 
-extern void CommunicationManager(void);
-#line 66 "User\\global.h"
+extern void COMM_Manager(void);
+#line 68 "User\\global.h"
 #line 1 "User\\Error.h"
 
 
@@ -7457,11 +7453,11 @@ extern void delay(uint32_t unDelayMs);
 extern void resetError(ENUM_ERROR_LEVEL enumErrorType);
 extern void setError(ENUM_ERROR_LEVEL enumErrorType);
 extern void clearError(void);
-extern void ErrorManager(void);
+extern void ERR_Manager(void);
 
-#line 67 "User\\global.h"
+#line 69 "User\\global.h"
 #line 1 "User\\Protection.h"
-#line 68 "User\\global.h"
+#line 70 "User\\global.h"
 #line 5 "User\\Protection.h"
 
 
@@ -7533,7 +7529,7 @@ void PTC_checkMotor(void)
 		{
 			while (1)
 			{
-				ErrorManager();
+				ERR_Manager();
 			}
 		}
 	}

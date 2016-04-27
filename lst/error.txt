@@ -197,9 +197,9 @@
 ;;;96     
                           ENDP
 
-                  ErrorManager PROC
+                  ERR_Manager PROC
 ;;;99     // to make sure then responding time will not burn the board
-;;;100    void ErrorManager(void)
+;;;100    void ERR_Manager(void)
 0000a8  b510              PUSH     {r4,lr}
 ;;;101    {
 ;;;102    	static uint32_t unLastErrorChangeTime;

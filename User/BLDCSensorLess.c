@@ -27,7 +27,7 @@
 __INLINE void PhaseChangedRoutine(void)
 {
 	FLAG_PHASE_CHANGED = RESET;
-	tMotor.structMotor.unPHASE_CHANGE_CNT++;
+	tMotor.structMotor.unPhaseChangeCNT++;
 	
 	if (TRUE == tMotor.structMotor.MSR.bZeroCrossDetecting)
 	{
@@ -58,7 +58,7 @@ __INLINE void PhaseChangedRoutine(void)
 			tMotor.structMotor.MSR.unSuccessZXD_CNT = 0;
 			// If ZX was not detected in last phase, unLastZXDetectedTime was also not updated
 			// Guess one value
-			unLastZXDetectedTime = GET_TIMER_DIFF((tMotor.structMotor.unACT_PERIOD >> 2), TIMER_GetCounter(TIMER1));
+			unLastZXDetectedTime = GET_TIMER_DIFF((tMotor.structMotor.unActualPeriod >> 2), TIMER_GetCounter(TIMER1));
 			if (tMotor.structMotor.MSR.unMissedZXD_CNT > MAX_MISS_ZXD_THRESHOLD)
 			{
 				if (TRUE == tMotor.structMotor.MSR.bLocked)
@@ -80,7 +80,7 @@ __INLINE void PhaseChangedRoutine(void)
 	{
 		// Set a rough next phase change time as the same with last phase
 		// After detected ZX in TIM1 interrupt, next phase change time will be re-configured
-		TIMER_SET_CMP_VALUE(TIMER0, tMotor.structMotor.unACT_PERIOD << 1);
+		TIMER_SET_CMP_VALUE(TIMER0, tMotor.structMotor.unActualPeriod << 1);
 	}
 
 	tMotor.structMotor.MSR.bThisPhaseDetectedZX = FALSE;
@@ -156,22 +156,22 @@ void BLDCSpeedManager(void)
 	{
 		PhaseChangedRoutine();
 
-		if (tMotor.structMotor.unACT_DUTY != tMotor.structMotor.unTGT_DUTY)
+		if (tMotor.structMotor.unActualDuty != tMotor.structMotor.unTargetDuty)
 		{
 //				tMotor.structMotor.ACT_DUTY = tMotor.structMotor.TGT_DUTY;
 				// Change PWM duty after each x phase change
 			if (unPhaseChangeCNT4Duty > CHANGE_DUTY_CNT_THR)
 			{
 				unPhaseChangeCNT4Duty = 0;
-				if (tMotor.structMotor.unACT_DUTY < tMotor.structMotor.unTGT_DUTY)
+				if (tMotor.structMotor.unActualDuty < tMotor.structMotor.unTargetDuty)
 				{
-					tMotor.structMotor.unACT_DUTY++;
+					tMotor.structMotor.unActualDuty++;
 				}
 				else
 				{
-					tMotor.structMotor.unACT_DUTY--;
+					tMotor.structMotor.unActualDuty--;
 				}
-				MOTOR_SET_DUTY(tMotor.structMotor.unACT_DUTY);
+				MOTOR_SET_DUTY(tMotor.structMotor.unActualDuty);
 			}
 			unPhaseChangeCNT4Duty++;
 		}
@@ -207,12 +207,12 @@ __INLINE void setPhaseManually(uint16_t iPWMDuty, uint8_t iPhase)
 
 ENUM_STATUS BLDCLocatingManager(void)
 {
-	if ((uint32_t)(unSystemTick - unLastPhaseChangeTime) > tMotor.structMotor.unLCT_PERIOD)
+	if ((uint32_t)(unSystemTick - unLastPhaseChangeTime) > tMotor.structMotor.unLocatingPeriod)
 	{
 		if (unLocateIndex < (sizeof(unLocatePhaseSequencyTable)/sizeof(uint8_t)))
 		{
 			//iLastPhaseChangeTime = unSystemTick; 
-			setPhaseManually(tMotor.structMotor.unLCT_DUTY, unLocatePhaseSequencyTable[unLocateIndex]);
+			setPhaseManually(tMotor.structMotor.unLocatingDuty, unLocatePhaseSequencyTable[unLocateIndex]);
 			unLocateIndex++;
 		}
 		else
@@ -236,15 +236,15 @@ __INLINE void BLDCRampUp_Manager(void)
 			unPhaseChangeCNT4Period = 0;
 			// Change duty and period 
 //			MOTOR_RAMPUP_DT_INCR(tMotor.structMotor.ACT_DUTY);			
-			MOTOR_RAMPUP_PR_DCR(tMotor.structMotor.unACT_PERIOD);	
-			if (tMotor.structMotor.unACT_PERIOD <= MOTOR_RAMPUP_PR_MIN)
+			MOTOR_RAMPUP_PR_DCR(tMotor.structMotor.unActualPeriod);	
+			if (tMotor.structMotor.unActualPeriod <= MOTOR_RAMPUP_PR_MIN)
 			{
 				unRampUpPeriodMiniCNT++;
 			}
 		}
 		unPhaseChangeCNT4Period++;
 //		MOTOR_SET_DUTY(tMotor.structMotor.ACT_DUTY);
-		TIMER_SET_CMP_VALUE(TIMER0, tMotor.structMotor.unACT_PERIOD);
+		TIMER_SET_CMP_VALUE(TIMER0, tMotor.structMotor.unActualPeriod);
 		PHASE_INCREASE(unCurrentPhase);
 		// Modify PWM->PHCHGNXT at last because I don't know how long needed to reload PHCH with PHCHNEXT after TIM0 time-out
 		PWM->PHCHGNXT = GET_PHASE_VALUE(unCurrentPhase);
@@ -258,7 +258,7 @@ void BLDC_SensorLessManager(void)
 	static uint32_t iEnterTimeBeforeWait;
 
 	// Duty too big protection
-	if ((tMotor.structMotor.unACT_DUTY > MAX_MOTOR_PWR_DUTY) || (PWM->CMR[1] > MAX_MOTOR_PWR_DUTY))
+	if ((tMotor.structMotor.unActualDuty > MAX_MOTOR_PWR_DUTY) || (PWM->CMR[1] > MAX_MOTOR_PWR_DUTY))
 	{
 		BLDC_stopMotor();
 		setError(ERR_INTERNAL);
@@ -351,11 +351,11 @@ void BLDC_SensorLessManager(void)
 		{
 			if ((uint32_t)(unSystemTick - iEnterTimeBeforeWait) >= WAIT_AFTER_LOCATE_TIME)
 			{
-				tMotor.structMotor.unACT_DUTY = tMotor.structMotor.unRU_DUTY;
-				tMotor.structMotor.unACT_PERIOD = tMotor.structMotor.unRU_PERIOD;
+				tMotor.structMotor.unActualDuty = tMotor.structMotor.unRampUpDuty;
+				tMotor.structMotor.unActualPeriod = tMotor.structMotor.unRampUpPeriod;
 				tMotor.structMotor.MSR.bMotorPowerOn = TRUE;
 				PHASE_INCREASE(unCurrentPhase);
-				setPhaseManually(tMotor.structMotor.unACT_DUTY, unCurrentPhase);
+				setPhaseManually(tMotor.structMotor.unActualDuty, unCurrentPhase);
 				BRG_ENABLE;
 				// Set timer 0 valure, use timer 0 to change phase automatically
 				// ************************************************************************
@@ -367,7 +367,7 @@ void BLDC_SensorLessManager(void)
 				// !!!! Need to make sure CPU run to here every min tMotor.structMotor.ACT_PERIOD time !!!
 				// !!!! If not , timer counter may already passed tMotor.structMotor.ACT_PERIOD, !!!!
 				// !!!! then need to count to 2^24, go back to 0 and triger interrupt when reach ACT_PERIOD !!!!
-				TIMER_SET_CMP_VALUE(TIMER0, tMotor.structMotor.unACT_PERIOD);
+				TIMER_SET_CMP_VALUE(TIMER0, tMotor.structMotor.unActualPeriod);
 				TIMER_Start(TIMER0);	// Once started, running and interrupting until Motor stop
 				TIMER_EnableInt(TIMER0);
 				unRampUpPeriodMiniCNT = 0;
@@ -386,7 +386,7 @@ void BLDC_SensorLessManager(void)
 		if (tMotor.structMotor.MCR.bMotorNeedToRun && NO_MOTOR_EEROR)
 		{
 			BLDCRampUp_Manager();
-			if (tMotor.structMotor.unACT_PERIOD <= MOTOR_START_ZXD_SPEED)	//(iRampUpPeriodMiniCNT > MOTOR_START_ZXD_MINROT_CNT)  //
+			if (tMotor.structMotor.unActualPeriod <= MOTOR_START_ZXD_SPEED)	//(iRampUpPeriodMiniCNT > MOTOR_START_ZXD_MINROT_CNT)  //
 			{
 				tMotor.structMotor.MSR.bThisPhaseDetectedZX = FALSE;
 				tMotor.structMotor.MSR.bZeroCrossDetecting = TRUE;

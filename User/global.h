@@ -42,24 +42,26 @@ typedef struct
 		__IO uint16_t unMissedZXD_CNT:8;
 		__IO uint16_t unSuccessZXD_CNT:8;
 	}MSR;
-//		__IO uint16_t  MCR;		/*!<  Motor Control  */
-//		__IO uint16_t  MSR;		/*!<  Motor Status  */
-	//  __IO uint32_t  ACNR;       /*!<  PWM Actual Counter Register  */
-	//  __IO uint32_t  STCNR;        /*!<  PWM Start Counter Register  */
-	//  __IO uint32_t  SBCNR;        /*!<  PWM Stable Counter Register  */
-	__IO uint16_t  unLCT_DUTY;	/*!<  PWM Locating Duty  */
-	__IO uint16_t  unRU_DUTY;		/*!<  PWM Ramp Up Start Duty  */
-	__IO uint16_t  unTGT_DUTY;	/*!<  PWM Target (Locked State) Duty  */
-	__IO uint16_t  unACT_DUTY;	/*!<  PWM Actual Duty  */
-	__IO uint16_t  unLCT_PERIOD;	/*!<  Locating State One Phase Period  */
-	__IO uint32_t  unRU_PERIOD;	/*!<  Ramp Up Start One Phase Period  */
-	__IO uint32_t  unACT_PERIOD;	/*!<  Actual One Phase Period  */
-	__IO uint32_t  unPHASE_CHANGE_CNT;	/*!<  Phase changed counter  */
-	__IO uint16_t  unRPM;			/*!<  Actual RPM  */
-	__IO uint16_t  unRESERVE;		/*!<  Reserve for future use (round up 32bits) */
-	__IO uint16_t  unBATTERY;		/*!<  Battery Voltage  */
-	__IO uint16_t  unCURRENT;		/*!<  Current  */
+	__IO uint16_t  unLocatingDuty;		/*!<  PWM Locating Duty  */
+	__IO uint16_t  unRampUpDuty;		/*!<  PWM Ramp Up Start Duty  */
+	__IO uint16_t  unTargetDuty;		/*!<  PWM Target (Locked State) Duty  */
+	__IO uint16_t  unActualDuty;		/*!<  PWM Actual Duty  */
+	__IO uint16_t  unLocatingPeriod;	/*!<  Locating State One Phase Period  */
+	__IO uint16_t  unRESERVE_1;			/*!<  for 4 bytes align */
+	__IO uint32_t  unRampUpPeriod;		/*!<  Ramp Up Start One Phase Period  */
+	__IO uint32_t  unActualPeriod;		/*!<  Actual One Phase Period  */
+	__IO uint32_t  unPhaseChangeCNT;	/*!<  Phase changed counter  */
+	__IO uint16_t  unRPM;				/*!<  Actual RPM  */
+	__IO uint16_t  unBattery;			/*!<  Battery Voltage  */
+	__IO uint16_t  unCurrent;			/*!<  Current  */
+	__IO uint16_t  unRESERVE_2;			//*!<  for 4 bytes align */
 } MOTOR_T;
+
+typedef union
+{
+	uint16_t unValue[sizeof(MOTOR_T)/sizeof(uint16_t)];
+	MOTOR_T structMotor;
+} MOTOR_UNION_T;
 
 #include "BLDCSensorLess.h"
 #include "Communication.h"

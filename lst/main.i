@@ -8154,24 +8154,26 @@ typedef struct
 		volatile uint16_t unMissedZXD_CNT:8;
 		volatile uint16_t unSuccessZXD_CNT:8;
 	}MSR;
-
-
-	
-	
-	
-	volatile uint16_t  unLCT_DUTY;	 
-	volatile uint16_t  unRU_DUTY;		 
-	volatile uint16_t  unTGT_DUTY;	 
-	volatile uint16_t  unACT_DUTY;	 
-	volatile uint16_t  unLCT_PERIOD;	 
-	volatile uint32_t  unRU_PERIOD;	 
-	volatile uint32_t  unACT_PERIOD;	 
-	volatile uint32_t  unPHASE_CHANGE_CNT;	 
-	volatile uint16_t  unRPM;			 
-	volatile uint16_t  unRESERVE;		 
-	volatile uint16_t  unBATTERY;		 
-	volatile uint16_t  unCURRENT;		 
+	volatile uint16_t  unLocatingDuty;		 
+	volatile uint16_t  unRampUpDuty;		 
+	volatile uint16_t  unTargetDuty;		 
+	volatile uint16_t  unActualDuty;		 
+	volatile uint16_t  unLocatingPeriod;	 
+	volatile uint16_t  unRESERVE_1;			 
+	volatile uint32_t  unRampUpPeriod;		 
+	volatile uint32_t  unActualPeriod;		 
+	volatile uint32_t  unPhaseChangeCNT;	 
+	volatile uint16_t  unRPM;				 
+	volatile uint16_t  unBattery;			 
+	volatile uint16_t  unCurrent;			 
+	volatile uint16_t  unRESERVE_2;			
 } MOTOR_T;
+
+typedef union
+{
+	uint16_t unValue[sizeof(MOTOR_T)/sizeof(uint16_t)];
+	MOTOR_T structMotor;
+} MOTOR_UNION_T;
 
 #line 1 "User\\BLDCSensorLess.h"
 
@@ -8180,12 +8182,6 @@ typedef struct
 #line 1 "User\\global.h"
 #line 5 "User\\BLDCSensorLess.h"
 
-typedef union
-{
-	uint16_t iValue[sizeof(MOTOR_T)/sizeof(uint16_t)];
-	MOTOR_T structMotor;
-} MOTOR_UNION_T;
-
 typedef enum {
 	ENUM_TIM1_AVOID_ZXD = 0,
 	ENUM_TIM1_ZXD_FILTER
@@ -8193,12 +8189,12 @@ typedef enum {
 }ENUM_TIM1_USAGE;
 
 
-#line 26 "User\\BLDCSensorLess.h"
+#line 20 "User\\BLDCSensorLess.h"
 
 
 
 
-#line 44 "User\\BLDCSensorLess.h"
+#line 38 "User\\BLDCSensorLess.h"
 
 
 
@@ -8206,11 +8202,11 @@ typedef enum {
 
 
 
-#line 59 "User\\BLDCSensorLess.h"
+#line 53 "User\\BLDCSensorLess.h"
 
-#line 66 "User\\BLDCSensorLess.h"
+#line 60 "User\\BLDCSensorLess.h"
 
-#line 73 "User\\BLDCSensorLess.h"
+#line 67 "User\\BLDCSensorLess.h"
 
 
 
@@ -8234,7 +8230,7 @@ typedef enum {
 
 
 
-#line 105 "User\\BLDCSensorLess.h"
+#line 99 "User\\BLDCSensorLess.h"
 
 
 
@@ -8251,7 +8247,7 @@ typedef enum {
 
 
 
-#line 279 "User\\BLDCSensorLess.h"
+#line 273 "User\\BLDCSensorLess.h"
 extern volatile MOTOR_UNION_T tMotor;	
 extern volatile ENUM_TIM1_USAGE FLAG_TIM1_USEAGE;
 extern volatile uint32_t unLastZXDetectedTime;
@@ -8264,14 +8260,14 @@ extern uint8_t unCurrentPhase;
 extern uint8_t FLAG_PHASE_CHANGED;
 extern __inline void BLDC_stopMotor(void);
 extern void BLDC_SensorLessManager(void);
-#line 65 "User\\global.h"
+#line 67 "User\\global.h"
 #line 1 "User\\Communication.h"
 
 
 
 #line 5 "User\\Communication.h"
 
-#line 12 "User\\Communication.h"
+#line 91 "User\\Communication.h"
 
 
 
@@ -8285,7 +8281,7 @@ extern void BLDC_SensorLessManager(void);
 
 
 
-
+#line 110 "User\\Communication.h"
 
 typedef enum{
 	MOTOR_MCR = 0,	 
@@ -8311,8 +8307,8 @@ extern uint16_t unRegisterValue;
 extern ENUM_COMM_REG tRegister;
 extern uint8_t FlagRegisterNeedWrite;
 
-extern void CommunicationManager(void);
-#line 66 "User\\global.h"
+extern void COMM_Manager(void);
+#line 68 "User\\global.h"
 #line 1 "User\\Error.h"
 
 
@@ -8358,9 +8354,9 @@ extern void delay(uint32_t unDelayMs);
 extern void resetError(ENUM_ERROR_LEVEL enumErrorType);
 extern void setError(ENUM_ERROR_LEVEL enumErrorType);
 extern void clearError(void);
-extern void ErrorManager(void);
+extern void ERR_Manager(void);
 
-#line 67 "User\\global.h"
+#line 69 "User\\global.h"
 #line 1 "User\\Protection.h"
 
 
@@ -8395,7 +8391,7 @@ extern void ErrorManager(void);
 
 
 extern void PTC_checkMotor(void);
-#line 68 "User\\global.h"
+#line 70 "User\\global.h"
 #line 5 "User\\main.h"
 
 
@@ -8631,17 +8627,19 @@ void configSPI(void)
     
     SPI_Open(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), ((1ul << 18)), ((1ul << 2)), 16, 5000000);
 
-    SPI_SET_LSB_FIRST(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-    SPI_SET_SS_LOW(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+    SPI_SET_MSB_FIRST(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 
-     
-    SPI_EnableAutoSS(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), ((1ul << 0)), (0x0));
+    
+
+
+
+
 
      
     SPI_EnableFIFO(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 4, 4 - 1);
 
      
-    SPI_EnableInt(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), (0x10));
+    SPI_EnableInt(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), (0x01));
 }
 
 
@@ -8756,6 +8754,7 @@ void initEnv(void)
 	unCOM_SPI_TransCNT = 0;
 	unCOM_SPI_TransErrCNT = 0;
 	unZXMatchCNT = 0;
+	tMotor.structMotor.MSR.bNewComFrameReceived = (0);
 }
 
 
@@ -8774,11 +8773,11 @@ int main()
     
     ((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(3))) + ((0)<<2)))) = 0); (((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->PIER = 0); (TIMER_Stop(((TIMER_T *) (((uint32_t)0x40000000) + 0x10000)))); (TIMER_Stop(((TIMER_T *) (((uint32_t)0x40000000) + 0x10020)))); (TIMER_DisableInt(((TIMER_T *) (((uint32_t)0x40000000) + 0x10000)))); (TIMER_DisableInt(((TIMER_T *) (((uint32_t)0x40000000) + 0x10020)))); (((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->PHCHGNXT = (0x000000FFul)); (((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->PHCHG = (0x000000FFul));
 
-    tMotor.structMotor.unLCT_DUTY = 200;
-    tMotor.structMotor.unLCT_PERIOD = 10;	
-    tMotor.structMotor.unRU_DUTY = 320;
-    tMotor.structMotor.unRU_PERIOD = 8000;	
-	tMotor.structMotor.unTGT_DUTY = 400;
+    tMotor.structMotor.unLocatingDuty = 200;
+    tMotor.structMotor.unLocatingPeriod = 10;	
+    tMotor.structMotor.unRampUpDuty = 320;
+    tMotor.structMotor.unRampUpPeriod = 8000;	
+	tMotor.structMotor.unTargetDuty = 400;
 	tMotor.structMotor.MCR.bRotateDirection = 0;	
     tMotor.structMotor.MCR.bMotorNeedToRun = (1);
      
@@ -8794,8 +8793,8 @@ int main()
 
 
 		BLDC_SensorLessManager();
-		
-		ErrorManager();
+		COMM_Manager();
+		ERR_Manager();
 
 		
 		if ((1) == tMotor.structMotor.MSR.bLocked)
@@ -8805,7 +8804,7 @@ int main()
 				if (iTestSpeedLastTime != unSystemTick)
 				{
 					iTestSpeedLastTime = unSystemTick;
-					tMotor.structMotor.unTGT_DUTY = iTestSpeedSequence[iTestSpeedSequenIndex];
+					tMotor.structMotor.unTargetDuty = iTestSpeedSequence[iTestSpeedSequenIndex];
 					((iTestSpeedSequenIndex) = (((iTestSpeedSequenIndex) < (((sizeof(iTestSpeedSequence)/sizeof(uint16_t))) - 1)) ? ((iTestSpeedSequenIndex) + 1) : 0));
 				}
 			}

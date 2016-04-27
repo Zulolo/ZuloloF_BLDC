@@ -42,7 +42,7 @@ void PTC_checkMotor(void)
 		{
 			while (1)
 			{
-				ErrorManager();
+				ERR_Manager();
 			}
 		}
 	}

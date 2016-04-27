@@ -3,12 +3,6 @@
 
 #include "global.h"
 
-typedef union
-{
-	uint16_t iValue[sizeof(MOTOR_T)/sizeof(uint16_t)];
-	MOTOR_T structMotor;
-} MOTOR_UNION_T;
-
 typedef enum {
 	ENUM_TIM1_AVOID_ZXD = 0,
 	ENUM_TIM1_ZXD_FILTER//,

@@ -58,8 +58,8 @@
 ;;;42     		{
 ;;;43     			while (1)
 ;;;44     			{
-;;;45     				ErrorManager();
-000030  f7fffffe          BL       ErrorManager
+;;;45     				ERR_Manager();
+000030  f7fffffe          BL       ERR_Manager
 000034  e7fc              B        |L1.48|
                   |L1.54|
 000036  1c64              ADDS     r4,r4,#1

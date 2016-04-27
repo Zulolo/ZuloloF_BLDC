@@ -7252,27 +7252,29 @@ typedef struct
 		volatile uint16_t unMissedZXD_CNT:8;
 		volatile uint16_t unSuccessZXD_CNT:8;
 	}MSR;
-
-
-	
-	
-	
-	volatile uint16_t  unLCT_DUTY;	 
-	volatile uint16_t  unRU_DUTY;		 
-	volatile uint16_t  unTGT_DUTY;	 
-	volatile uint16_t  unACT_DUTY;	 
-	volatile uint16_t  unLCT_PERIOD;	 
-	volatile uint32_t  unRU_PERIOD;	 
-	volatile uint32_t  unACT_PERIOD;	 
-	volatile uint32_t  unPHASE_CHANGE_CNT;	 
-	volatile uint16_t  unRPM;			 
-	volatile uint16_t  unRESERVE;		 
-	volatile uint16_t  unBATTERY;		 
-	volatile uint16_t  unCURRENT;		 
+	volatile uint16_t  unLocatingDuty;		 
+	volatile uint16_t  unRampUpDuty;		 
+	volatile uint16_t  unTargetDuty;		 
+	volatile uint16_t  unActualDuty;		 
+	volatile uint16_t  unLocatingPeriod;	 
+	volatile uint16_t  unRESERVE_1;			 
+	volatile uint32_t  unRampUpPeriod;		 
+	volatile uint32_t  unActualPeriod;		 
+	volatile uint32_t  unPhaseChangeCNT;	 
+	volatile uint16_t  unRPM;				 
+	volatile uint16_t  unBattery;			 
+	volatile uint16_t  unCurrent;			 
+	volatile uint16_t  unRESERVE_2;			
 } MOTOR_T;
 
+typedef union
+{
+	uint16_t unValue[sizeof(MOTOR_T)/sizeof(uint16_t)];
+	MOTOR_T structMotor;
+} MOTOR_UNION_T;
+
 #line 1 "User\\BLDCSensorLess.h"
-#line 65 "User\\global.h"
+#line 67 "User\\global.h"
 #line 1 "User\\Communication.h"
 
 
@@ -7280,7 +7282,7 @@ typedef struct
 #line 1 "User\\global.h"
 #line 5 "User\\Communication.h"
 
-#line 12 "User\\Communication.h"
+#line 91 "User\\Communication.h"
 
 
 
@@ -7294,7 +7296,7 @@ typedef struct
 
 
 
-
+#line 110 "User\\Communication.h"
 
 typedef enum{
 	MOTOR_MCR = 0,	 
@@ -7320,8 +7322,8 @@ extern uint16_t unRegisterValue;
 extern ENUM_COMM_REG tRegister;
 extern uint8_t FlagRegisterNeedWrite;
 
-extern void CommunicationManager(void);
-#line 66 "User\\global.h"
+extern void COMM_Manager(void);
+#line 68 "User\\global.h"
 #line 1 "User\\Error.h"
 
 
@@ -7367,9 +7369,9 @@ extern void delay(uint32_t unDelayMs);
 extern void resetError(ENUM_ERROR_LEVEL enumErrorType);
 extern void setError(ENUM_ERROR_LEVEL enumErrorType);
 extern void clearError(void);
-extern void ErrorManager(void);
+extern void ERR_Manager(void);
 
-#line 67 "User\\global.h"
+#line 69 "User\\global.h"
 #line 1 "User\\Protection.h"
 
 
@@ -7404,14 +7406,8 @@ extern void ErrorManager(void);
 
 
 extern void PTC_checkMotor(void);
-#line 68 "User\\global.h"
+#line 70 "User\\global.h"
 #line 5 "User\\BLDCSensorLess.h"
-
-typedef union
-{
-	uint16_t iValue[sizeof(MOTOR_T)/sizeof(uint16_t)];
-	MOTOR_T structMotor;
-} MOTOR_UNION_T;
 
 typedef enum {
 	ENUM_TIM1_AVOID_ZXD = 0,
@@ -7420,12 +7416,12 @@ typedef enum {
 }ENUM_TIM1_USAGE;
 
 
-#line 26 "User\\BLDCSensorLess.h"
+#line 20 "User\\BLDCSensorLess.h"
 
 
 
 
-#line 44 "User\\BLDCSensorLess.h"
+#line 38 "User\\BLDCSensorLess.h"
 
 
 
@@ -7433,11 +7429,11 @@ typedef enum {
 
 
 
-#line 59 "User\\BLDCSensorLess.h"
+#line 53 "User\\BLDCSensorLess.h"
 
-#line 66 "User\\BLDCSensorLess.h"
+#line 60 "User\\BLDCSensorLess.h"
 
-#line 73 "User\\BLDCSensorLess.h"
+#line 67 "User\\BLDCSensorLess.h"
 
 
 
@@ -7461,7 +7457,7 @@ typedef enum {
 
 
 
-#line 105 "User\\BLDCSensorLess.h"
+#line 99 "User\\BLDCSensorLess.h"
 
 
 
@@ -7482,7 +7478,7 @@ typedef enum {
 
 
 	
-#line 131 "User\\BLDCSensorLess.h"
+#line 125 "User\\BLDCSensorLess.h"
 
 	
 
@@ -7563,7 +7559,7 @@ typedef enum {
 
 		const uint8_t unLocatePhaseSequencyTable[] = {0, 1, 2, 1};
 
-#line 219 "User\\BLDCSensorLess.h"
+#line 213 "User\\BLDCSensorLess.h"
 
 
 
@@ -7654,7 +7650,7 @@ typedef enum {
 __inline void PhaseChangedRoutine(void)
 {
 	FLAG_PHASE_CHANGED = (0);
-	tMotor.structMotor.unPHASE_CHANGE_CNT++;
+	tMotor.structMotor.unPhaseChangeCNT++;
 	
 	if ((1) == tMotor.structMotor.MSR.bZeroCrossDetecting)
 	{
@@ -7685,7 +7681,7 @@ __inline void PhaseChangedRoutine(void)
 			tMotor.structMotor.MSR.unSuccessZXD_CNT = 0;
 			
 			
-			unLastZXDetectedTime = (((TIMER_GetCounter(((TIMER_T *) (((uint32_t)0x40000000) + 0x10020)))) > ((tMotor . structMotor . unACT_PERIOD >> 2))) ? ((TIMER_GetCounter(((TIMER_T *) (((uint32_t)0x40000000) + 0x10020)))) - ((tMotor . structMotor . unACT_PERIOD >> 2))) : ((TIMER_GetCounter(((TIMER_T *) (((uint32_t)0x40000000) + 0x10020)))) + (0xFFFFFF - ((tMotor . structMotor . unACT_PERIOD >> 2)))));
+			unLastZXDetectedTime = (((TIMER_GetCounter(((TIMER_T *) (((uint32_t)0x40000000) + 0x10020)))) > ((tMotor . structMotor . unActualPeriod >> 2))) ? ((TIMER_GetCounter(((TIMER_T *) (((uint32_t)0x40000000) + 0x10020)))) - ((tMotor . structMotor . unActualPeriod >> 2))) : ((TIMER_GetCounter(((TIMER_T *) (((uint32_t)0x40000000) + 0x10020)))) + (0xFFFFFF - ((tMotor . structMotor . unActualPeriod >> 2)))));
 			if (tMotor.structMotor.MSR.unMissedZXD_CNT > 12)
 			{
 				if ((1) == tMotor.structMotor.MSR.bLocked)
@@ -7707,7 +7703,7 @@ __inline void PhaseChangedRoutine(void)
 	{
 		
 		
-		((((TIMER_T *) (((uint32_t)0x40000000) + 0x10000)))->TCMPR = (tMotor . structMotor . unACT_PERIOD << 1));
+		((((TIMER_T *) (((uint32_t)0x40000000) + 0x10000)))->TCMPR = (tMotor . structMotor . unActualPeriod << 1));
 	}
 
 	tMotor.structMotor.MSR.bThisPhaseDetectedZX = (0);
@@ -7783,22 +7779,22 @@ void BLDCSpeedManager(void)
 	{
 		PhaseChangedRoutine();
 
-		if (tMotor.structMotor.unACT_DUTY != tMotor.structMotor.unTGT_DUTY)
+		if (tMotor.structMotor.unActualDuty != tMotor.structMotor.unTargetDuty)
 		{
 
 				
 			if (unPhaseChangeCNT4Duty > 5)
 			{
 				unPhaseChangeCNT4Duty = 0;
-				if (tMotor.structMotor.unACT_DUTY < tMotor.structMotor.unTGT_DUTY)
+				if (tMotor.structMotor.unActualDuty < tMotor.structMotor.unTargetDuty)
 				{
-					tMotor.structMotor.unACT_DUTY++;
+					tMotor.structMotor.unActualDuty++;
 				}
 				else
 				{
-					tMotor.structMotor.unACT_DUTY--;
+					tMotor.structMotor.unActualDuty--;
 				}
-				(((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->CMR[1] = (tMotor . structMotor . unACT_DUTY)); (((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->CMR[3] = (tMotor . structMotor . unACT_DUTY)); (((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->CMR[5] = (tMotor . structMotor . unACT_DUTY));
+				(((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->CMR[1] = (tMotor . structMotor . unActualDuty)); (((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->CMR[3] = (tMotor . structMotor . unActualDuty)); (((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->CMR[5] = (tMotor . structMotor . unActualDuty));
 			}
 			unPhaseChangeCNT4Duty++;
 		}
@@ -7834,12 +7830,12 @@ __inline void setPhaseManually(uint16_t iPWMDuty, uint8_t iPhase)
 
 ENUM_STATUS BLDCLocatingManager(void)
 {
-	if ((uint32_t)(unSystemTick - unLastPhaseChangeTime) > tMotor.structMotor.unLCT_PERIOD)
+	if ((uint32_t)(unSystemTick - unLastPhaseChangeTime) > tMotor.structMotor.unLocatingPeriod)
 	{
 		if (unLocateIndex < (sizeof(unLocatePhaseSequencyTable)/sizeof(uint8_t)))
 		{
 			
-			setPhaseManually(tMotor.structMotor.unLCT_DUTY, unLocatePhaseSequencyTable[unLocateIndex]);
+			setPhaseManually(tMotor.structMotor.unLocatingDuty, unLocatePhaseSequencyTable[unLocateIndex]);
 			unLocateIndex++;
 		}
 		else
@@ -7863,15 +7859,15 @@ __inline void BLDCRampUp_Manager(void)
 			unPhaseChangeCNT4Period = 0;
 			
 
-			((tMotor . structMotor . unACT_PERIOD) = (((tMotor . structMotor . unACT_PERIOD) < (1000 - 1)) ? (tMotor . structMotor . unACT_PERIOD) : (uint16_t)((tMotor . structMotor . unACT_PERIOD) * (0.98))));	
-			if (tMotor.structMotor.unACT_PERIOD <= (1000 - 1))
+			((tMotor . structMotor . unActualPeriod) = (((tMotor . structMotor . unActualPeriod) < (1000 - 1)) ? (tMotor . structMotor . unActualPeriod) : (uint16_t)((tMotor . structMotor . unActualPeriod) * (0.98))));	
+			if (tMotor.structMotor.unActualPeriod <= (1000 - 1))
 			{
 				unRampUpPeriodMiniCNT++;
 			}
 		}
 		unPhaseChangeCNT4Period++;
 
-		((((TIMER_T *) (((uint32_t)0x40000000) + 0x10000)))->TCMPR = (tMotor . structMotor . unACT_PERIOD));
+		((((TIMER_T *) (((uint32_t)0x40000000) + 0x10000)))->TCMPR = (tMotor . structMotor . unActualPeriod));
 		(((unCurrentPhase)) = ((((unCurrentPhase)) < (((sizeof(PHASE_TAB_CLOCKWISE)/sizeof(uint32_t))) - 1)) ? (((unCurrentPhase)) + 1) : 0));
 		
 		((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->PHCHGNXT = ((tMotor . structMotor . MCR . bRotateDirection == 0) ? PHASE_TAB_CLOCKWISE[(unCurrentPhase)] : PHASE_TAB_ANTICLOCKWISE[(unCurrentPhase)]);
@@ -7885,7 +7881,7 @@ void BLDC_SensorLessManager(void)
 	static uint32_t iEnterTimeBeforeWait;
 
 	
-	if ((tMotor.structMotor.unACT_DUTY > ((884-1) - 150)) || (((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->CMR[1] > ((884-1) - 150)))
+	if ((tMotor.structMotor.unActualDuty > ((884-1) - 150)) || (((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->CMR[1] > ((884-1) - 150)))
 	{
 		BLDC_stopMotor();
 		setError(ERR_INTERNAL);
@@ -7978,11 +7974,11 @@ void BLDC_SensorLessManager(void)
 		{
 			if ((uint32_t)(unSystemTick - iEnterTimeBeforeWait) >= 0)
 			{
-				tMotor.structMotor.unACT_DUTY = tMotor.structMotor.unRU_DUTY;
-				tMotor.structMotor.unACT_PERIOD = tMotor.structMotor.unRU_PERIOD;
+				tMotor.structMotor.unActualDuty = tMotor.structMotor.unRampUpDuty;
+				tMotor.structMotor.unActualPeriod = tMotor.structMotor.unRampUpPeriod;
 				tMotor.structMotor.MSR.bMotorPowerOn = (1);
 				(((unCurrentPhase)) = ((((unCurrentPhase)) < (((sizeof(PHASE_TAB_CLOCKWISE)/sizeof(uint32_t))) - 1)) ? (((unCurrentPhase)) + 1) : 0));
-				setPhaseManually(tMotor.structMotor.unACT_DUTY, unCurrentPhase);
+				setPhaseManually(tMotor.structMotor.unActualDuty, unCurrentPhase);
 				((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(3))) + ((0)<<2)))) = 1);
 				
 				
@@ -7994,7 +7990,7 @@ void BLDC_SensorLessManager(void)
 				
 				
 				
-				((((TIMER_T *) (((uint32_t)0x40000000) + 0x10000)))->TCMPR = (tMotor . structMotor . unACT_PERIOD));
+				((((TIMER_T *) (((uint32_t)0x40000000) + 0x10000)))->TCMPR = (tMotor . structMotor . unActualPeriod));
 				TIMER_Start(((TIMER_T *) (((uint32_t)0x40000000) + 0x10000)));	
 				TIMER_EnableInt(((TIMER_T *) (((uint32_t)0x40000000) + 0x10000)));
 				unRampUpPeriodMiniCNT = 0;
@@ -8013,7 +8009,7 @@ void BLDC_SensorLessManager(void)
 		if (tMotor.structMotor.MCR.bMotorNeedToRun && (((unErrorMaster & 0xFFFFFFFEul) == 0) ? (1) : (0)))
 		{
 			BLDCRampUp_Manager();
-			if (tMotor.structMotor.unACT_PERIOD <= (1600 - 1))	
+			if (tMotor.structMotor.unActualPeriod <= (1600 - 1))	
 			{
 				tMotor.structMotor.MSR.bThisPhaseDetectedZX = (0);
 				tMotor.structMotor.MSR.bZeroCrossDetecting = (1);

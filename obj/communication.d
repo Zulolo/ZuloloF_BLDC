@@ -23,3 +23,4 @@
 .\obj\communication.o: User\Communication.h
 .\obj\communication.o: User\Error.h
 .\obj\communication.o: User\Protection.h
+.\obj\communication.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

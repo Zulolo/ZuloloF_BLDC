@@ -364,11 +364,11 @@ int main()
     // Max Period is:
     MOTOR_SHUT_DOWN;
 
-    tMotor.structMotor.unLCT_DUTY = 200;
-    tMotor.structMotor.unLCT_PERIOD = 10;	// Unit ms
-    tMotor.structMotor.unRU_DUTY = 320;
-    tMotor.structMotor.unRU_PERIOD = 8000;	// Unit 2MH, 20ms, 500rpm
-	tMotor.structMotor.unTGT_DUTY = 400;
+    tMotor.structMotor.unLocatingDuty = 200;
+    tMotor.structMotor.unLocatingPeriod = 10;	// Unit ms
+    tMotor.structMotor.unRampUpDuty = 320;
+    tMotor.structMotor.unRampUpPeriod = 8000;	// Unit 2MH, 20ms, 500rpm
+	tMotor.structMotor.unTargetDuty = 400;
 	tMotor.structMotor.MCR.bRotateDirection = ROTATE_CLOCKWISE;	// Clockwise
     tMotor.structMotor.MCR.bMotorNeedToRun = TRUE;
     /* ----=============== Test End ================---- */
@@ -395,7 +395,7 @@ int main()
 				if (iTestSpeedLastTime != unSystemTick)
 				{
 					iTestSpeedLastTime = unSystemTick;
-					tMotor.structMotor.unTGT_DUTY = iTestSpeedSequence[iTestSpeedSequenIndex];
+					tMotor.structMotor.unTargetDuty = iTestSpeedSequence[iTestSpeedSequenIndex];
 					INDEX_INCREASE(iTestSpeedSequenIndex, TEST_SPEED_SEQUENCE_NUM);
 				}
 			}

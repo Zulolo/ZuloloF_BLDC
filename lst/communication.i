@@ -7252,24 +7252,26 @@ typedef struct
 		volatile uint16_t unMissedZXD_CNT:8;
 		volatile uint16_t unSuccessZXD_CNT:8;
 	}MSR;
-
-
-	
-	
-	
-	volatile uint16_t  unLCT_DUTY;	 
-	volatile uint16_t  unRU_DUTY;		 
-	volatile uint16_t  unTGT_DUTY;	 
-	volatile uint16_t  unACT_DUTY;	 
-	volatile uint16_t  unLCT_PERIOD;	 
-	volatile uint32_t  unRU_PERIOD;	 
-	volatile uint32_t  unACT_PERIOD;	 
-	volatile uint32_t  unPHASE_CHANGE_CNT;	 
-	volatile uint16_t  unRPM;			 
-	volatile uint16_t  unRESERVE;		 
-	volatile uint16_t  unBATTERY;		 
-	volatile uint16_t  unCURRENT;		 
+	volatile uint16_t  unLocatingDuty;		 
+	volatile uint16_t  unRampUpDuty;		 
+	volatile uint16_t  unTargetDuty;		 
+	volatile uint16_t  unActualDuty;		 
+	volatile uint16_t  unLocatingPeriod;	 
+	volatile uint16_t  unRESERVE_1;			 
+	volatile uint32_t  unRampUpPeriod;		 
+	volatile uint32_t  unActualPeriod;		 
+	volatile uint32_t  unPhaseChangeCNT;	 
+	volatile uint16_t  unRPM;				 
+	volatile uint16_t  unBattery;			 
+	volatile uint16_t  unCurrent;			 
+	volatile uint16_t  unRESERVE_2;			
 } MOTOR_T;
+
+typedef union
+{
+	uint16_t unValue[sizeof(MOTOR_T)/sizeof(uint16_t)];
+	MOTOR_T structMotor;
+} MOTOR_UNION_T;
 
 #line 1 "User\\BLDCSensorLess.h"
 
@@ -7278,12 +7280,6 @@ typedef struct
 #line 1 "User\\global.h"
 #line 5 "User\\BLDCSensorLess.h"
 
-typedef union
-{
-	uint16_t iValue[sizeof(MOTOR_T)/sizeof(uint16_t)];
-	MOTOR_T structMotor;
-} MOTOR_UNION_T;
-
 typedef enum {
 	ENUM_TIM1_AVOID_ZXD = 0,
 	ENUM_TIM1_ZXD_FILTER
@@ -7291,12 +7287,12 @@ typedef enum {
 }ENUM_TIM1_USAGE;
 
 
-#line 26 "User\\BLDCSensorLess.h"
+#line 20 "User\\BLDCSensorLess.h"
 
 
 
 
-#line 44 "User\\BLDCSensorLess.h"
+#line 38 "User\\BLDCSensorLess.h"
 
 
 
@@ -7304,11 +7300,11 @@ typedef enum {
 
 
 
-#line 59 "User\\BLDCSensorLess.h"
+#line 53 "User\\BLDCSensorLess.h"
 
-#line 66 "User\\BLDCSensorLess.h"
+#line 60 "User\\BLDCSensorLess.h"
 
-#line 73 "User\\BLDCSensorLess.h"
+#line 67 "User\\BLDCSensorLess.h"
 
 
 
@@ -7332,7 +7328,7 @@ typedef enum {
 
 
 
-#line 105 "User\\BLDCSensorLess.h"
+#line 99 "User\\BLDCSensorLess.h"
 
 
 
@@ -7349,7 +7345,7 @@ typedef enum {
 
 
 
-#line 279 "User\\BLDCSensorLess.h"
+#line 273 "User\\BLDCSensorLess.h"
 extern volatile MOTOR_UNION_T tMotor;	
 extern volatile ENUM_TIM1_USAGE FLAG_TIM1_USEAGE;
 extern volatile uint32_t unLastZXDetectedTime;
@@ -7362,9 +7358,9 @@ extern uint8_t unCurrentPhase;
 extern uint8_t FLAG_PHASE_CHANGED;
 extern __inline void BLDC_stopMotor(void);
 extern void BLDC_SensorLessManager(void);
-#line 65 "User\\global.h"
+#line 67 "User\\global.h"
 #line 1 "User\\Communication.h"
-#line 66 "User\\global.h"
+#line 68 "User\\global.h"
 #line 1 "User\\Error.h"
 
 
@@ -7410,9 +7406,9 @@ extern void delay(uint32_t unDelayMs);
 extern void resetError(ENUM_ERROR_LEVEL enumErrorType);
 extern void setError(ENUM_ERROR_LEVEL enumErrorType);
 extern void clearError(void);
-extern void ErrorManager(void);
+extern void ERR_Manager(void);
 
-#line 67 "User\\global.h"
+#line 69 "User\\global.h"
 #line 1 "User\\Protection.h"
 
 
@@ -7447,12 +7443,91 @@ extern void ErrorManager(void);
 
 
 extern void PTC_checkMotor(void);
-#line 68 "User\\global.h"
+#line 70 "User\\global.h"
 #line 5 "User\\Communication.h"
 
 
 
 
+		const uint8_t CRC_HIGH_FACTOR[] = {
+			0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0, 0x80, 0x41,
+			0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x00, 0xC1, 0x81, 0x40,
+			0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0, 0x80, 0x41,
+			0x00, 0xC1, 0x81, 0x40, 0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41,
+			0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0, 0x80, 0x41,
+			0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x00, 0xC1, 0x81, 0x40,
+			0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x00, 0xC1, 0x81, 0x40,
+			0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0, 0x80, 0x41, 0x00, 0xC1, 0x81, 0x40,
+			0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0, 0x80, 0x41,
+			0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x00, 0xC1, 0x81, 0x40,
+			0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0, 0x80, 0x41,
+			0x00, 0xC1, 0x81, 0x40, 0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41,
+			0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0, 0x80, 0x41,
+			0x00, 0xC1, 0x81, 0x40, 0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41,
+			0x01, 0xC0, 0x80, 0x41, 0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41,
+			0x00, 0xC1, 0x81, 0x40, 0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41,
+			0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0, 0x80, 0x41,
+			0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x00, 0xC1, 0x81, 0x40,
+			0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0, 0x80, 0x41,
+			0x00, 0xC1, 0x81, 0x40, 0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41,
+			0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0, 0x80, 0x41,
+			0x00, 0xC1, 0x81, 0x40
+		};
+
+		const uint8_t CRC_LOW_FACTOR[] = {
+			0x00, 0xC0, 0xC1, 0x01, 0xC3, 0x03, 0x02, 0xC2, 0xC6, 0x06, 0x07, 0xC7,
+			0x05, 0xC5, 0xC4, 0x04, 0xCC, 0x0C, 0x0D, 0xCD, 0x0F, 0xCF, 0xCE, 0x0E,
+			0x0A, 0xCA, 0xCB, 0x0B, 0xC9, 0x09, 0x08, 0xC8, 0xD8, 0x18, 0x19, 0xD9,
+			0x1B, 0xDB, 0xDA, 0x1A, 0x1E, 0xDE, 0xDF, 0x1F, 0xDD, 0x1D, 0x1C, 0xDC,
+			0x14, 0xD4, 0xD5, 0x15, 0xD7, 0x17, 0x16, 0xD6, 0xD2, 0x12, 0x13, 0xD3,
+			0x11, 0xD1, 0xD0, 0x10, 0xF0, 0x30, 0x31, 0xF1, 0x33, 0xF3, 0xF2, 0x32,
+			0x36, 0xF6, 0xF7, 0x37, 0xF5, 0x35, 0x34, 0xF4, 0x3C, 0xFC, 0xFD, 0x3D,
+			0xFF, 0x3F, 0x3E, 0xFE, 0xFA, 0x3A, 0x3B, 0xFB, 0x39, 0xF9, 0xF8, 0x38,
+			0x28, 0xE8, 0xE9, 0x29, 0xEB, 0x2B, 0x2A, 0xEA, 0xEE, 0x2E, 0x2F, 0xEF,
+			0x2D, 0xED, 0xEC, 0x2C, 0xE4, 0x24, 0x25, 0xE5, 0x27, 0xE7, 0xE6, 0x26,
+			0x22, 0xE2, 0xE3, 0x23, 0xE1, 0x21, 0x20, 0xE0, 0xA0, 0x60, 0x61, 0xA1,
+			0x63, 0xA3, 0xA2, 0x62, 0x66, 0xA6, 0xA7, 0x67, 0xA5, 0x65, 0x64, 0xA4,
+			0x6C, 0xAC, 0xAD, 0x6D, 0xAF, 0x6F, 0x6E, 0xAE, 0xAA, 0x6A, 0x6B, 0xAB,
+			0x69, 0xA9, 0xA8, 0x68, 0x78, 0xB8, 0xB9, 0x79, 0xBB, 0x7B, 0x7A, 0xBA,
+			0xBE, 0x7E, 0x7F, 0xBF, 0x7D, 0xBD, 0xBC, 0x7C, 0xB4, 0x74, 0x75, 0xB5,
+			0x77, 0xB7, 0xB6, 0x76, 0x72, 0xB2, 0xB3, 0x73, 0xB1, 0x71, 0x70, 0xB0,
+			0x50, 0x90, 0x91, 0x51, 0x93, 0x53, 0x52, 0x92, 0x96, 0x56, 0x57, 0x97,
+			0x55, 0x95, 0x94, 0x54, 0x9C, 0x5C, 0x5D, 0x9D, 0x5F, 0x9F, 0x9E, 0x5E,
+			0x5A, 0x9A, 0x9B, 0x5B, 0x99, 0x59, 0x58, 0x98, 0x88, 0x48, 0x49, 0x89,
+			0x4B, 0x8B, 0x8A, 0x4A, 0x4E, 0x8E, 0x8F, 0x4F, 0x8D, 0x4D, 0x4C, 0x8C,
+			0x44, 0x84, 0x85, 0x45, 0x87, 0x47, 0x46, 0x86, 0x82, 0x42, 0x43, 0x83,
+			0x41, 0x81, 0x80, 0x40
+		};
+		typedef enum {
+			COMM_READ_MCR = 0,
+			COMM_READ_MSR,
+			COMM_READ_LOCATING_DUTY,
+			COMM_READ_RAMP_UP_DUTY,
+			COMM_READ_TARGET_DUTY,
+			COMM_READ_ACTUAL_DUTY,
+			COMM_READ_LOCATING_PERIOD,
+			COMM_READ_RESERVED_1,
+			COMM_READ_RAMP_UP_PERIOD_LOW,
+			COMM_READ_RAMP_UP_PERIOD_HIGH,
+			COMM_READ_ACTUAL_PERIOD_LOW,
+			COMM_READ_ACTUAL_PERIOD_HIGH,
+			COMM_READ_PHASE_CHANGE_CNT_LOW,
+			COMM_READ_PHASE_CHANGE_CNT_HIGH,
+			COMM_READ_RPM,
+			COMM_READ_BATTERY,
+			COMM_READ_CURRENT,
+			COMM_READ_RESERVE_2,
+			COMM_READ_MAX
+		} ENUM_COMM_READ_CMD;
+
+		typedef enum {
+			COMM_WRITE_DUMMY = 0,
+			COMM_WRITE_MOTOR_NEED_TO_RUN,
+			COMM_WRITE_ROTATE_DIRECTION,
+			COMM_WRITE_LOCATING_DUTY,
+			COMM_WRITE_RAMP_UP_PERIOD,
+			COMM_WRITE_CMD_MAX
+		} ENUM_COMM_WRITE_CMD;
 
 
 
@@ -7469,7 +7544,7 @@ extern void PTC_checkMotor(void);
 
 
 
-
+#line 110 "User\\Communication.h"
 
 typedef enum{
 	MOTOR_MCR = 0,	 
@@ -7495,16 +7570,509 @@ typedef enum{
  ENUM_COMM_REG tRegister;
  uint8_t FlagRegisterNeedWrite;
 
- void CommunicationManager(void);
+ void COMM_Manager(void);
 #line 13 "User\\Communication.c"
+#line 1 "D:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+ 
+ 
+ 
+ 
 
 
-void CommunicationManager(void)
+
+
+ 
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+#line 38 "D:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+
+
+  
+
+
+
+    typedef unsigned int size_t;    
+#line 54 "D:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+
+
+
+
+extern __declspec(__nothrow) void *memcpy(void * __restrict  ,
+                    const void * __restrict  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+ 
+extern __declspec(__nothrow) void *memmove(void *  ,
+                    const void *  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+
+
+ 
+extern __declspec(__nothrow) char *strcpy(char * __restrict  , const char * __restrict  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+ 
+extern __declspec(__nothrow) char *strncpy(char * __restrict  , const char * __restrict  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) char *strcat(char * __restrict  , const char * __restrict  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+ 
+extern __declspec(__nothrow) char *strncat(char * __restrict  , const char * __restrict  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) int memcmp(const void *  , const void *  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+ 
+extern __declspec(__nothrow) int strcmp(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+ 
+extern __declspec(__nothrow) int strncmp(const char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+
+ 
+extern __declspec(__nothrow) int strcasecmp(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+ 
+extern __declspec(__nothrow) int strncasecmp(const char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+
+ 
+extern __declspec(__nothrow) int strcoll(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) size_t strxfrm(char * __restrict  , const char * __restrict  , size_t  ) __attribute__((__nonnull__(2)));
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+#line 193 "D:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+extern __declspec(__nothrow) void *memchr(const void *  , int  , size_t  ) __attribute__((__nonnull__(1)));
+
+   
+
+
+
+
+
+ 
+
+#line 209 "D:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+extern __declspec(__nothrow) char *strchr(const char *  , int  ) __attribute__((__nonnull__(1)));
+
+   
+
+
+
+
+ 
+
+extern __declspec(__nothrow) size_t strcspn(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+ 
+
+#line 232 "D:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+extern __declspec(__nothrow) char *strpbrk(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+
+   
+
+
+
+
+ 
+
+#line 247 "D:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+extern __declspec(__nothrow) char *strrchr(const char *  , int  ) __attribute__((__nonnull__(1)));
+
+   
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) size_t strspn(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+ 
+
+#line 270 "D:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+extern __declspec(__nothrow) char *strstr(const char *  , const char *  ) __attribute__((__nonnull__(1,2)));
+
+   
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) char *strtok(char * __restrict  , const char * __restrict  ) __attribute__((__nonnull__(2)));
+extern __declspec(__nothrow) char *_strtok_r(char *  , const char *  , char **  ) __attribute__((__nonnull__(2,3)));
+
+extern __declspec(__nothrow) char *strtok_r(char *  , const char *  , char **  ) __attribute__((__nonnull__(2,3)));
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) void *memset(void *  , int  , size_t  ) __attribute__((__nonnull__(1)));
+   
+
+
+
+ 
+extern __declspec(__nothrow) char *strerror(int  );
+   
+
+
+
+
+
+ 
+extern __declspec(__nothrow) size_t strlen(const char *  ) __attribute__((__nonnull__(1)));
+   
+
+
+
+ 
+
+extern __declspec(__nothrow) size_t strlcpy(char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) size_t strlcat(char *  , const char *  , size_t  ) __attribute__((__nonnull__(1,2)));
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+extern __declspec(__nothrow) void _membitcpybl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitcpybb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitcpyhl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitcpyhb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitcpywl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitcpywb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitmovebl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitmovebb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitmovehl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitmovehb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitmovewl(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+extern __declspec(__nothrow) void _membitmovewb(void *  , const void *  , int  , int  , size_t  ) __attribute__((__nonnull__(1,2)));
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+#line 502 "D:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
+
+
+
+ 
+
+#line 14 "User\\Communication.c"
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+uint16_t CRC16(uint8_t* pData, uint16_t unLength)
 {
+	uint8_t unCRCHi = 0xFF;
+	uint8_t unCRCLo = 0xFF;
+    int32_t nIndex;
+
+    while(unLength--)
+    {
+    	nIndex = unCRCLo ^ (*pData);
+        unCRCLo = (uint8_t)(unCRCHi ^ CRC_HIGH_FACTOR[nIndex]);
+        unCRCHi = CRC_LOW_FACTOR[nIndex];
+    }
+    return (uint16_t)(unCRCHi << 8 | unCRCLo);
+}
+
+int32_t nReadCommandHandler(uint16_t* pCOM_Buff)
+{
+	if (((pCOM_Buff[0]) & (0x7FFF)) < COMM_READ_MAX)
+	{
+		SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), tMotor.unValue[((pCOM_Buff[0]) & (0x7FFF))]);
+		SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), CRC16((uint8_t*)(&(tMotor.unValue[((pCOM_Buff[0]) & (0x7FFF))])), 1));
+		return 0;
+	}
+	else
+	{
+		return -1;
+	}
+}
+
+int32_t nWriteCommandHandler(uint16_t* pCOM_Buff)
+{
+
+	return 0;
+}
+
+
+void COMM_Manager(void)
+{
+	static uint16_t unCOM_Buff[4];
 	
 	if (tMotor.structMotor.MSR.bNewComFrameReceived == (1))
 	{
+		memcpy(unCOM_Buff, unCOM_SPI_ReadData, 4);
 		tMotor.structMotor.MSR.bNewComFrameReceived = (0);
+		if (CRC16((uint8_t *)unCOM_Buff, ((((unCOM_Buff[0]) & (0x8000)) == (0x8000)) ? (2 - 1) : (4 - 1))) ==
+				((((unCOM_Buff[0]) & (0x8000)) == (0x8000)) ? unCOM_Buff[2 - 1] : unCOM_Buff[4 - 1]))
+		{
+			
+			if ((((unCOM_Buff[0]) & (0x8000)) == (0x8000)))
+			{
+				nReadCommandHandler(unCOM_Buff);
+			}
+			else
+			{
+				nWriteCommandHandler(unCOM_Buff);
+			}
+		}
+		else
+		{
+			unCOM_SPI_TransErrCNT++;
+		}
+	}
 
+	if (unCOM_SPI_TransErrCNT > 6)
+	{
+		setError(ERR_COMMUNICATION_FAIL);
 	}
 }
