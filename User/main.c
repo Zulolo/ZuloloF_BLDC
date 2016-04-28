@@ -348,9 +348,6 @@ void initEnv(void)
 	tMotor.structMotor.MSR.bNewComFrameReceived = FALSE;
 }
 
-//    uint32_t imsTest;
-//	uint32_t iEntreTime;
-//	uint32_t iLeaveTime;
 int main()
 {
 
@@ -364,42 +361,21 @@ int main()
     // Max Period is:
     MOTOR_SHUT_DOWN;
 
-    tMotor.structMotor.unLocatingDuty = 200;
-    tMotor.structMotor.unLocatingPeriod = 10;	// Unit ms
-    tMotor.structMotor.unRampUpDuty = 320;
-    tMotor.structMotor.unRampUpPeriod = 8000;	// Unit 2MH, 20ms, 500rpm
-	tMotor.structMotor.unTargetDuty = 400;
-	tMotor.structMotor.MCR.bRotateDirection = ROTATE_CLOCKWISE;	// Clockwise
-    tMotor.structMotor.MCR.bMotorNeedToRun = TRUE;
+    // Example parameter
+//    tMotor.structMotor.unLocatingDuty = 200;
+//    tMotor.structMotor.unLocatingPeriod = 10;	// Unit ms
+//    tMotor.structMotor.unRampUpDuty = 320;
+//    tMotor.structMotor.unRampUpPeriod = 8000;	// Unit 2MH, 20ms, 500rpm
+//	tMotor.structMotor.unTargetDuty = 400;
+//	tMotor.structMotor.MCR.bRotateDirection = ROTATE_CLOCKWISE;	// Clockwise
+//    tMotor.structMotor.MCR.bMotorNeedToRun = TRUE;
     /* ----=============== Test End ================---- */
 
     while(1)
     {
-//	if (TIMER_GetCounter(TIMER0) > 100 && TIMER_GetCounter(TIMER0) < 1000)
-//	{
-//	    imsTest = unSystemTick;
-//	}
-//	if (TIMER_GetCounter(TIMER0) > 30000 && TIMER_GetCounter(TIMER0) < 31000)
-//	{
-//	    imsTest = unSystemTick;
-//	}
 		BLDC_SensorLessManager();
 		COMM_Manager();
 		ERR_Manager();
-
-		// For test
-		if (TRUE == tMotor.structMotor.MSR.bLocked)
-		{
-			if (unSystemTick%5000 == 0)
-			{
-				if (iTestSpeedLastTime != unSystemTick)
-				{
-					iTestSpeedLastTime = unSystemTick;
-					tMotor.structMotor.unTargetDuty = iTestSpeedSequence[iTestSpeedSequenIndex];
-					INDEX_INCREASE(iTestSpeedSequenIndex, TEST_SPEED_SEQUENCE_NUM);
-				}
-			}
-		}
 	}
 
 }

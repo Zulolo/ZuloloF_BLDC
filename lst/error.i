@@ -7365,7 +7365,7 @@ extern void BLDC_SensorLessManager(void);
 
 #line 5 "User\\Communication.h"
 
-#line 91 "User\\Communication.h"
+#line 95 "User\\Communication.h"
 
 
 
@@ -7379,7 +7379,7 @@ extern void BLDC_SensorLessManager(void);
 
 
 
-#line 110 "User\\Communication.h"
+#line 114 "User\\Communication.h"
 
 typedef enum{
 	MOTOR_MCR = 0,	 

@@ -7525,9 +7525,13 @@ extern void PTC_checkMotor(void);
 			COMM_WRITE_MOTOR_NEED_TO_RUN,
 			COMM_WRITE_ROTATE_DIRECTION,
 			COMM_WRITE_LOCATING_DUTY,
+			COMM_WRITE_RAMP_UP_DUTY,
+			COMM_WRITE_TARGET_DUTY,
+			COMM_WRITE_LOCATING_PERIOD,
 			COMM_WRITE_RAMP_UP_PERIOD,
 			COMM_WRITE_CMD_MAX
 		} ENUM_COMM_WRITE_CMD;
+		uint32_t unValidFrameCNT;
 
 
 
@@ -7544,7 +7548,7 @@ extern void PTC_checkMotor(void);
 
 
 
-#line 110 "User\\Communication.h"
+#line 114 "User\\Communication.h"
 
 typedef enum{
 	MOTOR_MCR = 0,	 
@@ -8008,6 +8012,14 @@ extern __declspec(__nothrow) void _membitmovewb(void *  , const void *  , int  ,
 
  
 
+
+
+
+
+
+
+ 
+
 uint16_t CRC16(uint8_t* pData, uint16_t unLength)
 {
 	uint8_t unCRCHi = 0xFF;
@@ -8039,7 +8051,30 @@ int32_t nReadCommandHandler(uint16_t* pCOM_Buff)
 
 int32_t nWriteCommandHandler(uint16_t* pCOM_Buff)
 {
-
+	switch(((pCOM_Buff[0]) & (0x7FFF)))
+	{
+	case COMM_WRITE_MOTOR_NEED_TO_RUN:
+	case COMM_WRITE_ROTATE_DIRECTION:
+		tMotor.structMotor.MCR.bMotorNeedToRun = pCOM_Buff[1];
+		break;
+	case COMM_WRITE_LOCATING_DUTY:
+		tMotor.structMotor.unLocatingDuty = pCOM_Buff[1];
+		break;
+	case COMM_WRITE_RAMP_UP_DUTY:
+		tMotor.structMotor.unRampUpDuty = pCOM_Buff[1];
+		break;
+	case COMM_WRITE_TARGET_DUTY:
+		tMotor.structMotor.unTargetDuty = pCOM_Buff[1];
+		break;
+	case COMM_WRITE_LOCATING_PERIOD:
+		tMotor.structMotor.unLocatingPeriod = pCOM_Buff[1];
+		break;
+	case COMM_WRITE_RAMP_UP_PERIOD:
+		tMotor.structMotor.unRampUpPeriod = pCOM_Buff[1] + pCOM_Buff[2] << 16;
+			break;
+	default:
+		return -1;
+	}
 	return 0;
 }
 
@@ -8047,6 +8082,8 @@ int32_t nWriteCommandHandler(uint16_t* pCOM_Buff)
 void COMM_Manager(void)
 {
 	static uint16_t unCOM_Buff[4];
+	static uint32_t unLastFrameCNT = 0;
+	static uint32_t unLastCheckTime = 0;
 	
 	if (tMotor.structMotor.MSR.bNewComFrameReceived == (1))
 	{
@@ -8055,6 +8092,7 @@ void COMM_Manager(void)
 		if (CRC16((uint8_t *)unCOM_Buff, ((((unCOM_Buff[0]) & (0x8000)) == (0x8000)) ? (2 - 1) : (4 - 1))) ==
 				((((unCOM_Buff[0]) & (0x8000)) == (0x8000)) ? unCOM_Buff[2 - 1] : unCOM_Buff[4 - 1]))
 		{
+			unValidFrameCNT++;
 			
 			if ((((unCOM_Buff[0]) & (0x8000)) == (0x8000)))
 			{
@@ -8071,8 +8109,21 @@ void COMM_Manager(void)
 		}
 	}
 
+	
+	if ((uint32_t)(unSystemTick - unLastCheckTime) > 500)
+	{
+		unLastCheckTime = unSystemTick;
+		if ((uint32_t)(unValidFrameCNT - unLastFrameCNT) < 1)
+		{
+			BLDC_stopMotor();
+			setError(ERR_COMMUNICATION_FAIL);
+		}
+		unLastFrameCNT = unValidFrameCNT;
+	}
+	
 	if (unCOM_SPI_TransErrCNT > 6)
 	{
+		BLDC_stopMotor();
 		setError(ERR_COMMUNICATION_FAIL);
 	}
 }

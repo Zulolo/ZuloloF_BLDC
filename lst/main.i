@@ -8267,7 +8267,7 @@ extern void BLDC_SensorLessManager(void);
 
 #line 5 "User\\Communication.h"
 
-#line 91 "User\\Communication.h"
+#line 95 "User\\Communication.h"
 
 
 
@@ -8281,7 +8281,7 @@ extern void BLDC_SensorLessManager(void);
 
 
 
-#line 110 "User\\Communication.h"
+#line 114 "User\\Communication.h"
 
 typedef enum{
 	MOTOR_MCR = 0,	 
@@ -8757,9 +8757,6 @@ void initEnv(void)
 	tMotor.structMotor.MSR.bNewComFrameReceived = (0);
 }
 
-
-
-
 int main()
 {
 
@@ -8773,42 +8770,21 @@ int main()
     
     ((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(3))) + ((0)<<2)))) = 0); (((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->PIER = 0); (TIMER_Stop(((TIMER_T *) (((uint32_t)0x40000000) + 0x10000)))); (TIMER_Stop(((TIMER_T *) (((uint32_t)0x40000000) + 0x10020)))); (TIMER_DisableInt(((TIMER_T *) (((uint32_t)0x40000000) + 0x10000)))); (TIMER_DisableInt(((TIMER_T *) (((uint32_t)0x40000000) + 0x10020)))); (((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->PHCHGNXT = (0x000000FFul)); (((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->PHCHG = (0x000000FFul));
 
-    tMotor.structMotor.unLocatingDuty = 200;
-    tMotor.structMotor.unLocatingPeriod = 10;	
-    tMotor.structMotor.unRampUpDuty = 320;
-    tMotor.structMotor.unRampUpPeriod = 8000;	
-	tMotor.structMotor.unTargetDuty = 400;
-	tMotor.structMotor.MCR.bRotateDirection = 0;	
-    tMotor.structMotor.MCR.bMotorNeedToRun = (1);
+    
+
+
+
+
+
+
+
      
 
     while(1)
     {
-
-
-
-
-
-
-
-
 		BLDC_SensorLessManager();
 		COMM_Manager();
 		ERR_Manager();
-
-		
-		if ((1) == tMotor.structMotor.MSR.bLocked)
-		{
-			if (unSystemTick%5000 == 0)
-			{
-				if (iTestSpeedLastTime != unSystemTick)
-				{
-					iTestSpeedLastTime = unSystemTick;
-					tMotor.structMotor.unTargetDuty = iTestSpeedSequence[iTestSpeedSequenIndex];
-					((iTestSpeedSequenIndex) = (((iTestSpeedSequenIndex) < (((sizeof(iTestSpeedSequence)/sizeof(uint16_t))) - 1)) ? ((iTestSpeedSequenIndex) + 1) : 0));
-				}
-			}
-		}
 	}
 
 }

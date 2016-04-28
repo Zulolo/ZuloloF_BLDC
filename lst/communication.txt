@@ -5,64 +5,64 @@
                           AREA ||.text||, CODE, READONLY, ALIGN=2
 
                   CRC16 PROC
-;;;26     
-;;;27     uint16_t CRC16(uint8_t* pData, uint16_t unLength)
+;;;34     
+;;;35     uint16_t CRC16(uint8_t* pData, uint16_t unLength)
 000000  b570              PUSH     {r4-r6,lr}
-;;;28     {
-;;;29     	uint8_t unCRCHi = 0xFF;
-;;;30     	uint8_t unCRCLo = 0xFF;
-;;;31         int32_t nIndex;
-;;;32     
-;;;33         while(unLength--)
-;;;34         {
-;;;35         	nIndex = unCRCLo ^ (*pData);
-;;;36             unCRCLo = (uint8_t)(unCRCHi ^ CRC_HIGH_FACTOR[nIndex]);
-000002  4d2f              LDR      r5,|L1.192|
-000004  23ff              MOVS     r3,#0xff              ;29
-;;;37             unCRCHi = CRC_LOW_FACTOR[nIndex];
+;;;36     {
+;;;37     	uint8_t unCRCHi = 0xFF;
+;;;38     	uint8_t unCRCLo = 0xFF;
+;;;39         int32_t nIndex;
+;;;40     
+;;;41         while(unLength--)
+;;;42         {
+;;;43         	nIndex = unCRCLo ^ (*pData);
+;;;44             unCRCLo = (uint8_t)(unCRCHi ^ CRC_HIGH_FACTOR[nIndex]);
+000002  4d52              LDR      r5,|L1.332|
+000004  23ff              MOVS     r3,#0xff              ;37
+;;;45             unCRCHi = CRC_LOW_FACTOR[nIndex];
 000006  1dee              ADDS     r6,r5,#7
-000008  461a              MOV      r2,r3                 ;30
+000008  461a              MOV      r2,r3                 ;38
 00000a  36f9              ADDS     r6,r6,#0xf9
 00000c  e004              B        |L1.24|
                   |L1.14|
-00000e  7804              LDRB     r4,[r0,#0]            ;35
-000010  4054              EORS     r4,r4,r2              ;35
-000012  5d2a              LDRB     r2,[r5,r4]            ;36
-000014  405a              EORS     r2,r2,r3              ;36
+00000e  7804              LDRB     r4,[r0,#0]            ;43
+000010  4054              EORS     r4,r4,r2              ;43
+000012  5d2a              LDRB     r2,[r5,r4]            ;44
+000014  405a              EORS     r2,r2,r3              ;44
 000016  5d33              LDRB     r3,[r6,r4]
                   |L1.24|
-000018  460c              MOV      r4,r1                 ;33
-00001a  1e49              SUBS     r1,r1,#1              ;33
-00001c  b289              UXTH     r1,r1                 ;33
-00001e  2c00              CMP      r4,#0                 ;33
+000018  460c              MOV      r4,r1                 ;41
+00001a  1e49              SUBS     r1,r1,#1              ;41
+00001c  b289              UXTH     r1,r1                 ;41
+00001e  2c00              CMP      r4,#0                 ;41
 000020  d1f5              BNE      |L1.14|
-;;;38         }
-;;;39         return (uint16_t)(unCRCHi << 8 | unCRCLo);
+;;;46         }
+;;;47         return (uint16_t)(unCRCHi << 8 | unCRCLo);
 000022  0218              LSLS     r0,r3,#8
 000024  4310              ORRS     r0,r0,r2
-;;;40     }
+;;;48     }
 000026  bd70              POP      {r4-r6,pc}
-;;;41     
+;;;49     
                           ENDP
 
                   nReadCommandHandler PROC
-;;;42     int32_t nReadCommandHandler(uint16_t* pCOM_Buff)
+;;;50     int32_t nReadCommandHandler(uint16_t* pCOM_Buff)
 000028  b510              PUSH     {r4,lr}
-;;;43     {
-;;;44     	if (COMM_GET_DATA(pCOM_Buff[0]) < COMM_READ_MAX)
+;;;51     {
+;;;52     	if (COMM_GET_DATA(pCOM_Buff[0]) < COMM_READ_MAX)
 00002a  8801              LDRH     r1,[r0,#0]
 00002c  0449              LSLS     r1,r1,#17
 00002e  0c49              LSRS     r1,r1,#17
 000030  2912              CMP      r1,#0x12
 000032  d20e              BCS      |L1.82|
-;;;45     	{
-;;;46     		SPI_WRITE_TX(SPI, tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])]);
-000034  4a23              LDR      r2,|L1.196|
+;;;53     	{
+;;;54     		SPI_WRITE_TX(SPI, tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])]);
+000034  4a46              LDR      r2,|L1.336|
 000036  0049              LSLS     r1,r1,#1
 000038  5a51              LDRH     r1,[r2,r1]
-00003a  4c23              LDR      r4,|L1.200|
+00003a  4c46              LDR      r4,|L1.340|
 00003c  6221              STR      r1,[r4,#0x20]
-;;;47     		SPI_WRITE_TX(SPI, CRC16((uint8_t*)(&(tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])])), 1));
+;;;55     		SPI_WRITE_TX(SPI, CRC16((uint8_t*)(&(tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])])), 1));
 00003e  8800              LDRH     r0,[r0,#0]
 000040  2101              MOVS     r1,#1
 000042  0440              LSLS     r0,r0,#17
@@ -70,131 +70,241 @@
 000046  1880              ADDS     r0,r0,r2
 000048  f7fffffe          BL       CRC16
 00004c  6220              STR      r0,[r4,#0x20]
-;;;48     		return 0;
+;;;56     		return 0;
 00004e  2000              MOVS     r0,#0
-;;;49     	}
-;;;50     	else
-;;;51     	{
-;;;52     		return -1;
-;;;53     	}
-;;;54     }
+;;;57     	}
+;;;58     	else
+;;;59     	{
+;;;60     		return -1;
+;;;61     	}
+;;;62     }
 000050  bd10              POP      {r4,pc}
                   |L1.82|
-000052  2000              MOVS     r0,#0                 ;52
-000054  43c0              MVNS     r0,r0                 ;52
+000052  2000              MOVS     r0,#0                 ;60
+000054  43c0              MVNS     r0,r0                 ;60
 000056  bd10              POP      {r4,pc}
-;;;55     
+;;;63     
                           ENDP
 
                   nWriteCommandHandler PROC
-;;;56     int32_t nWriteCommandHandler(uint16_t* pCOM_Buff)
-000058  2000              MOVS     r0,#0
-;;;57     {
-;;;58     
-;;;59     	return 0;
-;;;60     }
-00005a  4770              BX       lr
-;;;61     
+;;;64     int32_t nWriteCommandHandler(uint16_t* pCOM_Buff)
+000058  b500              PUSH     {lr}
+;;;65     {
+;;;66     	switch(COMM_GET_DATA(pCOM_Buff[0]))
+00005a  8801              LDRH     r1,[r0,#0]
+00005c  044a              LSLS     r2,r1,#17
+00005e  0c52              LSRS     r2,r2,#17
+;;;67     	{
+;;;68     	case COMM_WRITE_MOTOR_NEED_TO_RUN:
+;;;69     	case COMM_WRITE_ROTATE_DIRECTION:
+;;;70     		tMotor.structMotor.MCR.bMotorNeedToRun = pCOM_Buff[1];
+000060  493b              LDR      r1,|L1.336|
+000062  0013              MOVS     r3,r2                 ;66
+000064  f7fffffe          BL       __ARM_common_switch8
+000068  08210505          DCB      0x08,0x21,0x05,0x05
+00006c  0e111417          DCB      0x0e,0x11,0x14,0x17
+000070  1a21              DCB      0x1a,0x21
+000072  880a              LDRH     r2,[r1,#0]  ; tMotor
+000074  7880              LDRB     r0,[r0,#2]
+000076  0852              LSRS     r2,r2,#1
+000078  0052              LSLS     r2,r2,#1
+00007a  07c0              LSLS     r0,r0,#31
+00007c  0fc0              LSRS     r0,r0,#31
+00007e  4302              ORRS     r2,r2,r0
+000080  800a              STRH     r2,[r1,#0]
+;;;71     		break;
+000082  e010              B        |L1.166|
+;;;72     	case COMM_WRITE_LOCATING_DUTY:
+;;;73     		tMotor.structMotor.unLocatingDuty = pCOM_Buff[1];
+000084  8840              LDRH     r0,[r0,#2]
+000086  80c8              STRH     r0,[r1,#6]
+;;;74     		break;
+000088  e00d              B        |L1.166|
+;;;75     	case COMM_WRITE_RAMP_UP_DUTY:
+;;;76     		tMotor.structMotor.unRampUpDuty = pCOM_Buff[1];
+00008a  8840              LDRH     r0,[r0,#2]
+00008c  8108              STRH     r0,[r1,#8]
+;;;77     		break;
+00008e  e00a              B        |L1.166|
+;;;78     	case COMM_WRITE_TARGET_DUTY:
+;;;79     		tMotor.structMotor.unTargetDuty = pCOM_Buff[1];
+000090  8840              LDRH     r0,[r0,#2]
+000092  8148              STRH     r0,[r1,#0xa]
+;;;80     		break;
+000094  e007              B        |L1.166|
+;;;81     	case COMM_WRITE_LOCATING_PERIOD:
+;;;82     		tMotor.structMotor.unLocatingPeriod = pCOM_Buff[1];
+000096  8840              LDRH     r0,[r0,#2]
+000098  81c8              STRH     r0,[r1,#0xe]
+;;;83     		break;
+00009a  e004              B        |L1.166|
+;;;84     	case COMM_WRITE_RAMP_UP_PERIOD:
+;;;85     		tMotor.structMotor.unRampUpPeriod = pCOM_Buff[1] + pCOM_Buff[2] << 16;
+00009c  8842              LDRH     r2,[r0,#2]
+00009e  8880              LDRH     r0,[r0,#4]
+0000a0  1810              ADDS     r0,r2,r0
+0000a2  0400              LSLS     r0,r0,#16
+0000a4  6148              STR      r0,[r1,#0x14]  ; tMotor
+                  |L1.166|
+;;;86     			break;
+;;;87     	default:
+;;;88     		return -1;
+;;;89     	}
+;;;90     	return 0;
+0000a6  2000              MOVS     r0,#0
+;;;91     }
+0000a8  bd00              POP      {pc}
+0000aa  2000              MOVS     r0,#0                 ;88
+0000ac  43c0              MVNS     r0,r0                 ;88
+0000ae  bd00              POP      {pc}
+;;;92     
                           ENDP
 
                   COMM_Manager PROC
-;;;62     // Communicating with mast via SPI
-;;;63     void COMM_Manager(void)
-00005c  b570              PUSH     {r4-r6,lr}
-;;;64     {
-;;;65     	static uint16_t unCOM_Buff[COMM_FIFO_LENGTH];
-;;;66     	// All transactions are handled in interrupt
-;;;67     	if (tMotor.structMotor.MSR.bNewComFrameReceived == TRUE)
-00005e  4919              LDR      r1,|L1.196|
-000060  8848              LDRH     r0,[r1,#2]  ; tMotor
-;;;68     	{
-;;;69     		memcpy(unCOM_Buff, unCOM_SPI_ReadData, COMM_FIFO_LENGTH);
-000062  4c1a              LDR      r4,|L1.204|
-000064  06c0              LSLS     r0,r0,#27             ;67
-000066  d523              BPL      |L1.176|
-000068  89a0              LDRH     r0,[r4,#0xc]  ; unCOM_SPI_ReadData
-00006a  80a0              STRH     r0,[r4,#4]
-00006c  89e2              LDRH     r2,[r4,#0xe]  ; unCOM_SPI_ReadData
-00006e  80e2              STRH     r2,[r4,#6]
-;;;70     		tMotor.structMotor.MSR.bNewComFrameReceived = FALSE;
-000070  884a              LDRH     r2,[r1,#2]  ; tMotor
-000072  2310              MOVS     r3,#0x10
-000074  439a              BICS     r2,r2,r3
-000076  804a              STRH     r2,[r1,#2]
-;;;71     		if (CRC16((uint8_t *)unCOM_Buff, (IS_COMM_RD(unCOM_Buff[0]) ? (COMM_RD_CMD_CNT - 1) : (COMM_WR_CMD_CNT - 1))) ==
-000078  1d25              ADDS     r5,r4,#4
-00007a  0bc0              LSRS     r0,r0,#15
-00007c  d001              BEQ      |L1.130|
-00007e  2101              MOVS     r1,#1
-000080  e000              B        |L1.132|
-                  |L1.130|
-000082  2103              MOVS     r1,#3
-                  |L1.132|
-000084  4811              LDR      r0,|L1.204|
-000086  1d00              ADDS     r0,r0,#4
-000088  f7fffffe          BL       CRC16
-00008c  8829              LDRH     r1,[r5,#0]  ; unCOM_Buff
-00008e  0bca              LSRS     r2,r1,#15
-000090  d001              BEQ      |L1.150|
-;;;72     				(IS_COMM_RD(unCOM_Buff[0]) ? unCOM_Buff[COMM_RD_CMD_CNT - 1] : unCOM_Buff[COMM_WR_CMD_CNT - 1]))
-000092  886a              LDRH     r2,[r5,#2]  ; unCOM_Buff
-000094  e000              B        |L1.152|
-                  |L1.150|
-000096  88ea              LDRH     r2,[r5,#6]  ; unCOM_Buff
-                  |L1.152|
-000098  4290              CMP      r0,r2
-00009a  d106              BNE      |L1.170|
-;;;73     		{
-;;;74     			// safe zone
-;;;75     			if (IS_COMM_RD(unCOM_Buff[0]))
-00009c  0bc8              LSRS     r0,r1,#15
-00009e  d007              BEQ      |L1.176|
-;;;76     			{
-;;;77     				nReadCommandHandler(unCOM_Buff);
-0000a0  480a              LDR      r0,|L1.204|
-0000a2  1d00              ADDS     r0,r0,#4
-0000a4  f7fffffe          BL       nReadCommandHandler
-0000a8  e002              B        |L1.176|
-                  |L1.170|
-;;;78     			}
-;;;79     			else
-;;;80     			{
-;;;81     				nWriteCommandHandler(unCOM_Buff);
-;;;82     			}
-;;;83     		}
-;;;84     		else
-;;;85     		{
-;;;86     			unCOM_SPI_TransErrCNT++;
-0000aa  6820              LDR      r0,[r4,#0]  ; unCOM_SPI_TransErrCNT
-0000ac  1c40              ADDS     r0,r0,#1
-0000ae  6020              STR      r0,[r4,#0]  ; unCOM_SPI_TransErrCNT
-                  |L1.176|
-;;;87     		}
-;;;88     	}
-;;;89     
-;;;90     	if (unCOM_SPI_TransErrCNT > COM_SPI_TRANS_ERR_THRESHOLD)
-0000b0  6820              LDR      r0,[r4,#0]  ; unCOM_SPI_TransErrCNT
-0000b2  2806              CMP      r0,#6
-0000b4  d902              BLS      |L1.188|
-;;;91     	{
-;;;92     		setError(ERR_COMMUNICATION_FAIL);
-0000b6  2002              MOVS     r0,#2
-0000b8  f7fffffe          BL       setError
-                  |L1.188|
-;;;93     	}
-;;;94     }
-0000bc  bd70              POP      {r4-r6,pc}
+;;;93     // Communicating with mast via SPI
+;;;94     void COMM_Manager(void)
+0000b0  b570              PUSH     {r4-r6,lr}
+;;;95     {
+;;;96     	static uint16_t unCOM_Buff[COMM_FIFO_LENGTH];
+;;;97     	static uint32_t unLastFrameCNT = 0;
+;;;98     	static uint32_t unLastCheckTime = 0;
+;;;99     	// All transactions are handled in interrupt
+;;;100    	if (tMotor.structMotor.MSR.bNewComFrameReceived == TRUE)
+0000b2  4927              LDR      r1,|L1.336|
+0000b4  8848              LDRH     r0,[r1,#2]  ; tMotor
+;;;101    	{
+;;;102    		memcpy(unCOM_Buff, unCOM_SPI_ReadData, COMM_FIFO_LENGTH);
+0000b6  4c28              LDR      r4,|L1.344|
+0000b8  06c0              LSLS     r0,r0,#27             ;100
+0000ba  d528              BPL      |L1.270|
+0000bc  8b20              LDRH     r0,[r4,#0x18]  ; unCOM_SPI_ReadData
+0000be  8220              STRH     r0,[r4,#0x10]
+0000c0  8b62              LDRH     r2,[r4,#0x1a]  ; unCOM_SPI_ReadData
+0000c2  8262              STRH     r2,[r4,#0x12]
+;;;103    		tMotor.structMotor.MSR.bNewComFrameReceived = FALSE;
+0000c4  884a              LDRH     r2,[r1,#2]  ; tMotor
+0000c6  2310              MOVS     r3,#0x10
+0000c8  439a              BICS     r2,r2,r3
+0000ca  804a              STRH     r2,[r1,#2]
+;;;104    		if (CRC16((uint8_t *)unCOM_Buff, (IS_COMM_RD(unCOM_Buff[0]) ? (COMM_RD_CMD_CNT - 1) : (COMM_WR_CMD_CNT - 1))) ==
+0000cc  18e5              ADDS     r5,r4,r3
+0000ce  0bc0              LSRS     r0,r0,#15
+0000d0  d001              BEQ      |L1.214|
+0000d2  2101              MOVS     r1,#1
+0000d4  e000              B        |L1.216|
+                  |L1.214|
+0000d6  2103              MOVS     r1,#3
+                  |L1.216|
+0000d8  481f              LDR      r0,|L1.344|
+0000da  3010              ADDS     r0,r0,#0x10
+0000dc  f7fffffe          BL       CRC16
+0000e0  8829              LDRH     r1,[r5,#0]  ; unCOM_Buff
+0000e2  0bca              LSRS     r2,r1,#15
+0000e4  d001              BEQ      |L1.234|
+;;;105    				(IS_COMM_RD(unCOM_Buff[0]) ? unCOM_Buff[COMM_RD_CMD_CNT - 1] : unCOM_Buff[COMM_WR_CMD_CNT - 1]))
+0000e6  886a              LDRH     r2,[r5,#2]  ; unCOM_Buff
+0000e8  e000              B        |L1.236|
+                  |L1.234|
+0000ea  88ea              LDRH     r2,[r5,#6]  ; unCOM_Buff
+                  |L1.236|
+0000ec  4290              CMP      r0,r2
+0000ee  d10b              BNE      |L1.264|
+;;;106    		{
+;;;107    			unValidFrameCNT++;
+0000f0  68a0              LDR      r0,[r4,#8]  ; unValidFrameCNT
+0000f2  1c40              ADDS     r0,r0,#1
+;;;108    			// safe zone
+;;;109    			if (IS_COMM_RD(unCOM_Buff[0]))
+0000f4  60a0              STR      r0,[r4,#8]  ; unValidFrameCNT
+0000f6  0bc8              LSRS     r0,r1,#15
+;;;110    			{
+;;;111    				nReadCommandHandler(unCOM_Buff);
+;;;112    			}
+;;;113    			else
+;;;114    			{
+;;;115    				nWriteCommandHandler(unCOM_Buff);
+0000f8  4818              LDR      r0,|L1.348|
+0000fa  d002              BEQ      |L1.258|
+0000fc  f7fffffe          BL       nReadCommandHandler
+000100  e005              B        |L1.270|
+                  |L1.258|
+000102  f7fffffe          BL       nWriteCommandHandler
+000106  e002              B        |L1.270|
+                  |L1.264|
+;;;116    			}
+;;;117    		}
+;;;118    		else
+;;;119    		{
+;;;120    			unCOM_SPI_TransErrCNT++;
+000108  68e0              LDR      r0,[r4,#0xc]  ; unCOM_SPI_TransErrCNT
+00010a  1c40              ADDS     r0,r0,#1
+00010c  60e0              STR      r0,[r4,#0xc]  ; unCOM_SPI_TransErrCNT
+                  |L1.270|
+;;;121    		}
+;;;122    	}
+;;;123    
+;;;124    	// Comm protection 1: If have received some frame in 500ms, error
+;;;125    	if ((uint32_t)(unSystemTick - unLastCheckTime) > 500)
+00010e  4814              LDR      r0,|L1.352|
+000110  6801              LDR      r1,[r0,#0]  ; unSystemTick
+000112  6862              LDR      r2,[r4,#4]  ; unLastCheckTime
+000114  1a89              SUBS     r1,r1,r2
+000116  22ff              MOVS     r2,#0xff
+000118  32f5              ADDS     r2,r2,#0xf5
+00011a  4291              CMP      r1,r2
+00011c  d90c              BLS      |L1.312|
+;;;126    	{
+;;;127    		unLastCheckTime = unSystemTick;
+00011e  6800              LDR      r0,[r0,#0]  ; unSystemTick
+;;;128    		if ((uint32_t)(unValidFrameCNT - unLastFrameCNT) < 1)
+000120  6060              STR      r0,[r4,#4]  ; unLastCheckTime
+000122  6821              LDR      r1,[r4,#0]  ; unLastFrameCNT
+000124  68a0              LDR      r0,[r4,#8]  ; unValidFrameCNT
+000126  4288              CMP      r0,r1
+000128  d104              BNE      |L1.308|
+;;;129    		{
+;;;130    			BLDC_stopMotor();
+00012a  f7fffffe          BL       BLDC_stopMotor
+;;;131    			setError(ERR_COMMUNICATION_FAIL);
+00012e  2002              MOVS     r0,#2
+000130  f7fffffe          BL       setError
+                  |L1.308|
+;;;132    		}
+;;;133    		unLastFrameCNT = unValidFrameCNT;
+000134  68a0              LDR      r0,[r4,#8]  ; unValidFrameCNT
+000136  6020              STR      r0,[r4,#0]  ; unLastFrameCNT
+                  |L1.312|
+;;;134    	}
+;;;135    	// Comm protection 2: If received error frame exceed some threshold, error
+;;;136    	if (unCOM_SPI_TransErrCNT > COM_SPI_TRANS_ERR_THRESHOLD)
+000138  68e0              LDR      r0,[r4,#0xc]  ; unCOM_SPI_TransErrCNT
+00013a  2806              CMP      r0,#6
+00013c  d904              BLS      |L1.328|
+;;;137    	{
+;;;138    		BLDC_stopMotor();
+00013e  f7fffffe          BL       BLDC_stopMotor
+;;;139    		setError(ERR_COMMUNICATION_FAIL);
+000142  2002              MOVS     r0,#2
+000144  f7fffffe          BL       setError
+                  |L1.328|
+;;;140    	}
+;;;141    }
+000148  bd70              POP      {r4-r6,pc}
                           ENDP
 
-0000be  0000              DCW      0x0000
-                  |L1.192|
+00014a  0000              DCW      0x0000
+                  |L1.332|
                           DCD      ||.constdata||
-                  |L1.196|
+                  |L1.336|
                           DCD      tMotor
-                  |L1.200|
+                  |L1.340|
                           DCD      0x40030000
-                  |L1.204|
+                  |L1.344|
                           DCD      ||.data||
+                  |L1.348|
+                          DCD      ||.data||+0x10
+                  |L1.352|
+                          DCD      unSystemTick
 
                           AREA ||.constdata||, DATA, READONLY, ALIGN=0
 
@@ -331,6 +441,12 @@
 
                           AREA ||.data||, DATA, ALIGN=2
 
+                  unLastFrameCNT
+                          DCD      0x00000000
+                  unLastCheckTime
+                          DCD      0x00000000
+                  unValidFrameCNT
+                          DCD      0x00000000
                   unCOM_SPI_TransErrCNT
                           DCD      0x00000000
                   unCOM_Buff
@@ -361,6 +477,26 @@
                           EXPORTAS ||area_number.9||, ||.data||
                   FlagRegisterNeedWrite
 000000  00                DCB      0x00
+
+                          AREA ||i.__ARM_common_switch8||, COMGROUP=__ARM_common_switch8, CODE, READONLY, ALIGN=1
+
+                  __ARM_common_switch8 PROC
+000000  b430              PUSH     {r4,r5}
+000002  4674              MOV      r4,lr
+000004  1e64              SUBS     r4,r4,#1
+000006  7825              LDRB     r5,[r4,#0]
+000008  1c64              ADDS     r4,r4,#1
+00000a  42ab              CMP      r3,r5
+00000c  d200              BCS      |L21.16|
+00000e  461d              MOV      r5,r3
+                  |L21.16|
+000010  5d63              LDRB     r3,[r4,r5]
+000012  005b              LSLS     r3,r3,#1
+000014  18e3              ADDS     r3,r4,r3
+000016  bc30              POP      {r4,r5}
+000018  4718              BX       r3
+                          ENDP
+
 
 ;*** Start embedded assembler ***
 

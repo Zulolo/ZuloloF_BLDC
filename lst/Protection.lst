@@ -9457,9 +9457,13 @@ S			COMM_WRITE_DUMMY = 0,
 S			COMM_WRITE_MOTOR_NEED_TO_RUN,
 S			COMM_WRITE_ROTATE_DIRECTION,
 S			COMM_WRITE_LOCATING_DUTY,
+S			COMM_WRITE_RAMP_UP_DUTY,
+S			COMM_WRITE_TARGET_DUTY,
+S			COMM_WRITE_LOCATING_PERIOD,
 S			COMM_WRITE_RAMP_UP_PERIOD,
 S			COMM_WRITE_CMD_MAX
 S		} ENUM_COMM_WRITE_CMD;
+S		uint32_t unValidFrameCNT;
 N	#else 
 N		#define EXTERNAL_COMM extern
 N	#endif
@@ -9732,6 +9736,7 @@ X		(*(unMosfetTestTable[unCheckIndex]) = 1);
 N		if (IS_ANY_EEROR == TRUE)
 X		if (((unErrorMaster == 0) ? (0) : (1)) == (1))
 N		{
+N			BLDC_stopMotor();
 N			while (1)
 N			{
 N				ERR_Manager();

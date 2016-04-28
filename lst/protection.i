@@ -7366,7 +7366,7 @@ extern void BLDC_SensorLessManager(void);
 
 #line 5 "User\\Communication.h"
 
-#line 91 "User\\Communication.h"
+#line 95 "User\\Communication.h"
 
 
 
@@ -7380,7 +7380,7 @@ extern void BLDC_SensorLessManager(void);
 
 
 
-#line 110 "User\\Communication.h"
+#line 114 "User\\Communication.h"
 
 typedef enum{
 	MOTOR_MCR = 0,	 
@@ -7527,6 +7527,7 @@ void PTC_checkMotor(void)
 		(*(unMosfetTestTable[unCheckIndex]) = 1);
 		if (((unErrorMaster == 0) ? (0) : (1)) == (1))
 		{
+			BLDC_stopMotor();
 			while (1)
 			{
 				ERR_Manager();

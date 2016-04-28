@@ -10570,9 +10570,13 @@ S			COMM_WRITE_DUMMY = 0,
 S			COMM_WRITE_MOTOR_NEED_TO_RUN,
 S			COMM_WRITE_ROTATE_DIRECTION,
 S			COMM_WRITE_LOCATING_DUTY,
+S			COMM_WRITE_RAMP_UP_DUTY,
+S			COMM_WRITE_TARGET_DUTY,
+S			COMM_WRITE_LOCATING_PERIOD,
 S			COMM_WRITE_RAMP_UP_PERIOD,
 S			COMM_WRITE_CMD_MAX
 S		} ENUM_COMM_WRITE_CMD;
+S		uint32_t unValidFrameCNT;
 N	#else 
 N		#define EXTERNAL_COMM extern
 N	#endif
@@ -11265,9 +11269,6 @@ N	tMotor.structMotor.MSR.bNewComFrameReceived = FALSE;
 X	tMotor.structMotor.MSR.bNewComFrameReceived = (0);
 N}
 N
-N//    uint32_t imsTest;
-N//	uint32_t iEntreTime;
-N//	uint32_t iLeaveTime;
 Nint main()
 N{
 N
@@ -11282,46 +11283,21 @@ N    // Max Period is:
 N    MOTOR_SHUT_DOWN;
 X    ((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(3))) + ((0)<<2)))) = 0); (((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->PIER = 0); (TIMER_Stop(((TIMER_T *) (((uint32_t)0x40000000) + 0x10000)))); (TIMER_Stop(((TIMER_T *) (((uint32_t)0x40000000) + 0x10020)))); (TIMER_DisableInt(((TIMER_T *) (((uint32_t)0x40000000) + 0x10000)))); (TIMER_DisableInt(((TIMER_T *) (((uint32_t)0x40000000) + 0x10020)))); (((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->PHCHGNXT = (0x000000FFul)); (((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->PHCHG = (0x000000FFul));
 N
-N    tMotor.structMotor.unLocatingDuty = 200;
-N    tMotor.structMotor.unLocatingPeriod = 10;	// Unit ms
-N    tMotor.structMotor.unRampUpDuty = 320;
-N    tMotor.structMotor.unRampUpPeriod = 8000;	// Unit 2MH, 20ms, 500rpm
-N	tMotor.structMotor.unTargetDuty = 400;
-N	tMotor.structMotor.MCR.bRotateDirection = ROTATE_CLOCKWISE;	// Clockwise
-X	tMotor.structMotor.MCR.bRotateDirection = 0;	
-N    tMotor.structMotor.MCR.bMotorNeedToRun = TRUE;
-X    tMotor.structMotor.MCR.bMotorNeedToRun = (1);
+N    // Example parameter
+N//    tMotor.structMotor.unLocatingDuty = 200;
+N//    tMotor.structMotor.unLocatingPeriod = 10;	// Unit ms
+N//    tMotor.structMotor.unRampUpDuty = 320;
+N//    tMotor.structMotor.unRampUpPeriod = 8000;	// Unit 2MH, 20ms, 500rpm
+N//	tMotor.structMotor.unTargetDuty = 400;
+N//	tMotor.structMotor.MCR.bRotateDirection = ROTATE_CLOCKWISE;	// Clockwise
+N//    tMotor.structMotor.MCR.bMotorNeedToRun = TRUE;
 N    /* ----=============== Test End ================---- */
 N
 N    while(1)
 N    {
-N//	if (TIMER_GetCounter(TIMER0) > 100 && TIMER_GetCounter(TIMER0) < 1000)
-N//	{
-N//	    imsTest = unSystemTick;
-N//	}
-N//	if (TIMER_GetCounter(TIMER0) > 30000 && TIMER_GetCounter(TIMER0) < 31000)
-N//	{
-N//	    imsTest = unSystemTick;
-N//	}
 N		BLDC_SensorLessManager();
 N		COMM_Manager();
 N		ERR_Manager();
-N
-N		// For test
-N		if (TRUE == tMotor.structMotor.MSR.bLocked)
-X		if ((1) == tMotor.structMotor.MSR.bLocked)
-N		{
-N			if (unSystemTick%5000 == 0)
-N			{
-N				if (iTestSpeedLastTime != unSystemTick)
-N				{
-N					iTestSpeedLastTime = unSystemTick;
-N					tMotor.structMotor.unTargetDuty = iTestSpeedSequence[iTestSpeedSequenIndex];
-N					INDEX_INCREASE(iTestSpeedSequenIndex, TEST_SPEED_SEQUENCE_NUM);
-X					((iTestSpeedSequenIndex) = (((iTestSpeedSequenIndex) < (((sizeof(iTestSpeedSequence)/sizeof(uint16_t))) - 1)) ? ((iTestSpeedSequenIndex) + 1) : 0));
-N				}
-N			}
-N		}
 N	}
 N
 N}

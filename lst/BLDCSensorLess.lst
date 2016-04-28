@@ -9448,9 +9448,13 @@ S			COMM_WRITE_DUMMY = 0,
 S			COMM_WRITE_MOTOR_NEED_TO_RUN,
 S			COMM_WRITE_ROTATE_DIRECTION,
 S			COMM_WRITE_LOCATING_DUTY,
+S			COMM_WRITE_RAMP_UP_DUTY,
+S			COMM_WRITE_TARGET_DUTY,
+S			COMM_WRITE_LOCATING_PERIOD,
 S			COMM_WRITE_RAMP_UP_PERIOD,
 S			COMM_WRITE_CMD_MAX
 S		} ENUM_COMM_WRITE_CMD;
+S		uint32_t unValidFrameCNT;
 N	#else 
 N		#define EXTERNAL_COMM extern
 N	#endif
@@ -10052,6 +10056,7 @@ N// Then stop it while rotating to measure the waveform
 N// Manually rotate it is too slow 
 N	return 0;
 N
+W "User\BLDCSensorLess.c" 103 2 statement is unreachable
 N	if ((uint32_t)(unSystemTick - unRotateDetectStartTime) > MAX_ALREADY_ROTATING_DETECT_TIME)
 X	if ((uint32_t)(unSystemTick - unRotateDetectStartTime) > 200)
 N	{
@@ -10339,6 +10344,7 @@ N	case MOTOR_WAIT_AFTER_LOCATE:
 N		if (tMotor.structMotor.MCR.bMotorNeedToRun && NO_MOTOR_EEROR)
 X		if (tMotor.structMotor.MCR.bMotorNeedToRun && (((unErrorMaster & 0xFFFFFFFEul) == 0) ? (1) : (0)))
 N		{
+W "User\BLDCSensorLess.c" 352 56 pointless comparison of unsigned integer with zero
 N			if ((uint32_t)(unSystemTick - iEnterTimeBeforeWait) >= WAIT_AFTER_LOCATE_TIME)
 X			if ((uint32_t)(unSystemTick - iEnterTimeBeforeWait) >= 0)
 N			{

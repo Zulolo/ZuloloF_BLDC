@@ -40,6 +40,7 @@ void PTC_checkMotor(void)
 		SET_MOSFET_OFF_MANUAL(unMosfetTestTable[unCheckIndex]);
 		if (IS_ANY_EEROR == TRUE)
 		{
+			BLDC_stopMotor();
 			while (1)
 			{
 				ERR_Manager();

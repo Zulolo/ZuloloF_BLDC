@@ -9456,9 +9456,13 @@ S			COMM_WRITE_DUMMY = 0,
 S			COMM_WRITE_MOTOR_NEED_TO_RUN,
 S			COMM_WRITE_ROTATE_DIRECTION,
 S			COMM_WRITE_LOCATING_DUTY,
+S			COMM_WRITE_RAMP_UP_DUTY,
+S			COMM_WRITE_TARGET_DUTY,
+S			COMM_WRITE_LOCATING_PERIOD,
 S			COMM_WRITE_RAMP_UP_PERIOD,
 S			COMM_WRITE_CMD_MAX
 S		} ENUM_COMM_WRITE_CMD;
+S		uint32_t unValidFrameCNT;
 S	#else 
 S		#define EXTERNAL_COMM extern
 S	#endif
@@ -9721,9 +9725,13 @@ N			COMM_WRITE_DUMMY = 0,
 N			COMM_WRITE_MOTOR_NEED_TO_RUN,
 N			COMM_WRITE_ROTATE_DIRECTION,
 N			COMM_WRITE_LOCATING_DUTY,
+N			COMM_WRITE_RAMP_UP_DUTY,
+N			COMM_WRITE_TARGET_DUTY,
+N			COMM_WRITE_LOCATING_PERIOD,
 N			COMM_WRITE_RAMP_UP_PERIOD,
 N			COMM_WRITE_CMD_MAX
 N		} ENUM_COMM_WRITE_CMD;
+N		uint32_t unValidFrameCNT;
 N	#else 
 S		#define EXTERNAL_COMM extern
 N	#endif
@@ -10345,6 +10353,14 @@ N * We will check the successfully communication number every 1 second.
 N * If it is not increasing, we will consider something bad has happened and cut off the power of motor.
 N */
 N
+N/*
+N * When one read command was received, the application will put the address' data into FIFO of SPI.
+N * So next time when master is querying another address/dummy address, it can retrieve the data last time queried.
+N * In general, if you want to read some data,
+N * you need send first read command of one valid address, then send another read command to get the data.
+N * Because read command is 2 16bits length, it can only access one half word value and one CRC16.
+N */
+N
 Nuint16_t CRC16(uint8_t* pData, uint16_t unLength)
 N{
 N	uint8_t unCRCHi = 0xFF;
@@ -10379,7 +10395,31 @@ N}
 N
 Nint32_t nWriteCommandHandler(uint16_t* pCOM_Buff)
 N{
-N
+N	switch(COMM_GET_DATA(pCOM_Buff[0]))
+X	switch(((pCOM_Buff[0]) & (0x7FFF)))
+N	{
+N	case COMM_WRITE_MOTOR_NEED_TO_RUN:
+N	case COMM_WRITE_ROTATE_DIRECTION:
+N		tMotor.structMotor.MCR.bMotorNeedToRun = pCOM_Buff[1];
+N		break;
+N	case COMM_WRITE_LOCATING_DUTY:
+N		tMotor.structMotor.unLocatingDuty = pCOM_Buff[1];
+N		break;
+N	case COMM_WRITE_RAMP_UP_DUTY:
+N		tMotor.structMotor.unRampUpDuty = pCOM_Buff[1];
+N		break;
+N	case COMM_WRITE_TARGET_DUTY:
+N		tMotor.structMotor.unTargetDuty = pCOM_Buff[1];
+N		break;
+N	case COMM_WRITE_LOCATING_PERIOD:
+N		tMotor.structMotor.unLocatingPeriod = pCOM_Buff[1];
+N		break;
+N	case COMM_WRITE_RAMP_UP_PERIOD:
+N		tMotor.structMotor.unRampUpPeriod = pCOM_Buff[1] + pCOM_Buff[2] << 16;
+N			break;
+N	default:
+N		return -1;
+N	}
 N	return 0;
 N}
 N
@@ -10388,6 +10428,8 @@ Nvoid COMM_Manager(void)
 N{
 N	static uint16_t unCOM_Buff[COMM_FIFO_LENGTH];
 X	static uint16_t unCOM_Buff[4];
+N	static uint32_t unLastFrameCNT = 0;
+N	static uint32_t unLastCheckTime = 0;
 N	// All transactions are handled in interrupt
 N	if (tMotor.structMotor.MSR.bNewComFrameReceived == TRUE)
 X	if (tMotor.structMotor.MSR.bNewComFrameReceived == (1))
@@ -10401,6 +10443,7 @@ X		if (CRC16((uint8_t *)unCOM_Buff, ((((unCOM_Buff[0]) & (0x8000)) == (0x8000)) 
 N				(IS_COMM_RD(unCOM_Buff[0]) ? unCOM_Buff[COMM_RD_CMD_CNT - 1] : unCOM_Buff[COMM_WR_CMD_CNT - 1]))
 X				((((unCOM_Buff[0]) & (0x8000)) == (0x8000)) ? unCOM_Buff[2 - 1] : unCOM_Buff[4 - 1]))
 N		{
+N			unValidFrameCNT++;
 N			// safe zone
 N			if (IS_COMM_RD(unCOM_Buff[0]))
 X			if ((((unCOM_Buff[0]) & (0x8000)) == (0x8000)))
@@ -10418,9 +10461,22 @@ N			unCOM_SPI_TransErrCNT++;
 N		}
 N	}
 N
+N	// Comm protection 1: If have received some frame in 500ms, error
+N	if ((uint32_t)(unSystemTick - unLastCheckTime) > 500)
+N	{
+N		unLastCheckTime = unSystemTick;
+N		if ((uint32_t)(unValidFrameCNT - unLastFrameCNT) < 1)
+N		{
+N			BLDC_stopMotor();
+N			setError(ERR_COMMUNICATION_FAIL);
+N		}
+N		unLastFrameCNT = unValidFrameCNT;
+N	}
+N	// Comm protection 2: If received error frame exceed some threshold, error
 N	if (unCOM_SPI_TransErrCNT > COM_SPI_TRANS_ERR_THRESHOLD)
 X	if (unCOM_SPI_TransErrCNT > 6)
 N	{
+N		BLDC_stopMotor();
 N		setError(ERR_COMMUNICATION_FAIL);
 N	}
 N}
