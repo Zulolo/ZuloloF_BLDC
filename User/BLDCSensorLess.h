@@ -202,12 +202,10 @@ typedef enum {
 
 		const uint8_t unLocatePhaseSequencyTable[] = {0, 1, 2, 1};
 
-		#define ALREADY_ROTATING_DETECTING			0xFFFF
+		#define IS_ROTATING_DETECTING				0xFFFF
 		#define MAX_ROTATING_DETECT_PHASE_TIME		30	// half phase max 30ms
 		#define MAX_ALREADY_ROTATING_DETECT_TIME	200	// 200ms used to detect is motor is already rotating
-		#define MAX_SINGLE_PHASE_DURATION			80  // 80ms, 
 		#define RAMP_UP_MIN_PERIOD_NUM_THRS			300	// After ramp up to minimum period, force continue rotate these phases
-		#define MAX_MOTOR_PWR_DUTY 					(PWM_PERIOD - 150)
 		#define CHANGE_DUTY_PERIOD_THR				9		// Used in ramp up
 		#define CHANGE_DUTY_CNT_THR					5		// Used after locked
 
@@ -238,6 +236,8 @@ typedef enum {
 		#define MOTOR_START_ZXD_SPEED				(1600 - 1)	// frequency 2M,
 //		#define MOTOR_START_ZXD_MINROT_CNT			200	// After phase change xxx times at max speed of rampup, start to detect ZX
 
+		#define MAX_MOTOR_PWR_DUTY 					(PWM_PERIOD - 150)
+		#define MAX_SINGLE_PHASE_DURATION			80  // 80ms,
 //		typedef enum {
 //			PHASE_AB = 0,
 //			PHASE_AC,
@@ -263,7 +263,6 @@ typedef enum {
 		static uint8_t unPhaseChangeCNT4Period;
 		static uint8_t unPhaseChangeCNT4Duty;
 		static uint16_t unRampUpPeriodMiniCNT;
-		static uint32_t unCurrentPHCHG;
 		static uint32_t unLastPhaseChangeTime;
 		static uint32_t unRotateDetectStartTime;	// Used to record when enter motor start, 
 												// ALready rotating detect end time will be compared with this time

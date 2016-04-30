@@ -9208,12 +9208,10 @@ S		} ENUM_STATUS;
 S
 S		const uint8_t unLocatePhaseSequencyTable[] = {0, 1, 2, 1};
 S
-S		#define ALREADY_ROTATING_DETECTING			0xFFFF
+S		#define IS_ROTATING_DETECTING				0xFFFF
 S		#define MAX_ROTATING_DETECT_PHASE_TIME		30	// half phase max 30ms
 S		#define MAX_ALREADY_ROTATING_DETECT_TIME	200	// 200ms used to detect is motor is already rotating
-S		#define MAX_SINGLE_PHASE_DURATION			80  // 80ms, 
 S		#define RAMP_UP_MIN_PERIOD_NUM_THRS			300	// After ramp up to minimum period, force continue rotate these phases
-S		#define MAX_MOTOR_PWR_DUTY 					(PWM_PERIOD - 150)
 S		#define CHANGE_DUTY_PERIOD_THR				9		// Used in ramp up
 S		#define CHANGE_DUTY_CNT_THR					5		// Used after locked
 S
@@ -9244,6 +9242,8 @@ S//		#define MOTOR_RAMPUP_PR_DCR(x)				((x) = (((x) < MOTOR_RAMPUP_PR_MIN) ? (x)
 S		#define MOTOR_START_ZXD_SPEED				(1600 - 1)	// frequency 2M,
 S//		#define MOTOR_START_ZXD_MINROT_CNT			200	// After phase change xxx times at max speed of rampup, start to detect ZX
 S
+S		#define MAX_MOTOR_PWR_DUTY 					(PWM_PERIOD - 150)
+S		#define MAX_SINGLE_PHASE_DURATION			80  // 80ms,
 S//		typedef enum {
 S//			PHASE_AB = 0,
 S//			PHASE_AC,
@@ -9269,7 +9269,6 @@ S		static uint8_t unLocateIndex;
 S		static uint8_t unPhaseChangeCNT4Period;
 S		static uint8_t unPhaseChangeCNT4Duty;
 S		static uint16_t unRampUpPeriodMiniCNT;
-S		static uint32_t unCurrentPHCHG;
 S		static uint32_t unLastPhaseChangeTime;
 S		static uint32_t unRotateDetectStartTime;	// Used to record when enter motor start, 
 S												// ALready rotating detect end time will be compared with this time
@@ -9596,17 +9595,6 @@ N#define __PROTECTION_H__
 N
 N#include "global.h"
 N
-N	#ifdef __USED_BY_PTC_C__
-S		#define EXTERNAL_PTC
-S
-S		volatile uint32_t* unMosfetTestTable[] = {MOSFET_AS_PIN_ADDR, MOSFET_BS_PIN_ADDR, MOSFET_CS_PIN_ADDR,
-S				MOSFET_AD_PIN_ADDR, MOSFET_BD_PIN_ADDR, MOSFET_CD_PIN_ADDR};
-S		#define SET_MOSFET_ON_MANUAL(pinAddr)		(*(pinAddr) = 0)
-S		#define SET_MOSFET_OFF_MANUAL(pinAddr)		(*(pinAddr) = 1)
-N	#else
-N		#define EXTERNAL_PTC extern
-N	#endif
-N
 N#define BATTERY_V_PORT				P3
 N#define BATTERY_V_PIN				BIT1
 N#define CURRENT_PORT				P5
@@ -9638,8 +9626,21 @@ N#define ADC_BAT_LOW_CNT					16	// Battery may need further filter, 300us*16*2(o
 N// Set 11.5V as min, (11.5/12)*2=1.92V, (1.92/5)*1024=393	// Actually using 10K and 2K R
 N#define ADC_BAT_LOW_THRS_MT				393
 N
+N#ifdef __USED_BY_PTC_C__
+S	#define EXTERNAL_PTC
+S
+S	volatile uint32_t* unMosfetTestTable[] = {MOSFET_AS_PIN_ADDR, MOSFET_BS_PIN_ADDR, MOSFET_CS_PIN_ADDR,
+S			MOSFET_AD_PIN_ADDR, MOSFET_BD_PIN_ADDR, MOSFET_CD_PIN_ADDR};
+S	#define SET_MOSFET_ON_MANUAL(pinAddr)		(*(pinAddr) = 0)
+S	#define SET_MOSFET_OFF_MANUAL(pinAddr)		(*(pinAddr) = 1)
+S
+N#else
+N	#define EXTERNAL_PTC extern
+N#endif
+N
 NEXTERNAL_PTC void PTC_checkMotor(void);
 Xextern void PTC_checkMotor(void);
+N
 N#endif
 L 70 "User\global.h" 2
 N#endif 
@@ -9861,12 +9862,10 @@ N		} ENUM_STATUS;
 N
 N		const uint8_t unLocatePhaseSequencyTable[] = {0, 1, 2, 1};
 N
-N		#define ALREADY_ROTATING_DETECTING			0xFFFF
+N		#define IS_ROTATING_DETECTING				0xFFFF
 N		#define MAX_ROTATING_DETECT_PHASE_TIME		30	// half phase max 30ms
 N		#define MAX_ALREADY_ROTATING_DETECT_TIME	200	// 200ms used to detect is motor is already rotating
-N		#define MAX_SINGLE_PHASE_DURATION			80  // 80ms, 
 N		#define RAMP_UP_MIN_PERIOD_NUM_THRS			300	// After ramp up to minimum period, force continue rotate these phases
-N		#define MAX_MOTOR_PWR_DUTY 					(PWM_PERIOD - 150)
 N		#define CHANGE_DUTY_PERIOD_THR				9		// Used in ramp up
 N		#define CHANGE_DUTY_CNT_THR					5		// Used after locked
 N
@@ -9897,6 +9896,8 @@ N//		#define MOTOR_RAMPUP_PR_DCR(x)				((x) = (((x) < MOTOR_RAMPUP_PR_MIN) ? (x)
 N		#define MOTOR_START_ZXD_SPEED				(1600 - 1)	// frequency 2M,
 N//		#define MOTOR_START_ZXD_MINROT_CNT			200	// After phase change xxx times at max speed of rampup, start to detect ZX
 N
+N		#define MAX_MOTOR_PWR_DUTY 					(PWM_PERIOD - 150)
+N		#define MAX_SINGLE_PHASE_DURATION			80  // 80ms,
 N//		typedef enum {
 N//			PHASE_AB = 0,
 N//			PHASE_AC,
@@ -9922,7 +9923,6 @@ N		static uint8_t unLocateIndex;
 N		static uint8_t unPhaseChangeCNT4Period;
 N		static uint8_t unPhaseChangeCNT4Duty;
 N		static uint16_t unRampUpPeriodMiniCNT;
-N		static uint32_t unCurrentPHCHG;
 N		static uint32_t unLastPhaseChangeTime;
 N		static uint32_t unRotateDetectStartTime;	// Used to record when enter motor start, 
 N												// ALready rotating detect end time will be compared with this time
@@ -10176,7 +10176,7 @@ N	PWM->PHCHG = GET_PHASE_VALUE(iPhase);
 X	((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->PHCHG = ((tMotor . structMotor . MCR . bRotateDirection == 0) ? PHASE_TAB_CLOCKWISE[(iPhase)] : PHASE_TAB_ANTICLOCKWISE[(iPhase)]);
 N}
 N
-NENUM_STATUS BLDCLocatingManager(void)
+NENUM_STATUS BLDC_LocatingManager(void)
 N{
 N	if ((uint32_t)(unSystemTick - unLastPhaseChangeTime) > tMotor.structMotor.unLocatingPeriod)
 N	{
@@ -10232,12 +10232,9 @@ X		((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->PHCHGNXT = ((tMotor . structM
 N	}
 N}
 N
-N// Take charge of all Motot control
-Nvoid BLDC_SensorLessManager(void)
+N__INLINE void dutyProtection(void)
+X__inline void dutyProtection(void)
 N{
-N	uint16_t iMotorAlreadyRotatingPhaseTime;
-N	static uint32_t iEnterTimeBeforeWait;
-N
 N	// Duty too big protection
 N	if ((tMotor.structMotor.unActualDuty > MAX_MOTOR_PWR_DUTY) || (PWM->CMR[1] > MAX_MOTOR_PWR_DUTY))
 X	if ((tMotor.structMotor.unActualDuty > ((884-1) - 150)) || (((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->CMR[1] > ((884-1) - 150)))
@@ -10245,8 +10242,13 @@ N	{
 N		BLDC_stopMotor();
 N		setError(ERR_INTERNAL);
 N	}
+N}
 N
-N	// Single phase duration too long protection 
+N__INLINE void phaseDurationProtection(uint32_t unLastPhaseChangeTime)
+X__inline void phaseDurationProtection(uint32_t unLastPhaseChangeTime)
+N{
+N	static uint32_t unCurrentPHCHG;
+N	// Single phase duration too long protection
 N	if (TRUE == tMotor.structMotor.MSR.bMotorPowerOn)
 X	if ((1) == tMotor.structMotor.MSR.bMotorPowerOn)
 N	{
@@ -10259,14 +10261,24 @@ N			unLastPhaseChangeTime = unSystemTick;
 N		}
 N		else
 N		{
-N			if ((uint32_t)(unSystemTick - unLastPhaseChangeTime) > MAX_SINGLE_PHASE_DURATION) 
-X			if ((uint32_t)(unSystemTick - unLastPhaseChangeTime) > 80) 
+N			if ((uint32_t)(unSystemTick - unLastPhaseChangeTime) > MAX_SINGLE_PHASE_DURATION)
+X			if ((uint32_t)(unSystemTick - unLastPhaseChangeTime) > 80)
 N			{
 N				BLDC_stopMotor();
 N				setError(ERR_INTERNAL);
 N			}
 N		}
 N	}
+N}
+N
+N// Take charge of all Motot control
+Nvoid BLDC_SensorLessManager(void)
+N{
+N	uint16_t iMotorAlreadyRotatingPhaseTime;
+N	static uint32_t iEnterTimeBeforeWait;
+N
+N	dutyProtection();
+N	phaseDurationProtection(unLastPhaseChangeTime);
 N
 N	switch (tMotorState)
 N	{
@@ -10288,10 +10300,10 @@ N			// Later implement this when motor can rotate
 N			// Then stop it while rotating to measure the waveform
 N			// Manually rotate it is too slow 
 N			iMotorAlreadyRotatingPhaseTime = canMotorContinueRunning();
-N			if (iMotorAlreadyRotatingPhaseTime != ALREADY_ROTATING_DETECTING)
+N			if (iMotorAlreadyRotatingPhaseTime != IS_ROTATING_DETECTING)
 X			if (iMotorAlreadyRotatingPhaseTime != 0xFFFF)
 N			{
-N				if (iMotorAlreadyRotatingPhaseTime)
+N				if (iMotorAlreadyRotatingPhaseTime > 0)
 N				{
 N					// 1 to 65534
 N					tMotorState = MOTOR_LOCKED;
@@ -10328,7 +10340,7 @@ N	case MOTOR_LOCATE:
 N		if (tMotor.structMotor.MCR.bMotorNeedToRun && NO_MOTOR_EEROR)
 X		if (tMotor.structMotor.MCR.bMotorNeedToRun && (((unErrorMaster & 0xFFFFFFFEul) == 0) ? (1) : (0)))
 N		{
-N			if (BLDCLocatingManager() == STATUS_FINISHED)
+N			if (BLDC_LocatingManager() == STATUS_FINISHED)
 N			{
 N				iEnterTimeBeforeWait = unSystemTick;
 N				tMotorState = MOTOR_WAIT_AFTER_LOCATE;
@@ -10344,7 +10356,7 @@ N	case MOTOR_WAIT_AFTER_LOCATE:
 N		if (tMotor.structMotor.MCR.bMotorNeedToRun && NO_MOTOR_EEROR)
 X		if (tMotor.structMotor.MCR.bMotorNeedToRun && (((unErrorMaster & 0xFFFFFFFEul) == 0) ? (1) : (0)))
 N		{
-W "User\BLDCSensorLess.c" 352 56 pointless comparison of unsigned integer with zero
+W "User\BLDCSensorLess.c" 362 56 pointless comparison of unsigned integer with zero
 N			if ((uint32_t)(unSystemTick - iEnterTimeBeforeWait) >= WAIT_AFTER_LOCATE_TIME)
 X			if ((uint32_t)(unSystemTick - iEnterTimeBeforeWait) >= 0)
 N			{
@@ -10360,15 +10372,17 @@ X				((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(3))) +
 N				// Set timer 0 valure, use timer 0 to change phase automatically
 N				// ************************************************************************
 N				// ----==== From here current unCurrentPhase is actually next phase ====----
-N				// What to get real current phase value? Read PWM->PHCHG.
+N				// ----==== Because we want to use the HW auto phase changer (PWM->PHCHGNXT) ====----
+N				// So increase unCurrentPhase again. Want to get real current phase value? Read PWM->PHCHG.
 N				// ************************************************************************
 N				PHASE_INCREASE(unCurrentPhase);
 X				(((unCurrentPhase)) = ((((unCurrentPhase)) < (((sizeof(PHASE_TAB_CLOCKWISE)/sizeof(uint32_t))) - 1)) ? (((unCurrentPhase)) + 1) : 0));
 N				PWM->PHCHGNXT = GET_PHASE_VALUE(unCurrentPhase);
 X				((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->PHCHGNXT = ((tMotor . structMotor . MCR . bRotateDirection == 0) ? PHASE_TAB_CLOCKWISE[(unCurrentPhase)] : PHASE_TAB_ANTICLOCKWISE[(unCurrentPhase)]);
-N				// !!!! Need to make sure CPU run to here every min tMotor.structMotor.ACT_PERIOD time !!!
+N				// !!!! Need to make sure CPU runs to here every min tMotor.structMotor.ACT_PERIOD time !!!
 N				// !!!! If not , timer counter may already passed tMotor.structMotor.ACT_PERIOD, !!!!
-N				// !!!! then need to count to 2^24, go back to 0 and triger interrupt when reach ACT_PERIOD !!!!
+N				// !!!! then need to count to max timer counter number (which is 2^24), !!!!
+N				// !!!! go back to 0 and triger interrupt when reach ACT_PERIOD again !!!!
 N				TIMER_SET_CMP_VALUE(TIMER0, tMotor.structMotor.unActualPeriod);
 X				((((TIMER_T *) (((uint32_t)0x40000000) + 0x10000)))->TCMPR = (tMotor . structMotor . unActualPeriod));
 N				TIMER_Start(TIMER0);	// Once started, running and interrupting until Motor stop

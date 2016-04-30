@@ -5,18 +5,18 @@
                           AREA ||.text||, CODE, READONLY, ALIGN=2
 
                   TMR0_IRQHandler PROC
-;;;14     // Used to change phase
+;;;14     // Timer 0 is used to change phase
 ;;;15     void TMR0_IRQHandler(void)                                   
-000000  b530              PUSH     {r4,r5,lr}
+000000  b510              PUSH     {r4,lr}
 ;;;16     {
 ;;;17     	TIMER0->TISR  = TIMER0->TISR;	//~0;    // Write 1 to clear interrupt flag
-000002  49cd              LDR      r1,|L1.824|
+000002  49cc              LDR      r1,|L1.820|
 000004  6888              LDR      r0,[r1,#8]
 000006  6088              STR      r0,[r1,#8]
 ;;;18     
 ;;;19     	//iPhaseChangeCNT4Period++;
 ;;;20     	FLAG_PHASE_CHANGED = SET;
-000008  4acc              LDR      r2,|L1.828|
+000008  4acb              LDR      r2,|L1.824|
 00000a  2001              MOVS     r0,#1
 00000c  7010              STRB     r0,[r2,#0]
 ;;;21     //	iTestACMPIntEachPhaseCNT = 0;
@@ -25,63 +25,62 @@
 ;;;24     	//ACMP0_INT_DISABLE; 
 ;;;25     
 ;;;26     	// Disable PWM's interrupt in case after change phase it triggers
-;;;27     	PWM_INT_DISABLE;
-00000e  48cc              LDR      r0,|L1.832|
-000010  2400              MOVS     r4,#0
-000012  6144              STR      r4,[r0,#0x14]
+;;;27     //	PWM_INT_DISABLE;
 ;;;28     
 ;;;29     
 ;;;30     	if (TRUE == tMotor.structMotor.MSR.bZeroCrossDetecting)
-000014  48cb              LDR      r0,|L1.836|
-000016  8840              LDRH     r0,[r0,#2]  ; tMotor
-000018  0780              LSLS     r0,r0,#30
-00001a  d517              BPL      |L1.76|
-00001c  4ac6              LDR      r2,|L1.824|
-00001e  3220              ADDS     r2,r2,#0x20           ;16
-000020  6810              LDR      r0,[r2,#0]            ;16
-000022  034b              LSLS     r3,r1,#13             ;16
-000024  4398              BICS     r0,r0,r3              ;16
-000026  6010              STR      r0,[r2,#0]            ;16
+00000e  48cb              LDR      r0,|L1.828|
+000010  8840              LDRH     r0,[r0,#2]  ; tMotor
+000012  0780              LSLS     r0,r0,#30
+000014  d519              BPL      |L1.74|
+000016  4ac7              LDR      r2,|L1.820|
+000018  3220              ADDS     r2,r2,#0x20           ;16
+00001a  6810              LDR      r0,[r2,#0]            ;16
+00001c  034b              LSLS     r3,r1,#13             ;16
+00001e  4398              BICS     r0,r0,r3              ;16
+000020  6010              STR      r0,[r2,#0]            ;16
 ;;;31     	{
 ;;;32     		// In case TIM1 interrupt happened but preeempted by TIM0
 ;;;33     		TIMER_DisableInt(TIMER1);
 ;;;34     		TIMER1->TISR  = ~0;    // Clear interrupt flag
-000028  1e60              SUBS     r0,r4,#1
-00002a  6288              STR      r0,[r1,#0x28]
+000022  2000              MOVS     r0,#0
+000024  43c0              MVNS     r0,r0
+000026  6288              STR      r0,[r1,#0x28]
 ;;;35     		TIMER_SET_CMP_VALUE(TIMER1, GET_TIM1_CMP_VALUE(TIMER1->TDR + AVOID_ZXD_AFTER_PHCHG));	
-00002c  6ac8              LDR      r0,[r1,#0x2c]
-00002e  4dc6              LDR      r5,|L1.840|
-000030  30a0              ADDS     r0,r0,#0xa0
-000032  42a8              CMP      r0,r5
-000034  6ac8              LDR      r0,[r1,#0x2c]
-000036  d302              BCC      |L1.62|
-000038  4dc4              LDR      r5,|L1.844|
-00003a  1940              ADDS     r0,r0,r5
-00003c  e000              B        |L1.64|
-                  |L1.62|
-00003e  30a0              ADDS     r0,r0,#0xa0
-                  |L1.64|
-000040  6248              STR      r0,[r1,#0x24]
+000028  6ac8              LDR      r0,[r1,#0x2c]
+00002a  4cc5              LDR      r4,|L1.832|
+00002c  30a0              ADDS     r0,r0,#0xa0
+00002e  42a0              CMP      r0,r4
+000030  6ac8              LDR      r0,[r1,#0x2c]
+000032  d302              BCC      |L1.58|
+000034  4cc3              LDR      r4,|L1.836|
+000036  1900              ADDS     r0,r0,r4
+000038  e000              B        |L1.60|
+                  |L1.58|
+00003a  30a0              ADDS     r0,r0,#0xa0
+                  |L1.60|
+00003c  6248              STR      r0,[r1,#0x24]
 ;;;36     		//GET_TIMER_DIFF(PWM_ZX_FILTER_TIME, GET_TIM1_CMP_VALUE(TIMER1->TDR + (tMotor.structMotor.ACT_PERIOD >> 1))));	
 ;;;37     		//(tMotor.structMotor.ACT_PERIOD >> 2)));
 ;;;38     		FLAG_TIM1_USEAGE = ENUM_TIM1_AVOID_ZXD;
-000042  48c3              LDR      r0,|L1.848|
-000044  7004              STRB     r4,[r0,#0]
-000046  6810              LDR      r0,[r2,#0]
-000048  4318              ORRS     r0,r0,r3
-00004a  6010              STR      r0,[r2,#0]
-                  |L1.76|
+00003e  49c2              LDR      r1,|L1.840|
+000040  2000              MOVS     r0,#0
+000042  7008              STRB     r0,[r1,#0]
+000044  6810              LDR      r0,[r2,#0]
+000046  4318              ORRS     r0,r0,r3
+000048  6010              STR      r0,[r2,#0]
+                  |L1.74|
 ;;;39     		TIMER_EnableInt(TIMER1);
 ;;;40     	}
 ;;;41     }
-00004c  bd30              POP      {r4,r5,pc}
+00004a  bd10              POP      {r4,pc}
 ;;;42     
                           ENDP
 
                   DetectdTimeWhenPWMHigh PROC
 ;;;58     //		    ZX found
 ;;;59     uint32_t DetectdTimeWhenPWMHigh(void)
-00004e  b530              PUSH     {r4,r5,lr}
+00004c  b530              PUSH     {r4,r5,lr}
 ;;;60     {
 ;;;61     	
 ;;;62     
@@ -96,64 +95,64 @@
 ;;;71     //		BRG_DISABLE;
 ;;;72     //		BLDC_stopMotor();
 ;;;73     		if (unZXMatchCNT > MAX_ZX_MATCH_IN_PWM)
-000050  48c0              LDR      r0,|L1.852|
+00004e  48bf              LDR      r0,|L1.844|
 ;;;74     		{
 ;;;75     			return TIMER_GetCounter(TIMER1);	//GET_TIMER_DIFF(PWM_ZX_FILTER_TIME, TIMER_GetCounter(TIMER1));
 ;;;76     		}
 ;;;77     
 ;;;78     		if (ACMP0_EDGE_MATCH)
-000052  49bb              LDR      r1,|L1.832|
-000054  4bc0              LDR      r3,|L1.856|
-000056  2400              MOVS     r4,#0
+000050  49bf              LDR      r1,|L1.848|
+000052  4bc0              LDR      r3,|L1.852|
+000054  2400              MOVS     r4,#0
 ;;;79     		{
 ;;;80     			unZXMatchCNT++; 
 ;;;81     		}
 ;;;82     		else
 ;;;83     		{
 ;;;84     			unZXMatchCNT = 0;
-000058  e013              B        |L1.130|
-                  |L1.90|
-00005a  6802              LDR      r2,[r0,#0]            ;73  ; unZXMatchCNT
-00005c  2a24              CMP      r2,#0x24              ;73
-00005e  d903              BLS      |L1.104|
-000060  48b5              LDR      r0,|L1.824|
-000062  3020              ADDS     r0,r0,#0x20           ;73
-000064  68c0              LDR      r0,[r0,#0xc]          ;73
+000056  e013              B        |L1.128|
+                  |L1.88|
+000058  6802              LDR      r2,[r0,#0]            ;73  ; unZXMatchCNT
+00005a  2a24              CMP      r2,#0x24              ;73
+00005c  d903              BLS      |L1.102|
+00005e  48b5              LDR      r0,|L1.820|
+000060  3020              ADDS     r0,r0,#0x20           ;73
+000062  68c0              LDR      r0,[r0,#0xc]          ;73
 ;;;85     		}
 ;;;86     		
 ;;;87     	}
 ;;;88     	return TIMER_INVALID_CNT;
 ;;;89     }
-000066  bd30              POP      {r4,r5,pc}
-                  |L1.104|
-000068  6b8a              LDR      r2,[r1,#0x38]         ;78
-00006a  689d              LDR      r5,[r3,#8]            ;78
-00006c  0612              LSLS     r2,r2,#24             ;78
-00006e  0fd2              LSRS     r2,r2,#31             ;78
-000070  076d              LSLS     r5,r5,#29             ;78
-000072  0fed              LSRS     r5,r5,#31             ;78
-000074  42aa              CMP      r2,r5                 ;78
-000076  d103              BNE      |L1.128|
-000078  6802              LDR      r2,[r0,#0]            ;80  ; unZXMatchCNT
-00007a  1c52              ADDS     r2,r2,#1              ;80
-00007c  6002              STR      r2,[r0,#0]            ;80  ; unZXMatchCNT
-00007e  e000              B        |L1.130|
+000064  bd30              POP      {r4,r5,pc}
+                  |L1.102|
+000066  6b8a              LDR      r2,[r1,#0x38]         ;78
+000068  689d              LDR      r5,[r3,#8]            ;78
+00006a  0612              LSLS     r2,r2,#24             ;78
+00006c  0fd2              LSRS     r2,r2,#31             ;78
+00006e  076d              LSLS     r5,r5,#29             ;78
+000070  0fed              LSRS     r5,r5,#31             ;78
+000072  42aa              CMP      r2,r5                 ;78
+000074  d103              BNE      |L1.126|
+000076  6802              LDR      r2,[r0,#0]            ;80  ; unZXMatchCNT
+000078  1c52              ADDS     r2,r2,#1              ;80
+00007a  6002              STR      r2,[r0,#0]            ;80  ; unZXMatchCNT
+00007c  e000              B        |L1.128|
+                  |L1.126|
+00007e  6004              STR      r4,[r0,#0]            ;84  ; unZXMatchCNT
                   |L1.128|
-000080  6004              STR      r4,[r0,#0]            ;84  ; unZXMatchCNT
-                  |L1.130|
-000082  698a              LDR      r2,[r1,#0x18]         ;69
-000084  0792              LSLS     r2,r2,#30             ;69
-000086  d5e8              BPL      |L1.90|
-000088  2000              MOVS     r0,#0                 ;88
-00008a  43c0              MVNS     r0,r0                 ;88
-00008c  bd30              POP      {r4,r5,pc}
+000080  698a              LDR      r2,[r1,#0x18]         ;69
+000082  0792              LSLS     r2,r2,#30             ;69
+000084  d5e8              BPL      |L1.88|
+000086  2000              MOVS     r0,#0                 ;88
+000088  43c0              MVNS     r0,r0                 ;88
+00008a  bd30              POP      {r4,r5,pc}
 ;;;90     
                           ENDP
 
                   PhaseZXDedHandler PROC
 ;;;120    
 ;;;121    int32_t PhaseZXDedHandler(uint32_t iThisZXDetectedTime)
-00008e  b530              PUSH     {r4,r5,lr}
+00008c  b530              PUSH     {r4,r5,lr}
 ;;;122    {
 ;;;123    	static uint32_t iTempDeltaZXD = 0;
 ;;;124    	static uint32_t iHalfPeriod = 0;
@@ -162,95 +161,95 @@
 ;;;127    	//iThisZXDetectedTime = TIMER_GetCounter(TIMER1);
 ;;;128    
 ;;;129    	iTempDeltaZXD = GET_TIMER_DIFF(unLastZXDetectedTime, iThisZXDetectedTime);
-000090  4ab2              LDR      r2,|L1.860|
-000092  6811              LDR      r1,[r2,#0]  ; unLastZXDetectedTime
-000094  4288              CMP      r0,r1
-000096  d902              BLS      |L1.158|
-000098  6811              LDR      r1,[r2,#0]  ; unLastZXDetectedTime
-00009a  1a41              SUBS     r1,r0,r1
-00009c  e003              B        |L1.166|
-                  |L1.158|
-00009e  6813              LDR      r3,[r2,#0]  ; unLastZXDetectedTime
-0000a0  49a9              LDR      r1,|L1.840|
-0000a2  1ac9              SUBS     r1,r1,r3
-0000a4  1809              ADDS     r1,r1,r0
-                  |L1.166|
+00008e  4ab2              LDR      r2,|L1.856|
+000090  6811              LDR      r1,[r2,#0]  ; unLastZXDetectedTime
+000092  4288              CMP      r0,r1
+000094  d902              BLS      |L1.156|
+000096  6811              LDR      r1,[r2,#0]  ; unLastZXDetectedTime
+000098  1a41              SUBS     r1,r0,r1
+00009a  e003              B        |L1.164|
+                  |L1.156|
+00009c  6813              LDR      r3,[r2,#0]  ; unLastZXDetectedTime
+00009e  49a8              LDR      r1,|L1.832|
+0000a0  1ac9              SUBS     r1,r1,r3
+0000a2  1809              ADDS     r1,r1,r0
+                  |L1.164|
 ;;;130    
 ;;;131    	if ((iTempDeltaZXD > MIN_PHASE_TIME) && (iTempDeltaZXD < MAX_PHASE_TIME))
-0000a6  460c              MOV      r4,r1
-0000a8  4bad              LDR      r3,|L1.864|
-0000aa  3cff              SUBS     r4,r4,#0xff
-0000ac  4dad              LDR      r5,|L1.868|
-0000ae  3cf6              SUBS     r4,r4,#0xf6
-0000b0  6059              STR      r1,[r3,#4]  ; iTempDeltaZXD
-0000b2  42ac              CMP      r4,r5
-0000b4  d221              BCS      |L1.250|
+0000a4  460c              MOV      r4,r1
+0000a6  4bad              LDR      r3,|L1.860|
+0000a8  3cff              SUBS     r4,r4,#0xff
+0000aa  4dad              LDR      r5,|L1.864|
+0000ac  3cf6              SUBS     r4,r4,#0xf6
+0000ae  6059              STR      r1,[r3,#4]  ; iTempDeltaZXD
+0000b0  42ac              CMP      r4,r5
+0000b2  d221              BCS      |L1.248|
 ;;;132    	{
 ;;;133    		unLastZXDetectedTime = iThisZXDetectedTime;
-0000b6  6010              STR      r0,[r2,#0]  ; unLastZXDetectedTime
+0000b4  6010              STR      r0,[r2,#0]  ; unLastZXDetectedTime
 ;;;134    		tMotor.structMotor.MSR.bThisPhaseDetectedZX = TRUE;
-0000b8  48a2              LDR      r0,|L1.836|
-0000ba  8842              LDRH     r2,[r0,#2]  ; tMotor
-0000bc  2408              MOVS     r4,#8
-0000be  4322              ORRS     r2,r2,r4
-0000c0  8042              STRH     r2,[r0,#2]
+0000b6  48a1              LDR      r0,|L1.828|
+0000b8  8842              LDRH     r2,[r0,#2]  ; tMotor
+0000ba  2408              MOVS     r4,#8
+0000bc  4322              ORRS     r2,r2,r4
+0000be  8042              STRH     r2,[r0,#2]
 ;;;135    //		iTestDetectedZX++;
 ;;;136    		if (TRUE == tMotor.structMotor.MSR.bLocked)
-0000c2  8842              LDRH     r2,[r0,#2]  ; tMotor
-0000c4  0752              LSLS     r2,r2,#29
-0000c6  d516              BPL      |L1.246|
+0000c0  8842              LDRH     r2,[r0,#2]  ; tMotor
+0000c2  0752              LSLS     r2,r2,#29
+0000c4  d516              BPL      |L1.244|
 ;;;137    		{
 ;;;138    			tMotor.structMotor.unActualPeriod = (iTempDeltaZXD + tMotor.structMotor.unActualPeriod) >> 1;
-0000c8  6982              LDR      r2,[r0,#0x18]  ; tMotor
-0000ca  1851              ADDS     r1,r2,r1
-0000cc  0849              LSRS     r1,r1,#1
-0000ce  6181              STR      r1,[r0,#0x18]  ; tMotor
+0000c6  6982              LDR      r2,[r0,#0x18]  ; tMotor
+0000c8  1851              ADDS     r1,r2,r1
+0000ca  0849              LSRS     r1,r1,#1
+0000cc  6181              STR      r1,[r0,#0x18]  ; tMotor
 ;;;139    			iHalfPeriod = tMotor.structMotor.unActualPeriod >> 1;
-0000d0  6980              LDR      r0,[r0,#0x18]  ; tMotor
+0000ce  6980              LDR      r0,[r0,#0x18]  ; tMotor
 ;;;140    			TIMER_SET_CMP_VALUE(TIMER0, TIMER0->TDR + (iHalfPeriod > TIME_DEBT) ? (iHalfPeriod - TIME_DEBT) : ZXD_BEFORE_PHCHG);
-0000d2  4a99              LDR      r2,|L1.824|
-0000d4  0840              LSRS     r0,r0,#1              ;139
-0000d6  6098              STR      r0,[r3,#8]  ; iHalfPeriod
-0000d8  68d3              LDR      r3,[r2,#0xc]
-0000da  21ff              MOVS     r1,#0xff
-0000dc  3105              ADDS     r1,#5
-0000de  4288              CMP      r0,r1
-0000e0  d901              BLS      |L1.230|
-0000e2  2101              MOVS     r1,#1
-0000e4  e000              B        |L1.232|
+0000d0  4a98              LDR      r2,|L1.820|
+0000d2  0840              LSRS     r0,r0,#1              ;139
+0000d4  6098              STR      r0,[r3,#8]  ; iHalfPeriod
+0000d6  68d3              LDR      r3,[r2,#0xc]
+0000d8  21ff              MOVS     r1,#0xff
+0000da  3105              ADDS     r1,#5
+0000dc  4288              CMP      r0,r1
+0000de  d901              BLS      |L1.228|
+0000e0  2101              MOVS     r1,#1
+0000e2  e000              B        |L1.230|
+                  |L1.228|
+0000e4  2100              MOVS     r1,#0
                   |L1.230|
-0000e6  2100              MOVS     r1,#0
-                  |L1.232|
-0000e8  42cb              CMN      r3,r1
-0000ea  d002              BEQ      |L1.242|
-0000ec  38ff              SUBS     r0,r0,#0xff
-0000ee  3805              SUBS     r0,#5
-0000f0  e000              B        |L1.244|
+0000e6  42cb              CMN      r3,r1
+0000e8  d002              BEQ      |L1.240|
+0000ea  38ff              SUBS     r0,r0,#0xff
+0000ec  3805              SUBS     r0,#5
+0000ee  e000              B        |L1.242|
+                  |L1.240|
+0000f0  2032              MOVS     r0,#0x32
                   |L1.242|
-0000f2  2032              MOVS     r0,#0x32
+0000f2  6050              STR      r0,[r2,#4]
                   |L1.244|
-0000f4  6050              STR      r0,[r2,#4]
-                  |L1.246|
 ;;;141    		}
 ;;;142    		return TRUE;
-0000f6  2001              MOVS     r0,#1
+0000f4  2001              MOVS     r0,#1
 ;;;143    	}
 ;;;144    	else
 ;;;145    	{
 ;;;146    		return FALSE;
 ;;;147    	}
 ;;;148    }
-0000f8  bd30              POP      {r4,r5,pc}
-                  |L1.250|
-0000fa  2000              MOVS     r0,#0                 ;146
-0000fc  bd30              POP      {r4,r5,pc}
+0000f6  bd30              POP      {r4,r5,pc}
+                  |L1.248|
+0000f8  2000              MOVS     r0,#0                 ;146
+0000fa  bd30              POP      {r4,r5,pc}
 ;;;149    
                           ENDP
 
                   TMR1_IRQHandler PROC
 ;;;150    // Used to set time reference and filter ZXD
 ;;;151    void TMR1_IRQHandler(void)                                   
-0000fe  b5f0              PUSH     {r4-r7,lr}
+0000fc  b5f0              PUSH     {r4-r7,lr}
 ;;;152    {
 ;;;153    //	static uint32_t iZXTimeDuringPWMHigh;
 ;;;154    //	static uint32_t iTempDeltaZXD = 0;
@@ -260,10 +259,10 @@
 ;;;158    
 ;;;159    //	TIMER_DisableInt(TIMER1);
 ;;;160    	TIMER1->TISR = ~0;    // Clear interrupt flag
-000100  2000              MOVS     r0,#0
-000102  498d              LDR      r1,|L1.824|
-000104  43c0              MVNS     r0,r0
-000106  6288              STR      r0,[r1,#0x28]
+0000fe  2000              MOVS     r0,#0
+000100  498c              LDR      r1,|L1.820|
+000102  43c0              MVNS     r0,r0
+000104  6288              STR      r0,[r1,#0x28]
 ;;;161    //	unZXMatchCNT = 0;
 ;;;162    
 ;;;163    /*		iZXTimeDuringPWMHigh = DetectdTimeWhenPWMHigh();
@@ -305,51 +304,51 @@
 ;;;199    */
 ;;;200    
 ;;;201    	if (ENUM_TIM1_AVOID_ZXD == FLAG_TIM1_USEAGE)
-000108  4891              LDR      r0,|L1.848|
-00010a  7801              LDRB     r1,[r0,#0]  ; FLAG_TIM1_USEAGE
-00010c  4d8a              LDR      r5,|L1.824|
-00010e  2701              MOVS     r7,#1
-000110  077f              LSLS     r7,r7,#29
+000106  4890              LDR      r0,|L1.840|
+000108  7801              LDRB     r1,[r0,#0]  ; FLAG_TIM1_USEAGE
+00010a  4d8a              LDR      r5,|L1.820|
+00010c  2701              MOVS     r7,#1
+00010e  077f              LSLS     r7,r7,#29
 ;;;202    	{
 ;;;203    		TIMER_DisableInt(TIMER1);	// ACMP interrupt will re-open TIM1's interrupt
 ;;;204    		FLAG_TIM1_USEAGE = ENUM_TIM1_ZXD_FILTER;
 ;;;205    		// Clear all ACMP changed flag happened before
 ;;;206    		ACMP->CMPSR |= ACMP_CMPSR_ACMPF0_Msk;
 ;;;207    		ACMP0_INT_ENABLE;
-000112  2602              MOVS     r6,#2
-000114  4c90              LDR      r4,|L1.856|
-000116  3520              ADDS     r5,r5,#0x20           ;206
-000118  2900              CMP      r1,#0                 ;201
-00011a  d014              BEQ      |L1.326|
+000110  2602              MOVS     r6,#2
+000112  4c90              LDR      r4,|L1.852|
+000114  3520              ADDS     r5,r5,#0x20           ;206
+000116  2900              CMP      r1,#0                 ;201
+000118  d014              BEQ      |L1.324|
 ;;;208    	}
 ;;;209    	else
 ;;;210    	{	// for now can only be ENUM_TIM1_ZXD_FILTER
 ;;;211    		if (ACMP0_EDGE_MATCH)
-00011c  4888              LDR      r0,|L1.832|
-00011e  6b80              LDR      r0,[r0,#0x38]
-000120  68a1              LDR      r1,[r4,#8]
-000122  0600              LSLS     r0,r0,#24
-000124  0fc0              LSRS     r0,r0,#31
-000126  0749              LSLS     r1,r1,#29
-000128  0fc9              LSRS     r1,r1,#31
-00012a  4288              CMP      r0,r1
-00012c  d10a              BNE      |L1.324|
-00012e  68e8              LDR      r0,[r5,#0xc]
+00011a  488d              LDR      r0,|L1.848|
+00011c  6b80              LDR      r0,[r0,#0x38]
+00011e  68a1              LDR      r1,[r4,#8]
+000120  0600              LSLS     r0,r0,#24
+000122  0fc0              LSRS     r0,r0,#31
+000124  0749              LSLS     r1,r1,#29
+000126  0fc9              LSRS     r1,r1,#31
+000128  4288              CMP      r0,r1
+00012a  d10a              BNE      |L1.322|
+00012c  68e8              LDR      r0,[r5,#0xc]
 ;;;212    		{	
 ;;;213    			// No need to find the real ZXD time, we only care the delta 
 ;;;214    			if (TRUE == PhaseZXDedHandler(TIMER_GetCounter(TIMER1)))	//GET_TIMER_DIFF(ZXD_FILTER_TIME, TIMER_GetCounter(TIMER1))))
-000130  f7fffffe          BL       PhaseZXDedHandler
-000134  2801              CMP      r0,#1
-000136  d105              BNE      |L1.324|
+00012e  f7fffffe          BL       PhaseZXDedHandler
+000132  2801              CMP      r0,#1
+000134  d105              BNE      |L1.322|
 ;;;215    			{
 ;;;216    				ACMP0_INT_DISABLE;  // This phase ACMP job done
-000138  6820              LDR      r0,[r4,#0]
-00013a  43b0              BICS     r0,r0,r6
-00013c  6020              STR      r0,[r4,#0]
-00013e  6828              LDR      r0,[r5,#0]
-000140  43b8              BICS     r0,r0,r7
-000142  6028              STR      r0,[r5,#0]
-                  |L1.324|
+000136  6820              LDR      r0,[r4,#0]
+000138  43b0              BICS     r0,r0,r6
+00013a  6020              STR      r0,[r4,#0]
+00013c  6828              LDR      r0,[r5,#0]
+00013e  43b8              BICS     r0,r0,r7
+000140  6028              STR      r0,[r5,#0]
+                  |L1.322|
 ;;;217    				TIMER_DisableInt(TIMER1);
 ;;;218    			}
 ;;;219    
@@ -414,33 +413,33 @@
 ;;;278    		}
 ;;;279    	}
 ;;;280    }
-000144  bdf0              POP      {r4-r7,pc}
-                  |L1.326|
-000146  6829              LDR      r1,[r5,#0]
-000148  43b9              BICS     r1,r1,r7
-00014a  6029              STR      r1,[r5,#0]
-00014c  2101              MOVS     r1,#1                 ;204
-00014e  7001              STRB     r1,[r0,#0]            ;204
-000150  68a0              LDR      r0,[r4,#8]            ;206
-000152  4308              ORRS     r0,r0,r1              ;206
-000154  60a0              STR      r0,[r4,#8]            ;206
-000156  6820              LDR      r0,[r4,#0]            ;207
-000158  4330              ORRS     r0,r0,r6              ;207
-00015a  6020              STR      r0,[r4,#0]            ;207
-00015c  bdf0              POP      {r4-r7,pc}
+000142  bdf0              POP      {r4-r7,pc}
+                  |L1.324|
+000144  6829              LDR      r1,[r5,#0]
+000146  43b9              BICS     r1,r1,r7
+000148  6029              STR      r1,[r5,#0]
+00014a  2101              MOVS     r1,#1                 ;204
+00014c  7001              STRB     r1,[r0,#0]            ;204
+00014e  68a0              LDR      r0,[r4,#8]            ;206
+000150  4308              ORRS     r0,r0,r1              ;206
+000152  60a0              STR      r0,[r4,#8]            ;206
+000154  6820              LDR      r0,[r4,#0]            ;207
+000156  4330              ORRS     r0,r0,r6              ;207
+000158  6020              STR      r0,[r4,#0]            ;207
+00015a  bdf0              POP      {r4-r7,pc}
 ;;;281    
                           ENDP
 
                   ACMP_IRQHandler PROC
 ;;;301    
 ;;;302    void ACMP_IRQHandler(void)
-00015e  487e              LDR      r0,|L1.856|
+00015c  487d              LDR      r0,|L1.852|
 ;;;303    {
 ;;;304    	ACMP->CMPSR |= ACMP_CMPSR_ACMPF0_Msk;
-000160  6881              LDR      r1,[r0,#8]
-000162  2201              MOVS     r2,#1
-000164  4311              ORRS     r1,r1,r2
-000166  6081              STR      r1,[r0,#8]
+00015e  6881              LDR      r1,[r0,#8]
+000160  2201              MOVS     r2,#1
+000162  4311              ORRS     r1,r1,r2
+000164  6081              STR      r1,[r0,#8]
 ;;;305    //	iTestACMPIntEachPhaseCNT++;
 ;;;306    //	// maybe before enter TIM0 interrupt this ACMP int was triggered
 ;;;307    //	if (ACMP->CMPCR[0] & ACMP_CMPCR_ACMPIE_Msk)
@@ -465,10 +464,10 @@
 ;;;326    	// In case this was triggered by last phase
 ;;;327    	// and in TIM0 interrupt didin't successfully disabled this interrupt
 ;;;328    	if (ENUM_TIM1_ZXD_FILTER == FLAG_TIM1_USEAGE)
-000168  4879              LDR      r0,|L1.848|
-00016a  7800              LDRB     r0,[r0,#0]  ; FLAG_TIM1_USEAGE
-00016c  2801              CMP      r0,#1
-00016e  d112              BNE      |L1.406|
+000166  4878              LDR      r0,|L1.840|
+000168  7800              LDRB     r0,[r0,#0]  ; FLAG_TIM1_USEAGE
+00016a  2801              CMP      r0,#1
+00016c  d112              BNE      |L1.404|
 ;;;329    	{	 	
 ;;;330    		// Rising or falling edge will be put into TIM1 Interrupt handler because the following situdation will have problem:
 ;;;331    		// First a matched edge happened, then an un-matched edge happened
@@ -479,28 +478,28 @@
 ;;;336    		// we can consider real ZX
 ;;;337    		// If ACMP_IRQHandler was re-entered before ZXD_FILTER_TIME, postpond 
 ;;;338    		TIMER_SET_CMP_VALUE(TIMER1, GET_TIM1_CMP_VALUE(TIMER1->TDR + ZXD_FILTER_TIME));
-000170  4971              LDR      r1,|L1.824|
-000172  6ac8              LDR      r0,[r1,#0x2c]
-000174  4a74              LDR      r2,|L1.840|
-000176  30c8              ADDS     r0,r0,#0xc8
-000178  4290              CMP      r0,r2
-00017a  6ac8              LDR      r0,[r1,#0x2c]
-00017c  d303              BCC      |L1.390|
-00017e  4a73              LDR      r2,|L1.844|
-000180  3228              ADDS     r2,r2,#0x28
-000182  1880              ADDS     r0,r0,r2
-000184  e000              B        |L1.392|
+00016e  4971              LDR      r1,|L1.820|
+000170  6ac8              LDR      r0,[r1,#0x2c]
+000172  4a73              LDR      r2,|L1.832|
+000174  30c8              ADDS     r0,r0,#0xc8
+000176  4290              CMP      r0,r2
+000178  6ac8              LDR      r0,[r1,#0x2c]
+00017a  d303              BCC      |L1.388|
+00017c  4a71              LDR      r2,|L1.836|
+00017e  3228              ADDS     r2,r2,#0x28
+000180  1880              ADDS     r0,r0,r2
+000182  e000              B        |L1.390|
+                  |L1.388|
+000184  30c8              ADDS     r0,r0,#0xc8
                   |L1.390|
-000186  30c8              ADDS     r0,r0,#0xc8
-                  |L1.392|
-000188  6248              STR      r0,[r1,#0x24]
-00018a  486b              LDR      r0,|L1.824|
-00018c  3020              ADDS     r0,r0,#0x20
-00018e  6801              LDR      r1,[r0,#0]
-000190  0602              LSLS     r2,r0,#24
-000192  4311              ORRS     r1,r1,r2
-000194  6001              STR      r1,[r0,#0]
-                  |L1.406|
+000186  6248              STR      r0,[r1,#0x24]
+000188  486a              LDR      r0,|L1.820|
+00018a  3020              ADDS     r0,r0,#0x20
+00018c  6801              LDR      r1,[r0,#0]
+00018e  0602              LSLS     r2,r0,#24
+000190  4311              ORRS     r1,r1,r2
+000192  6001              STR      r1,[r0,#0]
+                  |L1.404|
 ;;;339    		TIMER_EnableInt(TIMER1);
 ;;;340    //		if (ACMP0_EDGE_MATCH)
 ;;;341    //		{
@@ -561,13 +560,13 @@
 ;;;396    //	}
 ;;;397    	}
 ;;;398    }
-000196  4770              BX       lr
+000194  4770              BX       lr
 ;;;399    
                           ENDP
 
                   ADC_IRQHandler PROC
 ;;;400    void ADC_IRQHandler(void)
-000198  b5f8              PUSH     {r3-r7,lr}
+000196  b5f8              PUSH     {r3-r7,lr}
 ;;;401    {
 ;;;402        static uint32_t iADC_ComparatorFlag;
 ;;;403    	static uint32_t iSystemTickTemp;
@@ -576,196 +575,196 @@
 ;;;406    
 ;;;407        // Get ADC comparator interrupt flag
 ;;;408        iADC_ComparatorFlag = ADC_GET_INT_FLAG(ADC, ADC_CURRENT_CMP_MSK | ADC_BATTERY_CMP_MSK | ADC_ADF_MSK);
-00019a  4e73              LDR      r6,|L1.872|
-00019c  6b30              LDR      r0,[r6,#0x30]
-00019e  4c70              LDR      r4,|L1.864|
-0001a0  0740              LSLS     r0,r0,#29
-0001a2  0f40              LSRS     r0,r0,#29
+000198  4e72              LDR      r6,|L1.868|
+00019a  6b30              LDR      r0,[r6,#0x30]
+00019c  4c6f              LDR      r4,|L1.860|
+00019e  0740              LSLS     r0,r0,#29
+0001a0  0f40              LSRS     r0,r0,#29
 ;;;409        if(iADC_ComparatorFlag & ADC_ADF_MSK)
-0001a4  60e0              STR      r0,[r4,#0xc]  ; iADC_ComparatorFlag
-0001a6  07c1              LSLS     r1,r0,#31
-0001a8  d01d              BEQ      |L1.486|
+0001a2  60e0              STR      r0,[r4,#0xc]  ; iADC_ComparatorFlag
+0001a4  07c1              LSLS     r1,r0,#31
+0001a6  d01d              BEQ      |L1.484|
 ;;;410    	{
 ;;;411    		// Change ADC channel
 ;;;412    		if (ADC->ADCHER & ADC_CURRENT_CHN_MSK)
-0001aa  6a71              LDR      r1,[r6,#0x24]
-0001ac  07ca              LSLS     r2,r1,#31
+0001a8  6a71              LDR      r1,[r6,#0x24]
+0001aa  07ca              LSLS     r2,r1,#31
 ;;;413    		{
 ;;;414    			tMotor.structMotor.unCurrent = (uint16_t)(ADC_GET_CONVERSION_DATA(ADC, WHAT_EVER_DO_NOT_CARE));
-0001ae  4965              LDR      r1,|L1.836|
-0001b0  d008              BEQ      |L1.452|
-0001b2  6832              LDR      r2,[r6,#0]
-0001b4  0592              LSLS     r2,r2,#22
-0001b6  0d92              LSRS     r2,r2,#22
-0001b8  848a              STRH     r2,[r1,#0x24]
+0001ac  4963              LDR      r1,|L1.828|
+0001ae  d008              BEQ      |L1.450|
+0001b0  6832              LDR      r2,[r6,#0]
+0001b2  0592              LSLS     r2,r2,#22
+0001b4  0d92              LSRS     r2,r2,#22
+0001b6  848a              STRH     r2,[r1,#0x24]
 ;;;415    			ADC_SET_INPUT_CHANNEL(ADC, ADC_BATTERY_CHN_MSK);		
-0001ba  6a71              LDR      r1,[r6,#0x24]
-0001bc  0a09              LSRS     r1,r1,#8
-0001be  0209              LSLS     r1,r1,#8
-0001c0  3180              ADDS     r1,r1,#0x80
-0001c2  e00a              B        |L1.474|
-                  |L1.452|
+0001b8  6a71              LDR      r1,[r6,#0x24]
+0001ba  0a09              LSRS     r1,r1,#8
+0001bc  0209              LSLS     r1,r1,#8
+0001be  3180              ADDS     r1,r1,#0x80
+0001c0  e00a              B        |L1.472|
+                  |L1.450|
 ;;;416    		}
 ;;;417    		else if (ADC->ADCHER & ADC_BATTERY_CHN_MSK)
-0001c4  6a72              LDR      r2,[r6,#0x24]
-0001c6  0612              LSLS     r2,r2,#24
-0001c8  d508              BPL      |L1.476|
+0001c2  6a72              LDR      r2,[r6,#0x24]
+0001c4  0612              LSLS     r2,r2,#24
+0001c6  d508              BPL      |L1.474|
 ;;;418    		{
 ;;;419    			tMotor.structMotor.unBattery = (uint16_t)(ADC_GET_CONVERSION_DATA(ADC, WHAT_EVER_DO_NOT_CARE));
-0001ca  6832              LDR      r2,[r6,#0]
-0001cc  0592              LSLS     r2,r2,#22
-0001ce  0d92              LSRS     r2,r2,#22
-0001d0  844a              STRH     r2,[r1,#0x22]
+0001c8  6832              LDR      r2,[r6,#0]
+0001ca  0592              LSLS     r2,r2,#22
+0001cc  0d92              LSRS     r2,r2,#22
+0001ce  844a              STRH     r2,[r1,#0x22]
 ;;;420    			ADC_SET_INPUT_CHANNEL(ADC, ADC_CURRENT_CHN_MSK);
-0001d2  6a71              LDR      r1,[r6,#0x24]
-0001d4  0a09              LSRS     r1,r1,#8
-0001d6  0209              LSLS     r1,r1,#8
-0001d8  1c49              ADDS     r1,r1,#1
+0001d0  6a71              LDR      r1,[r6,#0x24]
+0001d2  0a09              LSRS     r1,r1,#8
+0001d4  0209              LSLS     r1,r1,#8
+0001d6  1c49              ADDS     r1,r1,#1
+                  |L1.472|
+0001d8  6271              STR      r1,[r6,#0x24]
                   |L1.474|
-0001da  6271              STR      r1,[r6,#0x24]
-                  |L1.476|
 ;;;421    		}
 ;;;422    		ADC_START_CONV(ADC);
-0001dc  6a31              LDR      r1,[r6,#0x20]
-0001de  2201              MOVS     r2,#1
-0001e0  02d2              LSLS     r2,r2,#11
-0001e2  4311              ORRS     r1,r1,r2
-0001e4  6231              STR      r1,[r6,#0x20]
-                  |L1.486|
-0001e6  4d54              LDR      r5,|L1.824|
+0001da  6a31              LDR      r1,[r6,#0x20]
+0001dc  2201              MOVS     r2,#1
+0001de  02d2              LSLS     r2,r2,#11
+0001e0  4311              ORRS     r1,r1,r2
+0001e2  6231              STR      r1,[r6,#0x20]
+                  |L1.484|
+0001e4  4d53              LDR      r5,|L1.820|
 ;;;423    	}    
 ;;;424        if(iADC_ComparatorFlag & ADC_CURRENT_CMP_MSK)
-0001e8  0780              LSLS     r0,r0,#30
-0001ea  2700              MOVS     r7,#0
-0001ec  3520              ADDS     r5,r5,#0x20
-0001ee  2800              CMP      r0,#0
-0001f0  da18              BGE      |L1.548|
+0001e6  0780              LSLS     r0,r0,#30
+0001e8  2700              MOVS     r7,#0
+0001ea  3520              ADDS     r5,r5,#0x20
+0001ec  2800              CMP      r0,#0
+0001ee  da18              BGE      |L1.546|
 ;;;425    	{
 ;;;426    		// current too big
 ;;;427    		MOTOR_SHUT_DOWN;
-0001f2  485e              LDR      r0,|L1.876|
-0001f4  6207              STR      r7,[r0,#0x20]
-0001f6  4952              LDR      r1,|L1.832|
-0001f8  614f              STR      r7,[r1,#0x14]
-0001fa  484f              LDR      r0,|L1.824|
-0001fc  6803              LDR      r3,[r0,#0]
-0001fe  0382              LSLS     r2,r0,#14
-000200  4393              BICS     r3,r3,r2
-000202  6003              STR      r3,[r0,#0]
-000204  682b              LDR      r3,[r5,#0]
-000206  4393              BICS     r3,r3,r2
-000208  602b              STR      r3,[r5,#0]
-00020a  6803              LDR      r3,[r0,#0]
-00020c  0342              LSLS     r2,r0,#13
-00020e  4393              BICS     r3,r3,r2
-000210  6003              STR      r3,[r0,#0]
-000212  6828              LDR      r0,[r5,#0]
-000214  4390              BICS     r0,r0,r2
-000216  6028              STR      r0,[r5,#0]
-000218  20ff              MOVS     r0,#0xff
-00021a  63c8              STR      r0,[r1,#0x3c]
-00021c  6388              STR      r0,[r1,#0x38]
+0001f0  485d              LDR      r0,|L1.872|
+0001f2  6207              STR      r7,[r0,#0x20]
+0001f4  4956              LDR      r1,|L1.848|
+0001f6  614f              STR      r7,[r1,#0x14]
+0001f8  484e              LDR      r0,|L1.820|
+0001fa  6803              LDR      r3,[r0,#0]
+0001fc  0382              LSLS     r2,r0,#14
+0001fe  4393              BICS     r3,r3,r2
+000200  6003              STR      r3,[r0,#0]
+000202  682b              LDR      r3,[r5,#0]
+000204  4393              BICS     r3,r3,r2
+000206  602b              STR      r3,[r5,#0]
+000208  6803              LDR      r3,[r0,#0]
+00020a  0342              LSLS     r2,r0,#13
+00020c  4393              BICS     r3,r3,r2
+00020e  6003              STR      r3,[r0,#0]
+000210  6828              LDR      r0,[r5,#0]
+000212  4390              BICS     r0,r0,r2
+000214  6028              STR      r0,[r5,#0]
+000216  20ff              MOVS     r0,#0xff
+000218  63c8              STR      r0,[r1,#0x3c]
+00021a  6388              STR      r0,[r1,#0x38]
 ;;;428    		setError(ERR_CURRENT_BURNING);
-00021e  2007              MOVS     r0,#7
-000220  f7fffffe          BL       setError
-                  |L1.548|
+00021c  2007              MOVS     r0,#7
+00021e  f7fffffe          BL       setError
+                  |L1.546|
 ;;;429    	}
 ;;;430        if(iADC_ComparatorFlag & ADC_BATTERY_CMP_MSK)
-000224  7b20              LDRB     r0,[r4,#0xc]  ; iADC_ComparatorFlag
-000226  0740              LSLS     r0,r0,#29
-000228  d529              BPL      |L1.638|
+000222  7b20              LDRB     r0,[r4,#0xc]  ; iADC_ComparatorFlag
+000224  0740              LSLS     r0,r0,#29
+000226  d529              BPL      |L1.636|
 ;;;431    	{
 ;;;432        	// Longer filter for battery voltage
 ;;;433    		// if this time's battery low is near to the last one
 ;;;434    		// 0.64ms interval of each measurement
 ;;;435    		iSystemTickTemp = unSystemTick;
-00022a  4851              LDR      r0,|L1.880|
-00022c  6800              LDR      r0,[r0,#0]  ; unSystemTick
+000228  4850              LDR      r0,|L1.876|
+00022a  6800              LDR      r0,[r0,#0]  ; unSystemTick
 ;;;436    		if ((uint32_t)(iSystemTickTemp - iBatteryLowLastTimeRCD) < BATTERY_LOW_MIN_INTERVAL)
-00022e  6120              STR      r0,[r4,#0x10]  ; iSystemTickTemp
-000230  6961              LDR      r1,[r4,#0x14]  ; iBatteryLowLastTimeRCD
-000232  1a40              SUBS     r0,r0,r1
-000234  280a              CMP      r0,#0xa
-000236  d21f              BCS      |L1.632|
+00022c  6120              STR      r0,[r4,#0x10]  ; iSystemTickTemp
+00022e  6961              LDR      r1,[r4,#0x14]  ; iBatteryLowLastTimeRCD
+000230  1a40              SUBS     r0,r0,r1
+000232  280a              CMP      r0,#0xa
+000234  d21f              BCS      |L1.630|
 ;;;437    		{
 ;;;438    			if (iBatteryLowCNT < MAX_BATT_LOW_CNT)
-000238  8860              LDRH     r0,[r4,#2]  ; iBatteryLowCNT
-00023a  2832              CMP      r0,#0x32
-00023c  d202              BCS      |L1.580|
-00023e  1c40              ADDS     r0,r0,#1
+000236  8860              LDRH     r0,[r4,#2]  ; iBatteryLowCNT
+000238  2832              CMP      r0,#0x32
+00023a  d202              BCS      |L1.578|
+00023c  1c40              ADDS     r0,r0,#1
 ;;;439    			{
 ;;;440    				iBatteryLowCNT++;
-000240  8060              STRH     r0,[r4,#2]
-000242  e01a              B        |L1.634|
-                  |L1.580|
+00023e  8060              STRH     r0,[r4,#2]
+000240  e01a              B        |L1.632|
+                  |L1.578|
 ;;;441    			}
 ;;;442    			else
 ;;;443    			{
 ;;;444    				// battery really too low
 ;;;445    				MOTOR_SHUT_DOWN;
-000244  4849              LDR      r0,|L1.876|
-000246  6207              STR      r7,[r0,#0x20]
-000248  493d              LDR      r1,|L1.832|
-00024a  614f              STR      r7,[r1,#0x14]
-00024c  483a              LDR      r0,|L1.824|
-00024e  6802              LDR      r2,[r0,#0]
-000250  0383              LSLS     r3,r0,#14
-000252  439a              BICS     r2,r2,r3
-000254  6002              STR      r2,[r0,#0]
-000256  682a              LDR      r2,[r5,#0]
-000258  439a              BICS     r2,r2,r3
-00025a  602a              STR      r2,[r5,#0]
-00025c  6803              LDR      r3,[r0,#0]
-00025e  0342              LSLS     r2,r0,#13
-000260  4393              BICS     r3,r3,r2
-000262  6003              STR      r3,[r0,#0]
-000264  6828              LDR      r0,[r5,#0]
-000266  4390              BICS     r0,r0,r2
-000268  6028              STR      r0,[r5,#0]
-00026a  20ff              MOVS     r0,#0xff
-00026c  63c8              STR      r0,[r1,#0x3c]
-00026e  6388              STR      r0,[r1,#0x38]
+000242  4849              LDR      r0,|L1.872|
+000244  6207              STR      r7,[r0,#0x20]
+000246  4942              LDR      r1,|L1.848|
+000248  614f              STR      r7,[r1,#0x14]
+00024a  483a              LDR      r0,|L1.820|
+00024c  6802              LDR      r2,[r0,#0]
+00024e  0383              LSLS     r3,r0,#14
+000250  439a              BICS     r2,r2,r3
+000252  6002              STR      r2,[r0,#0]
+000254  682a              LDR      r2,[r5,#0]
+000256  439a              BICS     r2,r2,r3
+000258  602a              STR      r2,[r5,#0]
+00025a  6803              LDR      r3,[r0,#0]
+00025c  0342              LSLS     r2,r0,#13
+00025e  4393              BICS     r3,r3,r2
+000260  6003              STR      r3,[r0,#0]
+000262  6828              LDR      r0,[r5,#0]
+000264  4390              BICS     r0,r0,r2
+000266  6028              STR      r0,[r5,#0]
+000268  20ff              MOVS     r0,#0xff
+00026a  63c8              STR      r0,[r1,#0x3c]
+00026c  6388              STR      r0,[r1,#0x38]
 ;;;446    				setError(ERR_BATTERY_LOW);
-000270  2005              MOVS     r0,#5
-000272  f7fffffe          BL       setError
-000276  e000              B        |L1.634|
-                  |L1.632|
+00026e  2005              MOVS     r0,#5
+000270  f7fffffe          BL       setError
+000274  e000              B        |L1.632|
+                  |L1.630|
 ;;;447    			}
 ;;;448    		}
 ;;;449    		else
 ;;;450    		{
 ;;;451    			iBatteryLowCNT = 0;
-000278  8067              STRH     r7,[r4,#2]
-                  |L1.634|
+000276  8067              STRH     r7,[r4,#2]
+                  |L1.632|
 ;;;452    		}
 ;;;453    		iBatteryLowLastTimeRCD = iSystemTickTemp; 
-00027a  6920              LDR      r0,[r4,#0x10]  ; iSystemTickTemp
-00027c  6160              STR      r0,[r4,#0x14]  ; iBatteryLowLastTimeRCD
-                  |L1.638|
+000278  6920              LDR      r0,[r4,#0x10]  ; iSystemTickTemp
+00027a  6160              STR      r0,[r4,#0x14]  ; iBatteryLowLastTimeRCD
+                  |L1.636|
 ;;;454    	}
 ;;;455        
 ;;;456        ADC_CLR_INT_FLAG(ADC, iADC_ComparatorFlag);
-00027e  6b30              LDR      r0,[r6,#0x30]
-000280  68e1              LDR      r1,[r4,#0xc]  ; iADC_ComparatorFlag
-000282  08c0              LSRS     r0,r0,#3
-000284  00c0              LSLS     r0,r0,#3
-000286  4308              ORRS     r0,r0,r1
-000288  6330              STR      r0,[r6,#0x30]
+00027c  6b30              LDR      r0,[r6,#0x30]
+00027e  68e1              LDR      r1,[r4,#0xc]  ; iADC_ComparatorFlag
+000280  08c0              LSRS     r0,r0,#3
+000282  00c0              LSLS     r0,r0,#3
+000284  4308              ORRS     r0,r0,r1
+000286  6330              STR      r0,[r6,#0x30]
 ;;;457    }
-00028a  bdf8              POP      {r3-r7,pc}
+000288  bdf8              POP      {r3-r7,pc}
 ;;;458    
                           ENDP
 
                   SPI_IRQHandler PROC
 ;;;469    
 ;;;470    void SPI_IRQHandler(void)
-00028c  b5f8              PUSH     {r3-r7,lr}
+00028a  b5f8              PUSH     {r3-r7,lr}
 ;;;471    {
 ;;;472    	static uint8_t unValueIndex;
 ;;;473    	// Check if it is really finished one unit transfer
 ;;;474    	if ((SPI->SSR & SPI_SSR_LTRIG_FLAG_Msk) == SPI_SSR_LTRIG_FLAG_Msk)
-00028e  4c39              LDR      r4,|L1.884|
-000290  68a0              LDR      r0,[r4,#8]
+00028c  4c38              LDR      r4,|L1.880|
+00028e  68a0              LDR      r0,[r4,#8]
 ;;;475    	{
 ;;;476    		if (tMotor.structMotor.MSR.bNewComFrameReceived == FALSE)
 ;;;477    		{
@@ -783,85 +782,85 @@
 ;;;489    				else
 ;;;490    				{
 ;;;491    					unCOM_SPI_TransErrCNT++;
-000292  4f39              LDR      r7,|L1.888|
-000294  0680              LSLS     r0,r0,#26             ;474
-000296  6839              LDR      r1,[r7,#0]
-000298  1c49              ADDS     r1,r1,#1
-00029a  2800              CMP      r0,#0                 ;474
-00029c  da3f              BGE      |L1.798|
-00029e  4829              LDR      r0,|L1.836|
-0002a0  8840              LDRH     r0,[r0,#2]            ;476  ; tMotor
-0002a2  06c0              LSLS     r0,r0,#27             ;476
-0002a4  d433              BMI      |L1.782|
-0002a6  6c60              LDR      r0,[r4,#0x44]         ;476
-0002a8  4e2d              LDR      r6,|L1.864|
-0002aa  0400              LSLS     r0,r0,#16             ;481
-0002ac  0f02              LSRS     r2,r0,#28             ;481
-0002ae  2000              MOVS     r0,#0                 ;481
-0002b0  4b32              LDR      r3,|L1.892|
-0002b2  2a02              CMP      r2,#2                 ;478
-0002b4  d005              BEQ      |L1.706|
-0002b6  6c62              LDR      r2,[r4,#0x44]         ;478
-0002b8  0412              LSLS     r2,r2,#16             ;478
-0002ba  0f12              LSRS     r2,r2,#28             ;478
+000290  4f38              LDR      r7,|L1.884|
+000292  0680              LSLS     r0,r0,#26             ;474
+000294  6839              LDR      r1,[r7,#0]
+000296  1c49              ADDS     r1,r1,#1
+000298  2800              CMP      r0,#0                 ;474
+00029a  da3f              BGE      |L1.796|
+00029c  4827              LDR      r0,|L1.828|
+00029e  8840              LDRH     r0,[r0,#2]            ;476  ; tMotor
+0002a0  06c0              LSLS     r0,r0,#27             ;476
+0002a2  d433              BMI      |L1.780|
+0002a4  6c60              LDR      r0,[r4,#0x44]         ;476
+0002a6  4e2d              LDR      r6,|L1.860|
+0002a8  0400              LSLS     r0,r0,#16             ;481
+0002aa  0f02              LSRS     r2,r0,#28             ;481
+0002ac  2000              MOVS     r0,#0                 ;481
+0002ae  4b32              LDR      r3,|L1.888|
+0002b0  2a02              CMP      r2,#2                 ;478
+0002b2  d005              BEQ      |L1.704|
+0002b4  6c62              LDR      r2,[r4,#0x44]         ;478
+0002b6  0412              LSLS     r2,r2,#16             ;478
+0002b8  0f12              LSRS     r2,r2,#28             ;478
 ;;;492    				}
 ;;;493    			}
 ;;;494    			else if (SPI_GET_RX_FIFO_COUNT(SPI) == COMM_WR_CMD_CNT)
-0002bc  2a04              CMP      r2,#4
-0002be  d013              BEQ      |L1.744|
-0002c0  e025              B        |L1.782|
+0002ba  2a04              CMP      r2,#4
+0002bc  d013              BEQ      |L1.742|
+0002be  e025              B        |L1.780|
+                  |L1.704|
+0002c0  7030              STRB     r0,[r6,#0]            ;481
                   |L1.706|
-0002c2  7030              STRB     r0,[r6,#0]            ;481
-                  |L1.708|
-0002c4  6920              LDR      r0,[r4,#0x10]         ;481
-0002c6  7832              LDRB     r2,[r6,#0]            ;483  ; unValueIndex
-0002c8  0055              LSLS     r5,r2,#1              ;483
-0002ca  5358              STRH     r0,[r3,r5]            ;483
-0002cc  1c52              ADDS     r2,r2,#1              ;483
-0002ce  b2d0              UXTB     r0,r2                 ;481
-0002d0  7030              STRB     r0,[r6,#0]            ;481
-0002d2  2802              CMP      r0,#2                 ;481
-0002d4  d3f6              BCC      |L1.708|
-0002d6  8818              LDRH     r0,[r3,#0]            ;485  ; unCOM_SPI_ReadData
-0002d8  0bc0              LSRS     r0,r0,#15             ;485
-0002da  d018              BEQ      |L1.782|
-0002dc  4819              LDR      r0,|L1.836|
-0002de  8842              LDRH     r2,[r0,#2]            ;487  ; tMotor
-0002e0  2110              MOVS     r1,#0x10              ;487
-0002e2  430a              ORRS     r2,r2,r1              ;487
-0002e4  8042              STRH     r2,[r0,#2]            ;487
-0002e6  e013              B        |L1.784|
-                  |L1.744|
+0002c2  6920              LDR      r0,[r4,#0x10]         ;481
+0002c4  7832              LDRB     r2,[r6,#0]            ;483  ; unValueIndex
+0002c6  0055              LSLS     r5,r2,#1              ;483
+0002c8  5358              STRH     r0,[r3,r5]            ;483
+0002ca  1c52              ADDS     r2,r2,#1              ;483
+0002cc  b2d0              UXTB     r0,r2                 ;481
+0002ce  7030              STRB     r0,[r6,#0]            ;481
+0002d0  2802              CMP      r0,#2                 ;481
+0002d2  d3f6              BCC      |L1.706|
+0002d4  8818              LDRH     r0,[r3,#0]            ;485  ; unCOM_SPI_ReadData
+0002d6  0bc0              LSRS     r0,r0,#15             ;485
+0002d8  d018              BEQ      |L1.780|
+0002da  4818              LDR      r0,|L1.828|
+0002dc  8842              LDRH     r2,[r0,#2]            ;487  ; tMotor
+0002de  2110              MOVS     r1,#0x10              ;487
+0002e0  430a              ORRS     r2,r2,r1              ;487
+0002e2  8042              STRH     r2,[r0,#2]            ;487
+0002e4  e013              B        |L1.782|
+                  |L1.742|
 ;;;495    			{
 ;;;496    				// Received 4 uint16, copy to RAM buffer and infor communication manager
 ;;;497    				for (unValueIndex = 0; unValueIndex < COMM_WR_CMD_CNT; unValueIndex++)
-0002e8  7030              STRB     r0,[r6,#0]
-                  |L1.746|
-0002ea  6922              LDR      r2,[r4,#0x10]
+0002e6  7030              STRB     r0,[r6,#0]
+                  |L1.744|
+0002e8  6922              LDR      r2,[r4,#0x10]
 ;;;498    				{
 ;;;499    					unCOM_SPI_ReadData[unValueIndex] = SPI_READ_RX(SPI);
-0002ec  b2c0              UXTB     r0,r0
-0002ee  0045              LSLS     r5,r0,#1
-0002f0  1c40              ADDS     r0,r0,#1
-0002f2  b2c0              UXTB     r0,r0                 ;497
-0002f4  535a              STRH     r2,[r3,r5]
-0002f6  7030              STRB     r0,[r6,#0]            ;497
-0002f8  2804              CMP      r0,#4                 ;497
-0002fa  d3f6              BCC      |L1.746|
+0002ea  b2c0              UXTB     r0,r0
+0002ec  0045              LSLS     r5,r0,#1
+0002ee  1c40              ADDS     r0,r0,#1
+0002f0  b2c0              UXTB     r0,r0                 ;497
+0002f2  535a              STRH     r2,[r3,r5]
+0002f4  7030              STRB     r0,[r6,#0]            ;497
+0002f6  2804              CMP      r0,#4                 ;497
+0002f8  d3f6              BCC      |L1.744|
 ;;;500    				}
 ;;;501    				if (IS_COMM_WR(unCOM_SPI_ReadData[0]))
-0002fc  8818              LDRH     r0,[r3,#0]  ; unCOM_SPI_ReadData
-0002fe  0400              LSLS     r0,r0,#16
-000300  d405              BMI      |L1.782|
+0002fa  8818              LDRH     r0,[r3,#0]  ; unCOM_SPI_ReadData
+0002fc  0400              LSLS     r0,r0,#16
+0002fe  d405              BMI      |L1.780|
 ;;;502    				{
 ;;;503    					tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
-000302  4810              LDR      r0,|L1.836|
-000304  8841              LDRH     r1,[r0,#2]  ; tMotor
-000306  2210              MOVS     r2,#0x10
-000308  4311              ORRS     r1,r1,r2
-00030a  8041              STRH     r1,[r0,#2]
-00030c  e000              B        |L1.784|
-                  |L1.782|
+000300  480e              LDR      r0,|L1.828|
+000302  8841              LDRH     r1,[r0,#2]  ; tMotor
+000304  2210              MOVS     r2,#0x10
+000306  4311              ORRS     r1,r1,r2
+000308  8041              STRH     r1,[r0,#2]
+00030a  e000              B        |L1.782|
+                  |L1.780|
 ;;;504    				}
 ;;;505    				else
 ;;;506    				{
@@ -871,8 +870,8 @@
 ;;;510    			else
 ;;;511    			{
 ;;;512    				unCOM_SPI_TransErrCNT++;
-00030e  6039              STR      r1,[r7,#0]  ; unCOM_SPI_TransErrCNT
-                  |L1.784|
+00030c  6039              STR      r1,[r7,#0]  ; unCOM_SPI_TransErrCNT
+                  |L1.782|
 ;;;513    			}
 ;;;514    		}
 ;;;515    		else
@@ -882,80 +881,79 @@
 ;;;519    		// Clear Receive FIFO interrupt
 ;;;520    		// I don't know how to clear. Maybe just after I read out the data in FIFO and it is below threshold it will be OK
 ;;;521    		SPI_ClearRxFIFO(SPI);
-000310  4620              MOV      r0,r4
-000312  f7fffffe          BL       SPI_ClearRxFIFO
+00030e  4620              MOV      r0,r4
+000310  f7fffffe          BL       SPI_ClearRxFIFO
 ;;;522    		SPI_ClearTxFIFO(SPI);
-000316  4620              MOV      r0,r4
-000318  f7fffffe          BL       SPI_ClearTxFIFO
-00031c  e000              B        |L1.800|
-                  |L1.798|
+000314  4620              MOV      r0,r4
+000316  f7fffffe          BL       SPI_ClearTxFIFO
+00031a  e000              B        |L1.798|
+                  |L1.796|
 ;;;523    	}
 ;;;524    	else
 ;;;525    	{	// Receive FIFO interrupt should be the only interrupt enabled for SPI
 ;;;526    		// So something strange happened
 ;;;527    		unCOM_SPI_TransErrCNT++;
-00031e  6039              STR      r1,[r7,#0]  ; unCOM_SPI_TransErrCNT
-                  |L1.800|
-000320  6c60              LDR      r0,[r4,#0x44]
-000322  2101              MOVS     r1,#1
-000324  0409              LSLS     r1,r1,#16
-000326  4308              ORRS     r0,r0,r1
-000328  6460              STR      r0,[r4,#0x44]
+00031c  6039              STR      r1,[r7,#0]  ; unCOM_SPI_TransErrCNT
+                  |L1.798|
+00031e  6c60              LDR      r0,[r4,#0x44]
+000320  2101              MOVS     r1,#1
+000322  0409              LSLS     r1,r1,#16
+000324  4308              ORRS     r0,r0,r1
+000326  6460              STR      r0,[r4,#0x44]
 ;;;528    	}
 ;;;529    	SPI_CLR_UNIT_TRANS_INT_FLAG(SPI);
 ;;;530    }
-00032a  bdf8              POP      {r3-r7,pc}
+000328  bdf8              POP      {r3-r7,pc}
 ;;;531    
                           ENDP
 
                   SysTick_Handler PROC
 ;;;532    void SysTick_Handler(void)
-00032c  4810              LDR      r0,|L1.880|
+00032a  4810              LDR      r0,|L1.876|
 ;;;533    {
 ;;;534    	unSystemTick += 5;
-00032e  6801              LDR      r1,[r0,#0]  ; unSystemTick
-000330  1d49              ADDS     r1,r1,#5
-000332  6001              STR      r1,[r0,#0]  ; unSystemTick
+00032c  6801              LDR      r1,[r0,#0]  ; unSystemTick
+00032e  1d49              ADDS     r1,r1,#5
+000330  6001              STR      r1,[r0,#0]  ; unSystemTick
 ;;;535    }
-000334  4770              BX       lr
+000332  4770              BX       lr
                           ENDP
 
-000336  0000              DCW      0x0000
-                  |L1.824|
+                  |L1.820|
                           DCD      0x40010000
-                  |L1.828|
+                  |L1.824|
                           DCD      FLAG_PHASE_CHANGED
-                  |L1.832|
-                          DCD      0x40040040
-                  |L1.836|
+                  |L1.828|
                           DCD      tMotor
-                  |L1.840|
+                  |L1.832|
                           DCD      0x00ffffff
-                  |L1.844|
+                  |L1.836|
                           DCD      0xff0000a1
-                  |L1.848|
+                  |L1.840|
                           DCD      FLAG_TIM1_USEAGE
-                  |L1.852|
+                  |L1.844|
                           DCD      unZXMatchCNT
-                  |L1.856|
+                  |L1.848|
+                          DCD      0x40040040
+                  |L1.852|
                           DCD      0x400d0000
-                  |L1.860|
+                  |L1.856|
                           DCD      unLastZXDetectedTime
-                  |L1.864|
+                  |L1.860|
                           DCD      ||.data||
-                  |L1.868|
+                  |L1.864|
                           DCD      0x0000251b
-                  |L1.872|
+                  |L1.868|
                           DCD      0x400e0000
-                  |L1.876|
+                  |L1.872|
                           DCD      0x50004240
-                  |L1.880|
+                  |L1.876|
                           DCD      unSystemTick
-                  |L1.884|
+                  |L1.880|
                           DCD      0x40030000
-                  |L1.888|
+                  |L1.884|
                           DCD      unCOM_SPI_TransErrCNT
-                  |L1.892|
+                  |L1.888|
                           DCD      unCOM_SPI_ReadData
 
                           AREA ||.data||, DATA, ALIGN=2

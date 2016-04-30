@@ -10394,12 +10394,10 @@ S		} ENUM_STATUS;
 S
 S		const uint8_t unLocatePhaseSequencyTable[] = {0, 1, 2, 1};
 S
-S		#define ALREADY_ROTATING_DETECTING			0xFFFF
+S		#define IS_ROTATING_DETECTING				0xFFFF
 S		#define MAX_ROTATING_DETECT_PHASE_TIME		30	// half phase max 30ms
 S		#define MAX_ALREADY_ROTATING_DETECT_TIME	200	// 200ms used to detect is motor is already rotating
-S		#define MAX_SINGLE_PHASE_DURATION			80  // 80ms, 
 S		#define RAMP_UP_MIN_PERIOD_NUM_THRS			300	// After ramp up to minimum period, force continue rotate these phases
-S		#define MAX_MOTOR_PWR_DUTY 					(PWM_PERIOD - 150)
 S		#define CHANGE_DUTY_PERIOD_THR				9		// Used in ramp up
 S		#define CHANGE_DUTY_CNT_THR					5		// Used after locked
 S
@@ -10430,6 +10428,8 @@ S//		#define MOTOR_RAMPUP_PR_DCR(x)				((x) = (((x) < MOTOR_RAMPUP_PR_MIN) ? (x)
 S		#define MOTOR_START_ZXD_SPEED				(1600 - 1)	// frequency 2M,
 S//		#define MOTOR_START_ZXD_MINROT_CNT			200	// After phase change xxx times at max speed of rampup, start to detect ZX
 S
+S		#define MAX_MOTOR_PWR_DUTY 					(PWM_PERIOD - 150)
+S		#define MAX_SINGLE_PHASE_DURATION			80  // 80ms,
 S//		typedef enum {
 S//			PHASE_AB = 0,
 S//			PHASE_AC,
@@ -10455,7 +10455,6 @@ S		static uint8_t unLocateIndex;
 S		static uint8_t unPhaseChangeCNT4Period;
 S		static uint8_t unPhaseChangeCNT4Duty;
 S		static uint16_t unRampUpPeriodMiniCNT;
-S		static uint32_t unCurrentPHCHG;
 S		static uint32_t unLastPhaseChangeTime;
 S		static uint32_t unRotateDetectStartTime;	// Used to record when enter motor start, 
 S												// ALready rotating detect end time will be compared with this time
@@ -10718,17 +10717,6 @@ N#define __PROTECTION_H__
 N
 N#include "global.h"
 N
-N	#ifdef __USED_BY_PTC_C__
-S		#define EXTERNAL_PTC
-S
-S		volatile uint32_t* unMosfetTestTable[] = {MOSFET_AS_PIN_ADDR, MOSFET_BS_PIN_ADDR, MOSFET_CS_PIN_ADDR,
-S				MOSFET_AD_PIN_ADDR, MOSFET_BD_PIN_ADDR, MOSFET_CD_PIN_ADDR};
-S		#define SET_MOSFET_ON_MANUAL(pinAddr)		(*(pinAddr) = 0)
-S		#define SET_MOSFET_OFF_MANUAL(pinAddr)		(*(pinAddr) = 1)
-N	#else
-N		#define EXTERNAL_PTC extern
-N	#endif
-N
 N#define BATTERY_V_PORT				P3
 N#define BATTERY_V_PIN				BIT1
 N#define CURRENT_PORT				P5
@@ -10760,8 +10748,21 @@ N#define ADC_BAT_LOW_CNT					16	// Battery may need further filter, 300us*16*2(o
 N// Set 11.5V as min, (11.5/12)*2=1.92V, (1.92/5)*1024=393	// Actually using 10K and 2K R
 N#define ADC_BAT_LOW_THRS_MT				393
 N
+N#ifdef __USED_BY_PTC_C__
+S	#define EXTERNAL_PTC
+S
+S	volatile uint32_t* unMosfetTestTable[] = {MOSFET_AS_PIN_ADDR, MOSFET_BS_PIN_ADDR, MOSFET_CS_PIN_ADDR,
+S			MOSFET_AD_PIN_ADDR, MOSFET_BD_PIN_ADDR, MOSFET_CD_PIN_ADDR};
+S	#define SET_MOSFET_ON_MANUAL(pinAddr)		(*(pinAddr) = 0)
+S	#define SET_MOSFET_OFF_MANUAL(pinAddr)		(*(pinAddr) = 1)
+S
+N#else
+N	#define EXTERNAL_PTC extern
+N#endif
+N
 NEXTERNAL_PTC void PTC_checkMotor(void);
 Xextern void PTC_checkMotor(void);
+N
 N#endif
 L 70 "User\global.h" 2
 N#endif 

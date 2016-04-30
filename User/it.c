@@ -11,7 +11,7 @@
 #define __USED_BY_IT_C__
 #include "it.h"
 
-// Used to change phase
+// Timer 0 is used to change phase
 void TMR0_IRQHandler(void)                                   
 {
 	TIMER0->TISR  = TIMER0->TISR;	//~0;    // Write 1 to clear interrupt flag
@@ -24,7 +24,7 @@ void TMR0_IRQHandler(void)
 	//ACMP0_INT_DISABLE; 
 
 	// Disable PWM's interrupt in case after change phase it triggers
-	PWM_INT_DISABLE;
+//	PWM_INT_DISABLE;
 
 
 	if (TRUE == tMotor.structMotor.MSR.bZeroCrossDetecting)

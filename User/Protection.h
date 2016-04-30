@@ -3,17 +3,6 @@
 
 #include "global.h"
 
-	#ifdef __USED_BY_PTC_C__
-		#define EXTERNAL_PTC
-
-		volatile uint32_t* unMosfetTestTable[] = {MOSFET_AS_PIN_ADDR, MOSFET_BS_PIN_ADDR, MOSFET_CS_PIN_ADDR,
-				MOSFET_AD_PIN_ADDR, MOSFET_BD_PIN_ADDR, MOSFET_CD_PIN_ADDR};
-		#define SET_MOSFET_ON_MANUAL(pinAddr)		(*(pinAddr) = 0)
-		#define SET_MOSFET_OFF_MANUAL(pinAddr)		(*(pinAddr) = 1)
-	#else
-		#define EXTERNAL_PTC extern
-	#endif
-
 #define BATTERY_V_PORT				P3
 #define BATTERY_V_PIN				BIT1
 #define CURRENT_PORT				P5
@@ -45,5 +34,18 @@
 // Set 11.5V as min, (11.5/12)*2=1.92V, (1.92/5)*1024=393	// Actually using 10K and 2K R
 #define ADC_BAT_LOW_THRS_MT				393
 
+#ifdef __USED_BY_PTC_C__
+	#define EXTERNAL_PTC
+
+	volatile uint32_t* unMosfetTestTable[] = {MOSFET_AS_PIN_ADDR, MOSFET_BS_PIN_ADDR, MOSFET_CS_PIN_ADDR,
+			MOSFET_AD_PIN_ADDR, MOSFET_BD_PIN_ADDR, MOSFET_CD_PIN_ADDR};
+	#define SET_MOSFET_ON_MANUAL(pinAddr)		(*(pinAddr) = 0)
+	#define SET_MOSFET_OFF_MANUAL(pinAddr)		(*(pinAddr) = 1)
+
+#else
+	#define EXTERNAL_PTC extern
+#endif
+
 EXTERNAL_PTC void PTC_checkMotor(void);
+
 #endif

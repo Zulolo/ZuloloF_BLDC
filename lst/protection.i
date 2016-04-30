@@ -7346,7 +7346,7 @@ typedef enum {
 
 
 
-#line 273 "User\\BLDCSensorLess.h"
+#line 272 "User\\BLDCSensorLess.h"
 extern volatile MOTOR_UNION_T tMotor;	
 extern volatile ENUM_TIM1_USAGE FLAG_TIM1_USEAGE;
 extern volatile uint32_t unLastZXDetectedTime;
@@ -7463,20 +7463,9 @@ extern void ERR_Manager(void);
 
 
 
-		volatile uint32_t* unMosfetTestTable[] = {((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(2))) + ((2)<<2))), ((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(2))) + ((4)<<2))), ((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(2))) + ((6)<<2))),
-				((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(2))) + ((3)<<2))), ((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(2))) + ((5)<<2))), ((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((4)<<2)))};
 
 
-
-
-
-
-
-
-
-
-
-#line 29 "User\\Protection.h"
+#line 18 "User\\Protection.h"
 
 
 
@@ -7496,7 +7485,20 @@ extern void ERR_Manager(void);
 
 
 
+
+
+
+	volatile uint32_t* unMosfetTestTable[] = {((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(2))) + ((2)<<2))), ((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(2))) + ((4)<<2))), ((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(2))) + ((6)<<2))),
+			((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(2))) + ((3)<<2))), ((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(2))) + ((5)<<2))), ((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((4)<<2)))};
+
+
+
+
+
+
+
  void PTC_checkMotor(void);
+
 #line 14 "User\\Protection.c"
 
 

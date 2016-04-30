@@ -205,7 +205,7 @@ __INLINE void setPhaseManually(uint16_t iPWMDuty, uint8_t iPhase)
 	PWM->PHCHG = GET_PHASE_VALUE(iPhase);
 }
 
-ENUM_STATUS BLDCLocatingManager(void)
+ENUM_STATUS BLDC_LocatingManager(void)
 {
 	if ((uint32_t)(unSystemTick - unLastPhaseChangeTime) > tMotor.structMotor.unLocatingPeriod)
 	{
@@ -251,20 +251,20 @@ __INLINE void BLDCRampUp_Manager(void)
 	}
 }
 
-// Take charge of all Motot control
-void BLDC_SensorLessManager(void)
+__INLINE void dutyProtection(void)
 {
-	uint16_t iMotorAlreadyRotatingPhaseTime;
-	static uint32_t iEnterTimeBeforeWait;
-
 	// Duty too big protection
 	if ((tMotor.structMotor.unActualDuty > MAX_MOTOR_PWR_DUTY) || (PWM->CMR[1] > MAX_MOTOR_PWR_DUTY))
 	{
 		BLDC_stopMotor();
 		setError(ERR_INTERNAL);
 	}
+}
 
-	// Single phase duration too long protection 
+__INLINE void phaseDurationProtection(uint32_t unLastPhaseChangeTime)
+{
+	static uint32_t unCurrentPHCHG;
+	// Single phase duration too long protection
 	if (TRUE == tMotor.structMotor.MSR.bMotorPowerOn)
 	{
 		if (unCurrentPHCHG != PWM->PHCHG)
@@ -274,13 +274,23 @@ void BLDC_SensorLessManager(void)
 		}
 		else
 		{
-			if ((uint32_t)(unSystemTick - unLastPhaseChangeTime) > MAX_SINGLE_PHASE_DURATION) 
+			if ((uint32_t)(unSystemTick - unLastPhaseChangeTime) > MAX_SINGLE_PHASE_DURATION)
 			{
 				BLDC_stopMotor();
 				setError(ERR_INTERNAL);
 			}
 		}
 	}
+}
+
+// Take charge of all Motot control
+void BLDC_SensorLessManager(void)
+{
+	uint16_t iMotorAlreadyRotatingPhaseTime;
+	static uint32_t iEnterTimeBeforeWait;
+
+	dutyProtection();
+	phaseDurationProtection(unLastPhaseChangeTime);
 
 	switch (tMotorState)
 	{
@@ -300,9 +310,9 @@ void BLDC_SensorLessManager(void)
 			// Then stop it while rotating to measure the waveform
 			// Manually rotate it is too slow 
 			iMotorAlreadyRotatingPhaseTime = canMotorContinueRunning();
-			if (iMotorAlreadyRotatingPhaseTime != ALREADY_ROTATING_DETECTING)
+			if (iMotorAlreadyRotatingPhaseTime != IS_ROTATING_DETECTING)
 			{
-				if (iMotorAlreadyRotatingPhaseTime)
+				if (iMotorAlreadyRotatingPhaseTime > 0)
 				{
 					// 1 to 65534
 					tMotorState = MOTOR_LOCKED;
@@ -334,7 +344,7 @@ void BLDC_SensorLessManager(void)
 	case MOTOR_LOCATE:
 		if (tMotor.structMotor.MCR.bMotorNeedToRun && NO_MOTOR_EEROR)
 		{
-			if (BLDCLocatingManager() == STATUS_FINISHED)
+			if (BLDC_LocatingManager() == STATUS_FINISHED)
 			{
 				iEnterTimeBeforeWait = unSystemTick;
 				tMotorState = MOTOR_WAIT_AFTER_LOCATE;
@@ -360,13 +370,15 @@ void BLDC_SensorLessManager(void)
 				// Set timer 0 valure, use timer 0 to change phase automatically
 				// ************************************************************************
 				// ----==== From here current unCurrentPhase is actually next phase ====----
-				// What to get real current phase value? Read PWM->PHCHG.
+				// ----==== Because we want to use the HW auto phase changer (PWM->PHCHGNXT) ====----
+				// So increase unCurrentPhase again. Want to get real current phase value? Read PWM->PHCHG.
 				// ************************************************************************
 				PHASE_INCREASE(unCurrentPhase);
 				PWM->PHCHGNXT = GET_PHASE_VALUE(unCurrentPhase);
-				// !!!! Need to make sure CPU run to here every min tMotor.structMotor.ACT_PERIOD time !!!
+				// !!!! Need to make sure CPU runs to here every min tMotor.structMotor.ACT_PERIOD time !!!
 				// !!!! If not , timer counter may already passed tMotor.structMotor.ACT_PERIOD, !!!!
-				// !!!! then need to count to 2^24, go back to 0 and triger interrupt when reach ACT_PERIOD !!!!
+				// !!!! then need to count to max timer counter number (which is 2^24), !!!!
+				// !!!! go back to 0 and triger interrupt when reach ACT_PERIOD again !!!!
 				TIMER_SET_CMP_VALUE(TIMER0, tMotor.structMotor.unActualPeriod);
 				TIMER_Start(TIMER0);	// Once started, running and interrupting until Motor stop
 				TIMER_EnableInt(TIMER0);

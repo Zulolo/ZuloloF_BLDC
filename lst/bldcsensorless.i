@@ -7378,14 +7378,12 @@ extern void ERR_Manager(void);
 
 #line 5 "User\\Protection.h"
 
-#line 16 "User\\Protection.h"
 
 
 
 
 
-
-#line 29 "User\\Protection.h"
+#line 18 "User\\Protection.h"
 
 
 
@@ -7405,7 +7403,10 @@ extern void ERR_Manager(void);
 
 
 
+#line 48 "User\\Protection.h"
+
 extern void PTC_checkMotor(void);
+
 #line 70 "User\\global.h"
 #line 5 "User\\BLDCSensorLess.h"
 
@@ -7559,7 +7560,9 @@ typedef enum {
 
 		const uint8_t unLocatePhaseSequencyTable[] = {0, 1, 2, 1};
 
-#line 213 "User\\BLDCSensorLess.h"
+#line 211 "User\\BLDCSensorLess.h"
+
+
 
 
 
@@ -7613,7 +7616,6 @@ typedef enum {
 		static uint8_t unPhaseChangeCNT4Period;
 		static uint8_t unPhaseChangeCNT4Duty;
 		static uint16_t unRampUpPeriodMiniCNT;
-		static uint32_t unCurrentPHCHG;
 		static uint32_t unLastPhaseChangeTime;
 		static uint32_t unRotateDetectStartTime;	
 												
@@ -7828,7 +7830,7 @@ __inline void setPhaseManually(uint16_t iPWMDuty, uint8_t iPhase)
 	((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->PHCHG = ((tMotor . structMotor . MCR . bRotateDirection == 0) ? PHASE_TAB_CLOCKWISE[(iPhase)] : PHASE_TAB_ANTICLOCKWISE[(iPhase)]);
 }
 
-ENUM_STATUS BLDCLocatingManager(void)
+ENUM_STATUS BLDC_LocatingManager(void)
 {
 	if ((uint32_t)(unSystemTick - unLastPhaseChangeTime) > tMotor.structMotor.unLocatingPeriod)
 	{
@@ -7874,19 +7876,19 @@ __inline void BLDCRampUp_Manager(void)
 	}
 }
 
-
-void BLDC_SensorLessManager(void)
+__inline void dutyProtection(void)
 {
-	uint16_t iMotorAlreadyRotatingPhaseTime;
-	static uint32_t iEnterTimeBeforeWait;
-
 	
 	if ((tMotor.structMotor.unActualDuty > ((884-1) - 150)) || (((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->CMR[1] > ((884-1) - 150)))
 	{
 		BLDC_stopMotor();
 		setError(ERR_INTERNAL);
 	}
+}
 
+__inline void phaseDurationProtection(uint32_t unLastPhaseChangeTime)
+{
+	static uint32_t unCurrentPHCHG;
 	
 	if ((1) == tMotor.structMotor.MSR.bMotorPowerOn)
 	{
@@ -7897,13 +7899,23 @@ void BLDC_SensorLessManager(void)
 		}
 		else
 		{
-			if ((uint32_t)(unSystemTick - unLastPhaseChangeTime) > 80) 
+			if ((uint32_t)(unSystemTick - unLastPhaseChangeTime) > 80)
 			{
 				BLDC_stopMotor();
 				setError(ERR_INTERNAL);
 			}
 		}
 	}
+}
+
+
+void BLDC_SensorLessManager(void)
+{
+	uint16_t iMotorAlreadyRotatingPhaseTime;
+	static uint32_t iEnterTimeBeforeWait;
+
+	dutyProtection();
+	phaseDurationProtection(unLastPhaseChangeTime);
 
 	switch (tMotorState)
 	{
@@ -7925,7 +7937,7 @@ void BLDC_SensorLessManager(void)
 			iMotorAlreadyRotatingPhaseTime = canMotorContinueRunning();
 			if (iMotorAlreadyRotatingPhaseTime != 0xFFFF)
 			{
-				if (iMotorAlreadyRotatingPhaseTime)
+				if (iMotorAlreadyRotatingPhaseTime > 0)
 				{
 					
 					tMotorState = MOTOR_LOCKED;
@@ -7957,7 +7969,7 @@ void BLDC_SensorLessManager(void)
 	case MOTOR_LOCATE:
 		if (tMotor.structMotor.MCR.bMotorNeedToRun && (((unErrorMaster & 0xFFFFFFFEul) == 0) ? (1) : (0)))
 		{
-			if (BLDCLocatingManager() == STATUS_FINISHED)
+			if (BLDC_LocatingManager() == STATUS_FINISHED)
 			{
 				iEnterTimeBeforeWait = unSystemTick;
 				tMotorState = MOTOR_WAIT_AFTER_LOCATE;
@@ -7985,8 +7997,10 @@ void BLDC_SensorLessManager(void)
 				
 				
 				
+				
 				(((unCurrentPhase)) = ((((unCurrentPhase)) < (((sizeof(PHASE_TAB_CLOCKWISE)/sizeof(uint32_t))) - 1)) ? (((unCurrentPhase)) + 1) : 0));
 				((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->PHCHGNXT = ((tMotor . structMotor . MCR . bRotateDirection == 0) ? PHASE_TAB_CLOCKWISE[(unCurrentPhase)] : PHASE_TAB_ANTICLOCKWISE[(unCurrentPhase)]);
+				
 				
 				
 				
