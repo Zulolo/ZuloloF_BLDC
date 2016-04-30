@@ -17,7 +17,7 @@
    2. The first ACMP INT will start TIM1 and enable its interrupt.
    3. TIM1 INT will be set as current time + filter time (100us).
    4. Each new ACMP INT will reset TIM1 INT as current time + filter time (100us).
-   5. So when TIM1 INT really happened, it means ACMP was stable and really zero crossed.                                                            
+   5. So when TIM1 INT really happened, and the rising/falling edge is correct, it means ACMP was stable and really zero crossed.
    6. In the TIM1 INT we set TIM0's phase change time.*/
 
 /* Some limitation:
@@ -41,12 +41,6 @@ __INLINE void PhaseChangedRoutine(void)
 			if (tMotor.structMotor.MSR.unSuccessZXD_CNT > MIN_SUCC_ZXD_THRESHOLD)
 			{
 				tMotor.structMotor.MSR.bLocked = TRUE;
-//				BRG_DISABLE;
-//				P50 = 1;
-//				BLDC_stopMotor();
-
-//				iTestZXContinueCNT++;
-//				iTestZXDPeriod = tMotor.structMotor.ACT_PERIOD;
 			}
 			else
 			{
@@ -160,9 +154,9 @@ void BLDCSpeedManager(void)
 		{
 //				tMotor.structMotor.ACT_DUTY = tMotor.structMotor.TGT_DUTY;
 				// Change PWM duty after each x phase change
-			if (unPhaseChangeCNT4Duty > CHANGE_DUTY_CNT_THR)
+			if (unPhaseChangeCNT_AtCurrentDuty > CHANGE_DUTY_AFTER_PHASE_CHANGED_NUM)
 			{
-				unPhaseChangeCNT4Duty = 0;
+				unPhaseChangeCNT_AtCurrentDuty = 0;
 				if (tMotor.structMotor.unActualDuty < tMotor.structMotor.unTargetDuty)
 				{
 					tMotor.structMotor.unActualDuty++;
@@ -173,7 +167,7 @@ void BLDCSpeedManager(void)
 				}
 				MOTOR_SET_DUTY(tMotor.structMotor.unActualDuty);
 			}
-			unPhaseChangeCNT4Duty++;
+			unPhaseChangeCNT_AtCurrentDuty++;
 		}
 		
 		PHASE_INCREASE(unCurrentPhase);
@@ -181,16 +175,7 @@ void BLDCSpeedManager(void)
 		PWM->PHCHGNXT = GET_PHASE_VALUE(unCurrentPhase);
 	}
 }
-//
-//void BLDCStarterManager(void)
-//{
-//
-//}
-//
-//void BLDCPhaseChangeManager(void)
-//{
-//
-//}
+
 __INLINE void BLDC_stopMotor(void)
 {
 	MOTOR_SHUT_DOWN;
@@ -231,18 +216,18 @@ __INLINE void BLDCRampUp_Manager(void)
 	if (SET == FLAG_PHASE_CHANGED)
 	{
 		PhaseChangedRoutine();
-		if (unPhaseChangeCNT4Period > CHANGE_DUTY_PERIOD_THR)
+		if (unPhaseChangeCNT_AtCurrentPeriod > CHANGE_DT_PR_AFTER_PHASE_CHANGED_NUM)
 		{
-			unPhaseChangeCNT4Period = 0;
+			unPhaseChangeCNT_AtCurrentPeriod = 0;
 			// Change duty and period 
 //			MOTOR_RAMPUP_DT_INCR(tMotor.structMotor.ACT_DUTY);			
 			MOTOR_RAMPUP_PR_DCR(tMotor.structMotor.unActualPeriod);	
 			if (tMotor.structMotor.unActualPeriod <= MOTOR_RAMPUP_PR_MIN)
 			{
-				unRampUpPeriodMiniCNT++;
+				unPeriodChangeCNT_AfterPR_ReachMini++;
 			}
 		}
-		unPhaseChangeCNT4Period++;
+		unPhaseChangeCNT_AtCurrentPeriod++;
 //		MOTOR_SET_DUTY(tMotor.structMotor.ACT_DUTY);
 		TIMER_SET_CMP_VALUE(TIMER0, tMotor.structMotor.unActualPeriod);
 		PHASE_INCREASE(unCurrentPhase);
@@ -286,7 +271,7 @@ __INLINE void phaseDurationProtection(uint32_t unLastPhaseChangeTime)
 // Take charge of all Motot control
 void BLDC_SensorLessManager(void)
 {
-	uint16_t iMotorAlreadyRotatingPhaseTime;
+	uint16_t unMotorAlreadyRotatingPhaseTime;
 	static uint32_t iEnterTimeBeforeWait;
 
 	dutyProtection();
@@ -309,10 +294,10 @@ void BLDC_SensorLessManager(void)
 			// Later implement this when motor can rotate
 			// Then stop it while rotating to measure the waveform
 			// Manually rotate it is too slow 
-			iMotorAlreadyRotatingPhaseTime = canMotorContinueRunning();
-			if (iMotorAlreadyRotatingPhaseTime != IS_ROTATING_DETECTING)
+			unMotorAlreadyRotatingPhaseTime = canMotorContinueRunning();
+			if (unMotorAlreadyRotatingPhaseTime != IS_ROTATING_DETECTING)
 			{
-				if (iMotorAlreadyRotatingPhaseTime > 0)
+				if (unMotorAlreadyRotatingPhaseTime > 0)
 				{
 					// 1 to 65534
 					tMotorState = MOTOR_LOCKED;
@@ -382,9 +367,9 @@ void BLDC_SensorLessManager(void)
 				TIMER_SET_CMP_VALUE(TIMER0, tMotor.structMotor.unActualPeriod);
 				TIMER_Start(TIMER0);	// Once started, running and interrupting until Motor stop
 				TIMER_EnableInt(TIMER0);
-				unRampUpPeriodMiniCNT = 0;
-				unPhaseChangeCNT4Duty = 0;
-				unPhaseChangeCNT4Period = 0;
+				unPeriodChangeCNT_AfterPR_ReachMini = 0;
+				unPhaseChangeCNT_AtCurrentDuty = 0;
+				unPhaseChangeCNT_AtCurrentPeriod = 0;
 				tMotorState = MOTOR_RAMPUP_WO_ZXD;
 			}
 		}
@@ -406,7 +391,6 @@ void BLDC_SensorLessManager(void)
 				// Prepare everything
 				// T0 used to change phase automatically -- already configured
 				// T1 used to filter ZX
-				//ACMP->CMPCR[0]
 
 //				TIMER_SET_CMP_VALUE(TIMER1, GET_TIM1_CMP_VALUE(TIMER1->TDR + AVOID_ZXD_AFTER_PHCHG));
 //				FLAG_TIM1_USEAGE = ENUM_TIM1_AVOID_ZXD;
@@ -436,7 +420,7 @@ void BLDC_SensorLessManager(void)
 			}
 			else
 			{
-				if (unRampUpPeriodMiniCNT < RAMP_UP_MIN_PERIOD_NUM_THRS)
+				if (unPeriodChangeCNT_AfterPR_ReachMini < RAMP_UP_MIN_PERIOD_NUM_THRS)
 				{
 					BLDCRampUp_Manager(); 
 				}

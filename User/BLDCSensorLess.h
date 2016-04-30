@@ -206,8 +206,8 @@ typedef enum {
 		#define MAX_ROTATING_DETECT_PHASE_TIME		30	// half phase max 30ms
 		#define MAX_ALREADY_ROTATING_DETECT_TIME	200	// 200ms used to detect is motor is already rotating
 		#define RAMP_UP_MIN_PERIOD_NUM_THRS			300	// After ramp up to minimum period, force continue rotate these phases
-		#define CHANGE_DUTY_PERIOD_THR				9		// Used in ramp up
-		#define CHANGE_DUTY_CNT_THR					5		// Used after locked
+		#define CHANGE_DT_PR_AFTER_PHASE_CHANGED_NUM				9		// Used in ramp up
+		#define CHANGE_DUTY_AFTER_PHASE_CHANGED_NUM					5		// Used after locked
 
 //		#define MOTOR_RUNNING_MSK					(0x01ul)
 //		#define MOTOR_R_DIRECTION_MSK				(0x02ul)
@@ -260,9 +260,14 @@ typedef enum {
 		static ENUM_MOTOR_STATE tMotorState = MOTOR_IDLE;
 		static ENUM_ROTATE_DETECT_STATE tRotateDetectState = DETECT_START;
 		static uint8_t unLocateIndex;
-		static uint8_t unPhaseChangeCNT4Period;
-		static uint8_t unPhaseChangeCNT4Duty;
-		static uint16_t unRampUpPeriodMiniCNT;
+		static uint8_t unPhaseChangeCNT_AtCurrentPeriod;	/* This variable is only used at start up ramp up stage.
+															Only after phase has changed for a certain number at current period,
+															the actual period will increase or decrease to target period. */
+		static uint8_t unPhaseChangeCNT_AtCurrentDuty;	/* Only after phase has changed for a certain number at current duty,
+														the actual duty will increase or decrease to target duty */
+		static uint16_t unPeriodChangeCNT_AfterPR_ReachMini;	/* This variable is only used at start up ramp up stage.
+																Phase period changed counter after phase period has been lower to
+																ramp up min period*/
 		static uint32_t unLastPhaseChangeTime;
 		static uint32_t unRotateDetectStartTime;	// Used to record when enter motor start, 
 												// ALready rotating detect end time will be compared with this time

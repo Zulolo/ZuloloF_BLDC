@@ -108,38 +108,38 @@ Image Symbol Table
     .text                                    0x00000f4c   Section        0  bldcsensorless.o(.text)
     .text                                    0x00001258   Section        0  communication.o(.text)
     .text                                    0x000013bc   Section        0  it.o(.text)
-    .text                                    0x00001738   Section        0  error.o(.text)
-    .text                                    0x00001814   Section        0  protection.o(.text)
-    .text                                    0x0000187c   Section        0  uidiv.o(.text)
-    .text                                    0x000018a8   Section        0  dmul.o(.text)
-    .text                                    0x00001978   Section        0  dfltui.o(.text)
-    .text                                    0x00001994   Section        0  dfixui.o(.text)
-    .text                                    0x000019d0   Section        0  llushr.o(.text)
-    .text                                    0x000019f2   Section        0  depilogue.o(.text)
-    .text                                    0x000019f2   Section        0  iusefp.o(.text)
-    .text                                    0x00001ab0   Section       36  init.o(.text)
-    .text                                    0x00001ad4   Section        0  llshl.o(.text)
-    i.BLDCRampUp_Manager                     0x00001af4   Section        0  bldcsensorless.o(i.BLDCRampUp_Manager)
-    i.BLDC_stopMotor                         0x00001b90   Section        0  bldcsensorless.o(i.BLDC_stopMotor)
-    i.PhaseChangedRoutine                    0x00001bf0   Section        0  bldcsensorless.o(i.PhaseChangedRoutine)
-    i.__ARM_clz                              0x00001d04   Section        0  depilogue.o(i.__ARM_clz)
-    i.__ARM_common_switch8                   0x00001d32   Section        0  bldcsensorless.o(i.__ARM_common_switch8)
-    i.__scatterload_copy                     0x00001d4c   Section       14  handlers.o(i.__scatterload_copy)
-    i.__scatterload_null                     0x00001d5a   Section        2  handlers.o(i.__scatterload_null)
-    i.__scatterload_zeroinit                 0x00001d5c   Section       14  handlers.o(i.__scatterload_zeroinit)
-    i.setPhaseManually                       0x00001d6c   Section        0  bldcsensorless.o(i.setPhaseManually)
-    .constdata                               0x00001da0   Section       52  bldcsensorless.o(.constdata)
-    .constdata                               0x00001dd4   Section      512  communication.o(.constdata)
-    .constdata                               0x00001fd4   Section       32  error.o(.constdata)
+    .text                                    0x000016f4   Section        0  error.o(.text)
+    .text                                    0x000017d0   Section        0  protection.o(.text)
+    .text                                    0x00001838   Section        0  uidiv.o(.text)
+    .text                                    0x00001864   Section        0  dmul.o(.text)
+    .text                                    0x00001934   Section        0  dfltui.o(.text)
+    .text                                    0x00001950   Section        0  dfixui.o(.text)
+    .text                                    0x0000198c   Section        0  llushr.o(.text)
+    .text                                    0x000019ae   Section        0  depilogue.o(.text)
+    .text                                    0x000019ae   Section        0  iusefp.o(.text)
+    .text                                    0x00001a6c   Section       36  init.o(.text)
+    .text                                    0x00001a90   Section        0  llshl.o(.text)
+    i.BLDCRampUp_Manager                     0x00001ab0   Section        0  bldcsensorless.o(i.BLDCRampUp_Manager)
+    i.BLDC_stopMotor                         0x00001b4c   Section        0  bldcsensorless.o(i.BLDC_stopMotor)
+    i.PhaseChangedRoutine                    0x00001bac   Section        0  bldcsensorless.o(i.PhaseChangedRoutine)
+    i.__ARM_clz                              0x00001cc0   Section        0  depilogue.o(i.__ARM_clz)
+    i.__ARM_common_switch8                   0x00001cee   Section        0  bldcsensorless.o(i.__ARM_common_switch8)
+    i.__scatterload_copy                     0x00001d08   Section       14  handlers.o(i.__scatterload_copy)
+    i.__scatterload_null                     0x00001d16   Section        2  handlers.o(i.__scatterload_null)
+    i.__scatterload_zeroinit                 0x00001d18   Section       14  handlers.o(i.__scatterload_zeroinit)
+    i.setPhaseManually                       0x00001d28   Section        0  bldcsensorless.o(i.setPhaseManually)
+    .constdata                               0x00001d5c   Section       52  bldcsensorless.o(.constdata)
+    .constdata                               0x00001d90   Section      512  communication.o(.constdata)
+    .constdata                               0x00001f90   Section       32  error.o(.constdata)
     .data                                    0x20000000   Section        8  system_mini51series.o(.data)
     .data                                    0x20000008   Section        4  main.o(.data)
     .data                                    0x2000000c   Section       32  bldcsensorless.o(.data)
     tMotorState                              0x2000000c   Data           1  bldcsensorless.o(.data)
     tRotateDetectState                       0x2000000d   Data           1  bldcsensorless.o(.data)
     unLocateIndex                            0x2000000e   Data           1  bldcsensorless.o(.data)
-    unPhaseChangeCNT4Period                  0x2000000f   Data           1  bldcsensorless.o(.data)
-    unPhaseChangeCNT4Duty                    0x20000010   Data           1  bldcsensorless.o(.data)
-    unRampUpPeriodMiniCNT                    0x20000014   Data           2  bldcsensorless.o(.data)
+    unPhaseChangeCNT_AtCurrentPeriod         0x2000000f   Data           1  bldcsensorless.o(.data)
+    unPhaseChangeCNT_AtCurrentDuty           0x20000010   Data           1  bldcsensorless.o(.data)
+    unPeriodChangeCNT_AfterPR_ReachMini      0x20000014   Data           2  bldcsensorless.o(.data)
     unStateEnterTime                         0x20000018   Data           4  bldcsensorless.o(.data)
     iEnterTimeBeforeWait                     0x2000001c   Data           4  bldcsensorless.o(.data)
     unLastPhaseChangeTime                    0x20000020   Data           4  bldcsensorless.o(.data)
@@ -344,52 +344,51 @@ Image Symbol Table
     nWriteCommandHandler                     0x000012b1   Thumb Code    88  communication.o(.text)
     COMM_Manager                             0x00001309   Thumb Code   154  communication.o(.text)
     TMR0_IRQHandler                          0x000013bd   Thumb Code    76  it.o(.text)
-    DetectdTimeWhenPWMHigh                   0x00001409   Thumb Code    64  it.o(.text)
-    PhaseZXDedHandler                        0x00001449   Thumb Code   112  it.o(.text)
-    TMR1_IRQHandler                          0x000014b9   Thumb Code    96  it.o(.text)
-    ACMP_IRQHandler                          0x00001519   Thumb Code    58  it.o(.text)
-    ADC_IRQHandler                           0x00001553   Thumb Code   244  it.o(.text)
-    SPI_IRQHandler                           0x00001647   Thumb Code   160  it.o(.text)
-    SysTick_Handler                          0x000016e7   Thumb Code    10  it.o(.text)
-    delay                                    0x00001739   Thumb Code    18  error.o(.text)
-    clearError                               0x0000174b   Thumb Code     8  error.o(.text)
-    resetError                               0x00001753   Thumb Code    20  error.o(.text)
-    setError                                 0x00001767   Thumb Code    26  error.o(.text)
-    getPrecedenceError                       0x00001781   Thumb Code    28  error.o(.text)
-    LEDBlinkHandler                          0x0000179d   Thumb Code    68  error.o(.text)
-    ERR_Manager                              0x000017e1   Thumb Code    36  error.o(.text)
-    PTC_checkMotor                           0x00001815   Thumb Code    76  protection.o(.text)
-    __aeabi_uidiv                            0x0000187d   Thumb Code     0  uidiv.o(.text)
-    __aeabi_uidivmod                         0x0000187d   Thumb Code    44  uidiv.o(.text)
-    __aeabi_dmul                             0x000018a9   Thumb Code   202  dmul.o(.text)
-    __aeabi_ui2d                             0x00001979   Thumb Code    24  dfltui.o(.text)
-    __aeabi_d2uiz                            0x00001995   Thumb Code    50  dfixui.o(.text)
-    __aeabi_llsr                             0x000019d1   Thumb Code    34  llushr.o(.text)
-    _ll_ushift_r                             0x000019d1   Thumb Code     0  llushr.o(.text)
-    __I$use$fp                               0x000019f3   Thumb Code     0  iusefp.o(.text)
-    _double_round                            0x000019f3   Thumb Code    26  depilogue.o(.text)
-    _double_epilogue                         0x00001a0d   Thumb Code   164  depilogue.o(.text)
-    __scatterload                            0x00001ab1   Thumb Code    28  init.o(.text)
-    __scatterload_rt2                        0x00001ab1   Thumb Code     0  init.o(.text)
-    __aeabi_llsl                             0x00001ad5   Thumb Code    32  llshl.o(.text)
-    _ll_shift_l                              0x00001ad5   Thumb Code     0  llshl.o(.text)
-    BLDCRampUp_Manager                       0x00001af5   Thumb Code   122  bldcsensorless.o(i.BLDCRampUp_Manager)
-    BLDC_stopMotor                           0x00001b91   Thumb Code    76  bldcsensorless.o(i.BLDC_stopMotor)
-    PhaseChangedRoutine                      0x00001bf1   Thumb Code   248  bldcsensorless.o(i.PhaseChangedRoutine)
-    __ARM_clz                                0x00001d05   Thumb Code    46  depilogue.o(i.__ARM_clz)
-    __ARM_common_switch8                     0x00001d33   Thumb Code    26  bldcsensorless.o(i.__ARM_common_switch8)
-    __scatterload_copy                       0x00001d4d   Thumb Code    14  handlers.o(i.__scatterload_copy)
-    __scatterload_null                       0x00001d5b   Thumb Code     2  handlers.o(i.__scatterload_null)
-    __scatterload_zeroinit                   0x00001d5d   Thumb Code    14  handlers.o(i.__scatterload_zeroinit)
-    setPhaseManually                         0x00001d6d   Thumb Code    38  bldcsensorless.o(i.setPhaseManually)
-    unLocatePhaseSequencyTable               0x00001da0   Data           4  bldcsensorless.o(.constdata)
-    PHASE_TAB_CLOCKWISE                      0x00001da4   Data          24  bldcsensorless.o(.constdata)
-    PHASE_TAB_ANTICLOCKWISE                  0x00001dbc   Data          24  bldcsensorless.o(.constdata)
-    CRC_HIGH_FACTOR                          0x00001dd4   Data         256  communication.o(.constdata)
-    CRC_LOW_FACTOR                           0x00001ed4   Data         256  communication.o(.constdata)
-    unLED_BLINK_PATTERN_TABLE                0x00001fd4   Data          32  error.o(.constdata)
-    Region$$Table$$Base                      0x00001ff4   Number         0  anon$$obj.o(Region$$Table)
-    Region$$Table$$Limit                     0x00002014   Number         0  anon$$obj.o(Region$$Table)
+    PhaseZXDedHandler                        0x00001409   Thumb Code   112  it.o(.text)
+    TMR1_IRQHandler                          0x00001479   Thumb Code    96  it.o(.text)
+    ACMP_IRQHandler                          0x000014d9   Thumb Code    58  it.o(.text)
+    ADC_IRQHandler                           0x00001513   Thumb Code   244  it.o(.text)
+    SPI_IRQHandler                           0x00001607   Thumb Code   160  it.o(.text)
+    SysTick_Handler                          0x000016a7   Thumb Code    10  it.o(.text)
+    delay                                    0x000016f5   Thumb Code    18  error.o(.text)
+    clearError                               0x00001707   Thumb Code     8  error.o(.text)
+    resetError                               0x0000170f   Thumb Code    20  error.o(.text)
+    setError                                 0x00001723   Thumb Code    26  error.o(.text)
+    getPrecedenceError                       0x0000173d   Thumb Code    28  error.o(.text)
+    LEDBlinkHandler                          0x00001759   Thumb Code    68  error.o(.text)
+    ERR_Manager                              0x0000179d   Thumb Code    36  error.o(.text)
+    PTC_checkMotor                           0x000017d1   Thumb Code    76  protection.o(.text)
+    __aeabi_uidiv                            0x00001839   Thumb Code     0  uidiv.o(.text)
+    __aeabi_uidivmod                         0x00001839   Thumb Code    44  uidiv.o(.text)
+    __aeabi_dmul                             0x00001865   Thumb Code   202  dmul.o(.text)
+    __aeabi_ui2d                             0x00001935   Thumb Code    24  dfltui.o(.text)
+    __aeabi_d2uiz                            0x00001951   Thumb Code    50  dfixui.o(.text)
+    __aeabi_llsr                             0x0000198d   Thumb Code    34  llushr.o(.text)
+    _ll_ushift_r                             0x0000198d   Thumb Code     0  llushr.o(.text)
+    __I$use$fp                               0x000019af   Thumb Code     0  iusefp.o(.text)
+    _double_round                            0x000019af   Thumb Code    26  depilogue.o(.text)
+    _double_epilogue                         0x000019c9   Thumb Code   164  depilogue.o(.text)
+    __scatterload                            0x00001a6d   Thumb Code    28  init.o(.text)
+    __scatterload_rt2                        0x00001a6d   Thumb Code     0  init.o(.text)
+    __aeabi_llsl                             0x00001a91   Thumb Code    32  llshl.o(.text)
+    _ll_shift_l                              0x00001a91   Thumb Code     0  llshl.o(.text)
+    BLDCRampUp_Manager                       0x00001ab1   Thumb Code   122  bldcsensorless.o(i.BLDCRampUp_Manager)
+    BLDC_stopMotor                           0x00001b4d   Thumb Code    76  bldcsensorless.o(i.BLDC_stopMotor)
+    PhaseChangedRoutine                      0x00001bad   Thumb Code   248  bldcsensorless.o(i.PhaseChangedRoutine)
+    __ARM_clz                                0x00001cc1   Thumb Code    46  depilogue.o(i.__ARM_clz)
+    __ARM_common_switch8                     0x00001cef   Thumb Code    26  bldcsensorless.o(i.__ARM_common_switch8)
+    __scatterload_copy                       0x00001d09   Thumb Code    14  handlers.o(i.__scatterload_copy)
+    __scatterload_null                       0x00001d17   Thumb Code     2  handlers.o(i.__scatterload_null)
+    __scatterload_zeroinit                   0x00001d19   Thumb Code    14  handlers.o(i.__scatterload_zeroinit)
+    setPhaseManually                         0x00001d29   Thumb Code    38  bldcsensorless.o(i.setPhaseManually)
+    unLocatePhaseSequencyTable               0x00001d5c   Data           4  bldcsensorless.o(.constdata)
+    PHASE_TAB_CLOCKWISE                      0x00001d60   Data          24  bldcsensorless.o(.constdata)
+    PHASE_TAB_ANTICLOCKWISE                  0x00001d78   Data          24  bldcsensorless.o(.constdata)
+    CRC_HIGH_FACTOR                          0x00001d90   Data         256  communication.o(.constdata)
+    CRC_LOW_FACTOR                           0x00001e90   Data         256  communication.o(.constdata)
+    unLED_BLINK_PATTERN_TABLE                0x00001f90   Data          32  error.o(.constdata)
+    Region$$Table$$Base                      0x00001fb0   Number         0  anon$$obj.o(Region$$Table)
+    Region$$Table$$Limit                     0x00001fd0   Number         0  anon$$obj.o(Region$$Table)
     SystemCoreClock                          0x20000000   Data           4  system_mini51series.o(.data)
     CyclesPerUs                              0x20000004   Data           4  system_mini51series.o(.data)
     unSystemTick                             0x20000008   Data           4  main.o(.data)
@@ -416,9 +415,9 @@ Memory Map of the image
 
   Image Entry point : 0x00000125
 
-  Load Region LR_1 (Base: 0x00000000, Size: 0x000020ac, Max: 0xffffffff, ABSOLUTE)
+  Load Region LR_1 (Base: 0x00000000, Size: 0x00002068, Max: 0xffffffff, ABSOLUTE)
 
-    Execution Region ER_RO (Base: 0x00000000, Size: 0x00002014, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_RO (Base: 0x00000000, Size: 0x00001fd0, Max: 0xffffffff, ABSOLUTE)
 
     Base Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -443,32 +442,32 @@ Memory Map of the image
     0x000009bc   0x00000590   Code   RO          407    .text               main.o
     0x00000f4c   0x0000030c   Code   RO          464    .text               bldcsensorless.o
     0x00001258   0x00000164   Code   RO          535    .text               communication.o
-    0x000013bc   0x0000037c   Code   RO          577    .text               it.o
-    0x00001738   0x000000dc   Code   RO          607    .text               error.o
-    0x00001814   0x00000068   Code   RO          635    .text               protection.o
-    0x0000187c   0x0000002c   Code   RO          660    .text               mc_p.l(uidiv.o)
-    0x000018a8   0x000000d0   Code   RO          667    .text               mf_p.l(dmul.o)
-    0x00001978   0x0000001c   Code   RO          671    .text               mf_p.l(dfltui.o)
-    0x00001994   0x0000003c   Code   RO          675    .text               mf_p.l(dfixui.o)
-    0x000019d0   0x00000022   Code   RO          691    .text               mc_p.l(llushr.o)
-    0x000019f2   0x00000000   Code   RO          693    .text               mc_p.l(iusefp.o)
-    0x000019f2   0x000000be   Code   RO          696    .text               mf_p.l(depilogue.o)
-    0x00001ab0   0x00000024   Code   RO          700    .text               mc_p.l(init.o)
-    0x00001ad4   0x00000020   Code   RO          702    .text               mc_p.l(llshl.o)
-    0x00001af4   0x0000009c   Code   RO          504    i.BLDCRampUp_Manager  bldcsensorless.o
-    0x00001b90   0x00000060   Code   RO          492    i.BLDC_stopMotor    bldcsensorless.o
-    0x00001bf0   0x00000114   Code   RO          486    i.PhaseChangedRoutine  bldcsensorless.o
-    0x00001d04   0x0000002e   Code   RO          698    i.__ARM_clz         mf_p.l(depilogue.o)
-    0x00001d32   0x0000001a   Code   RO          511    i.__ARM_common_switch8  bldcsensorless.o
-    0x00001d4c   0x0000000e   Code   RO          706    i.__scatterload_copy  mc_p.l(handlers.o)
-    0x00001d5a   0x00000002   Code   RO          707    i.__scatterload_null  mc_p.l(handlers.o)
-    0x00001d5c   0x0000000e   Code   RO          708    i.__scatterload_zeroinit  mc_p.l(handlers.o)
-    0x00001d6a   0x00000002   PAD
-    0x00001d6c   0x00000034   Code   RO          498    i.setPhaseManually  bldcsensorless.o
-    0x00001da0   0x00000034   Data   RO          466    .constdata          bldcsensorless.o
-    0x00001dd4   0x00000200   Data   RO          536    .constdata          communication.o
-    0x00001fd4   0x00000020   Data   RO          608    .constdata          error.o
-    0x00001ff4   0x00000020   Data   RO          704    Region$$Table       anon$$obj.o
+    0x000013bc   0x00000338   Code   RO          577    .text               it.o
+    0x000016f4   0x000000dc   Code   RO          607    .text               error.o
+    0x000017d0   0x00000068   Code   RO          635    .text               protection.o
+    0x00001838   0x0000002c   Code   RO          660    .text               mc_p.l(uidiv.o)
+    0x00001864   0x000000d0   Code   RO          667    .text               mf_p.l(dmul.o)
+    0x00001934   0x0000001c   Code   RO          671    .text               mf_p.l(dfltui.o)
+    0x00001950   0x0000003c   Code   RO          675    .text               mf_p.l(dfixui.o)
+    0x0000198c   0x00000022   Code   RO          691    .text               mc_p.l(llushr.o)
+    0x000019ae   0x00000000   Code   RO          693    .text               mc_p.l(iusefp.o)
+    0x000019ae   0x000000be   Code   RO          696    .text               mf_p.l(depilogue.o)
+    0x00001a6c   0x00000024   Code   RO          700    .text               mc_p.l(init.o)
+    0x00001a90   0x00000020   Code   RO          702    .text               mc_p.l(llshl.o)
+    0x00001ab0   0x0000009c   Code   RO          504    i.BLDCRampUp_Manager  bldcsensorless.o
+    0x00001b4c   0x00000060   Code   RO          492    i.BLDC_stopMotor    bldcsensorless.o
+    0x00001bac   0x00000114   Code   RO          486    i.PhaseChangedRoutine  bldcsensorless.o
+    0x00001cc0   0x0000002e   Code   RO          698    i.__ARM_clz         mf_p.l(depilogue.o)
+    0x00001cee   0x0000001a   Code   RO          511    i.__ARM_common_switch8  bldcsensorless.o
+    0x00001d08   0x0000000e   Code   RO          706    i.__scatterload_copy  mc_p.l(handlers.o)
+    0x00001d16   0x00000002   Code   RO          707    i.__scatterload_null  mc_p.l(handlers.o)
+    0x00001d18   0x0000000e   Code   RO          708    i.__scatterload_zeroinit  mc_p.l(handlers.o)
+    0x00001d26   0x00000002   PAD
+    0x00001d28   0x00000034   Code   RO          498    i.setPhaseManually  bldcsensorless.o
+    0x00001d5c   0x00000034   Data   RO          466    .constdata          bldcsensorless.o
+    0x00001d90   0x00000200   Data   RO          536    .constdata          communication.o
+    0x00001f90   0x00000020   Data   RO          608    .constdata          error.o
+    0x00001fb0   0x00000020   Data   RO          704    Region$$Table       anon$$obj.o
 
 
     Execution Region ER_RW (Base: 0x20000000, Size: 0x00000098, Max: 0xffffffff, ABSOLUTE)
@@ -505,13 +504,13 @@ Image component sizes
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
        200          6          0          0          0      55274   adc.o
-      1386        160         52         41         40      14275   bldcsensorless.o
+      1386        160         52         41         40      14335   bldcsensorless.o
        396         26          0          0          0       3385   clk.o
        356         36        512         36          0       6341   communication.o
        220         16         32         12          0       3418   error.o
          0          0          0          0          0      53176   fmc.o
         92          4          0          0          0      54466   gpio.o
-       892         72          0         24          0       6985   it.o
+       824         68          0         24          0       6662   it.o
       1424        180          0          4          0      13723   main.o
        104         28          0         24          0       1673   protection.o
        776         14          0          0          0       7250   pwm.o
@@ -521,7 +520,7 @@ Image component sizes
         80         24          0          8          0       5370   system_mini51series.o
 
     ----------------------------------------------------------------------
-      6662        590        820        152        552     231512   Object Totals
+      6594        586        820        152        552     231249   Object Totals
          0          0         32          0          0          0   (incl. Generated)
          0          0          0          3          0          0   (incl. Padding)
 
@@ -569,15 +568,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-      7392        626        820        152        552     230400   Grand Totals
-      7392        626        820        152        552     230400   ELF Image Totals
-      7392        626        820        152          0          0   ROM Totals
+      7324        622        820        152        552     230137   Grand Totals
+      7324        622        820        152        552     230137   ELF Image Totals
+      7324        622        820        152          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                 8212 (   8.02kB)
+    Total RO  Size (Code + RO Data)                 8144 (   7.95kB)
     Total RW  Size (RW Data + ZI Data)               704 (   0.69kB)
-    Total ROM Size (Code + RO Data + RW Data)       8364 (   8.17kB)
+    Total ROM Size (Code + RO Data + RW Data)       8296 (   8.10kB)
 
 ==============================================================================
 

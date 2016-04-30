@@ -10,950 +10,684 @@
 000000  b510              PUSH     {r4,lr}
 ;;;16     {
 ;;;17     	TIMER0->TISR  = TIMER0->TISR;	//~0;    // Write 1 to clear interrupt flag
-000002  49cc              LDR      r1,|L1.820|
+000002  49bc              LDR      r1,|L1.756|
 000004  6888              LDR      r0,[r1,#8]
 000006  6088              STR      r0,[r1,#8]
 ;;;18     
-;;;19     	//iPhaseChangeCNT4Period++;
-;;;20     	FLAG_PHASE_CHANGED = SET;
-000008  4acb              LDR      r2,|L1.824|
+;;;19     	FLAG_PHASE_CHANGED = SET;
+000008  4abb              LDR      r2,|L1.760|
 00000a  2001              MOVS     r0,#1
 00000c  7010              STRB     r0,[r2,#0]
-;;;21     //	iTestACMPIntEachPhaseCNT = 0;
-;;;22     
-;;;23     	// Disable comparator's interrupt in case after change phase it triggers
-;;;24     	//ACMP0_INT_DISABLE; 
-;;;25     
-;;;26     	// Disable PWM's interrupt in case after change phase it triggers
-;;;27     //	PWM_INT_DISABLE;
-;;;28     
-;;;29     
-;;;30     	if (TRUE == tMotor.structMotor.MSR.bZeroCrossDetecting)
-00000e  48cb              LDR      r0,|L1.828|
+;;;20     
+;;;21     	if (TRUE == tMotor.structMotor.MSR.bZeroCrossDetecting)
+00000e  48bb              LDR      r0,|L1.764|
 000010  8840              LDRH     r0,[r0,#2]  ; tMotor
 000012  0780              LSLS     r0,r0,#30
 000014  d519              BPL      |L1.74|
-000016  4ac7              LDR      r2,|L1.820|
+000016  4ab7              LDR      r2,|L1.756|
 000018  3220              ADDS     r2,r2,#0x20           ;16
 00001a  6810              LDR      r0,[r2,#0]            ;16
 00001c  034b              LSLS     r3,r1,#13             ;16
 00001e  4398              BICS     r0,r0,r3              ;16
 000020  6010              STR      r0,[r2,#0]            ;16
-;;;31     	{
-;;;32     		// In case TIM1 interrupt happened but preeempted by TIM0
-;;;33     		TIMER_DisableInt(TIMER1);
-;;;34     		TIMER1->TISR  = ~0;    // Clear interrupt flag
+;;;22     	{
+;;;23     		// In case TIM1 interrupt was triggered but before TIM0 interrupt (phase change)
+;;;24     		TIMER_DisableInt(TIMER1);
+;;;25     		TIMER1->TISR  = ~0;    // Clear interrupt flag
 000022  2000              MOVS     r0,#0
 000024  43c0              MVNS     r0,r0
 000026  6288              STR      r0,[r1,#0x28]
-;;;35     		TIMER_SET_CMP_VALUE(TIMER1, GET_TIM1_CMP_VALUE(TIMER1->TDR + AVOID_ZXD_AFTER_PHCHG));	
+;;;26     		TIMER_SET_CMP_VALUE(TIMER1, GET_TIM1_CMP_VALUE(TIMER1->TDR + AVOID_ZXD_AFTER_PHCHG));	
 000028  6ac8              LDR      r0,[r1,#0x2c]
-00002a  4cc5              LDR      r4,|L1.832|
+00002a  4cb5              LDR      r4,|L1.768|
 00002c  30a0              ADDS     r0,r0,#0xa0
 00002e  42a0              CMP      r0,r4
 000030  6ac8              LDR      r0,[r1,#0x2c]
 000032  d302              BCC      |L1.58|
-000034  4cc3              LDR      r4,|L1.836|
+000034  4cb3              LDR      r4,|L1.772|
 000036  1900              ADDS     r0,r0,r4
 000038  e000              B        |L1.60|
                   |L1.58|
 00003a  30a0              ADDS     r0,r0,#0xa0
                   |L1.60|
 00003c  6248              STR      r0,[r1,#0x24]
-;;;36     		//GET_TIMER_DIFF(PWM_ZX_FILTER_TIME, GET_TIM1_CMP_VALUE(TIMER1->TDR + (tMotor.structMotor.ACT_PERIOD >> 1))));	
-;;;37     		//(tMotor.structMotor.ACT_PERIOD >> 2)));
-;;;38     		FLAG_TIM1_USEAGE = ENUM_TIM1_AVOID_ZXD;
-00003e  49c2              LDR      r1,|L1.840|
+;;;27     		// ****!! In future AVOID_ZXD_AFTER_PHCHG can be made to dynamic !!****
+;;;28     		// ****!! which means at lower RPM, the AVOID_ZXD_AFTER_PHCHG will be longer than at higher RPM !!****
+;;;29     		//GET_TIMER_DIFF(PWM_ZX_FILTER_TIME, GET_TIM1_CMP_VALUE(TIMER1->TDR + (tMotor.structMotor.ACT_PERIOD >> 1))));	
+;;;30     		//(tMotor.structMotor.ACT_PERIOD >> 2)));
+;;;31     		FLAG_TIM1_USEAGE = ENUM_TIM1_AVOID_ZXD;
+00003e  49b2              LDR      r1,|L1.776|
 000040  2000              MOVS     r0,#0
 000042  7008              STRB     r0,[r1,#0]
 000044  6810              LDR      r0,[r2,#0]
 000046  4318              ORRS     r0,r0,r3
 000048  6010              STR      r0,[r2,#0]
                   |L1.74|
-;;;39     		TIMER_EnableInt(TIMER1);
-;;;40     	}
-;;;41     }
+;;;32     		TIMER_EnableInt(TIMER1);
+;;;33     	}
+;;;34     }
 00004a  bd10              POP      {r4,pc}
-;;;42     
-                          ENDP
-
-                  DetectdTimeWhenPWMHigh PROC
-;;;58     //		    ZX found
-;;;59     uint32_t DetectdTimeWhenPWMHigh(void)
-00004c  b530              PUSH     {r4,r5,lr}
-;;;60     {
-;;;61     	
-;;;62     
-;;;63     //	uint32_t iMaxTIM0atThisPWMHigh;
-;;;64     //	iMaxTIM0atThisPWMHigh = getTIM0atThisPWMHigh(tMotor.structMotor.ACT_DUTY);
-;;;65     
-;;;66     	// ALready done when enter PWM interrupt
-;;;67     	//PWM->PIIR |= PWM_PIIR_PWMPIF1_Msk;
-;;;68     
-;;;69     	while ((PWM->PIIR & PWM_PIIR_PWMPIF1_Msk) == 0)
-;;;70     	{
-;;;71     //		BRG_DISABLE;
-;;;72     //		BLDC_stopMotor();
-;;;73     		if (unZXMatchCNT > MAX_ZX_MATCH_IN_PWM)
-00004e  48bf              LDR      r0,|L1.844|
-;;;74     		{
-;;;75     			return TIMER_GetCounter(TIMER1);	//GET_TIMER_DIFF(PWM_ZX_FILTER_TIME, TIMER_GetCounter(TIMER1));
-;;;76     		}
-;;;77     
-;;;78     		if (ACMP0_EDGE_MATCH)
-000050  49bf              LDR      r1,|L1.848|
-000052  4bc0              LDR      r3,|L1.852|
-000054  2400              MOVS     r4,#0
-;;;79     		{
-;;;80     			unZXMatchCNT++; 
-;;;81     		}
-;;;82     		else
-;;;83     		{
-;;;84     			unZXMatchCNT = 0;
-000056  e013              B        |L1.128|
-                  |L1.88|
-000058  6802              LDR      r2,[r0,#0]            ;73  ; unZXMatchCNT
-00005a  2a24              CMP      r2,#0x24              ;73
-00005c  d903              BLS      |L1.102|
-00005e  48b5              LDR      r0,|L1.820|
-000060  3020              ADDS     r0,r0,#0x20           ;73
-000062  68c0              LDR      r0,[r0,#0xc]          ;73
-;;;85     		}
-;;;86     		
-;;;87     	}
-;;;88     	return TIMER_INVALID_CNT;
-;;;89     }
-000064  bd30              POP      {r4,r5,pc}
-                  |L1.102|
-000066  6b8a              LDR      r2,[r1,#0x38]         ;78
-000068  689d              LDR      r5,[r3,#8]            ;78
-00006a  0612              LSLS     r2,r2,#24             ;78
-00006c  0fd2              LSRS     r2,r2,#31             ;78
-00006e  076d              LSLS     r5,r5,#29             ;78
-000070  0fed              LSRS     r5,r5,#31             ;78
-000072  42aa              CMP      r2,r5                 ;78
-000074  d103              BNE      |L1.126|
-000076  6802              LDR      r2,[r0,#0]            ;80  ; unZXMatchCNT
-000078  1c52              ADDS     r2,r2,#1              ;80
-00007a  6002              STR      r2,[r0,#0]            ;80  ; unZXMatchCNT
-00007c  e000              B        |L1.128|
-                  |L1.126|
-00007e  6004              STR      r4,[r0,#0]            ;84  ; unZXMatchCNT
-                  |L1.128|
-000080  698a              LDR      r2,[r1,#0x18]         ;69
-000082  0792              LSLS     r2,r2,#30             ;69
-000084  d5e8              BPL      |L1.88|
-000086  2000              MOVS     r0,#0                 ;88
-000088  43c0              MVNS     r0,r0                 ;88
-00008a  bd30              POP      {r4,r5,pc}
-;;;90     
+;;;35     
                           ENDP
 
                   PhaseZXDedHandler PROC
-;;;120    
-;;;121    int32_t PhaseZXDedHandler(uint32_t iThisZXDetectedTime)
-00008c  b530              PUSH     {r4,r5,lr}
-;;;122    {
-;;;123    	static uint32_t iTempDeltaZXD = 0;
-;;;124    	static uint32_t iHalfPeriod = 0;
-;;;125    //	static uint32_t iThisZXDetectedTime = 0;
-;;;126    
-;;;127    	//iThisZXDetectedTime = TIMER_GetCounter(TIMER1);
-;;;128    
-;;;129    	iTempDeltaZXD = GET_TIMER_DIFF(unLastZXDetectedTime, iThisZXDetectedTime);
-00008e  4ab2              LDR      r2,|L1.856|
-000090  6811              LDR      r1,[r2,#0]  ; unLastZXDetectedTime
-000092  4288              CMP      r0,r1
-000094  d902              BLS      |L1.156|
-000096  6811              LDR      r1,[r2,#0]  ; unLastZXDetectedTime
-000098  1a41              SUBS     r1,r0,r1
-00009a  e003              B        |L1.164|
-                  |L1.156|
-00009c  6813              LDR      r3,[r2,#0]  ; unLastZXDetectedTime
-00009e  49a8              LDR      r1,|L1.832|
-0000a0  1ac9              SUBS     r1,r1,r3
-0000a2  1809              ADDS     r1,r1,r0
+;;;36     int32_t PhaseZXDedHandler(uint32_t iThisZXDetectedTime)
+00004c  b530              PUSH     {r4,r5,lr}
+;;;37     {
+;;;38     	static uint32_t iTempDeltaZXD = 0;
+;;;39     	static uint32_t iHalfPeriod = 0;
+;;;40     //	static uint32_t iThisZXDetectedTime = 0;
+;;;41     
+;;;42     	//iThisZXDetectedTime = TIMER_GetCounter(TIMER1);
+;;;43     
+;;;44     	iTempDeltaZXD = GET_TIMER_DIFF(unLastZXDetectedTime, iThisZXDetectedTime);
+00004e  4aaf              LDR      r2,|L1.780|
+000050  6811              LDR      r1,[r2,#0]  ; unLastZXDetectedTime
+000052  4288              CMP      r0,r1
+000054  d902              BLS      |L1.92|
+000056  6811              LDR      r1,[r2,#0]  ; unLastZXDetectedTime
+000058  1a41              SUBS     r1,r0,r1
+00005a  e003              B        |L1.100|
+                  |L1.92|
+00005c  6813              LDR      r3,[r2,#0]  ; unLastZXDetectedTime
+00005e  49a8              LDR      r1,|L1.768|
+000060  1ac9              SUBS     r1,r1,r3
+000062  1809              ADDS     r1,r1,r0
+                  |L1.100|
+;;;45     
+;;;46     	if ((iTempDeltaZXD > MIN_PHASE_TIME) && (iTempDeltaZXD < MAX_PHASE_TIME))
+000064  460c              MOV      r4,r1
+000066  4baa              LDR      r3,|L1.784|
+000068  3cff              SUBS     r4,r4,#0xff
+00006a  4daa              LDR      r5,|L1.788|
+00006c  3cf6              SUBS     r4,r4,#0xf6
+00006e  6059              STR      r1,[r3,#4]  ; iTempDeltaZXD
+000070  42ac              CMP      r4,r5
+000072  d221              BCS      |L1.184|
+;;;47     	{
+;;;48     		unLastZXDetectedTime = iThisZXDetectedTime;
+000074  6010              STR      r0,[r2,#0]  ; unLastZXDetectedTime
+;;;49     		tMotor.structMotor.MSR.bThisPhaseDetectedZX = TRUE;
+000076  48a1              LDR      r0,|L1.764|
+000078  8842              LDRH     r2,[r0,#2]  ; tMotor
+00007a  2408              MOVS     r4,#8
+00007c  4322              ORRS     r2,r2,r4
+00007e  8042              STRH     r2,[r0,#2]
+;;;50     //		iTestDetectedZX++;
+;;;51     		if (TRUE == tMotor.structMotor.MSR.bLocked)
+000080  8842              LDRH     r2,[r0,#2]  ; tMotor
+000082  0752              LSLS     r2,r2,#29
+000084  d516              BPL      |L1.180|
+;;;52     		{
+;;;53     			tMotor.structMotor.unActualPeriod = (iTempDeltaZXD + tMotor.structMotor.unActualPeriod) >> 1;
+000086  6982              LDR      r2,[r0,#0x18]  ; tMotor
+000088  1851              ADDS     r1,r2,r1
+00008a  0849              LSRS     r1,r1,#1
+00008c  6181              STR      r1,[r0,#0x18]  ; tMotor
+;;;54     			iHalfPeriod = tMotor.structMotor.unActualPeriod >> 1;
+00008e  6980              LDR      r0,[r0,#0x18]  ; tMotor
+;;;55     			TIMER_SET_CMP_VALUE(TIMER0, TIMER0->TDR + (iHalfPeriod > TIME_DEBT) ? (iHalfPeriod - TIME_DEBT) : ZXD_BEFORE_PHCHG);
+000090  4a98              LDR      r2,|L1.756|
+000092  0840              LSRS     r0,r0,#1              ;54
+000094  6098              STR      r0,[r3,#8]  ; iHalfPeriod
+000096  68d3              LDR      r3,[r2,#0xc]
+000098  21ff              MOVS     r1,#0xff
+00009a  3105              ADDS     r1,#5
+00009c  4288              CMP      r0,r1
+00009e  d901              BLS      |L1.164|
+0000a0  2101              MOVS     r1,#1
+0000a2  e000              B        |L1.166|
                   |L1.164|
-;;;130    
-;;;131    	if ((iTempDeltaZXD > MIN_PHASE_TIME) && (iTempDeltaZXD < MAX_PHASE_TIME))
-0000a4  460c              MOV      r4,r1
-0000a6  4bad              LDR      r3,|L1.860|
-0000a8  3cff              SUBS     r4,r4,#0xff
-0000aa  4dad              LDR      r5,|L1.864|
-0000ac  3cf6              SUBS     r4,r4,#0xf6
-0000ae  6059              STR      r1,[r3,#4]  ; iTempDeltaZXD
-0000b0  42ac              CMP      r4,r5
-0000b2  d221              BCS      |L1.248|
-;;;132    	{
-;;;133    		unLastZXDetectedTime = iThisZXDetectedTime;
-0000b4  6010              STR      r0,[r2,#0]  ; unLastZXDetectedTime
-;;;134    		tMotor.structMotor.MSR.bThisPhaseDetectedZX = TRUE;
-0000b6  48a1              LDR      r0,|L1.828|
-0000b8  8842              LDRH     r2,[r0,#2]  ; tMotor
-0000ba  2408              MOVS     r4,#8
-0000bc  4322              ORRS     r2,r2,r4
-0000be  8042              STRH     r2,[r0,#2]
-;;;135    //		iTestDetectedZX++;
-;;;136    		if (TRUE == tMotor.structMotor.MSR.bLocked)
-0000c0  8842              LDRH     r2,[r0,#2]  ; tMotor
-0000c2  0752              LSLS     r2,r2,#29
-0000c4  d516              BPL      |L1.244|
-;;;137    		{
-;;;138    			tMotor.structMotor.unActualPeriod = (iTempDeltaZXD + tMotor.structMotor.unActualPeriod) >> 1;
-0000c6  6982              LDR      r2,[r0,#0x18]  ; tMotor
-0000c8  1851              ADDS     r1,r2,r1
-0000ca  0849              LSRS     r1,r1,#1
-0000cc  6181              STR      r1,[r0,#0x18]  ; tMotor
-;;;139    			iHalfPeriod = tMotor.structMotor.unActualPeriod >> 1;
-0000ce  6980              LDR      r0,[r0,#0x18]  ; tMotor
-;;;140    			TIMER_SET_CMP_VALUE(TIMER0, TIMER0->TDR + (iHalfPeriod > TIME_DEBT) ? (iHalfPeriod - TIME_DEBT) : ZXD_BEFORE_PHCHG);
-0000d0  4a98              LDR      r2,|L1.820|
-0000d2  0840              LSRS     r0,r0,#1              ;139
-0000d4  6098              STR      r0,[r3,#8]  ; iHalfPeriod
-0000d6  68d3              LDR      r3,[r2,#0xc]
-0000d8  21ff              MOVS     r1,#0xff
-0000da  3105              ADDS     r1,#5
-0000dc  4288              CMP      r0,r1
-0000de  d901              BLS      |L1.228|
-0000e0  2101              MOVS     r1,#1
-0000e2  e000              B        |L1.230|
-                  |L1.228|
-0000e4  2100              MOVS     r1,#0
-                  |L1.230|
-0000e6  42cb              CMN      r3,r1
-0000e8  d002              BEQ      |L1.240|
-0000ea  38ff              SUBS     r0,r0,#0xff
-0000ec  3805              SUBS     r0,#5
-0000ee  e000              B        |L1.242|
-                  |L1.240|
-0000f0  2032              MOVS     r0,#0x32
-                  |L1.242|
-0000f2  6050              STR      r0,[r2,#4]
-                  |L1.244|
-;;;141    		}
-;;;142    		return TRUE;
-0000f4  2001              MOVS     r0,#1
-;;;143    	}
-;;;144    	else
-;;;145    	{
-;;;146    		return FALSE;
-;;;147    	}
-;;;148    }
-0000f6  bd30              POP      {r4,r5,pc}
-                  |L1.248|
-0000f8  2000              MOVS     r0,#0                 ;146
-0000fa  bd30              POP      {r4,r5,pc}
-;;;149    
+0000a4  2100              MOVS     r1,#0
+                  |L1.166|
+0000a6  42cb              CMN      r3,r1
+0000a8  d002              BEQ      |L1.176|
+0000aa  38ff              SUBS     r0,r0,#0xff
+0000ac  3805              SUBS     r0,#5
+0000ae  e000              B        |L1.178|
+                  |L1.176|
+0000b0  2032              MOVS     r0,#0x32
+                  |L1.178|
+0000b2  6050              STR      r0,[r2,#4]
+                  |L1.180|
+;;;56     		}
+;;;57     		return TRUE;
+0000b4  2001              MOVS     r0,#1
+;;;58     	}
+;;;59     	else
+;;;60     	{
+;;;61     		return FALSE;
+;;;62     	}
+;;;63     }
+0000b6  bd30              POP      {r4,r5,pc}
+                  |L1.184|
+0000b8  2000              MOVS     r0,#0                 ;61
+0000ba  bd30              POP      {r4,r5,pc}
+;;;64     
                           ENDP
 
                   TMR1_IRQHandler PROC
-;;;150    // Used to set time reference and filter ZXD
-;;;151    void TMR1_IRQHandler(void)                                   
-0000fc  b5f0              PUSH     {r4-r7,lr}
-;;;152    {
-;;;153    //	static uint32_t iZXTimeDuringPWMHigh;
-;;;154    //	static uint32_t iTempDeltaZXD = 0;
-;;;155    //	static uint32_t iTempPhaseChange2ZX = 0;
-;;;156    //	static uint32_t iThisZXDetectedTime = 0;
-;;;157    //	static uint32_t iTargetNewPeriod = 0;
-;;;158    
-;;;159    //	TIMER_DisableInt(TIMER1);
-;;;160    	TIMER1->TISR = ~0;    // Clear interrupt flag
-0000fe  2000              MOVS     r0,#0
-000100  498c              LDR      r1,|L1.820|
-000102  43c0              MVNS     r0,r0
-000104  6288              STR      r0,[r1,#0x28]
-;;;161    //	unZXMatchCNT = 0;
-;;;162    
-;;;163    /*		iZXTimeDuringPWMHigh = DetectdTimeWhenPWMHigh();
-;;;164    		if (iZXTimeDuringPWMHigh == TIMER_INVALID_CNT)
-;;;165    		{
-;;;166    			// Start PWM duty interrupt, during each PWM high, check is there is ZX
-;;;167    			PWM->PIIR = ~0;
-;;;168    			PWM_INT_ENABLE;
-;;;169    		}
-;;;170    		else
-;;;171    		{
-;;;172    			if (PhaseZXDedHandler(iZXTimeDuringPWMHigh) == FALSE)
-;;;173    			{	// The value has some problem, still open interrupt of PWM to detect ZX when PWM high
-;;;174    				PWM->PIIR = ~0;
-;;;175    				PWM_INT_ENABLE;
-;;;176    			}
-;;;177    		}
-;;;178    
-;;;179    
-;;;180    	if (ENUM_TIM1_START_ZXD == FLAG_TIM1_USEAGE)
-;;;181    	{
-;;;182    		// First check if ACMP already match
-;;;183    		if (ACMP0_EDGE_MATCH)
-;;;184    		{
-;;;185    			iTestEnter_TMR1_MATCH++;
-;;;186    			PhaseZXDedHandler();
-;;;187    		}
-;;;188    		else
-;;;189    		{
-;;;190    			// ACMPF0 may already be set
-;;;191    			if (ACMP->CMPSR & ACMP_CMPSR_ACMPF0_Msk)
-;;;192    			{
-;;;193    				ACMP->CMPSR |= ACMP_CMPSR_ACMPF0_Msk;
-;;;194    			}
-;;;195    			// If not match, open ACMP interrupt to monitor ZX
-;;;196    			ACMP0_INT_ENABLE;
-;;;197    		}
-;;;198    	}
-;;;199    */
-;;;200    
-;;;201    	if (ENUM_TIM1_AVOID_ZXD == FLAG_TIM1_USEAGE)
-000106  4890              LDR      r0,|L1.840|
-000108  7801              LDRB     r1,[r0,#0]  ; FLAG_TIM1_USEAGE
-00010a  4d8a              LDR      r5,|L1.820|
-00010c  2701              MOVS     r7,#1
-00010e  077f              LSLS     r7,r7,#29
-;;;202    	{
-;;;203    		TIMER_DisableInt(TIMER1);	// ACMP interrupt will re-open TIM1's interrupt
-;;;204    		FLAG_TIM1_USEAGE = ENUM_TIM1_ZXD_FILTER;
-;;;205    		// Clear all ACMP changed flag happened before
-;;;206    		ACMP->CMPSR |= ACMP_CMPSR_ACMPF0_Msk;
-;;;207    		ACMP0_INT_ENABLE;
-000110  2602              MOVS     r6,#2
-000112  4c90              LDR      r4,|L1.852|
-000114  3520              ADDS     r5,r5,#0x20           ;206
-000116  2900              CMP      r1,#0                 ;201
-000118  d014              BEQ      |L1.324|
-;;;208    	}
-;;;209    	else
-;;;210    	{	// for now can only be ENUM_TIM1_ZXD_FILTER
-;;;211    		if (ACMP0_EDGE_MATCH)
-00011a  488d              LDR      r0,|L1.848|
-00011c  6b80              LDR      r0,[r0,#0x38]
-00011e  68a1              LDR      r1,[r4,#8]
-000120  0600              LSLS     r0,r0,#24
-000122  0fc0              LSRS     r0,r0,#31
-000124  0749              LSLS     r1,r1,#29
-000126  0fc9              LSRS     r1,r1,#31
-000128  4288              CMP      r0,r1
-00012a  d10a              BNE      |L1.322|
-00012c  68e8              LDR      r0,[r5,#0xc]
-;;;212    		{	
-;;;213    			// No need to find the real ZXD time, we only care the delta 
-;;;214    			if (TRUE == PhaseZXDedHandler(TIMER_GetCounter(TIMER1)))	//GET_TIMER_DIFF(ZXD_FILTER_TIME, TIMER_GetCounter(TIMER1))))
-00012e  f7fffffe          BL       PhaseZXDedHandler
-000132  2801              CMP      r0,#1
-000134  d105              BNE      |L1.322|
-;;;215    			{
-;;;216    				ACMP0_INT_DISABLE;  // This phase ACMP job done
-000136  6820              LDR      r0,[r4,#0]
-000138  43b0              BICS     r0,r0,r6
-00013a  6020              STR      r0,[r4,#0]
-00013c  6828              LDR      r0,[r5,#0]
-00013e  43b8              BICS     r0,r0,r7
-000140  6028              STR      r0,[r5,#0]
-                  |L1.322|
-;;;217    				TIMER_DisableInt(TIMER1);
-;;;218    			}
-;;;219    
-;;;220    //			iThisZXDetectedTime = TIMER_GetCounter(TIMER1) - ZXD_FILTER_TIME;
-;;;221    //			//iTempDeltaZXD = GET_TIMER_DIFF(unLastZXDetectedTime, iThisZXDetectedTime) - ZXD_FILTER_TIME - ACMP_HYS_AVG_TIME;
-;;;222    //			iTempDeltaZXD = GET_TIMER_DIFF(unLastZXDetectedTime, iThisZXDetectedTime);
-;;;223    ////			iTempPhaseChange2ZX = GET_TIMER_DIFF(iPhaseChangeTime, iThisZXDetectedTime) - ZXD_FILTER_TIME;
-;;;224    //			//iTargetNewPeriod = (iTempDeltaZXD >> 1) + iTempPhaseChange2ZX;
-;;;225    //			iTargetNewPeriod = iTempDeltaZXD;	// >> 1 + iTempPhaseChange2ZX;	//(iTempDeltaZXD + tMotor.structMotor.ACT_PERIOD) >> 1;
-;;;226    ////			iTargetNewPeriod = (iTargetNewPeriod + tMotor.structMotor.ACT_PERIOD) >> 1;
-;;;227    //			iTestEnter_TMR1_MATCH++;
-;;;228    ////			RECORD_TEST_VALUE(iTestNewPeriodIndex, iTestZXDPeriodArray, iTargetNewPeriod);
-;;;229    ////			RECORD_TEST_VALUE(iTestTIM0CNTIndex, iTestTIM0CNTArray, TIMER0->TCMPR);
-;;;230    ////			if ((iTestNewPeriodIndex == 0) && (iTestZXDPeriodArray[0] != 0))
-;;;231    ////			{
-;;;232    ////				BRG_DISABLE;
-;;;233    ////				BLDC_stopMotor();
-;;;234    ////				iTestZXDPeriodMax = getMax(iTestZXDPeriodArray, TEST_ARRAY_LEN);
-;;;235    ////				iTestZXDPeriodMin = getMin(iTestZXDPeriodArray, TEST_ARRAY_LEN);
-;;;236    ////				iTestTIM0CNTMax = getMax(iTestTIM0CNTArray, TEST_ARRAY_LEN);
-;;;237    ////				iTestTIM0CNTMin = getMin(iTestTIM0CNTArray, TEST_ARRAY_LEN);
-;;;238    ////			}
-;;;239    ////			RECORD_TEST_DELTA_ZXD(iTestNewPeriodIndex, iThisZXDetectedTime);
-;;;240    //			// Only when iTempDeltaZXD larger than minimum phase time and
-;;;241    //			// smaller then max phase time we consider it is valid
-;;;242    //			if ((iTargetNewPeriod > MIN_PHASE_TIME) && (iTargetNewPeriod < MAX_PHASE_TIME))
-;;;243    //			{
-;;;244    ////				ACMP0_INT_DISABLE;	// This phase job done
-;;;245    //				TIMER_DisableInt(TIMER1);	// TIM1 interrupt will be re-open in TIM0 interrupt (phase change) to implement AVOID_ZXD_AFTER_PHCHG
-;;;246    //				iTestEnter_ACMP_MATCH++;
-;;;247    //				// We can consider ZX detected, and USE IT!!!!
-;;;248    //				// To get stable and solide ZXD, more filter will be added in the TIM0 (phase change) interrupt
-;;;249    //				// Only after continuously some number of ThisPhaseDetectedZX or miss ThisPhaseDetectedZX, it will enter or loss lock
-;;;250    //				tMotor.structMotor.MSR.ThisPhaseDetectedZX = TRUE;
-;;;251    //				unLastZXDetectedTime = iThisZXDetectedTime;
-;;;252    //
-;;;253    //				// Incase the counter of TIM0 is already in front of iTempDeltaZXD
-;;;254    //				if ((TRUE == tMotor.structMotor.MSR.Locked))	// && (iTargetNewPeriod > (TIMER_GetCounter(TIMER0) + ZXD_BEFORE_PHCHG)))
-;;;255    //				{	// Still have time to change CMP in TIM0
-;;;256    //					// You can have a rest, now the only thing left is T0 trigger phase change
-;;;257    //
-;;;258    ////					BRG_DISABLE;
-;;;259    //					iTestDetectedZX++;
-;;;260    //					//iTempDeltaZXD = (tMotor.structMotor.ACT_PERIOD * 3 + iTempDeltaZXD) >> 2;
-;;;261    //					if (iTargetNewPeriod > (TIMER_GetCounter(TIMER0) + ZXD_BEFORE_PHCHG))
-;;;262    //					{
-;;;263    //						tMotor.structMotor.ACT_PERIOD = iTargetNewPeriod;   //GET_TIMER_DIFF(unLastZXDetectedTime, TIMER_GetCounter(TIMER1));
-;;;264    //					}
-;;;265    //					else
-;;;266    //					{
-;;;267    //						tMotor.structMotor.ACT_PERIOD = TIMER_GetCounter(TIMER0) + (ZXD_BEFORE_PHCHG << 1);
-;;;268    //					}
-;;;269    //					TIMER_SET_CMP_VALUE(TIMER0, tMotor.structMotor.ACT_PERIOD);	//TIMER0->TDR + (iTargetNewPeriod >> 2));	//(iTempPhaseChange2ZX >> 1));
-;;;270    ////					if (TIMER0->TISR & 0x01)
-;;;271    ////					{	// If TIM0 interrupt was already triggered
-;;;272    ////						// Clear interrupt flag
-;;;273    ////						TIMER0->TISR |= 0x01;
-;;;274    ////					}
-;;;275    //					//TIMER_SET_CMP_VALUE(TIMER0, tMotor.structMotor.ACT_PERIOD);
-;;;276    //				}
-;;;277    //			}
-;;;278    		}
-;;;279    	}
-;;;280    }
-000142  bdf0              POP      {r4-r7,pc}
-                  |L1.324|
-000144  6829              LDR      r1,[r5,#0]
-000146  43b9              BICS     r1,r1,r7
-000148  6029              STR      r1,[r5,#0]
-00014a  2101              MOVS     r1,#1                 ;204
-00014c  7001              STRB     r1,[r0,#0]            ;204
-00014e  68a0              LDR      r0,[r4,#8]            ;206
-000150  4308              ORRS     r0,r0,r1              ;206
-000152  60a0              STR      r0,[r4,#8]            ;206
-000154  6820              LDR      r0,[r4,#0]            ;207
-000156  4330              ORRS     r0,r0,r6              ;207
-000158  6020              STR      r0,[r4,#0]            ;207
-00015a  bdf0              POP      {r4-r7,pc}
-;;;281    
+;;;65     // Used to set time reference and filter ZXD
+;;;66     void TMR1_IRQHandler(void)                                   
+0000bc  b5f0              PUSH     {r4-r7,lr}
+;;;67     {
+;;;68     //	TIMER_DisableInt(TIMER1);
+;;;69     	TIMER1->TISR = ~0;    // Clear interrupt flag
+0000be  2000              MOVS     r0,#0
+0000c0  498c              LDR      r1,|L1.756|
+0000c2  43c0              MVNS     r0,r0
+0000c4  6288              STR      r0,[r1,#0x28]
+;;;70     
+;;;71     	if (ENUM_TIM1_AVOID_ZXD == FLAG_TIM1_USEAGE)
+0000c6  4890              LDR      r0,|L1.776|
+0000c8  7801              LDRB     r1,[r0,#0]  ; FLAG_TIM1_USEAGE
+0000ca  4d8a              LDR      r5,|L1.756|
+0000cc  2701              MOVS     r7,#1
+0000ce  077f              LSLS     r7,r7,#29
+;;;72     	{
+;;;73     		TIMER_DisableInt(TIMER1);	// ACMP interrupt will re-open TIM1's interrupt
+;;;74     		FLAG_TIM1_USEAGE = ENUM_TIM1_ZXD_FILTER;
+;;;75     		// Clear all ACMP changed flag happened before
+;;;76     		ACMP->CMPSR |= ACMP_CMPSR_ACMPF0_Msk;
+;;;77     		ACMP0_INT_ENABLE;
+0000d0  2602              MOVS     r6,#2
+0000d2  4c91              LDR      r4,|L1.792|
+0000d4  3520              ADDS     r5,r5,#0x20           ;76
+0000d6  2900              CMP      r1,#0                 ;71
+0000d8  d014              BEQ      |L1.260|
+;;;78     	}
+;;;79     	else
+;;;80     	{	// for now can only be ENUM_TIM1_ZXD_FILTER
+;;;81     		if (ACMP0_EDGE_MATCH)
+0000da  4890              LDR      r0,|L1.796|
+0000dc  6b80              LDR      r0,[r0,#0x38]
+0000de  68a1              LDR      r1,[r4,#8]
+0000e0  0600              LSLS     r0,r0,#24
+0000e2  0fc0              LSRS     r0,r0,#31
+0000e4  0749              LSLS     r1,r1,#29
+0000e6  0fc9              LSRS     r1,r1,#31
+0000e8  4288              CMP      r0,r1
+0000ea  d10a              BNE      |L1.258|
+0000ec  68e8              LDR      r0,[r5,#0xc]
+;;;82     		{	
+;;;83     			// No need to find the real ZXD time, we only care the delta 
+;;;84     			if (TRUE == PhaseZXDedHandler(TIMER_GetCounter(TIMER1)))	//GET_TIMER_DIFF(ZXD_FILTER_TIME, TIMER_GetCounter(TIMER1))))
+0000ee  f7fffffe          BL       PhaseZXDedHandler
+0000f2  2801              CMP      r0,#1
+0000f4  d105              BNE      |L1.258|
+;;;85     			{
+;;;86     				ACMP0_INT_DISABLE;  // This phase ACMP job done
+0000f6  6820              LDR      r0,[r4,#0]
+0000f8  43b0              BICS     r0,r0,r6
+0000fa  6020              STR      r0,[r4,#0]
+0000fc  6828              LDR      r0,[r5,#0]
+0000fe  43b8              BICS     r0,r0,r7
+000100  6028              STR      r0,[r5,#0]
+                  |L1.258|
+;;;87     				TIMER_DisableInt(TIMER1);
+;;;88     			}
+;;;89     		}
+;;;90     	}
+;;;91     }
+000102  bdf0              POP      {r4-r7,pc}
+                  |L1.260|
+000104  6829              LDR      r1,[r5,#0]
+000106  43b9              BICS     r1,r1,r7
+000108  6029              STR      r1,[r5,#0]
+00010a  2101              MOVS     r1,#1                 ;74
+00010c  7001              STRB     r1,[r0,#0]            ;74
+00010e  68a0              LDR      r0,[r4,#8]            ;76
+000110  4308              ORRS     r0,r0,r1              ;76
+000112  60a0              STR      r0,[r4,#8]            ;76
+000114  6820              LDR      r0,[r4,#0]            ;77
+000116  4330              ORRS     r0,r0,r6              ;77
+000118  6020              STR      r0,[r4,#0]            ;77
+00011a  bdf0              POP      {r4-r7,pc}
+;;;92     
                           ENDP
 
                   ACMP_IRQHandler PROC
-;;;301    
-;;;302    void ACMP_IRQHandler(void)
-00015c  487d              LDR      r0,|L1.852|
-;;;303    {
-;;;304    	ACMP->CMPSR |= ACMP_CMPSR_ACMPF0_Msk;
-00015e  6881              LDR      r1,[r0,#8]
-000160  2201              MOVS     r2,#1
-000162  4311              ORRS     r1,r1,r2
-000164  6081              STR      r1,[r0,#8]
-;;;305    //	iTestACMPIntEachPhaseCNT++;
-;;;306    //	// maybe before enter TIM0 interrupt this ACMP int was triggered
-;;;307    //	if (ACMP->CMPCR[0] & ACMP_CMPCR_ACMPIE_Msk)
-;;;308    //	{
-;;;309    //		if (ACMP0_EDGE_MATCH)
-;;;310    //		{
-;;;311    ////			RECORD_TEST_VALUE(iTestNewPeriodIndex, iTestZXDPeriodArray, TIMER_GetCounter(TIMER1) - TIMER1->TCMPR);
-;;;312    ////			if (TIMER_GetCounter(TIMER1) < TIMER1->TCMPR)//((iTestNewPeriodIndex == 0) && (iTestZXDPeriodArray[0] != 0))
-;;;313    ////			{
-;;;314    ////				BRG_DISABLE;
-;;;315    ////				BLDC_stopMotor();
-;;;316    ////				iTestZXDPeriodMax = getMax(iTestZXDPeriodArray, TEST_ARRAY_LEN);
-;;;317    ////				iTestZXDPeriodMin = getMin(iTestZXDPeriodArray, TEST_ARRAY_LEN);
-;;;318    ////			}
-;;;319    ////			iTestEnter_ACMP_MATCH++;
-;;;320    //			ACMP0_INT_DISABLE;
-;;;321    //			PhaseZXDedHandler(TIMER_GetCounter(TIMER1));
-;;;322    //		}
-;;;323    //	}
-;;;324    //}
-;;;325    
-;;;326    	// In case this was triggered by last phase
-;;;327    	// and in TIM0 interrupt didin't successfully disabled this interrupt
-;;;328    	if (ENUM_TIM1_ZXD_FILTER == FLAG_TIM1_USEAGE)
-000166  4878              LDR      r0,|L1.840|
-000168  7800              LDRB     r0,[r0,#0]  ; FLAG_TIM1_USEAGE
-00016a  2801              CMP      r0,#1
-00016c  d112              BNE      |L1.404|
-;;;329    	{	 	
-;;;330    		// Rising or falling edge will be put into TIM1 Interrupt handler because the following situdation will have problem:
-;;;331    		// First a matched edge happened, then an un-matched edge happened
-;;;332    		// So NOT check ACMP0_EDGE_MATCH here
-;;;333    		//	if (ACMP0_EDGE_MATCH)
-;;;334    		//	{
-;;;335    		// Start count, if ACMP level can be stable for ZXD_FILTER_TIME
-;;;336    		// we can consider real ZX
-;;;337    		// If ACMP_IRQHandler was re-entered before ZXD_FILTER_TIME, postpond 
-;;;338    		TIMER_SET_CMP_VALUE(TIMER1, GET_TIM1_CMP_VALUE(TIMER1->TDR + ZXD_FILTER_TIME));
-00016e  4971              LDR      r1,|L1.820|
-000170  6ac8              LDR      r0,[r1,#0x2c]
-000172  4a73              LDR      r2,|L1.832|
-000174  30c8              ADDS     r0,r0,#0xc8
-000176  4290              CMP      r0,r2
-000178  6ac8              LDR      r0,[r1,#0x2c]
-00017a  d303              BCC      |L1.388|
-00017c  4a71              LDR      r2,|L1.836|
-00017e  3228              ADDS     r2,r2,#0x28
-000180  1880              ADDS     r0,r0,r2
-000182  e000              B        |L1.390|
-                  |L1.388|
-000184  30c8              ADDS     r0,r0,#0xc8
-                  |L1.390|
-000186  6248              STR      r0,[r1,#0x24]
-000188  486a              LDR      r0,|L1.820|
-00018a  3020              ADDS     r0,r0,#0x20
-00018c  6801              LDR      r1,[r0,#0]
-00018e  0602              LSLS     r2,r0,#24
-000190  4311              ORRS     r1,r1,r2
-000192  6001              STR      r1,[r0,#0]
-                  |L1.404|
-;;;339    		TIMER_EnableInt(TIMER1);
-;;;340    //		if (ACMP0_EDGE_MATCH)
-;;;341    //		{
-;;;342    //			ACMP0_INT_DISABLE;	// This phase job done
-;;;343    //			iThisZXDetectedTime = TIMER_GetCounter(TIMER1);	// - ZXD_FILTER_TIME;
-;;;344    //			//iTempDeltaZXD = GET_TIMER_DIFF(unLastZXDetectedTime, iThisZXDetectedTime) - ZXD_FILTER_TIME - ACMP_HYS_AVG_TIME;
-;;;345    //			iTempDeltaZXD = GET_TIMER_DIFF(unLastZXDetectedTime, iThisZXDetectedTime);
-;;;346    ////			iTempPhaseChange2ZX = GET_TIMER_DIFF(iPhaseChangeTime, iThisZXDetectedTime) - ZXD_FILTER_TIME;
-;;;347    //			//iTargetNewPeriod = (iTempDeltaZXD >> 1) + iTempPhaseChange2ZX;
-;;;348    //			iTargetNewPeriod = (iTempDeltaZXD + tMotor.structMotor.ACT_PERIOD) >> 1;
-;;;349    ////			iTargetNewPeriod = (iTargetNewPeriod + tMotor.structMotor.ACT_PERIOD) >> 1;
-;;;350    //			iTestEnter_TMR1_MATCH++;
-;;;351    ////			RECORD_TEST_VALUE(iTestNewPeriodIndex, iTestZXDPeriodArray, iTargetNewPeriod);
-;;;352    ////			RECORD_TEST_VALUE(iTestTIM0CNTIndex, iTestTIM0CNTArray, TIMER0->TCMPR);
-;;;353    ////			if ((iTestNewPeriodIndex == 0) && (iTestZXDPeriodArray[0] != 0))
-;;;354    ////			{
-;;;355    ////				BRG_DISABLE;
-;;;356    ////				BLDC_stopMotor();
-;;;357    ////				iTestZXDPeriodMax = getMax(iTestZXDPeriodArray, TEST_ARRAY_LEN);
-;;;358    ////				iTestZXDPeriodMin = getMin(iTestZXDPeriodArray, TEST_ARRAY_LEN);
-;;;359    ////				iTestTIM0CNTMax = getMax(iTestTIM0CNTArray, TEST_ARRAY_LEN);
-;;;360    ////				iTestTIM0CNTMin = getMin(iTestTIM0CNTArray, TEST_ARRAY_LEN);
-;;;361    ////			}
-;;;362    ////			RECORD_TEST_DELTA_ZXD(iTestNewPeriodIndex, iThisZXDetectedTime);
-;;;363    //			// Only when iTempDeltaZXD larger than minimum phase time and
-;;;364    //			// smaller then max phase time we consider it is valid
-;;;365    //			if ((iTargetNewPeriod > MIN_PHASE_TIME) && (iTargetNewPeriod < MAX_PHASE_TIME))
-;;;366    //			{
-;;;367    ////				ACMP0_INT_DISABLE;	// This phase job done
-;;;368    //				TIMER_DisableInt(TIMER1);	// TIM1 interrupt will be re-open in TIM0 interrupt (phase change) to implement AVOID_ZXD_AFTER_PHCHG
-;;;369    //				iTestEnter_ACMP_MATCH++;
-;;;370    //				// We can consider ZX detected, and USE IT!!!!
-;;;371    //				// To get stable and solide ZXD, more filter will be added in the TIM0 (phase change) interrupt
-;;;372    //				// Only after continuously some number of ThisPhaseDetectedZX or miss ThisPhaseDetectedZX, it will enter or loss lock
-;;;373    //				tMotor.structMotor.MSR.ThisPhaseDetectedZX = TRUE;
-;;;374    //				unLastZXDetectedTime = iThisZXDetectedTime;
-;;;375    //
-;;;376    //				// Incase the counter of TIM0 is already in front of iTempDeltaZXD
-;;;377    //				if ((TRUE == tMotor.structMotor.MSR.Locked))	// && (iTargetNewPeriod > (TIMER_GetCounter(TIMER0) + ZXD_BEFORE_PHCHG)))
-;;;378    //				{	// Still have time to change CMP in TIM0
-;;;379    //					// You can have a rest, now the only thing left is T0 trigger phase change
-;;;380    //
-;;;381    ////					BRG_DISABLE;
-;;;382    //					iTestDetectedZX++;
-;;;383    //					//iTempDeltaZXD = (tMotor.structMotor.ACT_PERIOD * 3 + iTempDeltaZXD) >> 2;
-;;;384    //
-;;;385    //					tMotor.structMotor.ACT_PERIOD = iTargetNewPeriod;   //GET_TIMER_DIFF(unLastZXDetectedTime, TIMER_GetCounter(TIMER1));
-;;;386    //					TIMER_SET_CMP_VALUE(TIMER0, TIMER0->TDR + (iTargetNewPeriod >> 2));	//(iTempPhaseChange2ZX >> 1));
-;;;387    ////					if (TIMER0->TISR & 0x01)
-;;;388    ////					{	// If TIM0 interrupt was already triggered
-;;;389    ////						// Clear interrupt flag
-;;;390    ////						TIMER0->TISR |= 0x01;
-;;;391    ////					}
-;;;392    //					//TIMER_SET_CMP_VALUE(TIMER0, tMotor.structMotor.ACT_PERIOD);
-;;;393    //				}
-;;;394    //			}
-;;;395    //		}
-;;;396    //	}
-;;;397    	}
-;;;398    }
-000194  4770              BX       lr
-;;;399    
+;;;93     void ACMP_IRQHandler(void)
+00011c  487e              LDR      r0,|L1.792|
+;;;94     {
+;;;95     	ACMP->CMPSR |= ACMP_CMPSR_ACMPF0_Msk;
+00011e  6881              LDR      r1,[r0,#8]
+000120  2201              MOVS     r2,#1
+000122  4311              ORRS     r1,r1,r2
+000124  6081              STR      r1,[r0,#8]
+;;;96     
+;;;97     	// In case this was triggered by last phase
+;;;98     	// and in TIM0 interrupt didin't successfully disabled this interrupt
+;;;99     	if (ENUM_TIM1_ZXD_FILTER == FLAG_TIM1_USEAGE)
+000126  4878              LDR      r0,|L1.776|
+000128  7800              LDRB     r0,[r0,#0]  ; FLAG_TIM1_USEAGE
+00012a  2801              CMP      r0,#1
+00012c  d112              BNE      |L1.340|
+;;;100    	{	 	
+;;;101    		// Rising or falling edge will be put into TIM1 Interrupt handler because the following situation will have problem:
+;;;102    		// First a matched edge happened, then an un-matched edge happened
+;;;103    		// So do NOT check ACMP0_EDGE_MATCH here.
+;;;104    
+;;;105    		// Start count, if ACMP level can be stable for ZXD_FILTER_TIME
+;;;106    		// we can consider real ZX happened
+;;;107    		// If ACMP_IRQHandler was re-entered before ZXD_FILTER_TIME, TIM1's interrupt will be postponed
+;;;108    		TIMER_SET_CMP_VALUE(TIMER1, GET_TIM1_CMP_VALUE(TIMER1->TDR + ZXD_FILTER_TIME));
+00012e  4971              LDR      r1,|L1.756|
+000130  6ac8              LDR      r0,[r1,#0x2c]
+000132  4a73              LDR      r2,|L1.768|
+000134  30c8              ADDS     r0,r0,#0xc8
+000136  4290              CMP      r0,r2
+000138  6ac8              LDR      r0,[r1,#0x2c]
+00013a  d303              BCC      |L1.324|
+00013c  4a71              LDR      r2,|L1.772|
+00013e  3228              ADDS     r2,r2,#0x28
+000140  1880              ADDS     r0,r0,r2
+000142  e000              B        |L1.326|
+                  |L1.324|
+000144  30c8              ADDS     r0,r0,#0xc8
+                  |L1.326|
+000146  6248              STR      r0,[r1,#0x24]
+000148  486a              LDR      r0,|L1.756|
+00014a  3020              ADDS     r0,r0,#0x20
+00014c  6801              LDR      r1,[r0,#0]
+00014e  0602              LSLS     r2,r0,#24
+000150  4311              ORRS     r1,r1,r2
+000152  6001              STR      r1,[r0,#0]
+                  |L1.340|
+;;;109    		TIMER_EnableInt(TIMER1);
+;;;110    	}
+;;;111    }
+000154  4770              BX       lr
+;;;112    
                           ENDP
 
                   ADC_IRQHandler PROC
-;;;400    void ADC_IRQHandler(void)
-000196  b5f8              PUSH     {r3-r7,lr}
-;;;401    {
-;;;402        static uint32_t iADC_ComparatorFlag;
-;;;403    	static uint32_t iSystemTickTemp;
-;;;404    	static uint16_t iBatteryLowCNT = 0;
-;;;405        static uint32_t iBatteryLowLastTimeRCD = 0;
-;;;406    
-;;;407        // Get ADC comparator interrupt flag
-;;;408        iADC_ComparatorFlag = ADC_GET_INT_FLAG(ADC, ADC_CURRENT_CMP_MSK | ADC_BATTERY_CMP_MSK | ADC_ADF_MSK);
-000198  4e72              LDR      r6,|L1.868|
-00019a  6b30              LDR      r0,[r6,#0x30]
-00019c  4c6f              LDR      r4,|L1.860|
-00019e  0740              LSLS     r0,r0,#29
-0001a0  0f40              LSRS     r0,r0,#29
-;;;409        if(iADC_ComparatorFlag & ADC_ADF_MSK)
-0001a2  60e0              STR      r0,[r4,#0xc]  ; iADC_ComparatorFlag
-0001a4  07c1              LSLS     r1,r0,#31
-0001a6  d01d              BEQ      |L1.484|
-;;;410    	{
-;;;411    		// Change ADC channel
-;;;412    		if (ADC->ADCHER & ADC_CURRENT_CHN_MSK)
-0001a8  6a71              LDR      r1,[r6,#0x24]
-0001aa  07ca              LSLS     r2,r1,#31
-;;;413    		{
-;;;414    			tMotor.structMotor.unCurrent = (uint16_t)(ADC_GET_CONVERSION_DATA(ADC, WHAT_EVER_DO_NOT_CARE));
-0001ac  4963              LDR      r1,|L1.828|
-0001ae  d008              BEQ      |L1.450|
-0001b0  6832              LDR      r2,[r6,#0]
-0001b2  0592              LSLS     r2,r2,#22
-0001b4  0d92              LSRS     r2,r2,#22
-0001b6  848a              STRH     r2,[r1,#0x24]
-;;;415    			ADC_SET_INPUT_CHANNEL(ADC, ADC_BATTERY_CHN_MSK);		
-0001b8  6a71              LDR      r1,[r6,#0x24]
-0001ba  0a09              LSRS     r1,r1,#8
-0001bc  0209              LSLS     r1,r1,#8
-0001be  3180              ADDS     r1,r1,#0x80
-0001c0  e00a              B        |L1.472|
-                  |L1.450|
-;;;416    		}
-;;;417    		else if (ADC->ADCHER & ADC_BATTERY_CHN_MSK)
-0001c2  6a72              LDR      r2,[r6,#0x24]
-0001c4  0612              LSLS     r2,r2,#24
-0001c6  d508              BPL      |L1.474|
-;;;418    		{
-;;;419    			tMotor.structMotor.unBattery = (uint16_t)(ADC_GET_CONVERSION_DATA(ADC, WHAT_EVER_DO_NOT_CARE));
-0001c8  6832              LDR      r2,[r6,#0]
-0001ca  0592              LSLS     r2,r2,#22
-0001cc  0d92              LSRS     r2,r2,#22
-0001ce  844a              STRH     r2,[r1,#0x22]
-;;;420    			ADC_SET_INPUT_CHANNEL(ADC, ADC_CURRENT_CHN_MSK);
-0001d0  6a71              LDR      r1,[r6,#0x24]
-0001d2  0a09              LSRS     r1,r1,#8
-0001d4  0209              LSLS     r1,r1,#8
-0001d6  1c49              ADDS     r1,r1,#1
-                  |L1.472|
-0001d8  6271              STR      r1,[r6,#0x24]
-                  |L1.474|
-;;;421    		}
-;;;422    		ADC_START_CONV(ADC);
-0001da  6a31              LDR      r1,[r6,#0x20]
-0001dc  2201              MOVS     r2,#1
-0001de  02d2              LSLS     r2,r2,#11
-0001e0  4311              ORRS     r1,r1,r2
-0001e2  6231              STR      r1,[r6,#0x20]
-                  |L1.484|
-0001e4  4d53              LDR      r5,|L1.820|
-;;;423    	}    
-;;;424        if(iADC_ComparatorFlag & ADC_CURRENT_CMP_MSK)
-0001e6  0780              LSLS     r0,r0,#30
-0001e8  2700              MOVS     r7,#0
-0001ea  3520              ADDS     r5,r5,#0x20
-0001ec  2800              CMP      r0,#0
-0001ee  da18              BGE      |L1.546|
-;;;425    	{
-;;;426    		// current too big
-;;;427    		MOTOR_SHUT_DOWN;
-0001f0  485d              LDR      r0,|L1.872|
-0001f2  6207              STR      r7,[r0,#0x20]
-0001f4  4956              LDR      r1,|L1.848|
-0001f6  614f              STR      r7,[r1,#0x14]
-0001f8  484e              LDR      r0,|L1.820|
-0001fa  6803              LDR      r3,[r0,#0]
-0001fc  0382              LSLS     r2,r0,#14
-0001fe  4393              BICS     r3,r3,r2
-000200  6003              STR      r3,[r0,#0]
-000202  682b              LDR      r3,[r5,#0]
-000204  4393              BICS     r3,r3,r2
-000206  602b              STR      r3,[r5,#0]
-000208  6803              LDR      r3,[r0,#0]
-00020a  0342              LSLS     r2,r0,#13
-00020c  4393              BICS     r3,r3,r2
-00020e  6003              STR      r3,[r0,#0]
-000210  6828              LDR      r0,[r5,#0]
-000212  4390              BICS     r0,r0,r2
-000214  6028              STR      r0,[r5,#0]
-000216  20ff              MOVS     r0,#0xff
-000218  63c8              STR      r0,[r1,#0x3c]
-00021a  6388              STR      r0,[r1,#0x38]
-;;;428    		setError(ERR_CURRENT_BURNING);
-00021c  2007              MOVS     r0,#7
-00021e  f7fffffe          BL       setError
-                  |L1.546|
-;;;429    	}
-;;;430        if(iADC_ComparatorFlag & ADC_BATTERY_CMP_MSK)
-000222  7b20              LDRB     r0,[r4,#0xc]  ; iADC_ComparatorFlag
-000224  0740              LSLS     r0,r0,#29
-000226  d529              BPL      |L1.636|
-;;;431    	{
-;;;432        	// Longer filter for battery voltage
-;;;433    		// if this time's battery low is near to the last one
-;;;434    		// 0.64ms interval of each measurement
-;;;435    		iSystemTickTemp = unSystemTick;
-000228  4850              LDR      r0,|L1.876|
-00022a  6800              LDR      r0,[r0,#0]  ; unSystemTick
-;;;436    		if ((uint32_t)(iSystemTickTemp - iBatteryLowLastTimeRCD) < BATTERY_LOW_MIN_INTERVAL)
-00022c  6120              STR      r0,[r4,#0x10]  ; iSystemTickTemp
-00022e  6961              LDR      r1,[r4,#0x14]  ; iBatteryLowLastTimeRCD
-000230  1a40              SUBS     r0,r0,r1
-000232  280a              CMP      r0,#0xa
-000234  d21f              BCS      |L1.630|
-;;;437    		{
-;;;438    			if (iBatteryLowCNT < MAX_BATT_LOW_CNT)
-000236  8860              LDRH     r0,[r4,#2]  ; iBatteryLowCNT
-000238  2832              CMP      r0,#0x32
-00023a  d202              BCS      |L1.578|
-00023c  1c40              ADDS     r0,r0,#1
-;;;439    			{
-;;;440    				iBatteryLowCNT++;
-00023e  8060              STRH     r0,[r4,#2]
-000240  e01a              B        |L1.632|
-                  |L1.578|
-;;;441    			}
-;;;442    			else
-;;;443    			{
-;;;444    				// battery really too low
-;;;445    				MOTOR_SHUT_DOWN;
-000242  4849              LDR      r0,|L1.872|
-000244  6207              STR      r7,[r0,#0x20]
-000246  4942              LDR      r1,|L1.848|
-000248  614f              STR      r7,[r1,#0x14]
-00024a  483a              LDR      r0,|L1.820|
-00024c  6802              LDR      r2,[r0,#0]
-00024e  0383              LSLS     r3,r0,#14
-000250  439a              BICS     r2,r2,r3
-000252  6002              STR      r2,[r0,#0]
-000254  682a              LDR      r2,[r5,#0]
-000256  439a              BICS     r2,r2,r3
-000258  602a              STR      r2,[r5,#0]
-00025a  6803              LDR      r3,[r0,#0]
-00025c  0342              LSLS     r2,r0,#13
-00025e  4393              BICS     r3,r3,r2
-000260  6003              STR      r3,[r0,#0]
-000262  6828              LDR      r0,[r5,#0]
-000264  4390              BICS     r0,r0,r2
-000266  6028              STR      r0,[r5,#0]
-000268  20ff              MOVS     r0,#0xff
-00026a  63c8              STR      r0,[r1,#0x3c]
-00026c  6388              STR      r0,[r1,#0x38]
-;;;446    				setError(ERR_BATTERY_LOW);
-00026e  2005              MOVS     r0,#5
-000270  f7fffffe          BL       setError
-000274  e000              B        |L1.632|
-                  |L1.630|
-;;;447    			}
-;;;448    		}
-;;;449    		else
-;;;450    		{
-;;;451    			iBatteryLowCNT = 0;
-000276  8067              STRH     r7,[r4,#2]
-                  |L1.632|
-;;;452    		}
-;;;453    		iBatteryLowLastTimeRCD = iSystemTickTemp; 
-000278  6920              LDR      r0,[r4,#0x10]  ; iSystemTickTemp
-00027a  6160              STR      r0,[r4,#0x14]  ; iBatteryLowLastTimeRCD
-                  |L1.636|
-;;;454    	}
-;;;455        
-;;;456        ADC_CLR_INT_FLAG(ADC, iADC_ComparatorFlag);
-00027c  6b30              LDR      r0,[r6,#0x30]
-00027e  68e1              LDR      r1,[r4,#0xc]  ; iADC_ComparatorFlag
-000280  08c0              LSRS     r0,r0,#3
-000282  00c0              LSLS     r0,r0,#3
-000284  4308              ORRS     r0,r0,r1
-000286  6330              STR      r0,[r6,#0x30]
-;;;457    }
-000288  bdf8              POP      {r3-r7,pc}
-;;;458    
+;;;113    void ADC_IRQHandler(void)
+000156  b5f8              PUSH     {r3-r7,lr}
+;;;114    {
+;;;115        static uint32_t iADC_ComparatorFlag;
+;;;116    	static uint32_t iSystemTickTemp;
+;;;117    	static uint16_t iBatteryLowCNT = 0;
+;;;118        static uint32_t iBatteryLowLastTimeRCD = 0;
+;;;119    
+;;;120        // Get ADC comparator interrupt flag
+;;;121        iADC_ComparatorFlag = ADC_GET_INT_FLAG(ADC, ADC_CURRENT_CMP_MSK | ADC_BATTERY_CMP_MSK | ADC_ADF_MSK);
+000158  4e71              LDR      r6,|L1.800|
+00015a  6b30              LDR      r0,[r6,#0x30]
+00015c  4c6c              LDR      r4,|L1.784|
+00015e  0740              LSLS     r0,r0,#29
+000160  0f40              LSRS     r0,r0,#29
+;;;122        if(iADC_ComparatorFlag & ADC_ADF_MSK)
+000162  60e0              STR      r0,[r4,#0xc]  ; iADC_ComparatorFlag
+000164  07c1              LSLS     r1,r0,#31
+000166  d01d              BEQ      |L1.420|
+;;;123    	{
+;;;124    		// Change ADC channel
+;;;125    		if (ADC->ADCHER & ADC_CURRENT_CHN_MSK)
+000168  6a71              LDR      r1,[r6,#0x24]
+00016a  07ca              LSLS     r2,r1,#31
+;;;126    		{
+;;;127    			tMotor.structMotor.unCurrent = (uint16_t)(ADC_GET_CONVERSION_DATA(ADC, WHAT_EVER_DO_NOT_CARE));
+00016c  4963              LDR      r1,|L1.764|
+00016e  d008              BEQ      |L1.386|
+000170  6832              LDR      r2,[r6,#0]
+000172  0592              LSLS     r2,r2,#22
+000174  0d92              LSRS     r2,r2,#22
+000176  848a              STRH     r2,[r1,#0x24]
+;;;128    			ADC_SET_INPUT_CHANNEL(ADC, ADC_BATTERY_CHN_MSK);		
+000178  6a71              LDR      r1,[r6,#0x24]
+00017a  0a09              LSRS     r1,r1,#8
+00017c  0209              LSLS     r1,r1,#8
+00017e  3180              ADDS     r1,r1,#0x80
+000180  e00a              B        |L1.408|
+                  |L1.386|
+;;;129    		}
+;;;130    		else if (ADC->ADCHER & ADC_BATTERY_CHN_MSK)
+000182  6a72              LDR      r2,[r6,#0x24]
+000184  0612              LSLS     r2,r2,#24
+000186  d508              BPL      |L1.410|
+;;;131    		{
+;;;132    			tMotor.structMotor.unBattery = (uint16_t)(ADC_GET_CONVERSION_DATA(ADC, WHAT_EVER_DO_NOT_CARE));
+000188  6832              LDR      r2,[r6,#0]
+00018a  0592              LSLS     r2,r2,#22
+00018c  0d92              LSRS     r2,r2,#22
+00018e  844a              STRH     r2,[r1,#0x22]
+;;;133    			ADC_SET_INPUT_CHANNEL(ADC, ADC_CURRENT_CHN_MSK);
+000190  6a71              LDR      r1,[r6,#0x24]
+000192  0a09              LSRS     r1,r1,#8
+000194  0209              LSLS     r1,r1,#8
+000196  1c49              ADDS     r1,r1,#1
+                  |L1.408|
+000198  6271              STR      r1,[r6,#0x24]
+                  |L1.410|
+;;;134    		}
+;;;135    		ADC_START_CONV(ADC);
+00019a  6a31              LDR      r1,[r6,#0x20]
+00019c  2201              MOVS     r2,#1
+00019e  02d2              LSLS     r2,r2,#11
+0001a0  4311              ORRS     r1,r1,r2
+0001a2  6231              STR      r1,[r6,#0x20]
+                  |L1.420|
+0001a4  4d53              LDR      r5,|L1.756|
+;;;136    	}    
+;;;137        if(iADC_ComparatorFlag & ADC_CURRENT_CMP_MSK)
+0001a6  0780              LSLS     r0,r0,#30
+0001a8  2700              MOVS     r7,#0
+0001aa  3520              ADDS     r5,r5,#0x20
+0001ac  2800              CMP      r0,#0
+0001ae  da18              BGE      |L1.482|
+;;;138    	{
+;;;139    		// current too big
+;;;140    		MOTOR_SHUT_DOWN;
+0001b0  485c              LDR      r0,|L1.804|
+0001b2  6207              STR      r7,[r0,#0x20]
+0001b4  4959              LDR      r1,|L1.796|
+0001b6  614f              STR      r7,[r1,#0x14]
+0001b8  484e              LDR      r0,|L1.756|
+0001ba  6803              LDR      r3,[r0,#0]
+0001bc  0382              LSLS     r2,r0,#14
+0001be  4393              BICS     r3,r3,r2
+0001c0  6003              STR      r3,[r0,#0]
+0001c2  682b              LDR      r3,[r5,#0]
+0001c4  4393              BICS     r3,r3,r2
+0001c6  602b              STR      r3,[r5,#0]
+0001c8  6803              LDR      r3,[r0,#0]
+0001ca  0342              LSLS     r2,r0,#13
+0001cc  4393              BICS     r3,r3,r2
+0001ce  6003              STR      r3,[r0,#0]
+0001d0  6828              LDR      r0,[r5,#0]
+0001d2  4390              BICS     r0,r0,r2
+0001d4  6028              STR      r0,[r5,#0]
+0001d6  20ff              MOVS     r0,#0xff
+0001d8  63c8              STR      r0,[r1,#0x3c]
+0001da  6388              STR      r0,[r1,#0x38]
+;;;141    		setError(ERR_CURRENT_BURNING);
+0001dc  2007              MOVS     r0,#7
+0001de  f7fffffe          BL       setError
+                  |L1.482|
+;;;142    	}
+;;;143        if(iADC_ComparatorFlag & ADC_BATTERY_CMP_MSK)
+0001e2  7b20              LDRB     r0,[r4,#0xc]  ; iADC_ComparatorFlag
+0001e4  0740              LSLS     r0,r0,#29
+0001e6  d529              BPL      |L1.572|
+;;;144    	{
+;;;145        	// Longer filter for battery voltage
+;;;146    		// if this time's battery low is near to the last one
+;;;147    		// 0.64ms interval of each measurement
+;;;148    		iSystemTickTemp = unSystemTick;
+0001e8  484f              LDR      r0,|L1.808|
+0001ea  6800              LDR      r0,[r0,#0]  ; unSystemTick
+;;;149    		if ((uint32_t)(iSystemTickTemp - iBatteryLowLastTimeRCD) < BATTERY_LOW_MIN_INTERVAL)
+0001ec  6120              STR      r0,[r4,#0x10]  ; iSystemTickTemp
+0001ee  6961              LDR      r1,[r4,#0x14]  ; iBatteryLowLastTimeRCD
+0001f0  1a40              SUBS     r0,r0,r1
+0001f2  280a              CMP      r0,#0xa
+0001f4  d21f              BCS      |L1.566|
+;;;150    		{
+;;;151    			if (iBatteryLowCNT < MAX_BATT_LOW_CNT)
+0001f6  8860              LDRH     r0,[r4,#2]  ; iBatteryLowCNT
+0001f8  2832              CMP      r0,#0x32
+0001fa  d202              BCS      |L1.514|
+0001fc  1c40              ADDS     r0,r0,#1
+;;;152    			{
+;;;153    				iBatteryLowCNT++;
+0001fe  8060              STRH     r0,[r4,#2]
+000200  e01a              B        |L1.568|
+                  |L1.514|
+;;;154    			}
+;;;155    			else
+;;;156    			{
+;;;157    				// battery really too low
+;;;158    				MOTOR_SHUT_DOWN;
+000202  4848              LDR      r0,|L1.804|
+000204  6207              STR      r7,[r0,#0x20]
+000206  4945              LDR      r1,|L1.796|
+000208  614f              STR      r7,[r1,#0x14]
+00020a  483a              LDR      r0,|L1.756|
+00020c  6802              LDR      r2,[r0,#0]
+00020e  0383              LSLS     r3,r0,#14
+000210  439a              BICS     r2,r2,r3
+000212  6002              STR      r2,[r0,#0]
+000214  682a              LDR      r2,[r5,#0]
+000216  439a              BICS     r2,r2,r3
+000218  602a              STR      r2,[r5,#0]
+00021a  6803              LDR      r3,[r0,#0]
+00021c  0342              LSLS     r2,r0,#13
+00021e  4393              BICS     r3,r3,r2
+000220  6003              STR      r3,[r0,#0]
+000222  6828              LDR      r0,[r5,#0]
+000224  4390              BICS     r0,r0,r2
+000226  6028              STR      r0,[r5,#0]
+000228  20ff              MOVS     r0,#0xff
+00022a  63c8              STR      r0,[r1,#0x3c]
+00022c  6388              STR      r0,[r1,#0x38]
+;;;159    				setError(ERR_BATTERY_LOW);
+00022e  2005              MOVS     r0,#5
+000230  f7fffffe          BL       setError
+000234  e000              B        |L1.568|
+                  |L1.566|
+;;;160    			}
+;;;161    		}
+;;;162    		else
+;;;163    		{
+;;;164    			iBatteryLowCNT = 0;
+000236  8067              STRH     r7,[r4,#2]
+                  |L1.568|
+;;;165    		}
+;;;166    		iBatteryLowLastTimeRCD = iSystemTickTemp; 
+000238  6920              LDR      r0,[r4,#0x10]  ; iSystemTickTemp
+00023a  6160              STR      r0,[r4,#0x14]  ; iBatteryLowLastTimeRCD
+                  |L1.572|
+;;;167    	}
+;;;168        
+;;;169        ADC_CLR_INT_FLAG(ADC, iADC_ComparatorFlag);
+00023c  6b30              LDR      r0,[r6,#0x30]
+00023e  68e1              LDR      r1,[r4,#0xc]  ; iADC_ComparatorFlag
+000240  08c0              LSRS     r0,r0,#3
+000242  00c0              LSLS     r0,r0,#3
+000244  4308              ORRS     r0,r0,r1
+000246  6330              STR      r0,[r6,#0x30]
+;;;170    }
+000248  bdf8              POP      {r3-r7,pc}
+;;;171    
                           ENDP
 
                   SPI_IRQHandler PROC
-;;;469    
-;;;470    void SPI_IRQHandler(void)
-00028a  b5f8              PUSH     {r3-r7,lr}
-;;;471    {
-;;;472    	static uint8_t unValueIndex;
-;;;473    	// Check if it is really finished one unit transfer
-;;;474    	if ((SPI->SSR & SPI_SSR_LTRIG_FLAG_Msk) == SPI_SSR_LTRIG_FLAG_Msk)
-00028c  4c38              LDR      r4,|L1.880|
-00028e  68a0              LDR      r0,[r4,#8]
-;;;475    	{
-;;;476    		if (tMotor.structMotor.MSR.bNewComFrameReceived == FALSE)
-;;;477    		{
-;;;478    			if (SPI_GET_RX_FIFO_COUNT(SPI) == COMM_RD_CMD_CNT)
-;;;479    			{
-;;;480    				// Received 4 uint16, copy to RAM buffer and infor communication manager
-;;;481    				for (unValueIndex = 0; unValueIndex < COMM_RD_CMD_CNT; unValueIndex++)
-;;;482    				{
-;;;483    					unCOM_SPI_ReadData[unValueIndex] = SPI_READ_RX(SPI);
-;;;484    				}
-;;;485    				if (IS_COMM_RD(unCOM_SPI_ReadData[0]))
-;;;486    				{
-;;;487    					tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
-;;;488    				}
-;;;489    				else
-;;;490    				{
-;;;491    					unCOM_SPI_TransErrCNT++;
-000290  4f38              LDR      r7,|L1.884|
-000292  0680              LSLS     r0,r0,#26             ;474
-000294  6839              LDR      r1,[r7,#0]
-000296  1c49              ADDS     r1,r1,#1
-000298  2800              CMP      r0,#0                 ;474
-00029a  da3f              BGE      |L1.796|
-00029c  4827              LDR      r0,|L1.828|
-00029e  8840              LDRH     r0,[r0,#2]            ;476  ; tMotor
-0002a0  06c0              LSLS     r0,r0,#27             ;476
-0002a2  d433              BMI      |L1.780|
-0002a4  6c60              LDR      r0,[r4,#0x44]         ;476
-0002a6  4e2d              LDR      r6,|L1.860|
-0002a8  0400              LSLS     r0,r0,#16             ;481
-0002aa  0f02              LSRS     r2,r0,#28             ;481
-0002ac  2000              MOVS     r0,#0                 ;481
-0002ae  4b32              LDR      r3,|L1.888|
-0002b0  2a02              CMP      r2,#2                 ;478
-0002b2  d005              BEQ      |L1.704|
-0002b4  6c62              LDR      r2,[r4,#0x44]         ;478
-0002b6  0412              LSLS     r2,r2,#16             ;478
-0002b8  0f12              LSRS     r2,r2,#28             ;478
-;;;492    				}
-;;;493    			}
-;;;494    			else if (SPI_GET_RX_FIFO_COUNT(SPI) == COMM_WR_CMD_CNT)
-0002ba  2a04              CMP      r2,#4
-0002bc  d013              BEQ      |L1.742|
-0002be  e025              B        |L1.780|
-                  |L1.704|
-0002c0  7030              STRB     r0,[r6,#0]            ;481
-                  |L1.706|
-0002c2  6920              LDR      r0,[r4,#0x10]         ;481
-0002c4  7832              LDRB     r2,[r6,#0]            ;483  ; unValueIndex
-0002c6  0055              LSLS     r5,r2,#1              ;483
-0002c8  5358              STRH     r0,[r3,r5]            ;483
-0002ca  1c52              ADDS     r2,r2,#1              ;483
-0002cc  b2d0              UXTB     r0,r2                 ;481
-0002ce  7030              STRB     r0,[r6,#0]            ;481
-0002d0  2802              CMP      r0,#2                 ;481
-0002d2  d3f6              BCC      |L1.706|
-0002d4  8818              LDRH     r0,[r3,#0]            ;485  ; unCOM_SPI_ReadData
-0002d6  0bc0              LSRS     r0,r0,#15             ;485
-0002d8  d018              BEQ      |L1.780|
-0002da  4818              LDR      r0,|L1.828|
-0002dc  8842              LDRH     r2,[r0,#2]            ;487  ; tMotor
-0002de  2110              MOVS     r1,#0x10              ;487
-0002e0  430a              ORRS     r2,r2,r1              ;487
-0002e2  8042              STRH     r2,[r0,#2]            ;487
-0002e4  e013              B        |L1.782|
-                  |L1.742|
-;;;495    			{
-;;;496    				// Received 4 uint16, copy to RAM buffer and infor communication manager
-;;;497    				for (unValueIndex = 0; unValueIndex < COMM_WR_CMD_CNT; unValueIndex++)
-0002e6  7030              STRB     r0,[r6,#0]
-                  |L1.744|
-0002e8  6922              LDR      r2,[r4,#0x10]
-;;;498    				{
-;;;499    					unCOM_SPI_ReadData[unValueIndex] = SPI_READ_RX(SPI);
-0002ea  b2c0              UXTB     r0,r0
-0002ec  0045              LSLS     r5,r0,#1
-0002ee  1c40              ADDS     r0,r0,#1
-0002f0  b2c0              UXTB     r0,r0                 ;497
-0002f2  535a              STRH     r2,[r3,r5]
-0002f4  7030              STRB     r0,[r6,#0]            ;497
-0002f6  2804              CMP      r0,#4                 ;497
-0002f8  d3f6              BCC      |L1.744|
-;;;500    				}
-;;;501    				if (IS_COMM_WR(unCOM_SPI_ReadData[0]))
-0002fa  8818              LDRH     r0,[r3,#0]  ; unCOM_SPI_ReadData
-0002fc  0400              LSLS     r0,r0,#16
-0002fe  d405              BMI      |L1.780|
-;;;502    				{
-;;;503    					tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
-000300  480e              LDR      r0,|L1.828|
-000302  8841              LDRH     r1,[r0,#2]  ; tMotor
-000304  2210              MOVS     r2,#0x10
-000306  4311              ORRS     r1,r1,r2
-000308  8041              STRH     r1,[r0,#2]
-00030a  e000              B        |L1.782|
-                  |L1.780|
-;;;504    				}
-;;;505    				else
-;;;506    				{
-;;;507    					unCOM_SPI_TransErrCNT++;
-;;;508    				}
-;;;509    			}
-;;;510    			else
-;;;511    			{
-;;;512    				unCOM_SPI_TransErrCNT++;
-00030c  6039              STR      r1,[r7,#0]  ; unCOM_SPI_TransErrCNT
-                  |L1.782|
-;;;513    			}
-;;;514    		}
-;;;515    		else
-;;;516    		{
-;;;517    			unCOM_SPI_TransErrCNT++;
-;;;518    		}
-;;;519    		// Clear Receive FIFO interrupt
-;;;520    		// I don't know how to clear. Maybe just after I read out the data in FIFO and it is below threshold it will be OK
-;;;521    		SPI_ClearRxFIFO(SPI);
-00030e  4620              MOV      r0,r4
-000310  f7fffffe          BL       SPI_ClearRxFIFO
-;;;522    		SPI_ClearTxFIFO(SPI);
-000314  4620              MOV      r0,r4
-000316  f7fffffe          BL       SPI_ClearTxFIFO
-00031a  e000              B        |L1.798|
-                  |L1.796|
-;;;523    	}
-;;;524    	else
-;;;525    	{	// Receive FIFO interrupt should be the only interrupt enabled for SPI
-;;;526    		// So something strange happened
-;;;527    		unCOM_SPI_TransErrCNT++;
-00031c  6039              STR      r1,[r7,#0]  ; unCOM_SPI_TransErrCNT
-                  |L1.798|
-00031e  6c60              LDR      r0,[r4,#0x44]
-000320  2101              MOVS     r1,#1
-000322  0409              LSLS     r1,r1,#16
-000324  4308              ORRS     r0,r0,r1
-000326  6460              STR      r0,[r4,#0x44]
-;;;528    	}
-;;;529    	SPI_CLR_UNIT_TRANS_INT_FLAG(SPI);
-;;;530    }
-000328  bdf8              POP      {r3-r7,pc}
-;;;531    
+;;;172    void SPI_IRQHandler(void)
+00024a  b5f8              PUSH     {r3-r7,lr}
+;;;173    {
+;;;174    	static uint8_t unValueIndex;
+;;;175    	// Check if it is really finished one unit transfer
+;;;176    	if ((SPI->SSR & SPI_SSR_LTRIG_FLAG_Msk) == SPI_SSR_LTRIG_FLAG_Msk)
+00024c  4c37              LDR      r4,|L1.812|
+00024e  68a0              LDR      r0,[r4,#8]
+;;;177    	{
+;;;178    		if (tMotor.structMotor.MSR.bNewComFrameReceived == FALSE)
+;;;179    		{
+;;;180    			if (SPI_GET_RX_FIFO_COUNT(SPI) == COMM_RD_CMD_CNT)
+;;;181    			{
+;;;182    				// Received 4 uint16, copy to RAM buffer and infor communication manager
+;;;183    				for (unValueIndex = 0; unValueIndex < COMM_RD_CMD_CNT; unValueIndex++)
+;;;184    				{
+;;;185    					unCOM_SPI_ReadData[unValueIndex] = SPI_READ_RX(SPI);
+;;;186    				}
+;;;187    				if (IS_COMM_RD(unCOM_SPI_ReadData[0]))
+;;;188    				{
+;;;189    					tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
+;;;190    				}
+;;;191    				else
+;;;192    				{
+;;;193    					unCOM_SPI_TransErrCNT++;
+000250  4f37              LDR      r7,|L1.816|
+000252  0680              LSLS     r0,r0,#26             ;176
+000254  6839              LDR      r1,[r7,#0]
+000256  1c49              ADDS     r1,r1,#1
+000258  2800              CMP      r0,#0                 ;176
+00025a  da3f              BGE      |L1.732|
+00025c  4827              LDR      r0,|L1.764|
+00025e  8840              LDRH     r0,[r0,#2]            ;178  ; tMotor
+000260  06c0              LSLS     r0,r0,#27             ;178
+000262  d433              BMI      |L1.716|
+000264  6c60              LDR      r0,[r4,#0x44]         ;178
+000266  4e2a              LDR      r6,|L1.784|
+000268  0400              LSLS     r0,r0,#16             ;183
+00026a  0f02              LSRS     r2,r0,#28             ;183
+00026c  2000              MOVS     r0,#0                 ;183
+00026e  4b31              LDR      r3,|L1.820|
+000270  2a02              CMP      r2,#2                 ;180
+000272  d005              BEQ      |L1.640|
+000274  6c62              LDR      r2,[r4,#0x44]         ;180
+000276  0412              LSLS     r2,r2,#16             ;180
+000278  0f12              LSRS     r2,r2,#28             ;180
+;;;194    				}
+;;;195    			}
+;;;196    			else if (SPI_GET_RX_FIFO_COUNT(SPI) == COMM_WR_CMD_CNT)
+00027a  2a04              CMP      r2,#4
+00027c  d013              BEQ      |L1.678|
+00027e  e025              B        |L1.716|
+                  |L1.640|
+000280  7030              STRB     r0,[r6,#0]            ;183
+                  |L1.642|
+000282  6920              LDR      r0,[r4,#0x10]         ;183
+000284  7832              LDRB     r2,[r6,#0]            ;185  ; unValueIndex
+000286  0055              LSLS     r5,r2,#1              ;185
+000288  5358              STRH     r0,[r3,r5]            ;185
+00028a  1c52              ADDS     r2,r2,#1              ;185
+00028c  b2d0              UXTB     r0,r2                 ;183
+00028e  7030              STRB     r0,[r6,#0]            ;183
+000290  2802              CMP      r0,#2                 ;183
+000292  d3f6              BCC      |L1.642|
+000294  8818              LDRH     r0,[r3,#0]            ;187  ; unCOM_SPI_ReadData
+000296  0bc0              LSRS     r0,r0,#15             ;187
+000298  d018              BEQ      |L1.716|
+00029a  4818              LDR      r0,|L1.764|
+00029c  8842              LDRH     r2,[r0,#2]            ;189  ; tMotor
+00029e  2110              MOVS     r1,#0x10              ;189
+0002a0  430a              ORRS     r2,r2,r1              ;189
+0002a2  8042              STRH     r2,[r0,#2]            ;189
+0002a4  e013              B        |L1.718|
+                  |L1.678|
+;;;197    			{
+;;;198    				// Received 4 uint16, copy to RAM buffer and infor communication manager
+;;;199    				for (unValueIndex = 0; unValueIndex < COMM_WR_CMD_CNT; unValueIndex++)
+0002a6  7030              STRB     r0,[r6,#0]
+                  |L1.680|
+0002a8  6922              LDR      r2,[r4,#0x10]
+;;;200    				{
+;;;201    					unCOM_SPI_ReadData[unValueIndex] = SPI_READ_RX(SPI);
+0002aa  b2c0              UXTB     r0,r0
+0002ac  0045              LSLS     r5,r0,#1
+0002ae  1c40              ADDS     r0,r0,#1
+0002b0  b2c0              UXTB     r0,r0                 ;199
+0002b2  535a              STRH     r2,[r3,r5]
+0002b4  7030              STRB     r0,[r6,#0]            ;199
+0002b6  2804              CMP      r0,#4                 ;199
+0002b8  d3f6              BCC      |L1.680|
+;;;202    				}
+;;;203    				if (IS_COMM_WR(unCOM_SPI_ReadData[0]))
+0002ba  8818              LDRH     r0,[r3,#0]  ; unCOM_SPI_ReadData
+0002bc  0400              LSLS     r0,r0,#16
+0002be  d405              BMI      |L1.716|
+;;;204    				{
+;;;205    					tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
+0002c0  480e              LDR      r0,|L1.764|
+0002c2  8841              LDRH     r1,[r0,#2]  ; tMotor
+0002c4  2210              MOVS     r2,#0x10
+0002c6  4311              ORRS     r1,r1,r2
+0002c8  8041              STRH     r1,[r0,#2]
+0002ca  e000              B        |L1.718|
+                  |L1.716|
+;;;206    				}
+;;;207    				else
+;;;208    				{
+;;;209    					unCOM_SPI_TransErrCNT++;
+;;;210    				}
+;;;211    			}
+;;;212    			else
+;;;213    			{
+;;;214    				unCOM_SPI_TransErrCNT++;
+0002cc  6039              STR      r1,[r7,#0]  ; unCOM_SPI_TransErrCNT
+                  |L1.718|
+;;;215    			}
+;;;216    		}
+;;;217    		else
+;;;218    		{
+;;;219    			unCOM_SPI_TransErrCNT++;
+;;;220    		}
+;;;221    		// Clear Receive FIFO interrupt
+;;;222    		// I don't know how to clear. Maybe just after I read out the data in FIFO and it is below threshold it will be OK
+;;;223    		SPI_ClearRxFIFO(SPI);
+0002ce  4620              MOV      r0,r4
+0002d0  f7fffffe          BL       SPI_ClearRxFIFO
+;;;224    		SPI_ClearTxFIFO(SPI);
+0002d4  4620              MOV      r0,r4
+0002d6  f7fffffe          BL       SPI_ClearTxFIFO
+0002da  e000              B        |L1.734|
+                  |L1.732|
+;;;225    	}
+;;;226    	else
+;;;227    	{	// Receive FIFO interrupt should be the only interrupt enabled for SPI
+;;;228    		// So something strange happened
+;;;229    		unCOM_SPI_TransErrCNT++;
+0002dc  6039              STR      r1,[r7,#0]  ; unCOM_SPI_TransErrCNT
+                  |L1.734|
+0002de  6c60              LDR      r0,[r4,#0x44]
+0002e0  2101              MOVS     r1,#1
+0002e2  0409              LSLS     r1,r1,#16
+0002e4  4308              ORRS     r0,r0,r1
+0002e6  6460              STR      r0,[r4,#0x44]
+;;;230    	}
+;;;231    	SPI_CLR_UNIT_TRANS_INT_FLAG(SPI);
+;;;232    }
+0002e8  bdf8              POP      {r3-r7,pc}
+;;;233    
                           ENDP
 
                   SysTick_Handler PROC
-;;;532    void SysTick_Handler(void)
-00032a  4810              LDR      r0,|L1.876|
-;;;533    {
-;;;534    	unSystemTick += 5;
-00032c  6801              LDR      r1,[r0,#0]  ; unSystemTick
-00032e  1d49              ADDS     r1,r1,#5
-000330  6001              STR      r1,[r0,#0]  ; unSystemTick
-;;;535    }
-000332  4770              BX       lr
+;;;234    void SysTick_Handler(void)
+0002ea  480f              LDR      r0,|L1.808|
+;;;235    {
+;;;236    	unSystemTick += 5;
+0002ec  6801              LDR      r1,[r0,#0]  ; unSystemTick
+0002ee  1d49              ADDS     r1,r1,#5
+0002f0  6001              STR      r1,[r0,#0]  ; unSystemTick
+;;;237    }
+0002f2  4770              BX       lr
                           ENDP
 
-                  |L1.820|
+                  |L1.756|
                           DCD      0x40010000
-                  |L1.824|
+                  |L1.760|
                           DCD      FLAG_PHASE_CHANGED
-                  |L1.828|
+                  |L1.764|
                           DCD      tMotor
-                  |L1.832|
+                  |L1.768|
                           DCD      0x00ffffff
-                  |L1.836|
+                  |L1.772|
                           DCD      0xff0000a1
-                  |L1.840|
+                  |L1.776|
                           DCD      FLAG_TIM1_USEAGE
-                  |L1.844|
-                          DCD      unZXMatchCNT
-                  |L1.848|
-                          DCD      0x40040040
-                  |L1.852|
-                          DCD      0x400d0000
-                  |L1.856|
+                  |L1.780|
                           DCD      unLastZXDetectedTime
-                  |L1.860|
+                  |L1.784|
                           DCD      ||.data||
-                  |L1.864|
+                  |L1.788|
                           DCD      0x0000251b
-                  |L1.868|
+                  |L1.792|
+                          DCD      0x400d0000
+                  |L1.796|
+                          DCD      0x40040040
+                  |L1.800|
                           DCD      0x400e0000
-                  |L1.872|
+                  |L1.804|
                           DCD      0x50004240
-                  |L1.876|
+                  |L1.808|
                           DCD      unSystemTick
-                  |L1.880|
+                  |L1.812|
                           DCD      0x40030000
-                  |L1.884|
+                  |L1.816|
                           DCD      unCOM_SPI_TransErrCNT
-                  |L1.888|
+                  |L1.820|
                           DCD      unCOM_SPI_ReadData
 
                           AREA ||.data||, DATA, ALIGN=2

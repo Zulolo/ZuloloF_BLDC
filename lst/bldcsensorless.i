@@ -7613,9 +7613,14 @@ typedef enum {
 		static ENUM_MOTOR_STATE tMotorState = MOTOR_IDLE;
 		static ENUM_ROTATE_DETECT_STATE tRotateDetectState = DETECT_START;
 		static uint8_t unLocateIndex;
-		static uint8_t unPhaseChangeCNT4Period;
-		static uint8_t unPhaseChangeCNT4Duty;
-		static uint16_t unRampUpPeriodMiniCNT;
+		static uint8_t unPhaseChangeCNT_AtCurrentPeriod;	
+
+ 
+		static uint8_t unPhaseChangeCNT_AtCurrentDuty;	
+ 
+		static uint16_t unPeriodChangeCNT_AfterPR_ReachMini;	
+
+ 
 		static uint32_t unLastPhaseChangeTime;
 		static uint32_t unRotateDetectStartTime;	
 												
@@ -7666,12 +7671,6 @@ __inline void PhaseChangedRoutine(void)
 			if (tMotor.structMotor.MSR.unSuccessZXD_CNT > 4)
 			{
 				tMotor.structMotor.MSR.bLocked = (1);
-
-
-
-
-
-
 			}
 			else
 			{
@@ -7785,9 +7784,9 @@ void BLDCSpeedManager(void)
 		{
 
 				
-			if (unPhaseChangeCNT4Duty > 5)
+			if (unPhaseChangeCNT_AtCurrentDuty > 5)
 			{
-				unPhaseChangeCNT4Duty = 0;
+				unPhaseChangeCNT_AtCurrentDuty = 0;
 				if (tMotor.structMotor.unActualDuty < tMotor.structMotor.unTargetDuty)
 				{
 					tMotor.structMotor.unActualDuty++;
@@ -7798,7 +7797,7 @@ void BLDCSpeedManager(void)
 				}
 				(((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->CMR[1] = (tMotor . structMotor . unActualDuty)); (((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->CMR[3] = (tMotor . structMotor . unActualDuty)); (((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->CMR[5] = (tMotor . structMotor . unActualDuty));
 			}
-			unPhaseChangeCNT4Duty++;
+			unPhaseChangeCNT_AtCurrentDuty++;
 		}
 		
 		(((unCurrentPhase)) = ((((unCurrentPhase)) < (((sizeof(PHASE_TAB_CLOCKWISE)/sizeof(uint32_t))) - 1)) ? (((unCurrentPhase)) + 1) : 0));
@@ -7806,15 +7805,6 @@ void BLDCSpeedManager(void)
 		((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->PHCHGNXT = ((tMotor . structMotor . MCR . bRotateDirection == 0) ? PHASE_TAB_CLOCKWISE[(unCurrentPhase)] : PHASE_TAB_ANTICLOCKWISE[(unCurrentPhase)]);
 	}
 }
-
-
-
-
-
-
-
-
-
 
 __inline void BLDC_stopMotor(void)
 {
@@ -7856,18 +7846,18 @@ __inline void BLDCRampUp_Manager(void)
 	if ((1) == FLAG_PHASE_CHANGED)
 	{
 		PhaseChangedRoutine();
-		if (unPhaseChangeCNT4Period > 9)
+		if (unPhaseChangeCNT_AtCurrentPeriod > 9)
 		{
-			unPhaseChangeCNT4Period = 0;
+			unPhaseChangeCNT_AtCurrentPeriod = 0;
 			
 
 			((tMotor . structMotor . unActualPeriod) = (((tMotor . structMotor . unActualPeriod) < (1000 - 1)) ? (tMotor . structMotor . unActualPeriod) : (uint16_t)((tMotor . structMotor . unActualPeriod) * (0.98))));	
 			if (tMotor.structMotor.unActualPeriod <= (1000 - 1))
 			{
-				unRampUpPeriodMiniCNT++;
+				unPeriodChangeCNT_AfterPR_ReachMini++;
 			}
 		}
-		unPhaseChangeCNT4Period++;
+		unPhaseChangeCNT_AtCurrentPeriod++;
 
 		((((TIMER_T *) (((uint32_t)0x40000000) + 0x10000)))->TCMPR = (tMotor . structMotor . unActualPeriod));
 		(((unCurrentPhase)) = ((((unCurrentPhase)) < (((sizeof(PHASE_TAB_CLOCKWISE)/sizeof(uint32_t))) - 1)) ? (((unCurrentPhase)) + 1) : 0));
@@ -7911,7 +7901,7 @@ __inline void phaseDurationProtection(uint32_t unLastPhaseChangeTime)
 
 void BLDC_SensorLessManager(void)
 {
-	uint16_t iMotorAlreadyRotatingPhaseTime;
+	uint16_t unMotorAlreadyRotatingPhaseTime;
 	static uint32_t iEnterTimeBeforeWait;
 
 	dutyProtection();
@@ -7934,10 +7924,10 @@ void BLDC_SensorLessManager(void)
 			
 			
 			
-			iMotorAlreadyRotatingPhaseTime = canMotorContinueRunning();
-			if (iMotorAlreadyRotatingPhaseTime != 0xFFFF)
+			unMotorAlreadyRotatingPhaseTime = canMotorContinueRunning();
+			if (unMotorAlreadyRotatingPhaseTime != 0xFFFF)
 			{
-				if (iMotorAlreadyRotatingPhaseTime > 0)
+				if (unMotorAlreadyRotatingPhaseTime > 0)
 				{
 					
 					tMotorState = MOTOR_LOCKED;
@@ -8007,9 +7997,9 @@ void BLDC_SensorLessManager(void)
 				((((TIMER_T *) (((uint32_t)0x40000000) + 0x10000)))->TCMPR = (tMotor . structMotor . unActualPeriod));
 				TIMER_Start(((TIMER_T *) (((uint32_t)0x40000000) + 0x10000)));	
 				TIMER_EnableInt(((TIMER_T *) (((uint32_t)0x40000000) + 0x10000)));
-				unRampUpPeriodMiniCNT = 0;
-				unPhaseChangeCNT4Duty = 0;
-				unPhaseChangeCNT4Period = 0;
+				unPeriodChangeCNT_AfterPR_ReachMini = 0;
+				unPhaseChangeCNT_AtCurrentDuty = 0;
+				unPhaseChangeCNT_AtCurrentPeriod = 0;
 				tMotorState = MOTOR_RAMPUP_WO_ZXD;
 			}
 		}
@@ -8027,7 +8017,6 @@ void BLDC_SensorLessManager(void)
 			{
 				tMotor.structMotor.MSR.bThisPhaseDetectedZX = (0);
 				tMotor.structMotor.MSR.bZeroCrossDetecting = (1);
-				
 				
 				
 				
@@ -8061,7 +8050,7 @@ void BLDC_SensorLessManager(void)
 			}
 			else
 			{
-				if (unRampUpPeriodMiniCNT < 300)
+				if (unPeriodChangeCNT_AfterPR_ReachMini < 300)
 				{
 					BLDCRampUp_Manager(); 
 				}

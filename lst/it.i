@@ -7345,7 +7345,7 @@ typedef enum {
 
 
 
-#line 272 "User\\BLDCSensorLess.h"
+#line 277 "User\\BLDCSensorLess.h"
 extern volatile MOTOR_UNION_T tMotor;	
 extern volatile ENUM_TIM1_USAGE FLAG_TIM1_USEAGE;
 extern volatile uint32_t unLastZXDetectedTime;
@@ -7503,27 +7503,6 @@ extern void PTC_checkMotor(void);
 
 
 
-	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -7534,16 +7513,7 @@ void TMR0_IRQHandler(void)
 {
 	((TIMER_T *) (((uint32_t)0x40000000) + 0x10000))->TISR  = ((TIMER_T *) (((uint32_t)0x40000000) + 0x10000))->TISR;	
 
-	
 	FLAG_PHASE_CHANGED = (1);
-
-
-	
-	
-
-	
-
-
 
 	if ((1) == tMotor.structMotor.MSR.bZeroCrossDetecting)
 	{
@@ -7553,88 +7523,12 @@ void TMR0_IRQHandler(void)
 		((((TIMER_T *) (((uint32_t)0x40000000) + 0x10020)))->TCMPR = ((((((TIMER_T *) (((uint32_t)0x40000000) + 0x10020))->TDR + 160) >= 0xFFFFFF) ? ((((TIMER_T *) (((uint32_t)0x40000000) + 0x10020))->TDR + 160) - 0xFFFFFF) : (((TIMER_T *) (((uint32_t)0x40000000) + 0x10020))->TDR + 160))));	
 		
 		
+		
+		
 		FLAG_TIM1_USEAGE = ENUM_TIM1_AVOID_ZXD;
 		TIMER_EnableInt(((TIMER_T *) (((uint32_t)0x40000000) + 0x10020)));
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-uint32_t DetectdTimeWhenPWMHigh(void)
-{
-	
-
-
-
-
-	
-	
-
-	while ((((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->PIIR & (1ul << 1)) == 0)
-	{
-
-
-		if (unZXMatchCNT > 36)
-		{
-			return TIMER_GetCounter(((TIMER_T *) (((uint32_t)0x40000000) + 0x10020)));	
-		}
-
-		if ((((((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->PHCHG & (1ul << 7)) >> 7) == (( ((ACMP_T *) (((uint32_t)0x40000000) + 0xD0000))->CMPSR & (1ul << 2)) >> 2)))
-		{
-			unZXMatchCNT++; 
-		}
-		else
-		{
-			unZXMatchCNT = 0;
-		}
-		
-	}
-	return 0xFFFFFFFF;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 int32_t PhaseZXDedHandler(uint32_t iThisZXDetectedTime)
 {
@@ -7669,52 +7563,7 @@ int32_t PhaseZXDedHandler(uint32_t iThisZXDetectedTime)
 void TMR1_IRQHandler(void)                                   
 {
 
-
-
-
-
-
-
 	((TIMER_T *) (((uint32_t)0x40000000) + 0x10020))->TISR = ~0;    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- 
 
 	if (ENUM_TIM1_AVOID_ZXD == FLAG_TIM1_USEAGE)
 	{
@@ -7734,112 +7583,13 @@ void TMR1_IRQHandler(void)
 				(((ACMP_T *) (((uint32_t)0x40000000) + 0xD0000))->CMPCR[0] &= (~(1ul << 1)));  
 				TIMER_DisableInt(((TIMER_T *) (((uint32_t)0x40000000) + 0x10020)));
 			}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 		}
 	}
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void ACMP_IRQHandler(void)
 {
 	((ACMP_T *) (((uint32_t)0x40000000) + 0xD0000))->CMPSR |= (1ul << 0);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	
 	
@@ -7848,70 +7598,12 @@ void ACMP_IRQHandler(void)
 		
 		
 		
-		
-		
+
 		
 		
 		
 		((((TIMER_T *) (((uint32_t)0x40000000) + 0x10020)))->TCMPR = ((((((TIMER_T *) (((uint32_t)0x40000000) + 0x10020))->TDR + 200) >= 0xFFFFFF) ? ((((TIMER_T *) (((uint32_t)0x40000000) + 0x10020))->TDR + 200) - 0xFFFFFF) : (((TIMER_T *) (((uint32_t)0x40000000) + 0x10020))->TDR + 200))));
 		TIMER_EnableInt(((TIMER_T *) (((uint32_t)0x40000000) + 0x10020)));
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	}
 }
 
@@ -7973,17 +7665,6 @@ void ADC_IRQHandler(void)
     
     (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADSR = (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADSR & ~((1ul << 0) | (1ul << 1) | (1ul << 2))) | (iADC_ComparatorFlag));
 }
-
-
-
-
-
-
-
-
-
-
-
 
 void SPI_IRQHandler(void)
 {

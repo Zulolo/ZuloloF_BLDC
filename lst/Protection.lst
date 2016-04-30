@@ -9285,8 +9285,8 @@ S		#define IS_ROTATING_DETECTING				0xFFFF
 S		#define MAX_ROTATING_DETECT_PHASE_TIME		30	// half phase max 30ms
 S		#define MAX_ALREADY_ROTATING_DETECT_TIME	200	// 200ms used to detect is motor is already rotating
 S		#define RAMP_UP_MIN_PERIOD_NUM_THRS			300	// After ramp up to minimum period, force continue rotate these phases
-S		#define CHANGE_DUTY_PERIOD_THR				9		// Used in ramp up
-S		#define CHANGE_DUTY_CNT_THR					5		// Used after locked
+S		#define CHANGE_DT_PR_AFTER_PHASE_CHANGED_NUM				9		// Used in ramp up
+S		#define CHANGE_DUTY_AFTER_PHASE_CHANGED_NUM					5		// Used after locked
 S
 S//		#define MOTOR_RUNNING_MSK					(0x01ul)
 S//		#define MOTOR_R_DIRECTION_MSK				(0x02ul)
@@ -9339,9 +9339,14 @@ S
 S		static ENUM_MOTOR_STATE tMotorState = MOTOR_IDLE;
 S		static ENUM_ROTATE_DETECT_STATE tRotateDetectState = DETECT_START;
 S		static uint8_t unLocateIndex;
-S		static uint8_t unPhaseChangeCNT4Period;
-S		static uint8_t unPhaseChangeCNT4Duty;
-S		static uint16_t unRampUpPeriodMiniCNT;
+S		static uint8_t unPhaseChangeCNT_AtCurrentPeriod;	/* This variable is only used at start up ramp up stage.
+S															Only after phase has changed for a certain number at current period,
+S															the actual period will increase or decrease to target period. */
+S		static uint8_t unPhaseChangeCNT_AtCurrentDuty;	/* Only after phase has changed for a certain number at current duty,
+S														the actual duty will increase or decrease to target duty */
+S		static uint16_t unPeriodChangeCNT_AfterPR_ReachMini;	/* This variable is only used at start up ramp up stage.
+S																Phase period changed counter after phase period has been lower to
+S																ramp up min period*/
 S		static uint32_t unLastPhaseChangeTime;
 S		static uint32_t unRotateDetectStartTime;	// Used to record when enter motor start, 
 S												// ALready rotating detect end time will be compared with this time

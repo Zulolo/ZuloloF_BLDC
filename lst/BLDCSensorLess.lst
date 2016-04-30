@@ -9212,8 +9212,8 @@ S		#define IS_ROTATING_DETECTING				0xFFFF
 S		#define MAX_ROTATING_DETECT_PHASE_TIME		30	// half phase max 30ms
 S		#define MAX_ALREADY_ROTATING_DETECT_TIME	200	// 200ms used to detect is motor is already rotating
 S		#define RAMP_UP_MIN_PERIOD_NUM_THRS			300	// After ramp up to minimum period, force continue rotate these phases
-S		#define CHANGE_DUTY_PERIOD_THR				9		// Used in ramp up
-S		#define CHANGE_DUTY_CNT_THR					5		// Used after locked
+S		#define CHANGE_DT_PR_AFTER_PHASE_CHANGED_NUM				9		// Used in ramp up
+S		#define CHANGE_DUTY_AFTER_PHASE_CHANGED_NUM					5		// Used after locked
 S
 S//		#define MOTOR_RUNNING_MSK					(0x01ul)
 S//		#define MOTOR_R_DIRECTION_MSK				(0x02ul)
@@ -9266,9 +9266,14 @@ S
 S		static ENUM_MOTOR_STATE tMotorState = MOTOR_IDLE;
 S		static ENUM_ROTATE_DETECT_STATE tRotateDetectState = DETECT_START;
 S		static uint8_t unLocateIndex;
-S		static uint8_t unPhaseChangeCNT4Period;
-S		static uint8_t unPhaseChangeCNT4Duty;
-S		static uint16_t unRampUpPeriodMiniCNT;
+S		static uint8_t unPhaseChangeCNT_AtCurrentPeriod;	/* This variable is only used at start up ramp up stage.
+S															Only after phase has changed for a certain number at current period,
+S															the actual period will increase or decrease to target period. */
+S		static uint8_t unPhaseChangeCNT_AtCurrentDuty;	/* Only after phase has changed for a certain number at current duty,
+S														the actual duty will increase or decrease to target duty */
+S		static uint16_t unPeriodChangeCNT_AfterPR_ReachMini;	/* This variable is only used at start up ramp up stage.
+S																Phase period changed counter after phase period has been lower to
+S																ramp up min period*/
 S		static uint32_t unLastPhaseChangeTime;
 S		static uint32_t unRotateDetectStartTime;	// Used to record when enter motor start, 
 S												// ALready rotating detect end time will be compared with this time
@@ -9866,8 +9871,8 @@ N		#define IS_ROTATING_DETECTING				0xFFFF
 N		#define MAX_ROTATING_DETECT_PHASE_TIME		30	// half phase max 30ms
 N		#define MAX_ALREADY_ROTATING_DETECT_TIME	200	// 200ms used to detect is motor is already rotating
 N		#define RAMP_UP_MIN_PERIOD_NUM_THRS			300	// After ramp up to minimum period, force continue rotate these phases
-N		#define CHANGE_DUTY_PERIOD_THR				9		// Used in ramp up
-N		#define CHANGE_DUTY_CNT_THR					5		// Used after locked
+N		#define CHANGE_DT_PR_AFTER_PHASE_CHANGED_NUM				9		// Used in ramp up
+N		#define CHANGE_DUTY_AFTER_PHASE_CHANGED_NUM					5		// Used after locked
 N
 N//		#define MOTOR_RUNNING_MSK					(0x01ul)
 N//		#define MOTOR_R_DIRECTION_MSK				(0x02ul)
@@ -9920,9 +9925,14 @@ N
 N		static ENUM_MOTOR_STATE tMotorState = MOTOR_IDLE;
 N		static ENUM_ROTATE_DETECT_STATE tRotateDetectState = DETECT_START;
 N		static uint8_t unLocateIndex;
-N		static uint8_t unPhaseChangeCNT4Period;
-N		static uint8_t unPhaseChangeCNT4Duty;
-N		static uint16_t unRampUpPeriodMiniCNT;
+N		static uint8_t unPhaseChangeCNT_AtCurrentPeriod;	/* This variable is only used at start up ramp up stage.
+N															Only after phase has changed for a certain number at current period,
+N															the actual period will increase or decrease to target period. */
+N		static uint8_t unPhaseChangeCNT_AtCurrentDuty;	/* Only after phase has changed for a certain number at current duty,
+N														the actual duty will increase or decrease to target duty */
+N		static uint16_t unPeriodChangeCNT_AfterPR_ReachMini;	/* This variable is only used at start up ramp up stage.
+N																Phase period changed counter after phase period has been lower to
+N																ramp up min period*/
 N		static uint32_t unLastPhaseChangeTime;
 N		static uint32_t unRotateDetectStartTime;	// Used to record when enter motor start, 
 N												// ALready rotating detect end time will be compared with this time
@@ -9958,7 +9968,7 @@ N   1. In this window the comparator's interrupt will be enabled.
 N   2. The first ACMP INT will start TIM1 and enable its interrupt.
 N   3. TIM1 INT will be set as current time + filter time (100us).
 N   4. Each new ACMP INT will reset TIM1 INT as current time + filter time (100us).
-N   5. So when TIM1 INT really happened, it means ACMP was stable and really zero crossed.                                                            
+N   5. So when TIM1 INT really happened, and the rising/falling edge is correct, it means ACMP was stable and really zero crossed.
 N   6. In the TIM1 INT we set TIM0's phase change time.*/
 N
 N/* Some limitation:
@@ -9988,12 +9998,6 @@ X			if (tMotor.structMotor.MSR.unSuccessZXD_CNT > 4)
 N			{
 N				tMotor.structMotor.MSR.bLocked = TRUE;
 X				tMotor.structMotor.MSR.bLocked = (1);
-N//				BRG_DISABLE;
-N//				P50 = 1;
-N//				BLDC_stopMotor();
-N
-N//				iTestZXContinueCNT++;
-N//				iTestZXDPeriod = tMotor.structMotor.ACT_PERIOD;
 N			}
 N			else
 N			{
@@ -10056,7 +10060,7 @@ N// Then stop it while rotating to measure the waveform
 N// Manually rotate it is too slow 
 N	return 0;
 N
-W "User\BLDCSensorLess.c" 103 2 statement is unreachable
+W "User\BLDCSensorLess.c" 97 2 statement is unreachable
 N	if ((uint32_t)(unSystemTick - unRotateDetectStartTime) > MAX_ALREADY_ROTATING_DETECT_TIME)
 X	if ((uint32_t)(unSystemTick - unRotateDetectStartTime) > 200)
 N	{
@@ -10120,10 +10124,10 @@ N		if (tMotor.structMotor.unActualDuty != tMotor.structMotor.unTargetDuty)
 N		{
 N//				tMotor.structMotor.ACT_DUTY = tMotor.structMotor.TGT_DUTY;
 N				// Change PWM duty after each x phase change
-N			if (unPhaseChangeCNT4Duty > CHANGE_DUTY_CNT_THR)
-X			if (unPhaseChangeCNT4Duty > 5)
+N			if (unPhaseChangeCNT_AtCurrentDuty > CHANGE_DUTY_AFTER_PHASE_CHANGED_NUM)
+X			if (unPhaseChangeCNT_AtCurrentDuty > 5)
 N			{
-N				unPhaseChangeCNT4Duty = 0;
+N				unPhaseChangeCNT_AtCurrentDuty = 0;
 N				if (tMotor.structMotor.unActualDuty < tMotor.structMotor.unTargetDuty)
 N				{
 N					tMotor.structMotor.unActualDuty++;
@@ -10135,7 +10139,7 @@ N				}
 N				MOTOR_SET_DUTY(tMotor.structMotor.unActualDuty);
 X				(((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->CMR[1] = (tMotor . structMotor . unActualDuty)); (((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->CMR[3] = (tMotor . structMotor . unActualDuty)); (((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->CMR[5] = (tMotor . structMotor . unActualDuty));
 N			}
-N			unPhaseChangeCNT4Duty++;
+N			unPhaseChangeCNT_AtCurrentDuty++;
 N		}
 N		
 N		PHASE_INCREASE(unCurrentPhase);
@@ -10145,16 +10149,7 @@ N		PWM->PHCHGNXT = GET_PHASE_VALUE(unCurrentPhase);
 X		((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->PHCHGNXT = ((tMotor . structMotor . MCR . bRotateDirection == 0) ? PHASE_TAB_CLOCKWISE[(unCurrentPhase)] : PHASE_TAB_ANTICLOCKWISE[(unCurrentPhase)]);
 N	}
 N}
-N//
-N//void BLDCStarterManager(void)
-N//{
-N//
-N//}
-N//
-N//void BLDCPhaseChangeManager(void)
-N//{
-N//
-N//}
+N
 N__INLINE void BLDC_stopMotor(void)
 X__inline void BLDC_stopMotor(void)
 N{
@@ -10206,10 +10201,10 @@ N	if (SET == FLAG_PHASE_CHANGED)
 X	if ((1) == FLAG_PHASE_CHANGED)
 N	{
 N		PhaseChangedRoutine();
-N		if (unPhaseChangeCNT4Period > CHANGE_DUTY_PERIOD_THR)
-X		if (unPhaseChangeCNT4Period > 9)
+N		if (unPhaseChangeCNT_AtCurrentPeriod > CHANGE_DT_PR_AFTER_PHASE_CHANGED_NUM)
+X		if (unPhaseChangeCNT_AtCurrentPeriod > 9)
 N		{
-N			unPhaseChangeCNT4Period = 0;
+N			unPhaseChangeCNT_AtCurrentPeriod = 0;
 N			// Change duty and period 
 N//			MOTOR_RAMPUP_DT_INCR(tMotor.structMotor.ACT_DUTY);			
 N			MOTOR_RAMPUP_PR_DCR(tMotor.structMotor.unActualPeriod);	
@@ -10217,10 +10212,10 @@ X			((tMotor . structMotor . unActualPeriod) = (((tMotor . structMotor . unActua
 N			if (tMotor.structMotor.unActualPeriod <= MOTOR_RAMPUP_PR_MIN)
 X			if (tMotor.structMotor.unActualPeriod <= (1000 - 1))
 N			{
-N				unRampUpPeriodMiniCNT++;
+N				unPeriodChangeCNT_AfterPR_ReachMini++;
 N			}
 N		}
-N		unPhaseChangeCNT4Period++;
+N		unPhaseChangeCNT_AtCurrentPeriod++;
 N//		MOTOR_SET_DUTY(tMotor.structMotor.ACT_DUTY);
 N		TIMER_SET_CMP_VALUE(TIMER0, tMotor.structMotor.unActualPeriod);
 X		((((TIMER_T *) (((uint32_t)0x40000000) + 0x10000)))->TCMPR = (tMotor . structMotor . unActualPeriod));
@@ -10274,7 +10269,7 @@ N
 N// Take charge of all Motot control
 Nvoid BLDC_SensorLessManager(void)
 N{
-N	uint16_t iMotorAlreadyRotatingPhaseTime;
+N	uint16_t unMotorAlreadyRotatingPhaseTime;
 N	static uint32_t iEnterTimeBeforeWait;
 N
 N	dutyProtection();
@@ -10299,11 +10294,11 @@ N		{
 N			// Later implement this when motor can rotate
 N			// Then stop it while rotating to measure the waveform
 N			// Manually rotate it is too slow 
-N			iMotorAlreadyRotatingPhaseTime = canMotorContinueRunning();
-N			if (iMotorAlreadyRotatingPhaseTime != IS_ROTATING_DETECTING)
-X			if (iMotorAlreadyRotatingPhaseTime != 0xFFFF)
+N			unMotorAlreadyRotatingPhaseTime = canMotorContinueRunning();
+N			if (unMotorAlreadyRotatingPhaseTime != IS_ROTATING_DETECTING)
+X			if (unMotorAlreadyRotatingPhaseTime != 0xFFFF)
 N			{
-N				if (iMotorAlreadyRotatingPhaseTime > 0)
+N				if (unMotorAlreadyRotatingPhaseTime > 0)
 N				{
 N					// 1 to 65534
 N					tMotorState = MOTOR_LOCKED;
@@ -10356,7 +10351,7 @@ N	case MOTOR_WAIT_AFTER_LOCATE:
 N		if (tMotor.structMotor.MCR.bMotorNeedToRun && NO_MOTOR_EEROR)
 X		if (tMotor.structMotor.MCR.bMotorNeedToRun && (((unErrorMaster & 0xFFFFFFFEul) == 0) ? (1) : (0)))
 N		{
-W "User\BLDCSensorLess.c" 362 56 pointless comparison of unsigned integer with zero
+W "User\BLDCSensorLess.c" 347 56 pointless comparison of unsigned integer with zero
 N			if ((uint32_t)(unSystemTick - iEnterTimeBeforeWait) >= WAIT_AFTER_LOCATE_TIME)
 X			if ((uint32_t)(unSystemTick - iEnterTimeBeforeWait) >= 0)
 N			{
@@ -10389,9 +10384,9 @@ N				TIMER_Start(TIMER0);	// Once started, running and interrupting until Motor 
 X				TIMER_Start(((TIMER_T *) (((uint32_t)0x40000000) + 0x10000)));	
 N				TIMER_EnableInt(TIMER0);
 X				TIMER_EnableInt(((TIMER_T *) (((uint32_t)0x40000000) + 0x10000)));
-N				unRampUpPeriodMiniCNT = 0;
-N				unPhaseChangeCNT4Duty = 0;
-N				unPhaseChangeCNT4Period = 0;
+N				unPeriodChangeCNT_AfterPR_ReachMini = 0;
+N				unPhaseChangeCNT_AtCurrentDuty = 0;
+N				unPhaseChangeCNT_AtCurrentPeriod = 0;
 N				tMotorState = MOTOR_RAMPUP_WO_ZXD;
 N			}
 N		}
@@ -10417,7 +10412,6 @@ N				// Speed is enough for zero cross detecting
 N				// Prepare everything
 N				// T0 used to change phase automatically -- already configured
 N				// T1 used to filter ZX
-N				//ACMP->CMPCR[0]
 N
 N//				TIMER_SET_CMP_VALUE(TIMER1, GET_TIM1_CMP_VALUE(TIMER1->TDR + AVOID_ZXD_AFTER_PHCHG));
 N//				FLAG_TIM1_USEAGE = ENUM_TIM1_AVOID_ZXD;
@@ -10451,8 +10445,8 @@ N				tMotorState = MOTOR_LOCKED;
 N			}
 N			else
 N			{
-N				if (unRampUpPeriodMiniCNT < RAMP_UP_MIN_PERIOD_NUM_THRS)
-X				if (unRampUpPeriodMiniCNT < 300)
+N				if (unPeriodChangeCNT_AfterPR_ReachMini < RAMP_UP_MIN_PERIOD_NUM_THRS)
+X				if (unPeriodChangeCNT_AfterPR_ReachMini < 300)
 N				{
 N					BLDCRampUp_Manager(); 
 N				}

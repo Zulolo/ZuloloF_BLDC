@@ -7345,7 +7345,7 @@ typedef enum {
 
 
 
-#line 272 "User\\BLDCSensorLess.h"
+#line 277 "User\\BLDCSensorLess.h"
 extern volatile MOTOR_UNION_T tMotor;	
 extern volatile ENUM_TIM1_USAGE FLAG_TIM1_USEAGE;
 extern volatile uint32_t unLastZXDetectedTime;
