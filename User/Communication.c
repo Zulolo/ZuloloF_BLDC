@@ -15,8 +15,10 @@
 /*
  * The communication works like this:
  * If one unit transfer is finished, interrupt will be triggered and we check how many 16bits half word (HW) data was received
- * If it is two HWs and the MSB in the first HW is zero, we consider one received command transfer has been received.
+ * If it is two HWs and the MSB in the first HW is zero, we consider one read command transfer has been received.
+ * First HW is read address and second is CRC.
  * If it is 4 HWs and the MSB in the first HW is 1, we consider one write command transfer has been received.
+ * First HW is write address, second & third HWs are value, fourth is CRC.
  * No matter witch command has been received, we will copy all data received into on buffer and check CRC in back ground routine.
  *
  * Besides all of this, there is at least one routine communication every 200ms like read battery/current.
@@ -26,9 +28,9 @@
 
 /*
  * When one read command was received, the application will put the address' data into FIFO of SPI.
- * So next time when master is querying another address/dummy address, it can retrieve the data last time queried.
+ * So next time when master is sending another frame (read/write, address/dummy address), it can retrieve the data last time queried.
  * In general, if you want to read some data,
- * you need send first read command of one valid address, then send another read command to get the data.
+ * you need send first frame including read command of one valid address, then send another read command to get the data.
  * Because read command is 2 16bits length, it can only access one half word value and one CRC16.
  */
 
