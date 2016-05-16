@@ -103,12 +103,12 @@ void COMM_Manager(void)
 	{
 		memcpy(unCOM_Buff, unCOM_SPI_ReadData, COMM_FIFO_LENGTH);
 		tMotor.structMotor.MSR.bNewComFrameReceived = FALSE;
-		if (CRC16((uint8_t *)unCOM_Buff, (IS_COMM_RD(unCOM_Buff[0]) ? (COMM_RD_CMD_CNT - 1) : (COMM_WR_CMD_CNT - 1))) ==
-				(IS_COMM_RD(unCOM_Buff[0]) ? unCOM_Buff[COMM_RD_CMD_CNT - 1] : unCOM_Buff[COMM_WR_CMD_CNT - 1]))
+		if (CRC16((uint8_t *)unCOM_Buff, (IS_COMM_RD_CMD(unCOM_Buff[0]) ? (COMM_RD_CMD_CNT - 1) : (COMM_WR_CMD_CNT - 1))) ==
+				(IS_COMM_RD_CMD(unCOM_Buff[0]) ? unCOM_Buff[COMM_RD_CMD_CNT - 1] : unCOM_Buff[COMM_WR_CMD_CNT - 1]))
 		{
 			unValidFrameCNT++;
 			// safe zone
-			if (IS_COMM_RD(unCOM_Buff[0]))
+			if (IS_COMM_RD_CMD(unCOM_Buff[0]))
 			{
 				nReadCommandHandler(unCOM_Buff);
 			}

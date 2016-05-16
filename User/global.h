@@ -63,6 +63,7 @@ typedef union
 	MOTOR_T structMotor;
 } MOTOR_UNION_T;
 
+
 #include "BLDCSensorLess.h"
 #include "Communication.h"
 #include "Error.h"

@@ -8998,6 +8998,7 @@ N	uint16_t unValue[sizeof(MOTOR_T)/sizeof(uint16_t)];
 N	MOTOR_T structMotor;
 N} MOTOR_UNION_T;
 N
+N
 N#include "BLDCSensorLess.h"
 L 1 "User\BLDCSensorLess.h" 1
 N#ifndef __BLDC_SENSOR_LESS_H__
@@ -9069,6 +9070,7 @@ S{
 S	uint16_t unValue[sizeof(MOTOR_T)/sizeof(uint16_t)];
 S	MOTOR_T structMotor;
 S} MOTOR_UNION_T;
+S
 S
 S#include "BLDCSensorLess.h"
 S#include "Communication.h"
@@ -9374,7 +9376,7 @@ Xextern __inline void BLDC_stopMotor(void);
 NEXTERNAL_BLDC void BLDC_SensorLessManager(void);
 Xextern void BLDC_SensorLessManager(void);
 N#endif
-L 67 "User\global.h" 2
+L 68 "User\global.h" 2
 N#include "Communication.h"
 L 1 "User\Communication.h" 1
 N#ifndef __COMMUNICATION_H__
@@ -9484,12 +9486,12 @@ N										// highest bit in first half word is used to indicate command or data
 N#define COMM_RD_CMD_CNT				2	// R(0):Address | CRC
 N#define COMM_WR_CMD_CNT				4	// W(1):Address | Data Low | Data High | CRC
 N
-N#define COMM_RW_MASK				(0x8000)
-N#define IS_COMM_RD(value)			(((value) & COMM_RW_MASK) == COMM_RW_MASK)
-N#define IS_COMM_WR(value)			(((value) & COMM_RW_MASK) == 0)
-N#define COMM_DATA_MASK				(0x7FFF)
-N#define COMM_GET_DATA(value)		((value) & COMM_DATA_MASK)
-N#define COMM_BAUT_RATE				5000000	// 5MHz
+N#define COMM_RW_CMD_MASK					(0x8000)
+N#define IS_COMM_RD_CMD(value)			(((value) & COMM_RW_CMD_MASK) == COMM_RW_CMD_MASK)
+N#define IS_COMM_WR_CMD(value)			(((value) & COMM_RW_CMD_MASK) == 0)
+N#define COMM_DATA_MASK						(0x7FFF)
+N#define COMM_GET_DATA(value)			((value) & COMM_DATA_MASK)
+N#define COMM_BAUT_RATE						5000000	// 5MHz
 N
 Ntypedef enum{
 N	MOTOR_MCR = 0,	/*!<  Motor Control  */
@@ -9524,7 +9526,7 @@ N
 NEXTERNAL_COMM void COMM_Manager(void);
 Xextern void COMM_Manager(void);
 N#endif
-L 68 "User\global.h" 2
+L 69 "User\global.h" 2
 N#include "Error.h"
 L 1 "User\Error.h" 1
 N#ifndef __ERROR_H__
@@ -9601,7 +9603,7 @@ NEXTERNAL_ERROR void ERR_Manager(void);
 Xextern void ERR_Manager(void);
 N
 N#endif
-L 69 "User\global.h" 2
+L 70 "User\global.h" 2
 N#include "Protection.h"
 L 1 "User\Protection.h" 1
 N#ifndef __PROTECTION_H__
@@ -9655,7 +9657,7 @@ S
 SEXTERNAL_PTC void PTC_checkMotor(void);
 S
 N#endif
-L 70 "User\global.h" 2
+L 71 "User\global.h" 2
 N#endif 
 L 5 "User\Protection.h" 2
 N

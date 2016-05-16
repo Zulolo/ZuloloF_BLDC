@@ -7273,8 +7273,9 @@ typedef union
 	MOTOR_T structMotor;
 } MOTOR_UNION_T;
 
+
 #line 1 "User\\BLDCSensorLess.h"
-#line 67 "User\\global.h"
+#line 68 "User\\global.h"
 #line 1 "User\\Communication.h"
 
 
@@ -7323,7 +7324,7 @@ extern ENUM_COMM_REG tRegister;
 extern uint8_t FlagRegisterNeedWrite;
 
 extern void COMM_Manager(void);
-#line 68 "User\\global.h"
+#line 69 "User\\global.h"
 #line 1 "User\\Error.h"
 
 
@@ -7371,7 +7372,7 @@ extern void setError(ENUM_ERROR_LEVEL enumErrorType);
 extern void clearError(void);
 extern void ERR_Manager(void);
 
-#line 69 "User\\global.h"
+#line 70 "User\\global.h"
 #line 1 "User\\Protection.h"
 
 
@@ -7407,7 +7408,7 @@ extern void ERR_Manager(void);
 
 extern void PTC_checkMotor(void);
 
-#line 70 "User\\global.h"
+#line 71 "User\\global.h"
 #line 5 "User\\BLDCSensorLess.h"
 
 typedef enum {

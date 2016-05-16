@@ -511,7 +511,7 @@
 ;;;184    				{
 ;;;185    					unCOM_SPI_ReadData[unValueIndex] = SPI_READ_RX(SPI);
 ;;;186    				}
-;;;187    				if (IS_COMM_RD(unCOM_SPI_ReadData[0]))
+;;;187    				if (IS_COMM_RD_CMD(unCOM_SPI_ReadData[0]))
 ;;;188    				{
 ;;;189    					tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
 ;;;190    				}
@@ -584,7 +584,7 @@
 0002b6  2804              CMP      r0,#4                 ;199
 0002b8  d3f6              BCC      |L1.680|
 ;;;202    				}
-;;;203    				if (IS_COMM_WR(unCOM_SPI_ReadData[0]))
+;;;203    				if (IS_COMM_WR_CMD(unCOM_SPI_ReadData[0]))
 0002ba  8818              LDRH     r0,[r3,#0]  ; unCOM_SPI_ReadData
 0002bc  0400              LSLS     r0,r0,#16
 0002be  d405              BMI      |L1.716|

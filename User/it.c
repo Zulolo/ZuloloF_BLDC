@@ -184,7 +184,7 @@ void SPI_IRQHandler(void)
 				{
 					unCOM_SPI_ReadData[unValueIndex] = SPI_READ_RX(SPI);
 				}
-				if (IS_COMM_RD(unCOM_SPI_ReadData[0]))
+				if (IS_COMM_RD_CMD(unCOM_SPI_ReadData[0]))
 				{
 					tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
 				}
@@ -200,7 +200,7 @@ void SPI_IRQHandler(void)
 				{
 					unCOM_SPI_ReadData[unValueIndex] = SPI_READ_RX(SPI);
 				}
-				if (IS_COMM_WR(unCOM_SPI_ReadData[0]))
+				if (IS_COMM_WR_CMD(unCOM_SPI_ReadData[0]))
 				{
 					tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
 				}
