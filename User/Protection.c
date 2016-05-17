@@ -41,10 +41,10 @@ void PTC_checkMotor(void)
 		if (IS_ANY_EEROR == TRUE)
 		{
 			BLDC_stopMotor();
-			while (1)
-			{
-				ERR_Manager();
-			}
+//			while (1)
+//			{
+//				ERR_Manager();
+//			}
 		}
 	}
     // Configure and enable Comperator 0 to monitor channel 0(current) input greater or euqal to 93

@@ -9747,10 +9747,10 @@ N		if (IS_ANY_EEROR == TRUE)
 X		if (((unErrorMaster == 0) ? (0) : (1)) == (1))
 N		{
 N			BLDC_stopMotor();
-N			while (1)
-N			{
-N				ERR_Manager();
-N			}
+N//			while (1)
+N//			{
+N//				ERR_Manager();
+N//			}
 N		}
 N	}
 N    // Configure and enable Comperator 0 to monitor channel 0(current) input greater or euqal to 93

@@ -15,7 +15,7 @@
         <TargetCommonOption>
           <Device>(Generic) Mini51 Series</Device>
           <Vendor>Nuvoton</Vendor>
-          <PackID>Nuvoton.NuMicro_DFP.1.0.2</PackID>
+          <PackID>Nuvoton.NuMicro_DFP.1.0.7</PackID>
           <PackURL>http://www.nuvoton.com/hq/enu/Documents/KEILSoftwarePack</PackURL>
           <Cpu>IROM(0x00000000,0x4000) IRAM(0x20000000,0x800) CPUTYPE("Cortex-M0") CLOCK(12000000)</Cpu>
           <FlashUtilSpec></FlashUtilSpec>

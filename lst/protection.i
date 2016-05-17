@@ -7531,10 +7531,10 @@ void PTC_checkMotor(void)
 		if (((unErrorMaster == 0) ? (0) : (1)) == (1))
 		{
 			BLDC_stopMotor();
-			while (1)
-			{
-				ERR_Manager();
-			}
+
+
+
+
 		}
 	}
     
