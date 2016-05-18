@@ -140,44 +140,22 @@
           <Name>UL2CM3(-S0 -C0 -P0 Nano100 Series$Flash\Nano100_AP_123.FLM))  -FN1 -FC800 -FD20000000 -FF0Mini51_AP_16 -FL04000 -FS00 -FP0($$Device:(Generic)</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
-      <Breakpoint>
-        <Bp>
-          <Number>0</Number>
-          <Type>0</Type>
-          <LineNumber>176</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>5640</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\User\it.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\template\User/it.c\176</Expression>
-        </Bp>
-      </Breakpoint>
+      <Breakpoint/>
       <WatchWindow1>
         <Ww>
           <count>0</count>
           <WinNumber>1</WinNumber>
-          <ItemText>mMotor.structMotor</ItemText>
+          <ItemText>tMotor</ItemText>
         </Ww>
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>iErrorMaster</ItemText>
+          <ItemText>unCOM_SPI_TransErrCNT</ItemText>
         </Ww>
         <Ww>
           <count>2</count>
           <WinNumber>1</WinNumber>
-          <ItemText>iEntreTime</ItemText>
-        </Ww>
-        <Ww>
-          <count>3</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>iLeaveTime</ItemText>
+          <ItemText>unValidFrameCNT</ItemText>
         </Ww>
       </WatchWindow1>
       <MemoryWindow1>
