@@ -9482,7 +9482,7 @@ N#define IS_COMM_RD_CMD(value)			(((value) & COMM_RW_CMD_MASK) == COMM_RW_CMD_MA
 N#define IS_COMM_WR_CMD(value)			(((value) & COMM_RW_CMD_MASK) == 0)
 N#define COMM_DATA_MASK						(0x7FFF)
 N#define COMM_GET_DATA(value)			((value) & COMM_DATA_MASK)
-N#define COMM_BAUT_RATE						5000000	// 5MHz
+N#define COMM_BAUT_RATE						1000000	// 5MHz
 N
 Ntypedef enum{
 N	MOTOR_MCR = 0,	/*!<  Motor Control  */

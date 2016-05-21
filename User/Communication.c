@@ -122,8 +122,9 @@ void COMM_Manager(void)
 			unCOM_SPI_TransErrCNT++;
 		}
 	}
-
-	// Comm protection 1: If have received some frame in 500ms, error
+	SPI_TRIGGER(SPI);
+	
+	// Comm protection 1: If have NOT received any frame in 500ms, error
 	if ((uint32_t)(unSystemTick - unLastCheckTime) > 500)
 	{
 		unLastCheckTime = unSystemTick;

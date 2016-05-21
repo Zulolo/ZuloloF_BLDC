@@ -10604,7 +10604,7 @@ N#define IS_COMM_RD_CMD(value)			(((value) & COMM_RW_CMD_MASK) == COMM_RW_CMD_MA
 N#define IS_COMM_WR_CMD(value)			(((value) & COMM_RW_CMD_MASK) == 0)
 N#define COMM_DATA_MASK						(0x7FFF)
 N#define COMM_GET_DATA(value)			((value) & COMM_DATA_MASK)
-N#define COMM_BAUT_RATE						5000000	// 5MHz
+N#define COMM_BAUT_RATE						1000000	// 5MHz
 N
 Ntypedef enum{
 N	MOTOR_MCR = 0,	/*!<  Motor Control  */
@@ -11106,24 +11106,29 @@ N    SPI_ClearTxFIFO(SPI);
 X    SPI_ClearTxFIFO(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 N    // peripheral clock frequency of slave device must be faster than the bus clock frequency of the master
 N    SPI_Open(SPI, SPI_SLAVE, SPI_MODE_0, COMM_BIT_LENTH, COMM_BAUT_RATE);
-X    SPI_Open(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), ((1ul << 18)), ((1ul << 2)), 16, 5000000);
+X    SPI_Open(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), ((1ul << 18)), ((1ul << 2)), 16, 1000000);
 N
 N    SPI_SET_MSB_FIRST(SPI);
 X    SPI_SET_MSB_FIRST(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 N
 N    // SS edge trigger
-N//    // Set input slave select signal to level-trigger
-N//    SPI->SSR |= SPI_SSR_SS_LTRIG_Msk;
-N//    // Set slave select signal SPISS to be active at Low-level.
-N//    SPI->SSR &= (~SPI_SSR_SS_LVL_Msk);
+N    // Set input slave select signal to edge-trigger
+N    SPI->SSR &= (~SPI_SSR_SS_LTRIG_Msk);
+X    ((SPI_T *) (((uint32_t)0x40000000) + 0x30000))->SSR &= (~(1ul << 4));
+N    // Set slave select signal SPISS to be active at Falling-level.
+N    SPI->SSR &= (~SPI_SSR_SS_LVL_Msk);
+X    ((SPI_T *) (((uint32_t)0x40000000) + 0x30000))->SSR &= (~(1ul << 2));
 N
 N    /* Use FIFO */
 N    SPI_EnableFIFO(SPI, COMM_FIFO_LENGTH, COMM_FIFO_LENGTH - 1);
 X    SPI_EnableFIFO(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 4, 4 - 1);
 N
-N    /* Enable SPI Receive FIFO interrupt (interrupt when FIFO count is 4) */
+N    /* Enable SPI unit transfer interrupt */
 N    SPI_EnableInt(SPI, SPI_IE_MASK);
 X    SPI_EnableInt(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), (0x01));
+N		
+N		SPI_TRIGGER(SPI);
+X		SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 N}
 N
 N//void ACMP_Config(void)

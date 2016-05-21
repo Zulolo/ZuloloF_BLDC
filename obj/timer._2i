@@ -1,7 +1,0 @@
--c --cpu Cortex-M0 -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I..\..\..\Library\CMSIS\Include -I..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I..\..\..\Library\StdDriver\inc -I.\StdDriver\inc -I.\CMSIS
--I G:\Geek\Projects\Zulolo_F\Force\Code\Zulolo_F_Force\RTE
--I D:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.0.2\Device\Mini51\Include
--I D:\Keil_v5\ARM\CMSIS\Include
--I \
-
--o .\obj\timer.o --list_dir ".\\lst\\" --list --omf_browse .\obj\timer.crf --depend .\obj\timer.d --feedback ".\obj\template.fed" "StdDriver\src\timer.c"

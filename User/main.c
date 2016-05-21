@@ -221,16 +221,18 @@ void configSPI(void)
     SPI_SET_MSB_FIRST(SPI);
 
     // SS edge trigger
-//    // Set input slave select signal to level-trigger
-//    SPI->SSR |= SPI_SSR_SS_LTRIG_Msk;
-//    // Set slave select signal SPISS to be active at Low-level.
-//    SPI->SSR &= (~SPI_SSR_SS_LVL_Msk);
+    // Set input slave select signal to edge-trigger
+    SPI->SSR &= (~SPI_SSR_SS_LTRIG_Msk);
+    // Set slave select signal SPISS to be active at Falling-level.
+    SPI->SSR &= (~SPI_SSR_SS_LVL_Msk);
 
     /* Use FIFO */
     SPI_EnableFIFO(SPI, COMM_FIFO_LENGTH, COMM_FIFO_LENGTH - 1);
 
-    /* Enable SPI Receive FIFO interrupt (interrupt when FIFO count is 4) */
+    /* Enable SPI unit transfer interrupt */
     SPI_EnableInt(SPI, SPI_IE_MASK);
+		
+		SPI_TRIGGER(SPI);
 }
 
 //void ACMP_Config(void)

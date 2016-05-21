@@ -48,10 +48,10 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\obj\</OutputDirectory>
-          <OutputName>template</OutputName>
+          <OutputName>Power</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>0</CreateHexFile>
+          <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
           <ListingPath>.\lst\</ListingPath>
@@ -373,22 +373,7 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>CMSIS</GroupName>
-          <Files>
-            <File>
-              <FileName>system_Mini51Series.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\CMSIS\system_Mini51Series.c</FilePath>
-            </File>
-            <File>
-              <FileName>startup_Mini51Series.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>.\CMSIS\startup_Mini51Series.s</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Library</GroupName>
+          <GroupName>StdDriver</GroupName>
           <Files>
             <File>
               <FileName>adc.c</FileName>
@@ -484,6 +469,21 @@
               <FileName>Protection.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\User\Protection.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>CMSIS</GroupName>
+          <Files>
+            <File>
+              <FileName>system_Mini51Series.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\CMSIS\system_Mini51Series.c</FilePath>
+            </File>
+            <File>
+              <FileName>startup_Mini51Series.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\CMSIS\startup_Mini51Series.s</FilePath>
             </File>
           </Files>
         </Group>

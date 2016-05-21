@@ -110,7 +110,7 @@
 #define IS_COMM_WR_CMD(value)			(((value) & COMM_RW_CMD_MASK) == 0)
 #define COMM_DATA_MASK						(0x7FFF)
 #define COMM_GET_DATA(value)			((value) & COMM_DATA_MASK)
-#define COMM_BAUT_RATE						5000000	// 5MHz
+#define COMM_BAUT_RATE						1000000	// 5MHz
 
 typedef enum{
 	MOTOR_MCR = 0,	/*!<  Motor Control  */

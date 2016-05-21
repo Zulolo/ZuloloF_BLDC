@@ -9490,7 +9490,7 @@ S#define IS_COMM_RD_CMD(value)			(((value) & COMM_RW_CMD_MASK) == COMM_RW_CMD_MA
 S#define IS_COMM_WR_CMD(value)			(((value) & COMM_RW_CMD_MASK) == 0)
 S#define COMM_DATA_MASK						(0x7FFF)
 S#define COMM_GET_DATA(value)			((value) & COMM_DATA_MASK)
-S#define COMM_BAUT_RATE						5000000	// 5MHz
+S#define COMM_BAUT_RATE						1000000	// 5MHz
 S
 Stypedef enum{
 S	MOTOR_MCR = 0,	/*!<  Motor Control  */
@@ -9761,7 +9761,7 @@ N#define IS_COMM_RD_CMD(value)			(((value) & COMM_RW_CMD_MASK) == COMM_RW_CMD_MA
 N#define IS_COMM_WR_CMD(value)			(((value) & COMM_RW_CMD_MASK) == 0)
 N#define COMM_DATA_MASK						(0x7FFF)
 N#define COMM_GET_DATA(value)			((value) & COMM_DATA_MASK)
-N#define COMM_BAUT_RATE						5000000	// 5MHz
+N#define COMM_BAUT_RATE						1000000	// 5MHz
 N
 Ntypedef enum{
 N	MOTOR_MCR = 0,	/*!<  Motor Control  */
@@ -10470,8 +10470,10 @@ N		{
 N			unCOM_SPI_TransErrCNT++;
 N		}
 N	}
-N
-N	// Comm protection 1: If have received some frame in 500ms, error
+N	SPI_TRIGGER(SPI);
+X	SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+N	
+N	// Comm protection 1: If have NOT received any frame in 500ms, error
 N	if ((uint32_t)(unSystemTick - unLastCheckTime) > 500)
 N	{
 N		unLastCheckTime = unSystemTick;

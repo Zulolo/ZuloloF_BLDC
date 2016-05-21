@@ -8627,21 +8627,23 @@ void configSPI(void)
     SPI_ClearRxFIFO(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
     SPI_ClearTxFIFO(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
     
-    SPI_Open(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), ((1ul << 18)), ((1ul << 2)), 16, 5000000);
+    SPI_Open(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), ((1ul << 18)), ((1ul << 2)), 16, 1000000);
 
     SPI_SET_MSB_FIRST(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 
     
-
-
-
-
+    
+    ((SPI_T *) (((uint32_t)0x40000000) + 0x30000))->SSR &= (~(1ul << 4));
+    
+    ((SPI_T *) (((uint32_t)0x40000000) + 0x30000))->SSR &= (~(1ul << 2));
 
      
     SPI_EnableFIFO(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 4, 4 - 1);
 
      
     SPI_EnableInt(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), (0x01));
+		
+		SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 }
 
 
