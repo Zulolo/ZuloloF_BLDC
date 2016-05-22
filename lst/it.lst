@@ -9876,6 +9876,7 @@ N    ADC_CLR_INT_FLAG(ADC, iADC_ComparatorFlag);
 X    (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADSR = (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADSR & ~((1ul << 0) | (1ul << 1) | (1ul << 2))) | (iADC_ComparatorFlag));
 N}
 N
+Nextern uint32_t unValidFrameCNT;
 Nvoid SPI_IRQHandler(void)
 N{
 N	static uint8_t unValueIndex;
@@ -9886,16 +9887,19 @@ N	{
 N		if (tMotor.structMotor.MSR.bNewComFrameReceived == FALSE)
 X		if (tMotor.structMotor.MSR.bNewComFrameReceived == (0))
 N		{
+N			unValidFrameCNT = SPI_GET_RX_FIFO_COUNT(SPI);
+X			unValidFrameCNT = SPI_GET_RX_FIFO_COUNT(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 N			if (SPI_GET_RX_FIFO_COUNT(SPI) == COMM_RD_CMD_CNT)
 X			if (SPI_GET_RX_FIFO_COUNT(((SPI_T *) (((uint32_t)0x40000000) + 0x30000))) == 2)
 N			{
-N				// Received 4 uint16, copy to RAM buffer and infor communication manager
+N				// Received 2 uint16, copy to RAM buffer and infor communication manager
 N				for (unValueIndex = 0; unValueIndex < COMM_RD_CMD_CNT; unValueIndex++)
 X				for (unValueIndex = 0; unValueIndex < 2; unValueIndex++)
 N				{
 N					unCOM_SPI_ReadData[unValueIndex] = SPI_READ_RX(SPI);
 X					unCOM_SPI_ReadData[unValueIndex] = SPI_READ_RX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 N				}
+N
 N				if (IS_COMM_RD_CMD(unCOM_SPI_ReadData[0]))
 X				if ((((unCOM_SPI_ReadData[0]) & (0x8000)) == (0x8000)))
 N				{
@@ -9932,6 +9936,8 @@ N			else
 N			{
 N				unCOM_SPI_TransErrCNT++;
 N			}
+N//			SPI_ClearRxFIFO(SPI);
+N//			SPI_ClearTxFIFO(SPI);
 N		}
 N		else
 N		{
@@ -9939,10 +9945,8 @@ N			unCOM_SPI_TransErrCNT++;
 N		}
 N		// Clear Receive FIFO interrupt
 N		// I don't know how to clear. Maybe just after I read out the data in FIFO and it is below threshold it will be OK
-N		SPI_ClearRxFIFO(SPI);
-X		SPI_ClearRxFIFO(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-N		SPI_ClearTxFIFO(SPI);
-X		SPI_ClearTxFIFO(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+N//		SPI_ClearRxFIFO(SPI);
+N//		SPI_ClearTxFIFO(SPI);
 N	}
 N	else
 N	{	// Receive FIFO interrupt should be the only interrupt enabled for SPI

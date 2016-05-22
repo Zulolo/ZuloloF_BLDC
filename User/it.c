@@ -169,6 +169,7 @@ void ADC_IRQHandler(void)
     ADC_CLR_INT_FLAG(ADC, iADC_ComparatorFlag);
 }
 
+extern uint32_t unValidFrameCNT;
 void SPI_IRQHandler(void)
 {
 	static uint8_t unValueIndex;
@@ -177,13 +178,15 @@ void SPI_IRQHandler(void)
 	{
 		if (tMotor.structMotor.MSR.bNewComFrameReceived == FALSE)
 		{
+			unValidFrameCNT = SPI_GET_RX_FIFO_COUNT(SPI);
 			if (SPI_GET_RX_FIFO_COUNT(SPI) == COMM_RD_CMD_CNT)
 			{
-				// Received 4 uint16, copy to RAM buffer and infor communication manager
+				// Received 2 uint16, copy to RAM buffer and infor communication manager
 				for (unValueIndex = 0; unValueIndex < COMM_RD_CMD_CNT; unValueIndex++)
 				{
 					unCOM_SPI_ReadData[unValueIndex] = SPI_READ_RX(SPI);
 				}
+
 				if (IS_COMM_RD_CMD(unCOM_SPI_ReadData[0]))
 				{
 					tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
@@ -213,6 +216,8 @@ void SPI_IRQHandler(void)
 			{
 				unCOM_SPI_TransErrCNT++;
 			}
+//			SPI_ClearRxFIFO(SPI);
+//			SPI_ClearTxFIFO(SPI);
 		}
 		else
 		{
@@ -220,8 +225,8 @@ void SPI_IRQHandler(void)
 		}
 		// Clear Receive FIFO interrupt
 		// I don't know how to clear. Maybe just after I read out the data in FIFO and it is below threshold it will be OK
-		SPI_ClearRxFIFO(SPI);
-		SPI_ClearTxFIFO(SPI);
+//		SPI_ClearRxFIFO(SPI);
+//		SPI_ClearTxFIFO(SPI);
 	}
 	else
 	{	// Receive FIFO interrupt should be the only interrupt enabled for SPI

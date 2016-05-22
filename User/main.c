@@ -15,62 +15,64 @@
 
 void initClk()
 {
-    /* Enable internal 22.1184MHz */
-    CLK->PWRCON |= CLK_PWRCON_IRC22M_EN_Msk;
+	/* Enable internal 22.1184MHz */
+	CLK->PWRCON |= CLK_PWRCON_IRC22M_EN_Msk;
 
-    /* Waiting for clock ready */
-    CLK_WaitClockReady(CLK_CLKSTATUS_IRC22M_STB_Msk);
+	/* Waiting for clock ready */
+	CLK_WaitClockReady(CLK_CLKSTATUS_IRC22M_STB_Msk);
 
-    // Configure HCLK to use 22.1184MHz HIRC and div by 1
-    CLK_SetHCLK(CLK_CLKSEL0_HCLK_S_IRC22M, CLK_CLKDIV_HCLK(1));
-//	CLK_DisableXtalRC(CLK_PWRCON_XTLCLK_EN_Msk);
+	// Configure HCLK to use 22.1184MHz HIRC and div by 1
+	CLK_SetHCLK(CLK_CLKSEL0_HCLK_S_IRC22M, CLK_CLKDIV_HCLK(1));
+	//	CLK_DisableXtalRC(CLK_PWRCON_XTLCLK_EN_Msk);
 
-    // Configure SysTick to use HIRC
-//	SetSysTickClockSrc(CLK_CLKSEL0_STCLK_S_IRC22M_DIV2);
+	// Configure SysTick to use HIRC
+	CLK_SetSysTickClockSrc(CLK_CLKSEL0_STCLK_S_IRC22M_DIV2);
 
-//    CLK_SetSysTickClockSrc(CLK_CLKSEL0_STCLK_S_HCLK_DIV2);
-    CLK_SetModuleClock(WDT_MODULE, CLK_CLKSEL1_WDT_S_HCLK_DIV2048, WHAT_EVER_DO_NOT_CARE);
-    CLK_SetModuleClock(ADC_MODULE, CLK_CLKSEL1_ADC_S_IRC22M, CLK_CLKDIV_ADC(ADC_CLK_DIVIDER));
-    CLK_SetModuleClock(PWM01_MODULE, CLK_CLKSEL1_PWM01_S_HCLK, WHAT_EVER_DO_NOT_CARE);
-    CLK_SetModuleClock(PWM23_MODULE, CLK_CLKSEL1_PWM23_S_HCLK, WHAT_EVER_DO_NOT_CARE);
-    CLK_SetModuleClock(PWM45_MODULE, CLK_CLKSEL2_PWM45_S_HCLK, WHAT_EVER_DO_NOT_CARE);
-    CLK_SetModuleClock(UART_MODULE, CLK_CLKSEL1_UART_S_IRC22M, CLK_CLKDIV_UART(UART_CLK_DIVIDER));
-    CLK_SetModuleClock(TMR0_MODULE, CLK_CLKSEL1_TMR0_S_HCLK , WHAT_EVER_DO_NOT_CARE);
-    CLK_SetModuleClock(TMR1_MODULE, CLK_CLKSEL1_TMR1_S_HCLK , WHAT_EVER_DO_NOT_CARE);
-    CLK_SetModuleClock(SPI_MODULE, CLK_CLKSEL1_SPI_S_HCLK  , WHAT_EVER_DO_NOT_CARE);
+	//    CLK_SetSysTickClockSrc(CLK_CLKSEL0_STCLK_S_HCLK_DIV2);
+	CLK_SetModuleClock(WDT_MODULE, CLK_CLKSEL1_WDT_S_HCLK_DIV2048, WHAT_EVER_DO_NOT_CARE);
+	CLK_SetModuleClock(ADC_MODULE, CLK_CLKSEL1_ADC_S_IRC22M, CLK_CLKDIV_ADC(ADC_CLK_DIVIDER));
+	CLK_SetModuleClock(PWM01_MODULE, CLK_CLKSEL1_PWM01_S_HCLK, WHAT_EVER_DO_NOT_CARE);
+	CLK_SetModuleClock(PWM23_MODULE, CLK_CLKSEL1_PWM23_S_HCLK, WHAT_EVER_DO_NOT_CARE);
+	CLK_SetModuleClock(PWM45_MODULE, CLK_CLKSEL2_PWM45_S_HCLK, WHAT_EVER_DO_NOT_CARE);
+	CLK_SetModuleClock(UART_MODULE, CLK_CLKSEL1_UART_S_IRC22M, CLK_CLKDIV_UART(UART_CLK_DIVIDER));
+	CLK_SetModuleClock(TMR0_MODULE, CLK_CLKSEL1_TMR0_S_HCLK , WHAT_EVER_DO_NOT_CARE);
+	CLK_SetModuleClock(TMR1_MODULE, CLK_CLKSEL1_TMR1_S_HCLK , WHAT_EVER_DO_NOT_CARE);
+//	CLK_SetModuleClock(SPI_MODULE, CLK_CLKSEL1_SPI_S_HCLK  , WHAT_EVER_DO_NOT_CARE);
+	CLK->CLKSEL1 |= (0x01 << 4);
 
-    // Nai nai de seems can not use | | | to put all peripheral enable into one invoke
-    CLK_EnableModuleClock(WDT_MODULE);
-    CLK_EnableModuleClock(TMR0_MODULE);
-    CLK_EnableModuleClock(TMR1_MODULE);
-    CLK_EnableModuleClock(SPI_MODULE);
-    CLK_EnableModuleClock(UART_MODULE);
-    CLK_EnableModuleClock(PWM01_MODULE);
-    CLK_EnableModuleClock(PWM23_MODULE);
-    CLK_EnableModuleClock(PWM45_MODULE);
-    CLK_EnableModuleClock(ADC_MODULE);
-    CLK_EnableModuleClock(ACMP_MODULE);
+	// Nai nai de seems can not use | | | to put all peripheral enable into one invoke
+	CLK_EnableModuleClock(WDT_MODULE);
+	CLK_EnableModuleClock(TMR0_MODULE);
+	CLK_EnableModuleClock(TMR1_MODULE);
+	CLK_EnableModuleClock(SPI_MODULE);
+	CLK_EnableModuleClock(UART_MODULE);
+	CLK_EnableModuleClock(PWM01_MODULE);
+	CLK_EnableModuleClock(PWM23_MODULE);
+	CLK_EnableModuleClock(PWM45_MODULE);
+	CLK_EnableModuleClock(ADC_MODULE);
+	CLK_EnableModuleClock(ACMP_MODULE);
+//	CLK->APBCLK |= (0x01 << 12);
 }
 
 void initIRQ()
 {
-    NVIC_EnableIRQ(TMR0_IRQn);
-    NVIC_EnableIRQ(TMR1_IRQn);
-    NVIC_EnableIRQ(SPI_IRQn);
-    NVIC_EnableIRQ(ACMP_IRQn);
-    NVIC_EnableIRQ(EINT0_IRQn);
-    NVIC_EnableIRQ(ADC_IRQn);
-//    NVIC_EnableIRQ(PWM_IRQn);
+	NVIC_EnableIRQ(TMR0_IRQn);
+	NVIC_EnableIRQ(TMR1_IRQn);
+	NVIC_EnableIRQ(SPI_IRQn);
+	NVIC_EnableIRQ(ACMP_IRQn);
+	NVIC_EnableIRQ(EINT0_IRQn);
+	NVIC_EnableIRQ(ADC_IRQn);
+	//    NVIC_EnableIRQ(PWM_IRQn);
 
-    NVIC_SetPriority(TMR0_IRQn, 1);
-    NVIC_SetPriority(TMR1_IRQn, 1);
-    NVIC_SetPriority(SPI_IRQn, 3);
-    NVIC_SetPriority(ACMP_IRQn, 2);
-    NVIC_SetPriority(EINT0_IRQn, 0);
-    NVIC_SetPriority(ADC_IRQn, 3);
-//    NVIC_SetPriority(PWM_IRQn, 2);
+	NVIC_SetPriority(TMR0_IRQn, 1);
+	NVIC_SetPriority(TMR1_IRQn, 1);
+	NVIC_SetPriority(SPI_IRQn, 3);
+	NVIC_SetPriority(ACMP_IRQn, 2);
+	NVIC_SetPriority(EINT0_IRQn, 0);
+	NVIC_SetPriority(ADC_IRQn, 3);
+	//    NVIC_SetPriority(PWM_IRQn, 2);
 
-    GPIO_EnableEINT0(BRG_FAULT_PORT, BRG_FAULT_PIN, GPIO_INT_FALLING);
+	GPIO_EnableEINT0(BRG_FAULT_PORT, BRG_FAULT_PIN, GPIO_INT_FALLING);
 }
 
 void initGPIO()
@@ -94,8 +96,8 @@ void initGPIO()
     GPIO_SetMode(MOSFET_DRV_5_PORT, MOSFET_DRV_5_PIN, GPIO_PMD_OUTPUT);
 
     // SPI, I am slave
-    GPIO_SetMode(COMM_PORT, COMM_CLK_PIN | COMM_CS_PIN | COMM_RX_PIN, GPIO_PMD_INPUT);
-    GPIO_SetMode(COMM_PORT, COMM_TX_PIN, GPIO_PMD_OUTPUT);
+//    GPIO_SetMode(COMM_PORT, COMM_CLK_PIN | COMM_CS_PIN | COMM_RX_PIN, GPIO_PMD_INPUT);
+//    GPIO_SetMode(COMM_PORT, COMM_TX_PIN, GPIO_PMD_OUTPUT);
 
     // UART Pin
     GPIO_SetMode(DEBUG_TX_PORT, DEBUG_TX_PIN, GPIO_PMD_OUTPUT);
@@ -103,8 +105,8 @@ void initGPIO()
 
     // DEBUG for ACMP Output Pin
     GPIO_SetMode(DEBUG_ACMP_OUT_PORT, DEBUG_ACMP_OUT_PIN, GPIO_PMD_OUTPUT);
-	GPIO_SetMode(DEBUG_GPIO_PORT, DEBUG_GPIO_PIN, GPIO_PMD_OUTPUT);
-	P50 = 0;
+		GPIO_SetMode(DEBUG_GPIO_PORT, DEBUG_GPIO_PIN, GPIO_PMD_OUTPUT);
+		P50 = 0;
 
     // ADC for current Pin
     GPIO_DISABLE_DIGITAL_PATH(CURRENT_PORT, CURRENT_PIN << GPIO_OFFD_OFF_SET);
@@ -128,7 +130,7 @@ void initGPIO()
     SYS->P1_MFP |= SYS_MFP_P12_RXD; 
 	 
 	/* Set multi-function pins for SPI */
-    SYS->P0_MFP &= ~(SYS_MFP_P01_Msk | SYS_MFP_P05_Msk | SYS_MFP_P06_Msk | SYS_MFP_P07_Msk);
+//    SYS->P0_MFP &= ~(SYS_MFP_P01_Msk | SYS_MFP_P05_Msk | SYS_MFP_P06_Msk | SYS_MFP_P07_Msk);
     SYS->P0_MFP |= (SYS_MFP_P01_SPISS | SYS_MFP_P05_MOSI | SYS_MFP_P06_MISO | SYS_MFP_P07_SPICLK); 
 
 	/* Set multi-function pins for ADC for current */
@@ -218,6 +220,9 @@ void configSPI(void)
     // peripheral clock frequency of slave device must be faster than the bus clock frequency of the master
     SPI_Open(SPI, SPI_SLAVE, SPI_MODE_0, COMM_BIT_LENTH, COMM_BAUT_RATE);
 
+//	  /* Enable the automatic hardware slave select function. Select the SS pin and configure as low-active. */
+//    SPI_EnableAutoSS(SPI, SPI_SS, SPI_SS_ACTIVE_LOW);
+	
     SPI_SET_MSB_FIRST(SPI);
 
     // SS edge trigger
@@ -231,8 +236,6 @@ void configSPI(void)
 
     /* Enable SPI unit transfer interrupt */
     SPI_EnableInt(SPI, SPI_IE_MASK);
-		
-		SPI_TRIGGER(SPI);
 }
 
 //void ACMP_Config(void)

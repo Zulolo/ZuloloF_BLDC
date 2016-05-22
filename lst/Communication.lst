@@ -10470,8 +10470,6 @@ N		{
 N			unCOM_SPI_TransErrCNT++;
 N		}
 N	}
-N	SPI_TRIGGER(SPI);
-X	SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 N	
 N	// Comm protection 1: If have NOT received any frame in 500ms, error
 N	if ((uint32_t)(unSystemTick - unLastCheckTime) > 500)

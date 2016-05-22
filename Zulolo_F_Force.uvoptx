@@ -144,9 +144,9 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>176</LineNumber>
+          <LineNumber>177</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>5668</Address>
+          <Address>5532</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -155,14 +155,14 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>.\User\it.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\template\User/it.c\176</Expression>
+          <Expression>\\Power\User/it.c\177</Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>173</LineNumber>
+          <LineNumber>174</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>5666</Address>
+          <Address>5530</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -171,7 +171,7 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>.\User\it.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\template\User/it.c\173</Expression>
+          <Expression>\\Power\User/it.c\174</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -183,7 +183,17 @@
         <Ww>
           <count>1</count>
           <WinNumber>1</WinNumber>
-          <ItemText>unCOM_SPI_TransErrCNT</ItemText>
+          <ItemText>unValidFrameCNT</ItemText>
+        </Ww>
+        <Ww>
+          <count>2</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>SPI</ItemText>
+        </Ww>
+        <Ww>
+          <count>3</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>unCOM_SPI_ReadData</ItemText>
         </Ww>
       </WatchWindow1>
       <MemoryWindow1>
@@ -200,7 +210,7 @@
       <DebugFlag>
         <trace>0</trace>
         <periodic>1</periodic>
-        <aLwin>1</aLwin>
+        <aLwin>0</aLwin>
         <aCover>0</aCover>
         <aSer1>0</aSer1>
         <aSer2>0</aSer2>

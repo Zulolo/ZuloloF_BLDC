@@ -8426,62 +8426,64 @@ volatile uint32_t unSystemTick = 0;
 
 void initClk()
 {
-     
-    ((CLK_T *) (((uint32_t)0x50000000) + 0x00200))->PWRCON |= (1ul << 2);
+	 
+	((CLK_T *) (((uint32_t)0x50000000) + 0x00200))->PWRCON |= (1ul << 2);
 
-     
-    CLK_WaitClockReady((1ul << 4));
+	 
+	CLK_WaitClockReady((1ul << 4));
 
-    
-    CLK_SetHCLK(0x07UL, ((1)-1));
+	
+	CLK_SetHCLK(0x07UL, ((1)-1));
+	
 
+	
+	CLK_SetSysTickClockSrc(0x38UL);
 
-    
+	
+	CLK_SetModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|( 0<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|0 ), 0x00000002UL, 1);
+	CLK_SetModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|( 2<<20)|(0x0<<18)|(0xFF<<10)|(16<<5)|28), 0x0000000CUL, (((221)-1) << 16));
+	CLK_SetModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|(28<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|20), 0x20000000UL, 1);
+	CLK_SetModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|(30<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|21), 0x80000000UL, 1);
+	CLK_SetModuleClock(((0x0<<31)|(0x3<<29)|(0x3<<25)|( 4<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|22), 0x00000020UL, 1);
+	CLK_SetModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|(24<<20)|(0x0<<18)|(0x0F<<10)|( 8<<5)|16), 0x02000000UL, (((1)-1) << 8));
+	CLK_SetModuleClock(((0x0<<31)|(0x1<<29)|(0x7<<25)|( 8<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|2), 0x00000200UL , 1);
+	CLK_SetModuleClock(((0x0<<31)|(0x1<<29)|(0x7<<25)|(12<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|3), 0x00002000UL , 1);
 
+	((CLK_T *) (((uint32_t)0x50000000) + 0x00200))->CLKSEL1 |= (0x01 << 4);
 
+	
+	CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|( 0<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|0 ));
+	CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x7<<25)|( 8<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|2));
+	CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x7<<25)|(12<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|3));
+	CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x1<<25)|( 4<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|12));
+	CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|(24<<20)|(0x0<<18)|(0x0F<<10)|( 8<<5)|16));
+	CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|(28<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|20));
+	CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|(30<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|21));
+	CLK_EnableModuleClock(((0x0<<31)|(0x3<<29)|(0x3<<25)|( 4<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|22));
+	CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|( 2<<20)|(0x0<<18)|(0xFF<<10)|(16<<5)|28));
+	CLK_EnableModuleClock(((0x0<<31)|(0x3<<29)|(0x0<<25)|(31<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|30));
 
-    CLK_SetModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|( 0<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|0 ), 0x00000002UL, 1);
-    CLK_SetModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|( 2<<20)|(0x0<<18)|(0xFF<<10)|(16<<5)|28), 0x0000000CUL, (((221)-1) << 16));
-    CLK_SetModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|(28<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|20), 0x20000000UL, 1);
-    CLK_SetModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|(30<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|21), 0x80000000UL, 1);
-    CLK_SetModuleClock(((0x0<<31)|(0x3<<29)|(0x3<<25)|( 4<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|22), 0x00000020UL, 1);
-    CLK_SetModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|(24<<20)|(0x0<<18)|(0x0F<<10)|( 8<<5)|16), 0x02000000UL, (((1)-1) << 8));
-    CLK_SetModuleClock(((0x0<<31)|(0x1<<29)|(0x7<<25)|( 8<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|2), 0x00000200UL , 1);
-    CLK_SetModuleClock(((0x0<<31)|(0x1<<29)|(0x7<<25)|(12<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|3), 0x00002000UL , 1);
-    CLK_SetModuleClock(((0x0<<31)|(0x1<<29)|(0x1<<25)|( 4<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|12), 0x00000001UL  , 1);
-
-    
-    CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|( 0<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|0 ));
-    CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x7<<25)|( 8<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|2));
-    CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x7<<25)|(12<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|3));
-    CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x1<<25)|( 4<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|12));
-    CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|(24<<20)|(0x0<<18)|(0x0F<<10)|( 8<<5)|16));
-    CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|(28<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|20));
-    CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|(30<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|21));
-    CLK_EnableModuleClock(((0x0<<31)|(0x3<<29)|(0x3<<25)|( 4<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|22));
-    CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|( 2<<20)|(0x0<<18)|(0xFF<<10)|(16<<5)|28));
-    CLK_EnableModuleClock(((0x0<<31)|(0x3<<29)|(0x0<<25)|(31<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|30));
 }
 
 void initIRQ()
 {
-    NVIC_EnableIRQ(TMR0_IRQn);
-    NVIC_EnableIRQ(TMR1_IRQn);
-    NVIC_EnableIRQ(SPI_IRQn);
-    NVIC_EnableIRQ(ACMP_IRQn);
-    NVIC_EnableIRQ(EINT0_IRQn);
-    NVIC_EnableIRQ(ADC_IRQn);
+	NVIC_EnableIRQ(TMR0_IRQn);
+	NVIC_EnableIRQ(TMR1_IRQn);
+	NVIC_EnableIRQ(SPI_IRQn);
+	NVIC_EnableIRQ(ACMP_IRQn);
+	NVIC_EnableIRQ(EINT0_IRQn);
+	NVIC_EnableIRQ(ADC_IRQn);
+	
 
+	NVIC_SetPriority(TMR0_IRQn, 1);
+	NVIC_SetPriority(TMR1_IRQn, 1);
+	NVIC_SetPriority(SPI_IRQn, 3);
+	NVIC_SetPriority(ACMP_IRQn, 2);
+	NVIC_SetPriority(EINT0_IRQn, 0);
+	NVIC_SetPriority(ADC_IRQn, 3);
+	
 
-    NVIC_SetPriority(TMR0_IRQn, 1);
-    NVIC_SetPriority(TMR1_IRQn, 1);
-    NVIC_SetPriority(SPI_IRQn, 3);
-    NVIC_SetPriority(ACMP_IRQn, 2);
-    NVIC_SetPriority(EINT0_IRQn, 0);
-    NVIC_SetPriority(ADC_IRQn, 3);
-
-
-    GPIO_EnableInt(((GPIO_T *) (((uint32_t)0x50000000) + 0x040C0)), (0x00000004), 0x00000001UL);
+	GPIO_EnableInt(((GPIO_T *) (((uint32_t)0x50000000) + 0x040C0)), (0x00000004), 0x00000001UL);
 }
 
 void initGPIO()
@@ -8505,8 +8507,8 @@ void initGPIO()
     GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000010), 0x1UL);
 
     
-    GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000080) | (0x00000002) | (0x00000020), 0x0UL);
-    GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000040), 0x1UL);
+
+
 
     
     GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000001), 0x1UL);
@@ -8514,8 +8516,8 @@ void initGPIO()
 
     
     GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x040C0)), (0x00000040), 0x1UL);
-	GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04140)), (0x00000001), 0x1UL);
-	(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(5))) + ((0)<<2)))) = 0;
+		GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04140)), (0x00000001), 0x1UL);
+		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(5))) + ((0)<<2)))) = 0;
 
     
     ((((GPIO_T *) (((uint32_t)0x50000000) + 0x04140)))->OFFD |= (0x00000008) << 16);
@@ -8539,7 +8541,7 @@ void initGPIO()
     ((GCR_T *) (((uint32_t)0x50000000) + 0x00000))->P1_MFP |= 0x00000400UL; 
 	 
 	 
-    ((GCR_T *) (((uint32_t)0x50000000) + 0x00000))->P0_MFP &= ~(0x02000202UL | 0x00002020UL | 0x00004040UL | 0x00008080UL);
+
     ((GCR_T *) (((uint32_t)0x50000000) + 0x00000))->P0_MFP |= (0x00000002UL | 0x00002000UL | 0x00004000UL | 0x00008000UL); 
 
 	 
@@ -8629,6 +8631,9 @@ void configSPI(void)
     
     SPI_Open(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), ((1ul << 18)), ((1ul << 2)), 16, 1000000);
 
+
+
+	
     SPI_SET_MSB_FIRST(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 
     
@@ -8642,8 +8647,6 @@ void configSPI(void)
 
      
     SPI_EnableInt(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), (0x01));
-		
-		SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 }
 
 

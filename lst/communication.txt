@@ -17,7 +17,7 @@
 ;;;44         {
 ;;;45         	nIndex = unCRCLo ^ (*pData);
 ;;;46             unCRCLo = (uint8_t)(unCRCHi ^ CRC_HIGH_FACTOR[nIndex]);
-000002  4d54              LDR      r5,|L1.340|
+000002  4d52              LDR      r5,|L1.332|
 000004  23ff              MOVS     r3,#0xff              ;39
 ;;;47             unCRCHi = CRC_LOW_FACTOR[nIndex];
 000006  1dee              ADDS     r6,r5,#7
@@ -57,10 +57,10 @@
 000032  d20e              BCS      |L1.82|
 ;;;55     	{
 ;;;56     		SPI_WRITE_TX(SPI, tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])]);
-000034  4a48              LDR      r2,|L1.344|
+000034  4a46              LDR      r2,|L1.336|
 000036  0049              LSLS     r1,r1,#1
 000038  5a51              LDRH     r1,[r2,r1]
-00003a  4c48              LDR      r4,|L1.348|
+00003a  4c46              LDR      r4,|L1.340|
 00003c  6221              STR      r1,[r4,#0x20]
 ;;;57     		SPI_WRITE_TX(SPI, CRC16((uint8_t*)(&(tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])])), 1));
 00003e  8800              LDRH     r0,[r0,#0]
@@ -98,7 +98,7 @@
 ;;;70     	case COMM_WRITE_MOTOR_NEED_TO_RUN:
 ;;;71     	case COMM_WRITE_ROTATE_DIRECTION:
 ;;;72     		tMotor.structMotor.MCR.bMotorNeedToRun = pCOM_Buff[1];
-000060  493d              LDR      r1,|L1.344|
+000060  493b              LDR      r1,|L1.336|
 000062  0013              MOVS     r3,r2                 ;68
 000064  f7fffffe          BL       __ARM_common_switch8
 000068  08210505          DCB      0x08,0x21,0x05,0x05
@@ -170,11 +170,11 @@
 ;;;100    	static uint32_t unLastCheckTime = 0;
 ;;;101    	// All transactions are handled in interrupt
 ;;;102    	if (tMotor.structMotor.MSR.bNewComFrameReceived == TRUE)
-0000b2  4929              LDR      r1,|L1.344|
+0000b2  4927              LDR      r1,|L1.336|
 0000b4  8848              LDRH     r0,[r1,#2]  ; tMotor
 ;;;103    	{
 ;;;104    		memcpy(unCOM_Buff, unCOM_SPI_ReadData, COMM_FIFO_LENGTH);
-0000b6  4c2a              LDR      r4,|L1.352|
+0000b6  4c28              LDR      r4,|L1.344|
 0000b8  06c0              LSLS     r0,r0,#27             ;102
 0000ba  d528              BPL      |L1.270|
 0000bc  8b20              LDRH     r0,[r4,#0x18]  ; unCOM_SPI_ReadData
@@ -195,7 +195,7 @@
                   |L1.214|
 0000d6  2103              MOVS     r1,#3
                   |L1.216|
-0000d8  4821              LDR      r0,|L1.352|
+0000d8  481f              LDR      r0,|L1.344|
 0000da  3010              ADDS     r0,r0,#0x10
 0000dc  f7fffffe          BL       CRC16
 0000e0  8829              LDRH     r1,[r5,#0]  ; unCOM_Buff
@@ -223,7 +223,7 @@
 ;;;115    			else
 ;;;116    			{
 ;;;117    				nWriteCommandHandler(unCOM_Buff);
-0000f8  481a              LDR      r0,|L1.356|
+0000f8  4818              LDR      r0,|L1.348|
 0000fa  d002              BEQ      |L1.258|
 0000fc  f7fffffe          BL       nReadCommandHandler
 000100  e005              B        |L1.270|
@@ -240,75 +240,70 @@
 00010a  1c40              ADDS     r0,r0,#1
 00010c  60e0              STR      r0,[r4,#0xc]  ; unCOM_SPI_TransErrCNT
                   |L1.270|
-00010e  4913              LDR      r1,|L1.348|
-000110  6808              LDR      r0,[r1,#0]
-000112  2201              MOVS     r2,#1
-000114  4310              ORRS     r0,r0,r2
-000116  6008              STR      r0,[r1,#0]
 ;;;123    		}
 ;;;124    	}
-;;;125    	SPI_TRIGGER(SPI);
-;;;126    	
-;;;127    	// Comm protection 1: If have NOT received any frame in 500ms, error
-;;;128    	if ((uint32_t)(unSystemTick - unLastCheckTime) > 500)
-000118  4813              LDR      r0,|L1.360|
-00011a  6801              LDR      r1,[r0,#0]  ; unSystemTick
-00011c  6862              LDR      r2,[r4,#4]  ; unLastCheckTime
-00011e  1a89              SUBS     r1,r1,r2
-000120  22ff              MOVS     r2,#0xff
-000122  32f5              ADDS     r2,r2,#0xf5
-000124  4291              CMP      r1,r2
-000126  d90c              BLS      |L1.322|
-;;;129    	{
-;;;130    		unLastCheckTime = unSystemTick;
-000128  6800              LDR      r0,[r0,#0]  ; unSystemTick
-;;;131    		if ((uint32_t)(unValidFrameCNT - unLastFrameCNT) < 1)
-00012a  6060              STR      r0,[r4,#4]  ; unLastCheckTime
-00012c  6821              LDR      r1,[r4,#0]  ; unLastFrameCNT
-00012e  68a0              LDR      r0,[r4,#8]  ; unValidFrameCNT
-000130  4288              CMP      r0,r1
-000132  d104              BNE      |L1.318|
-;;;132    		{
-;;;133    			BLDC_stopMotor();
-000134  f7fffffe          BL       BLDC_stopMotor
-;;;134    			setError(ERR_COMMUNICATION_FAIL);
-000138  2002              MOVS     r0,#2
-00013a  f7fffffe          BL       setError
-                  |L1.318|
-;;;135    		}
-;;;136    		unLastFrameCNT = unValidFrameCNT;
-00013e  68a0              LDR      r0,[r4,#8]  ; unValidFrameCNT
-000140  6020              STR      r0,[r4,#0]  ; unLastFrameCNT
-                  |L1.322|
-;;;137    	}
-;;;138    	// Comm protection 2: If received error frame exceed some threshold, error
-;;;139    	if (unCOM_SPI_TransErrCNT > COM_SPI_TRANS_ERR_THRESHOLD)
-000142  68e0              LDR      r0,[r4,#0xc]  ; unCOM_SPI_TransErrCNT
-000144  2806              CMP      r0,#6
-000146  d904              BLS      |L1.338|
-;;;140    	{
-;;;141    		BLDC_stopMotor();
-000148  f7fffffe          BL       BLDC_stopMotor
-;;;142    		setError(ERR_COMMUNICATION_FAIL);
-00014c  2002              MOVS     r0,#2
-00014e  f7fffffe          BL       setError
-                  |L1.338|
-;;;143    	}
-;;;144    }
-000152  bd70              POP      {r4-r6,pc}
+;;;125    	
+;;;126    	// Comm protection 1: If have NOT received any frame in 500ms, error
+;;;127    	if ((uint32_t)(unSystemTick - unLastCheckTime) > 500)
+00010e  4814              LDR      r0,|L1.352|
+000110  6801              LDR      r1,[r0,#0]  ; unSystemTick
+000112  6862              LDR      r2,[r4,#4]  ; unLastCheckTime
+000114  1a89              SUBS     r1,r1,r2
+000116  22ff              MOVS     r2,#0xff
+000118  32f5              ADDS     r2,r2,#0xf5
+00011a  4291              CMP      r1,r2
+00011c  d90c              BLS      |L1.312|
+;;;128    	{
+;;;129    		unLastCheckTime = unSystemTick;
+00011e  6800              LDR      r0,[r0,#0]  ; unSystemTick
+;;;130    		if ((uint32_t)(unValidFrameCNT - unLastFrameCNT) < 1)
+000120  6060              STR      r0,[r4,#4]  ; unLastCheckTime
+000122  6821              LDR      r1,[r4,#0]  ; unLastFrameCNT
+000124  68a0              LDR      r0,[r4,#8]  ; unValidFrameCNT
+000126  4288              CMP      r0,r1
+000128  d104              BNE      |L1.308|
+;;;131    		{
+;;;132    			BLDC_stopMotor();
+00012a  f7fffffe          BL       BLDC_stopMotor
+;;;133    			setError(ERR_COMMUNICATION_FAIL);
+00012e  2002              MOVS     r0,#2
+000130  f7fffffe          BL       setError
+                  |L1.308|
+;;;134    		}
+;;;135    		unLastFrameCNT = unValidFrameCNT;
+000134  68a0              LDR      r0,[r4,#8]  ; unValidFrameCNT
+000136  6020              STR      r0,[r4,#0]  ; unLastFrameCNT
+                  |L1.312|
+;;;136    	}
+;;;137    	// Comm protection 2: If received error frame exceed some threshold, error
+;;;138    	if (unCOM_SPI_TransErrCNT > COM_SPI_TRANS_ERR_THRESHOLD)
+000138  68e0              LDR      r0,[r4,#0xc]  ; unCOM_SPI_TransErrCNT
+00013a  2806              CMP      r0,#6
+00013c  d904              BLS      |L1.328|
+;;;139    	{
+;;;140    		BLDC_stopMotor();
+00013e  f7fffffe          BL       BLDC_stopMotor
+;;;141    		setError(ERR_COMMUNICATION_FAIL);
+000142  2002              MOVS     r0,#2
+000144  f7fffffe          BL       setError
+                  |L1.328|
+;;;142    	}
+;;;143    }
+000148  bd70              POP      {r4-r6,pc}
                           ENDP
 
-                  |L1.340|
+00014a  0000              DCW      0x0000
+                  |L1.332|
                           DCD      ||.constdata||
-                  |L1.344|
+                  |L1.336|
                           DCD      tMotor
-                  |L1.348|
+                  |L1.340|
                           DCD      0x40030000
-                  |L1.352|
+                  |L1.344|
                           DCD      ||.data||
-                  |L1.356|
+                  |L1.348|
                           DCD      ||.data||+0x10
-                  |L1.360|
+                  |L1.352|
                           DCD      unSystemTick
 
                           AREA ||.constdata||, DATA, READONLY, ALIGN=0

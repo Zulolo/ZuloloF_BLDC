@@ -8112,7 +8112,6 @@ void COMM_Manager(void)
 			unCOM_SPI_TransErrCNT++;
 		}
 	}
-	SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 	
 	
 	if ((uint32_t)(unSystemTick - unLastCheckTime) > 500)

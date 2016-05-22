@@ -7667,6 +7667,7 @@ void ADC_IRQHandler(void)
     (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADSR = (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADSR & ~((1ul << 0) | (1ul << 1) | (1ul << 2))) | (iADC_ComparatorFlag));
 }
 
+extern uint32_t unValidFrameCNT;
 void SPI_IRQHandler(void)
 {
 	static uint8_t unValueIndex;
@@ -7675,6 +7676,7 @@ void SPI_IRQHandler(void)
 	{
 		if (tMotor.structMotor.MSR.bNewComFrameReceived == (0))
 		{
+			unValidFrameCNT = SPI_GET_RX_FIFO_COUNT(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 			if (SPI_GET_RX_FIFO_COUNT(((SPI_T *) (((uint32_t)0x40000000) + 0x30000))) == 2)
 			{
 				
@@ -7682,6 +7684,7 @@ void SPI_IRQHandler(void)
 				{
 					unCOM_SPI_ReadData[unValueIndex] = SPI_READ_RX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 				}
+
 				if ((((unCOM_SPI_ReadData[0]) & (0x8000)) == (0x8000)))
 				{
 					tMotor.structMotor.MSR.bNewComFrameReceived = (1);
@@ -7711,6 +7714,8 @@ void SPI_IRQHandler(void)
 			{
 				unCOM_SPI_TransErrCNT++;
 			}
+
+
 		}
 		else
 		{
@@ -7718,8 +7723,8 @@ void SPI_IRQHandler(void)
 		}
 		
 		
-		SPI_ClearRxFIFO(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-		SPI_ClearTxFIFO(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+
+
 	}
 	else
 	{	

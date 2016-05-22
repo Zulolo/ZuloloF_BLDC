@@ -10824,85 +10824,88 @@ L 15 "User\main.c" 2
 N
 Nvoid initClk()
 N{
-N    /* Enable internal 22.1184MHz */
-N    CLK->PWRCON |= CLK_PWRCON_IRC22M_EN_Msk;
-X    ((CLK_T *) (((uint32_t)0x50000000) + 0x00200))->PWRCON |= (1ul << 2);
+N	/* Enable internal 22.1184MHz */
+N	CLK->PWRCON |= CLK_PWRCON_IRC22M_EN_Msk;
+X	((CLK_T *) (((uint32_t)0x50000000) + 0x00200))->PWRCON |= (1ul << 2);
 N
-N    /* Waiting for clock ready */
-N    CLK_WaitClockReady(CLK_CLKSTATUS_IRC22M_STB_Msk);
-X    CLK_WaitClockReady((1ul << 4));
+N	/* Waiting for clock ready */
+N	CLK_WaitClockReady(CLK_CLKSTATUS_IRC22M_STB_Msk);
+X	CLK_WaitClockReady((1ul << 4));
 N
-N    // Configure HCLK to use 22.1184MHz HIRC and div by 1
-N    CLK_SetHCLK(CLK_CLKSEL0_HCLK_S_IRC22M, CLK_CLKDIV_HCLK(1));
-X    CLK_SetHCLK(0x07UL, ((1)-1));
-N//	CLK_DisableXtalRC(CLK_PWRCON_XTLCLK_EN_Msk);
+N	// Configure HCLK to use 22.1184MHz HIRC and div by 1
+N	CLK_SetHCLK(CLK_CLKSEL0_HCLK_S_IRC22M, CLK_CLKDIV_HCLK(1));
+X	CLK_SetHCLK(0x07UL, ((1)-1));
+N	//	CLK_DisableXtalRC(CLK_PWRCON_XTLCLK_EN_Msk);
 N
-N    // Configure SysTick to use HIRC
-N//	SetSysTickClockSrc(CLK_CLKSEL0_STCLK_S_IRC22M_DIV2);
+N	// Configure SysTick to use HIRC
+N	CLK_SetSysTickClockSrc(CLK_CLKSEL0_STCLK_S_IRC22M_DIV2);
+X	CLK_SetSysTickClockSrc(0x38UL);
 N
-N//    CLK_SetSysTickClockSrc(CLK_CLKSEL0_STCLK_S_HCLK_DIV2);
-N    CLK_SetModuleClock(WDT_MODULE, CLK_CLKSEL1_WDT_S_HCLK_DIV2048, WHAT_EVER_DO_NOT_CARE);
-X    CLK_SetModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|( 0<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|0 ), 0x00000002UL, 1);
-N    CLK_SetModuleClock(ADC_MODULE, CLK_CLKSEL1_ADC_S_IRC22M, CLK_CLKDIV_ADC(ADC_CLK_DIVIDER));
-X    CLK_SetModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|( 2<<20)|(0x0<<18)|(0xFF<<10)|(16<<5)|28), 0x0000000CUL, (((221)-1) << 16));
-N    CLK_SetModuleClock(PWM01_MODULE, CLK_CLKSEL1_PWM01_S_HCLK, WHAT_EVER_DO_NOT_CARE);
-X    CLK_SetModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|(28<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|20), 0x20000000UL, 1);
-N    CLK_SetModuleClock(PWM23_MODULE, CLK_CLKSEL1_PWM23_S_HCLK, WHAT_EVER_DO_NOT_CARE);
-X    CLK_SetModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|(30<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|21), 0x80000000UL, 1);
-N    CLK_SetModuleClock(PWM45_MODULE, CLK_CLKSEL2_PWM45_S_HCLK, WHAT_EVER_DO_NOT_CARE);
-X    CLK_SetModuleClock(((0x0<<31)|(0x3<<29)|(0x3<<25)|( 4<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|22), 0x00000020UL, 1);
-N    CLK_SetModuleClock(UART_MODULE, CLK_CLKSEL1_UART_S_IRC22M, CLK_CLKDIV_UART(UART_CLK_DIVIDER));
-X    CLK_SetModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|(24<<20)|(0x0<<18)|(0x0F<<10)|( 8<<5)|16), 0x02000000UL, (((1)-1) << 8));
-N    CLK_SetModuleClock(TMR0_MODULE, CLK_CLKSEL1_TMR0_S_HCLK , WHAT_EVER_DO_NOT_CARE);
-X    CLK_SetModuleClock(((0x0<<31)|(0x1<<29)|(0x7<<25)|( 8<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|2), 0x00000200UL , 1);
-N    CLK_SetModuleClock(TMR1_MODULE, CLK_CLKSEL1_TMR1_S_HCLK , WHAT_EVER_DO_NOT_CARE);
-X    CLK_SetModuleClock(((0x0<<31)|(0x1<<29)|(0x7<<25)|(12<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|3), 0x00002000UL , 1);
-N    CLK_SetModuleClock(SPI_MODULE, CLK_CLKSEL1_SPI_S_HCLK  , WHAT_EVER_DO_NOT_CARE);
-X    CLK_SetModuleClock(((0x0<<31)|(0x1<<29)|(0x1<<25)|( 4<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|12), 0x00000001UL  , 1);
+N	//    CLK_SetSysTickClockSrc(CLK_CLKSEL0_STCLK_S_HCLK_DIV2);
+N	CLK_SetModuleClock(WDT_MODULE, CLK_CLKSEL1_WDT_S_HCLK_DIV2048, WHAT_EVER_DO_NOT_CARE);
+X	CLK_SetModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|( 0<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|0 ), 0x00000002UL, 1);
+N	CLK_SetModuleClock(ADC_MODULE, CLK_CLKSEL1_ADC_S_IRC22M, CLK_CLKDIV_ADC(ADC_CLK_DIVIDER));
+X	CLK_SetModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|( 2<<20)|(0x0<<18)|(0xFF<<10)|(16<<5)|28), 0x0000000CUL, (((221)-1) << 16));
+N	CLK_SetModuleClock(PWM01_MODULE, CLK_CLKSEL1_PWM01_S_HCLK, WHAT_EVER_DO_NOT_CARE);
+X	CLK_SetModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|(28<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|20), 0x20000000UL, 1);
+N	CLK_SetModuleClock(PWM23_MODULE, CLK_CLKSEL1_PWM23_S_HCLK, WHAT_EVER_DO_NOT_CARE);
+X	CLK_SetModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|(30<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|21), 0x80000000UL, 1);
+N	CLK_SetModuleClock(PWM45_MODULE, CLK_CLKSEL2_PWM45_S_HCLK, WHAT_EVER_DO_NOT_CARE);
+X	CLK_SetModuleClock(((0x0<<31)|(0x3<<29)|(0x3<<25)|( 4<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|22), 0x00000020UL, 1);
+N	CLK_SetModuleClock(UART_MODULE, CLK_CLKSEL1_UART_S_IRC22M, CLK_CLKDIV_UART(UART_CLK_DIVIDER));
+X	CLK_SetModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|(24<<20)|(0x0<<18)|(0x0F<<10)|( 8<<5)|16), 0x02000000UL, (((1)-1) << 8));
+N	CLK_SetModuleClock(TMR0_MODULE, CLK_CLKSEL1_TMR0_S_HCLK , WHAT_EVER_DO_NOT_CARE);
+X	CLK_SetModuleClock(((0x0<<31)|(0x1<<29)|(0x7<<25)|( 8<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|2), 0x00000200UL , 1);
+N	CLK_SetModuleClock(TMR1_MODULE, CLK_CLKSEL1_TMR1_S_HCLK , WHAT_EVER_DO_NOT_CARE);
+X	CLK_SetModuleClock(((0x0<<31)|(0x1<<29)|(0x7<<25)|(12<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|3), 0x00002000UL , 1);
+N//	CLK_SetModuleClock(SPI_MODULE, CLK_CLKSEL1_SPI_S_HCLK  , WHAT_EVER_DO_NOT_CARE);
+N	CLK->CLKSEL1 |= (0x01 << 4);
+X	((CLK_T *) (((uint32_t)0x50000000) + 0x00200))->CLKSEL1 |= (0x01 << 4);
 N
-N    // Nai nai de seems can not use | | | to put all peripheral enable into one invoke
-N    CLK_EnableModuleClock(WDT_MODULE);
-X    CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|( 0<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|0 ));
-N    CLK_EnableModuleClock(TMR0_MODULE);
-X    CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x7<<25)|( 8<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|2));
-N    CLK_EnableModuleClock(TMR1_MODULE);
-X    CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x7<<25)|(12<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|3));
-N    CLK_EnableModuleClock(SPI_MODULE);
-X    CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x1<<25)|( 4<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|12));
-N    CLK_EnableModuleClock(UART_MODULE);
-X    CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|(24<<20)|(0x0<<18)|(0x0F<<10)|( 8<<5)|16));
-N    CLK_EnableModuleClock(PWM01_MODULE);
-X    CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|(28<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|20));
-N    CLK_EnableModuleClock(PWM23_MODULE);
-X    CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|(30<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|21));
-N    CLK_EnableModuleClock(PWM45_MODULE);
-X    CLK_EnableModuleClock(((0x0<<31)|(0x3<<29)|(0x3<<25)|( 4<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|22));
-N    CLK_EnableModuleClock(ADC_MODULE);
-X    CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|( 2<<20)|(0x0<<18)|(0xFF<<10)|(16<<5)|28));
-N    CLK_EnableModuleClock(ACMP_MODULE);
-X    CLK_EnableModuleClock(((0x0<<31)|(0x3<<29)|(0x0<<25)|(31<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|30));
+N	// Nai nai de seems can not use | | | to put all peripheral enable into one invoke
+N	CLK_EnableModuleClock(WDT_MODULE);
+X	CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|( 0<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|0 ));
+N	CLK_EnableModuleClock(TMR0_MODULE);
+X	CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x7<<25)|( 8<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|2));
+N	CLK_EnableModuleClock(TMR1_MODULE);
+X	CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x7<<25)|(12<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|3));
+N	CLK_EnableModuleClock(SPI_MODULE);
+X	CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x1<<25)|( 4<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|12));
+N	CLK_EnableModuleClock(UART_MODULE);
+X	CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|(24<<20)|(0x0<<18)|(0x0F<<10)|( 8<<5)|16));
+N	CLK_EnableModuleClock(PWM01_MODULE);
+X	CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|(28<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|20));
+N	CLK_EnableModuleClock(PWM23_MODULE);
+X	CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|(30<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|21));
+N	CLK_EnableModuleClock(PWM45_MODULE);
+X	CLK_EnableModuleClock(((0x0<<31)|(0x3<<29)|(0x3<<25)|( 4<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|22));
+N	CLK_EnableModuleClock(ADC_MODULE);
+X	CLK_EnableModuleClock(((0x0<<31)|(0x1<<29)|(0x3<<25)|( 2<<20)|(0x0<<18)|(0xFF<<10)|(16<<5)|28));
+N	CLK_EnableModuleClock(ACMP_MODULE);
+X	CLK_EnableModuleClock(((0x0<<31)|(0x3<<29)|(0x0<<25)|(31<<20)|(0x3<<18)|(0x0<<10)|(31<<5)|30));
+N//	CLK->APBCLK |= (0x01 << 12);
 N}
 N
 Nvoid initIRQ()
 N{
-N    NVIC_EnableIRQ(TMR0_IRQn);
-N    NVIC_EnableIRQ(TMR1_IRQn);
-N    NVIC_EnableIRQ(SPI_IRQn);
-N    NVIC_EnableIRQ(ACMP_IRQn);
-N    NVIC_EnableIRQ(EINT0_IRQn);
-N    NVIC_EnableIRQ(ADC_IRQn);
-N//    NVIC_EnableIRQ(PWM_IRQn);
+N	NVIC_EnableIRQ(TMR0_IRQn);
+N	NVIC_EnableIRQ(TMR1_IRQn);
+N	NVIC_EnableIRQ(SPI_IRQn);
+N	NVIC_EnableIRQ(ACMP_IRQn);
+N	NVIC_EnableIRQ(EINT0_IRQn);
+N	NVIC_EnableIRQ(ADC_IRQn);
+N	//    NVIC_EnableIRQ(PWM_IRQn);
 N
-N    NVIC_SetPriority(TMR0_IRQn, 1);
-N    NVIC_SetPriority(TMR1_IRQn, 1);
-N    NVIC_SetPriority(SPI_IRQn, 3);
-N    NVIC_SetPriority(ACMP_IRQn, 2);
-N    NVIC_SetPriority(EINT0_IRQn, 0);
-N    NVIC_SetPriority(ADC_IRQn, 3);
-N//    NVIC_SetPriority(PWM_IRQn, 2);
+N	NVIC_SetPriority(TMR0_IRQn, 1);
+N	NVIC_SetPriority(TMR1_IRQn, 1);
+N	NVIC_SetPriority(SPI_IRQn, 3);
+N	NVIC_SetPriority(ACMP_IRQn, 2);
+N	NVIC_SetPriority(EINT0_IRQn, 0);
+N	NVIC_SetPriority(ADC_IRQn, 3);
+N	//    NVIC_SetPriority(PWM_IRQn, 2);
 N
-N    GPIO_EnableEINT0(BRG_FAULT_PORT, BRG_FAULT_PIN, GPIO_INT_FALLING);
-X    GPIO_EnableInt(((GPIO_T *) (((uint32_t)0x50000000) + 0x040C0)), (0x00000004), 0x00000001UL);
+N	GPIO_EnableEINT0(BRG_FAULT_PORT, BRG_FAULT_PIN, GPIO_INT_FALLING);
+X	GPIO_EnableInt(((GPIO_T *) (((uint32_t)0x50000000) + 0x040C0)), (0x00000004), 0x00000001UL);
 N}
 N
 Nvoid initGPIO()
@@ -10933,10 +10936,8 @@ N    GPIO_SetMode(MOSFET_DRV_5_PORT, MOSFET_DRV_5_PIN, GPIO_PMD_OUTPUT);
 X    GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000010), 0x1UL);
 N
 N    // SPI, I am slave
-N    GPIO_SetMode(COMM_PORT, COMM_CLK_PIN | COMM_CS_PIN | COMM_RX_PIN, GPIO_PMD_INPUT);
-X    GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000080) | (0x00000002) | (0x00000020), 0x0UL);
-N    GPIO_SetMode(COMM_PORT, COMM_TX_PIN, GPIO_PMD_OUTPUT);
-X    GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000040), 0x1UL);
+N//    GPIO_SetMode(COMM_PORT, COMM_CLK_PIN | COMM_CS_PIN | COMM_RX_PIN, GPIO_PMD_INPUT);
+N//    GPIO_SetMode(COMM_PORT, COMM_TX_PIN, GPIO_PMD_OUTPUT);
 N
 N    // UART Pin
 N    GPIO_SetMode(DEBUG_TX_PORT, DEBUG_TX_PIN, GPIO_PMD_OUTPUT);
@@ -10947,10 +10948,10 @@ N
 N    // DEBUG for ACMP Output Pin
 N    GPIO_SetMode(DEBUG_ACMP_OUT_PORT, DEBUG_ACMP_OUT_PIN, GPIO_PMD_OUTPUT);
 X    GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x040C0)), (0x00000040), 0x1UL);
-N	GPIO_SetMode(DEBUG_GPIO_PORT, DEBUG_GPIO_PIN, GPIO_PMD_OUTPUT);
-X	GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04140)), (0x00000001), 0x1UL);
-N	P50 = 0;
-X	(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(5))) + ((0)<<2)))) = 0;
+N		GPIO_SetMode(DEBUG_GPIO_PORT, DEBUG_GPIO_PIN, GPIO_PMD_OUTPUT);
+X		GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04140)), (0x00000001), 0x1UL);
+N		P50 = 0;
+X		(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(5))) + ((0)<<2)))) = 0;
 N
 N    // ADC for current Pin
 N    GPIO_DISABLE_DIGITAL_PATH(CURRENT_PORT, CURRENT_PIN << GPIO_OFFD_OFF_SET);
@@ -10985,8 +10986,7 @@ N    SYS->P1_MFP |= SYS_MFP_P12_RXD;
 X    ((GCR_T *) (((uint32_t)0x50000000) + 0x00000))->P1_MFP |= 0x00000400UL; 
 N	 
 N	/* Set multi-function pins for SPI */
-N    SYS->P0_MFP &= ~(SYS_MFP_P01_Msk | SYS_MFP_P05_Msk | SYS_MFP_P06_Msk | SYS_MFP_P07_Msk);
-X    ((GCR_T *) (((uint32_t)0x50000000) + 0x00000))->P0_MFP &= ~(0x02000202UL | 0x00002020UL | 0x00004040UL | 0x00008080UL);
+N//    SYS->P0_MFP &= ~(SYS_MFP_P01_Msk | SYS_MFP_P05_Msk | SYS_MFP_P06_Msk | SYS_MFP_P07_Msk);
 N    SYS->P0_MFP |= (SYS_MFP_P01_SPISS | SYS_MFP_P05_MOSI | SYS_MFP_P06_MISO | SYS_MFP_P07_SPICLK); 
 X    ((GCR_T *) (((uint32_t)0x50000000) + 0x00000))->P0_MFP |= (0x00000002UL | 0x00002000UL | 0x00004000UL | 0x00008000UL); 
 N
@@ -11108,6 +11108,9 @@ N    // peripheral clock frequency of slave device must be faster than the bus c
 N    SPI_Open(SPI, SPI_SLAVE, SPI_MODE_0, COMM_BIT_LENTH, COMM_BAUT_RATE);
 X    SPI_Open(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), ((1ul << 18)), ((1ul << 2)), 16, 1000000);
 N
+N//	  /* Enable the automatic hardware slave select function. Select the SS pin and configure as low-active. */
+N//    SPI_EnableAutoSS(SPI, SPI_SS, SPI_SS_ACTIVE_LOW);
+N	
 N    SPI_SET_MSB_FIRST(SPI);
 X    SPI_SET_MSB_FIRST(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 N
@@ -11126,9 +11129,6 @@ N
 N    /* Enable SPI unit transfer interrupt */
 N    SPI_EnableInt(SPI, SPI_IE_MASK);
 X    SPI_EnableInt(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), (0x01));
-N		
-N		SPI_TRIGGER(SPI);
-X		SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 N}
 N
 N//void ACMP_Config(void)
