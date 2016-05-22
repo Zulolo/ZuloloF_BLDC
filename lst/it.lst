@@ -9479,18 +9479,22 @@ N#define COMM_CS_PIN					BIT1
 N#define COMM_TX_PIN					BIT6
 N#define COMM_RX_PIN					BIT5
 N
-N#define COMM_FIFO_LENGTH			4
-N#define COMM_BIT_LENTH				16	// Because STM32F407 can only configure SPI to be 8bits/16bits width
+N#define COMM_FIFO_LENGTH					4
+N#define COMM_BIT_LENTH						32	// Because STM32F407 can only configure SPI to be 8bits/16bits width
 N										// highest bit in first half word is used to indicate command or data
-N#define COMM_RD_CMD_CNT				2	// R(0):Address | CRC
-N#define COMM_WR_CMD_CNT				4	// W(1):Address | Data Low | Data High | CRC
+N#define COMM_RD_CMD_CNT						2	// R(0):Address | CRC
+N#define COMM_WR_CMD_CNT						4	// W(1):Address | Data Low | Data High | CRC
 N
+N// If using FIFO, need to use 32 bit
+N#define COMM_RD_CMD_CNT_IN_32BIT	1	
+N#define COMM_WR_CMD_CNT_IN_32BIT	2	
+N		
 N#define COMM_RW_CMD_MASK					(0x8000)
 N#define IS_COMM_RD_CMD(value)			(((value) & COMM_RW_CMD_MASK) == COMM_RW_CMD_MASK)
 N#define IS_COMM_WR_CMD(value)			(((value) & COMM_RW_CMD_MASK) == 0)
 N#define COMM_DATA_MASK						(0x7FFF)
 N#define COMM_GET_DATA(value)			((value) & COMM_DATA_MASK)
-N#define COMM_BAUT_RATE						1000000	// 5MHz
+N#define COMM_BAUT_RATE						0	// 5MHz
 N
 Ntypedef enum{
 N	MOTOR_MCR = 0,	/*!<  Motor Control  */
@@ -9876,56 +9880,65 @@ N    ADC_CLR_INT_FLAG(ADC, iADC_ComparatorFlag);
 X    (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADSR = (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADSR & ~((1ul << 0) | (1ul << 1) | (1ul << 2))) | (iADC_ComparatorFlag));
 N}
 N
-Nextern uint32_t unValidFrameCNT;
 Nvoid SPI_IRQHandler(void)
 N{
-N	static uint8_t unValueIndex;
-N	// Check if it is really finished one unit transfer
-N	if ((SPI->SSR & SPI_SSR_LTRIG_FLAG_Msk) == SPI_SSR_LTRIG_FLAG_Msk)
-X	if ((((SPI_T *) (((uint32_t)0x40000000) + 0x30000))->SSR & (1ul << 5)) == (1ul << 5))
+N	static uint32_t unSPI_RX_Value;
+N	
+N	if ((SPI->CNTRL & SPI_STATUS_IF_Msk) == SPI_STATUS_IF_Msk)
+X	if ((((SPI_T *) (((uint32_t)0x40000000) + 0x30000))->CNTRL & (1ul << 16)) == (1ul << 16))
 N	{
-N		if (tMotor.structMotor.MSR.bNewComFrameReceived == FALSE)
-X		if (tMotor.structMotor.MSR.bNewComFrameReceived == (0))
-N		{
-N			unValidFrameCNT = SPI_GET_RX_FIFO_COUNT(SPI);
-X			unValidFrameCNT = SPI_GET_RX_FIFO_COUNT(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-N			if (SPI_GET_RX_FIFO_COUNT(SPI) == COMM_RD_CMD_CNT)
-X			if (SPI_GET_RX_FIFO_COUNT(((SPI_T *) (((uint32_t)0x40000000) + 0x30000))) == 2)
-N			{
-N				// Received 2 uint16, copy to RAM buffer and infor communication manager
-N				for (unValueIndex = 0; unValueIndex < COMM_RD_CMD_CNT; unValueIndex++)
-X				for (unValueIndex = 0; unValueIndex < 2; unValueIndex++)
-N				{
-N					unCOM_SPI_ReadData[unValueIndex] = SPI_READ_RX(SPI);
-X					unCOM_SPI_ReadData[unValueIndex] = SPI_READ_RX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-N				}
+N		SPI_CLR_UNIT_TRANS_INT_FLAG(SPI);
+X		SPI_CLR_UNIT_TRANS_INT_FLAG(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 N
-N				if (IS_COMM_RD_CMD(unCOM_SPI_ReadData[0]))
-X				if ((((unCOM_SPI_ReadData[0]) & (0x8000)) == (0x8000)))
-N				{
-N					tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
-X					tMotor.structMotor.MSR.bNewComFrameReceived = (1);
-N				}
-N				else
-N				{
-N					unCOM_SPI_TransErrCNT++;
-N				}
-N			}
-N			else if (SPI_GET_RX_FIFO_COUNT(SPI) == COMM_WR_CMD_CNT)
-X			else if (SPI_GET_RX_FIFO_COUNT(((SPI_T *) (((uint32_t)0x40000000) + 0x30000))) == 4)
+N		// Check if it is really finished one unit transfer
+N		if ((SPI->SSR & SPI_SSR_LTRIG_FLAG_Msk) == SPI_SSR_LTRIG_FLAG_Msk)
+X		if ((((SPI_T *) (((uint32_t)0x40000000) + 0x30000))->SSR & (1ul << 5)) == (1ul << 5))
+N		{
+N			if (tMotor.structMotor.MSR.bNewComFrameReceived == FALSE)
+X			if (tMotor.structMotor.MSR.bNewComFrameReceived == (0))
 N			{
-N				// Received 4 uint16, copy to RAM buffer and infor communication manager
-N				for (unValueIndex = 0; unValueIndex < COMM_WR_CMD_CNT; unValueIndex++)
-X				for (unValueIndex = 0; unValueIndex < 4; unValueIndex++)
+N				if (SPI_GET_RX_FIFO_COUNT(SPI) == COMM_RD_CMD_CNT_IN_32BIT)
+X				if (SPI_GET_RX_FIFO_COUNT(((SPI_T *) (((uint32_t)0x40000000) + 0x30000))) == 1)
 N				{
-N					unCOM_SPI_ReadData[unValueIndex] = SPI_READ_RX(SPI);
-X					unCOM_SPI_ReadData[unValueIndex] = SPI_READ_RX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+N					// Received 2 uint16, copy to RAM buffer and infor communication manager
+N					unSPI_RX_Value = SPI_READ_RX(SPI);
+X					unSPI_RX_Value = SPI_READ_RX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+N					unCOM_SPI_ReadData[0] = (uint16_t)(unSPI_RX_Value >> 16);
+N					unCOM_SPI_ReadData[1] = (uint16_t)unSPI_RX_Value;
+N
+N					if (IS_COMM_RD_CMD(unCOM_SPI_ReadData[0]))
+X					if ((((unCOM_SPI_ReadData[0]) & (0x8000)) == (0x8000)))
+N					{
+N						tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
+X						tMotor.structMotor.MSR.bNewComFrameReceived = (1);
+N					}
+N					else
+N					{
+N						unCOM_SPI_TransErrCNT++;
+N					}
 N				}
-N				if (IS_COMM_WR_CMD(unCOM_SPI_ReadData[0]))
-X				if ((((unCOM_SPI_ReadData[0]) & (0x8000)) == 0))
+N				else if (SPI_GET_RX_FIFO_COUNT(SPI) == COMM_WR_CMD_CNT_IN_32BIT)
+X				else if (SPI_GET_RX_FIFO_COUNT(((SPI_T *) (((uint32_t)0x40000000) + 0x30000))) == 2)
 N				{
-N					tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
-X					tMotor.structMotor.MSR.bNewComFrameReceived = (1);
+N					// Received 4 uint16, copy to RAM buffer and infor communication manager
+N					unSPI_RX_Value = SPI_READ_RX(SPI);
+X					unSPI_RX_Value = SPI_READ_RX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+N					unCOM_SPI_ReadData[0] = (uint16_t)(unSPI_RX_Value >> 16);
+N					unCOM_SPI_ReadData[1] = (uint16_t)unSPI_RX_Value;
+N					unSPI_RX_Value = SPI_READ_RX(SPI);
+X					unSPI_RX_Value = SPI_READ_RX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+N					unCOM_SPI_ReadData[2] = (uint16_t)(unSPI_RX_Value >> 16);
+N					unCOM_SPI_ReadData[3] = (uint16_t)unSPI_RX_Value;					
+N					if (IS_COMM_WR_CMD(unCOM_SPI_ReadData[0]))
+X					if ((((unCOM_SPI_ReadData[0]) & (0x8000)) == 0))
+N					{
+N						tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
+X						tMotor.structMotor.MSR.bNewComFrameReceived = (1);
+N					}
+N					else
+N					{
+N						unCOM_SPI_TransErrCNT++;
+N					}
 N				}
 N				else
 N				{
@@ -9936,25 +9949,15 @@ N			else
 N			{
 N				unCOM_SPI_TransErrCNT++;
 N			}
-N//			SPI_ClearRxFIFO(SPI);
-N//			SPI_ClearTxFIFO(SPI);
+N			// Clear Receive FIFO interrupt
+N			// I don't know how to clear. Maybe just after I read out the data in FIFO and it is below threshold it will be OK
 N		}
 N		else
-N		{
+N		{	// Receive FIFO interrupt should be the only interrupt enabled for SPI
+N			// So something strange happened
 N			unCOM_SPI_TransErrCNT++;
-N		}
-N		// Clear Receive FIFO interrupt
-N		// I don't know how to clear. Maybe just after I read out the data in FIFO and it is below threshold it will be OK
-N//		SPI_ClearRxFIFO(SPI);
-N//		SPI_ClearTxFIFO(SPI);
+N		}		
 N	}
-N	else
-N	{	// Receive FIFO interrupt should be the only interrupt enabled for SPI
-N		// So something strange happened
-N		unCOM_SPI_TransErrCNT++;
-N	}
-N	SPI_CLR_UNIT_TRANS_INT_FLAG(SPI);
-X	SPI_CLR_UNIT_TRANS_INT_FLAG(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 N}
 N
 Nvoid SysTick_Handler(void)

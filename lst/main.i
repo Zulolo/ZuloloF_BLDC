@@ -8282,7 +8282,11 @@ extern void BLDC_SensorLessManager(void);
 
 
 
-#line 114 "User\\Communication.h"
+
+
+
+		
+#line 118 "User\\Communication.h"
 
 typedef enum{
 	MOTOR_MCR = 0,	 
@@ -8507,8 +8511,8 @@ void initGPIO()
     GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000010), 0x1UL);
 
     
-
-
+    GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000080) | (0x00000002) | (0x00000020), 0x0UL);
+    GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000040), 0x1UL);
 
     
     GPIO_SetMode(((GPIO_T *) (((uint32_t)0x50000000) + 0x04000)), (0x00000001), 0x1UL);
@@ -8629,7 +8633,7 @@ void configSPI(void)
     SPI_ClearRxFIFO(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
     SPI_ClearTxFIFO(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
     
-    SPI_Open(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), ((1ul << 18)), ((1ul << 2)), 16, 1000000);
+    SPI_Open(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), ((1ul << 18)), ((1ul << 2)), 32, 0);
 
 
 
@@ -8643,10 +8647,12 @@ void configSPI(void)
     ((SPI_T *) (((uint32_t)0x40000000) + 0x30000))->SSR &= (~(1ul << 2));
 
      
-    SPI_EnableFIFO(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 4, 4 - 1);
+    SPI_EnableFIFO(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 4, 4);
 
      
     SPI_EnableInt(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), (0x01));
+		
+
 }
 
 

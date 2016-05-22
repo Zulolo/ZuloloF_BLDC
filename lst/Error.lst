@@ -9479,18 +9479,22 @@ N#define COMM_CS_PIN					BIT1
 N#define COMM_TX_PIN					BIT6
 N#define COMM_RX_PIN					BIT5
 N
-N#define COMM_FIFO_LENGTH			4
-N#define COMM_BIT_LENTH				16	// Because STM32F407 can only configure SPI to be 8bits/16bits width
+N#define COMM_FIFO_LENGTH					4
+N#define COMM_BIT_LENTH						32	// Because STM32F407 can only configure SPI to be 8bits/16bits width
 N										// highest bit in first half word is used to indicate command or data
-N#define COMM_RD_CMD_CNT				2	// R(0):Address | CRC
-N#define COMM_WR_CMD_CNT				4	// W(1):Address | Data Low | Data High | CRC
+N#define COMM_RD_CMD_CNT						2	// R(0):Address | CRC
+N#define COMM_WR_CMD_CNT						4	// W(1):Address | Data Low | Data High | CRC
 N
+N// If using FIFO, need to use 32 bit
+N#define COMM_RD_CMD_CNT_IN_32BIT	1	
+N#define COMM_WR_CMD_CNT_IN_32BIT	2	
+N		
 N#define COMM_RW_CMD_MASK					(0x8000)
 N#define IS_COMM_RD_CMD(value)			(((value) & COMM_RW_CMD_MASK) == COMM_RW_CMD_MASK)
 N#define IS_COMM_WR_CMD(value)			(((value) & COMM_RW_CMD_MASK) == 0)
 N#define COMM_DATA_MASK						(0x7FFF)
 N#define COMM_GET_DATA(value)			((value) & COMM_DATA_MASK)
-N#define COMM_BAUT_RATE						1000000	// 5MHz
+N#define COMM_BAUT_RATE						0	// 5MHz
 N
 Ntypedef enum{
 N	MOTOR_MCR = 0,	/*!<  Motor Control  */

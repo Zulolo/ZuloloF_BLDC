@@ -7380,7 +7380,11 @@ extern void BLDC_SensorLessManager(void);
 
 
 
-#line 114 "User\\Communication.h"
+
+
+
+		
+#line 118 "User\\Communication.h"
 
 typedef enum{
 	MOTOR_MCR = 0,	 
@@ -7667,43 +7671,52 @@ void ADC_IRQHandler(void)
     (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADSR = (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADSR & ~((1ul << 0) | (1ul << 1) | (1ul << 2))) | (iADC_ComparatorFlag));
 }
 
-extern uint32_t unValidFrameCNT;
 void SPI_IRQHandler(void)
 {
-	static uint8_t unValueIndex;
+	static uint32_t unSPI_RX_Value;
 	
-	if ((((SPI_T *) (((uint32_t)0x40000000) + 0x30000))->SSR & (1ul << 5)) == (1ul << 5))
+	if ((((SPI_T *) (((uint32_t)0x40000000) + 0x30000))->CNTRL & (1ul << 16)) == (1ul << 16))
 	{
-		if (tMotor.structMotor.MSR.bNewComFrameReceived == (0))
-		{
-			unValidFrameCNT = SPI_GET_RX_FIFO_COUNT(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-			if (SPI_GET_RX_FIFO_COUNT(((SPI_T *) (((uint32_t)0x40000000) + 0x30000))) == 2)
-			{
-				
-				for (unValueIndex = 0; unValueIndex < 2; unValueIndex++)
-				{
-					unCOM_SPI_ReadData[unValueIndex] = SPI_READ_RX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-				}
+		SPI_CLR_UNIT_TRANS_INT_FLAG(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 
-				if ((((unCOM_SPI_ReadData[0]) & (0x8000)) == (0x8000)))
-				{
-					tMotor.structMotor.MSR.bNewComFrameReceived = (1);
-				}
-				else
-				{
-					unCOM_SPI_TransErrCNT++;
-				}
-			}
-			else if (SPI_GET_RX_FIFO_COUNT(((SPI_T *) (((uint32_t)0x40000000) + 0x30000))) == 4)
+		
+		if ((((SPI_T *) (((uint32_t)0x40000000) + 0x30000))->SSR & (1ul << 5)) == (1ul << 5))
+		{
+			if (tMotor.structMotor.MSR.bNewComFrameReceived == (0))
 			{
-				
-				for (unValueIndex = 0; unValueIndex < 4; unValueIndex++)
+				if (SPI_GET_RX_FIFO_COUNT(((SPI_T *) (((uint32_t)0x40000000) + 0x30000))) == 1)
 				{
-					unCOM_SPI_ReadData[unValueIndex] = SPI_READ_RX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+					
+					unSPI_RX_Value = SPI_READ_RX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+					unCOM_SPI_ReadData[0] = (uint16_t)(unSPI_RX_Value >> 16);
+					unCOM_SPI_ReadData[1] = (uint16_t)unSPI_RX_Value;
+
+					if ((((unCOM_SPI_ReadData[0]) & (0x8000)) == (0x8000)))
+					{
+						tMotor.structMotor.MSR.bNewComFrameReceived = (1);
+					}
+					else
+					{
+						unCOM_SPI_TransErrCNT++;
+					}
 				}
-				if ((((unCOM_SPI_ReadData[0]) & (0x8000)) == 0))
+				else if (SPI_GET_RX_FIFO_COUNT(((SPI_T *) (((uint32_t)0x40000000) + 0x30000))) == 2)
 				{
-					tMotor.structMotor.MSR.bNewComFrameReceived = (1);
+					
+					unSPI_RX_Value = SPI_READ_RX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+					unCOM_SPI_ReadData[0] = (uint16_t)(unSPI_RX_Value >> 16);
+					unCOM_SPI_ReadData[1] = (uint16_t)unSPI_RX_Value;
+					unSPI_RX_Value = SPI_READ_RX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+					unCOM_SPI_ReadData[2] = (uint16_t)(unSPI_RX_Value >> 16);
+					unCOM_SPI_ReadData[3] = (uint16_t)unSPI_RX_Value;					
+					if ((((unCOM_SPI_ReadData[0]) & (0x8000)) == 0))
+					{
+						tMotor.structMotor.MSR.bNewComFrameReceived = (1);
+					}
+					else
+					{
+						unCOM_SPI_TransErrCNT++;
+					}
 				}
 				else
 				{
@@ -7714,24 +7727,15 @@ void SPI_IRQHandler(void)
 			{
 				unCOM_SPI_TransErrCNT++;
 			}
-
-
+			
+			
 		}
 		else
-		{
+		{	
+			
 			unCOM_SPI_TransErrCNT++;
-		}
-		
-		
-
-
+		}		
 	}
-	else
-	{	
-		
-		unCOM_SPI_TransErrCNT++;
-	}
-	SPI_CLR_UNIT_TRANS_INT_FLAG(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 }
 
 void SysTick_Handler(void)

@@ -169,43 +169,52 @@ void ADC_IRQHandler(void)
     ADC_CLR_INT_FLAG(ADC, iADC_ComparatorFlag);
 }
 
-extern uint32_t unValidFrameCNT;
 void SPI_IRQHandler(void)
 {
-	static uint8_t unValueIndex;
-	// Check if it is really finished one unit transfer
-	if ((SPI->SSR & SPI_SSR_LTRIG_FLAG_Msk) == SPI_SSR_LTRIG_FLAG_Msk)
+	static uint32_t unSPI_RX_Value;
+	
+	if ((SPI->CNTRL & SPI_STATUS_IF_Msk) == SPI_STATUS_IF_Msk)
 	{
-		if (tMotor.structMotor.MSR.bNewComFrameReceived == FALSE)
-		{
-			unValidFrameCNT = SPI_GET_RX_FIFO_COUNT(SPI);
-			if (SPI_GET_RX_FIFO_COUNT(SPI) == COMM_RD_CMD_CNT)
-			{
-				// Received 2 uint16, copy to RAM buffer and infor communication manager
-				for (unValueIndex = 0; unValueIndex < COMM_RD_CMD_CNT; unValueIndex++)
-				{
-					unCOM_SPI_ReadData[unValueIndex] = SPI_READ_RX(SPI);
-				}
+		SPI_CLR_UNIT_TRANS_INT_FLAG(SPI);
 
-				if (IS_COMM_RD_CMD(unCOM_SPI_ReadData[0]))
-				{
-					tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
-				}
-				else
-				{
-					unCOM_SPI_TransErrCNT++;
-				}
-			}
-			else if (SPI_GET_RX_FIFO_COUNT(SPI) == COMM_WR_CMD_CNT)
+		// Check if it is really finished one unit transfer
+		if ((SPI->SSR & SPI_SSR_LTRIG_FLAG_Msk) == SPI_SSR_LTRIG_FLAG_Msk)
+		{
+			if (tMotor.structMotor.MSR.bNewComFrameReceived == FALSE)
 			{
-				// Received 4 uint16, copy to RAM buffer and infor communication manager
-				for (unValueIndex = 0; unValueIndex < COMM_WR_CMD_CNT; unValueIndex++)
+				if (SPI_GET_RX_FIFO_COUNT(SPI) == COMM_RD_CMD_CNT_IN_32BIT)
 				{
-					unCOM_SPI_ReadData[unValueIndex] = SPI_READ_RX(SPI);
+					// Received 2 uint16, copy to RAM buffer and infor communication manager
+					unSPI_RX_Value = SPI_READ_RX(SPI);
+					unCOM_SPI_ReadData[0] = (uint16_t)(unSPI_RX_Value >> 16);
+					unCOM_SPI_ReadData[1] = (uint16_t)unSPI_RX_Value;
+
+					if (IS_COMM_RD_CMD(unCOM_SPI_ReadData[0]))
+					{
+						tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
+					}
+					else
+					{
+						unCOM_SPI_TransErrCNT++;
+					}
 				}
-				if (IS_COMM_WR_CMD(unCOM_SPI_ReadData[0]))
+				else if (SPI_GET_RX_FIFO_COUNT(SPI) == COMM_WR_CMD_CNT_IN_32BIT)
 				{
-					tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
+					// Received 4 uint16, copy to RAM buffer and infor communication manager
+					unSPI_RX_Value = SPI_READ_RX(SPI);
+					unCOM_SPI_ReadData[0] = (uint16_t)(unSPI_RX_Value >> 16);
+					unCOM_SPI_ReadData[1] = (uint16_t)unSPI_RX_Value;
+					unSPI_RX_Value = SPI_READ_RX(SPI);
+					unCOM_SPI_ReadData[2] = (uint16_t)(unSPI_RX_Value >> 16);
+					unCOM_SPI_ReadData[3] = (uint16_t)unSPI_RX_Value;					
+					if (IS_COMM_WR_CMD(unCOM_SPI_ReadData[0]))
+					{
+						tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
+					}
+					else
+					{
+						unCOM_SPI_TransErrCNT++;
+					}
 				}
 				else
 				{
@@ -216,24 +225,15 @@ void SPI_IRQHandler(void)
 			{
 				unCOM_SPI_TransErrCNT++;
 			}
-//			SPI_ClearRxFIFO(SPI);
-//			SPI_ClearTxFIFO(SPI);
+			// Clear Receive FIFO interrupt
+			// I don't know how to clear. Maybe just after I read out the data in FIFO and it is below threshold it will be OK
 		}
 		else
-		{
+		{	// Receive FIFO interrupt should be the only interrupt enabled for SPI
+			// So something strange happened
 			unCOM_SPI_TransErrCNT++;
-		}
-		// Clear Receive FIFO interrupt
-		// I don't know how to clear. Maybe just after I read out the data in FIFO and it is below threshold it will be OK
-//		SPI_ClearRxFIFO(SPI);
-//		SPI_ClearTxFIFO(SPI);
+		}		
 	}
-	else
-	{	// Receive FIFO interrupt should be the only interrupt enabled for SPI
-		// So something strange happened
-		unCOM_SPI_TransErrCNT++;
-	}
-	SPI_CLR_UNIT_TRANS_INT_FLAG(SPI);
 }
 
 void SysTick_Handler(void)

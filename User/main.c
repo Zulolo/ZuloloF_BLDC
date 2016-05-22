@@ -96,8 +96,8 @@ void initGPIO()
     GPIO_SetMode(MOSFET_DRV_5_PORT, MOSFET_DRV_5_PIN, GPIO_PMD_OUTPUT);
 
     // SPI, I am slave
-//    GPIO_SetMode(COMM_PORT, COMM_CLK_PIN | COMM_CS_PIN | COMM_RX_PIN, GPIO_PMD_INPUT);
-//    GPIO_SetMode(COMM_PORT, COMM_TX_PIN, GPIO_PMD_OUTPUT);
+    GPIO_SetMode(COMM_PORT, COMM_CLK_PIN | COMM_CS_PIN | COMM_RX_PIN, GPIO_PMD_INPUT);
+    GPIO_SetMode(COMM_PORT, COMM_TX_PIN, GPIO_PMD_OUTPUT);
 
     // UART Pin
     GPIO_SetMode(DEBUG_TX_PORT, DEBUG_TX_PIN, GPIO_PMD_OUTPUT);
@@ -228,14 +228,16 @@ void configSPI(void)
     // SS edge trigger
     // Set input slave select signal to edge-trigger
     SPI->SSR &= (~SPI_SSR_SS_LTRIG_Msk);
-    // Set slave select signal SPISS to be active at Falling-level.
+    // Set slave select signal SPISS to be active at Falling-edge.
     SPI->SSR &= (~SPI_SSR_SS_LVL_Msk);
 
     /* Use FIFO */
-    SPI_EnableFIFO(SPI, COMM_FIFO_LENGTH, COMM_FIFO_LENGTH - 1);
+    SPI_EnableFIFO(SPI, COMM_FIFO_LENGTH, COMM_FIFO_LENGTH);
 
     /* Enable SPI unit transfer interrupt */
     SPI_EnableInt(SPI, SPI_IE_MASK);
+		
+//		SPI_TRIGGER(SPI);
 }
 
 //void ACMP_Config(void)
