@@ -7,14 +7,15 @@
 
 #define DEBUG_ACMP_OUT_PORT			P3
 #define DEBUG_ACMP_OUT_PIN			BIT6
-#define DEBUG_GPIO_PORT				P5
-#define DEBUG_GPIO_PIN				BIT0
-#define DEBUG_TX_PORT				P0
-#define DEBUG_TX_PIN				BIT0
-#define DEBUG_RX_PORT				P1
-#define DEBUG_RX_PIN				BIT2
+#define DEBUG_GPIO_PORT					P5
+#define DEBUG_GPIO_PIN					BIT0
+#define DEBUG_TX_PORT						P0
+#define DEBUG_TX_PIN						BIT0
+#define DEBUG_RX_PORT						P1
+#define DEBUG_RX_PIN						BIT2
 
-#define TIMER_INVALID_CNT 			0xFFFFFFFF
+#define TIMER_INVALID_CNT 		0xFFFFFFFF
+#define BIT_MASK							0x00000001
 
 //#define unSystemTick 				SysTick->VAL
 

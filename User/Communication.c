@@ -34,19 +34,34 @@
  * Because read command is 2 16bits length, it can only access one half word value and one CRC16.
  */
 
+uint16_t reflect16Bit(uint16_t unOrigin)
+{
+	register uint8_t unVenier = 0;
+	register uint16_t unResult = 0;
+	while(unVenier < 16)
+	{
+		if ((unOrigin & (BIT_MASK << unVenier)) != 0)
+		{
+			unResult |= (BIT_MASK << (15 - unVenier));
+		}
+		unVenier++;
+	}
+	return unResult;
+}
+
 uint16_t CRC16(uint8_t* pData, uint16_t unLength)
 {
-	uint8_t unCRCHi = 0xFF;
-	uint8_t unCRCLo = 0xFF;
-    int32_t nIndex;
+	uint8_t unCRCHi = 0x00;
+	uint8_t unCRCLo = 0x00;
+	int32_t nIndex;
 
-    while(unLength--)
-    {
-    	nIndex = unCRCLo ^ (*pData);
-        unCRCLo = (uint8_t)(unCRCHi ^ CRC_HIGH_FACTOR[nIndex]);
-        unCRCHi = CRC_LOW_FACTOR[nIndex];
-    }
-    return (uint16_t)(unCRCHi << 8 | unCRCLo);
+	while(unLength--)
+	{
+		nIndex = unCRCLo ^ *(pData++);
+		unCRCLo = (uint8_t)(unCRCHi ^ CRC_HIGH_FACTOR[nIndex]);
+		unCRCHi = CRC_LOW_FACTOR[nIndex];
+	}
+	return reflect16Bit((uint16_t)(unCRCHi << 8 | unCRCLo));
 }
 
 int32_t nReadCommandHandler(uint16_t* pCOM_Buff)
@@ -103,7 +118,7 @@ void COMM_Manager(void)
 	{
 		memcpy(unCOM_Buff, unCOM_SPI_ReadData, COMM_FIFO_LENGTH);
 		tMotor.structMotor.MSR.bNewComFrameReceived = FALSE;
-		if (CRC16((uint8_t *)unCOM_Buff, (IS_COMM_RD_CMD(unCOM_Buff[0]) ? (COMM_RD_CMD_CNT - 1) : (COMM_WR_CMD_CNT - 1))) ==
+		if (CRC16((uint8_t *)unCOM_Buff, (IS_COMM_RD_CMD(unCOM_Buff[0]) ? ((COMM_RD_CMD_CNT - 1) << 1) : ((COMM_WR_CMD_CNT - 1) << 1))) ==
 				(IS_COMM_RD_CMD(unCOM_Buff[0]) ? unCOM_Buff[COMM_RD_CMD_CNT - 1] : unCOM_Buff[COMM_WR_CMD_CNT - 1]))
 		{
 			unValidFrameCNT++;

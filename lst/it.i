@@ -7233,6 +7233,7 @@ void WDT_DisableInt(void);
 
 
 
+
 extern volatile uint32_t unSystemTick;
 
 typedef struct
@@ -7359,7 +7360,7 @@ extern uint8_t unCurrentPhase;
 extern uint8_t FLAG_PHASE_CHANGED;
 extern __inline void BLDC_stopMotor(void);
 extern void BLDC_SensorLessManager(void);
-#line 68 "User\\global.h"
+#line 69 "User\\global.h"
 #line 1 "User\\Communication.h"
 
 
@@ -7411,7 +7412,7 @@ extern ENUM_COMM_REG tRegister;
 extern uint8_t FlagRegisterNeedWrite;
 
 extern void COMM_Manager(void);
-#line 69 "User\\global.h"
+#line 70 "User\\global.h"
 #line 1 "User\\Error.h"
 
 
@@ -7450,7 +7451,11 @@ typedef enum {
 	ERR_BRD_FAULT
 } ENUM_ERROR_LEVEL;
 
-#line 60 "User\\Error.h"
+
+
+
+
+#line 62 "User\\Error.h"
 
 extern uint32_t unErrorMaster;
 extern void delay(uint32_t unDelayMs);
@@ -7459,7 +7464,7 @@ extern void setError(ENUM_ERROR_LEVEL enumErrorType);
 extern void clearError(void);
 extern void ERR_Manager(void);
 
-#line 70 "User\\global.h"
+#line 71 "User\\global.h"
 #line 1 "User\\Protection.h"
 
 
@@ -7495,7 +7500,7 @@ extern void ERR_Manager(void);
 
 extern void PTC_checkMotor(void);
 
-#line 71 "User\\global.h"
+#line 72 "User\\global.h"
 #line 5 "User\\it.h"
 
 
@@ -7673,18 +7678,18 @@ void ADC_IRQHandler(void)
 
 void SPI_IRQHandler(void)
 {
-	static uint32_t unSPI_RX_Value;
-	
+	uint32_t unSPI_RX_Value;
+	uint8_t unFIFO_RX_CNT;
+
 	if ((((SPI_T *) (((uint32_t)0x40000000) + 0x30000))->CNTRL & (1ul << 16)) == (1ul << 16))
 	{
-		SPI_CLR_UNIT_TRANS_INT_FLAG(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-
 		
 		if ((((SPI_T *) (((uint32_t)0x40000000) + 0x30000))->SSR & (1ul << 5)) == (1ul << 5))
 		{
 			if (tMotor.structMotor.MSR.bNewComFrameReceived == (0))
 			{
-				if (SPI_GET_RX_FIFO_COUNT(((SPI_T *) (((uint32_t)0x40000000) + 0x30000))) == 1)
+				unFIFO_RX_CNT = SPI_GET_RX_FIFO_COUNT(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+				if (unFIFO_RX_CNT == 1)
 				{
 					
 					unSPI_RX_Value = SPI_READ_RX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
@@ -7700,7 +7705,7 @@ void SPI_IRQHandler(void)
 						unCOM_SPI_TransErrCNT++;
 					}
 				}
-				else if (SPI_GET_RX_FIFO_COUNT(((SPI_T *) (((uint32_t)0x40000000) + 0x30000))) == 2)
+				else if (unFIFO_RX_CNT == 2)
 				{
 					
 					unSPI_RX_Value = SPI_READ_RX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
@@ -7735,6 +7740,8 @@ void SPI_IRQHandler(void)
 			
 			unCOM_SPI_TransErrCNT++;
 		}		
+		SPI_ClearRxFIFO(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+		SPI_CLR_UNIT_TRANS_INT_FLAG(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 	}
 }
 

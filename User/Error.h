@@ -5,7 +5,7 @@
 
 #define LED_PORT					P5
 #define LED_PIN						BIT4
-#define LED_OUTPUT					P54
+#define LED_OUTPUT				P54
 
 #define GET_SPECIFIED_EEROR(x)		((unErrorMaster & (1L << (x)) == 0) ? FALSE : TRUE)
 #define IS_ANY_EEROR				((unErrorMaster == 0) ? FALSE : TRUE)
@@ -35,14 +35,16 @@ typedef enum {
 	ERR_BRD_FAULT
 } ENUM_ERROR_LEVEL;
 
+	#define LED_ON					(LED_OUTPUT = 0)
+	#define LED_OFF 				(LED_OUTPUT = 1)
+	#define LED_TOGGLE 			(GPIO_TOGGLE(LED_OUTPUT))
+
 #ifdef __USED_BY_ERROR_C__
 	#define EXTERNAL_ERROR  
 
-	#define LED_ON					(LED_OUTPUT = 0)
-	#define LED_OFF 				(LED_OUTPUT = 1)
-	#define LED_TOGGLE 				(GPIO_TOGGLE(LED_OUTPUT))
+
 	#define LED_PATTERN_INTERVAL	2000  //2s
-	#define LED_BLINK_ON_TIME		200  //0.2s
+	#define LED_BLINK_ON_TIME			200  //0.2s
 	#define LED_BLINK_OFF_TIME		200  //0.2s, so 3 times is (0.4x3 = 1.2s)
 	#define LED_BLINK_INTERVAL		(LED_BLINK_ON_TIME + LED_BLINK_OFF_TIME)
 	// Since LED can not blink to fast (for human watchable), 3 type of blink make sense

@@ -845,7 +845,7 @@
                   |L1.1176|
                           DCD      0x00000373
                   |L1.1180|
-00049c  4832              LDR      r0,|L1.1384|
+00049c  4831              LDR      r0,|L1.1380|
 00049e  3040              ADDS     r0,r0,#0x40
 0004a0  6145              STR      r5,[r0,#0x14]
 ;;;296        BLDC_stopMotor();
@@ -857,7 +857,7 @@
 ;;;301    			    // this will be used in locked time
 ;;;302    			    // During startup ramp, duty change every x E-Circle
 ;;;303        PWM->PHCHGMASK = PHCHG_CTL_CMP0;	// Input of ACMP0 is controlled by PHCHG
-0004a6  4930              LDR      r1,|L1.1384|
+0004a6  492f              LDR      r1,|L1.1380|
 0004a8  15a0              ASRS     r0,r4,#22
 0004aa  3180              ADDS     r1,r1,#0x80
 0004ac  6008              STR      r0,[r1,#0]
@@ -883,8 +883,8 @@
 ;;;316        /* User can use SystemCoreClockUpdate() to calculate SystemCoreClock and cyclesPerUs automatically. */
 ;;;317        SystemCoreClockUpdate(); 
 0004ba  f7fffffe          BL       SystemCoreClockUpdate
-0004be  4c2c              LDR      r4,|L1.1392|
-0004c0  482a              LDR      r0,|L1.1388|
+0004be  4c2b              LDR      r4,|L1.1388|
+0004c0  4829              LDR      r0,|L1.1384|
 0004c2  6160              STR      r0,[r4,#0x14]
 0004c4  2103              MOVS     r1,#3
 0004c6  1f08              SUBS     r0,r1,#4
@@ -937,19 +937,19 @@
 
                   initEnv PROC
 ;;;350    void initEnv(void)
-0004f2  4920              LDR      r1,|L1.1396|
+0004f2  491f              LDR      r1,|L1.1392|
 ;;;351    {
 ;;;352    	unCOM_SPI_TransCNT = 0;
 0004f4  2000              MOVS     r0,#0
 ;;;353    	unCOM_SPI_TransErrCNT = 0;
 0004f6  6008              STR      r0,[r1,#0]  ; unCOM_SPI_TransCNT
-0004f8  491f              LDR      r1,|L1.1400|
+0004f8  491e              LDR      r1,|L1.1396|
 ;;;354    	unZXMatchCNT = 0;
 0004fa  6008              STR      r0,[r1,#0]  ; unCOM_SPI_TransErrCNT
-0004fc  491f              LDR      r1,|L1.1404|
+0004fc  491e              LDR      r1,|L1.1400|
 0004fe  6008              STR      r0,[r1,#0]  ; unZXMatchCNT
 ;;;355    	tMotor.structMotor.MSR.bNewComFrameReceived = FALSE;
-000500  481f              LDR      r0,|L1.1408|
+000500  481e              LDR      r0,|L1.1404|
 000502  8841              LDRH     r1,[r0,#2]  ; tMotor
 000504  2210              MOVS     r2,#0x10
 000506  4391              BICS     r1,r1,r2
@@ -964,29 +964,29 @@
 00050c  f7fffffe          BL       initSys
 ;;;359    {
 ;;;360    
-;;;361        initSys();
-;;;362        initEnv();
+;;;361    	initSys();
+;;;362    	initEnv();
 000510  f7fffffe          BL       initEnv
 ;;;363    
-;;;364        PTC_checkMotor();
+;;;364    	PTC_checkMotor();
 000514  f7fffffe          BL       PTC_checkMotor
 ;;;365    
-;;;366        /* ----==== Here is the parameter used for test ====----*/
-;;;367        // Max PWM Duty is: PWM_PERIOD = 441
-;;;368        // Max Period is:
-;;;369        MOTOR_SHUT_DOWN;
-000518  491a              LDR      r1,|L1.1412|
+;;;366    	/* ----==== Here is the parameter used for test ====----*/
+;;;367    	// Max PWM Duty is: PWM_PERIOD = 441
+;;;368    	// Max Period is:
+;;;369    	MOTOR_SHUT_DOWN;
+000518  4919              LDR      r1,|L1.1408|
 00051a  2000              MOVS     r0,#0
 00051c  6208              STR      r0,[r1,#0x20]
-00051e  4a12              LDR      r2,|L1.1384|
+00051e  4a11              LDR      r2,|L1.1380|
 000520  3240              ADDS     r2,r2,#0x40
 000522  6150              STR      r0,[r2,#0x14]
-000524  4818              LDR      r0,|L1.1416|
+000524  4817              LDR      r0,|L1.1412|
 000526  6801              LDR      r1,[r0,#0]
 000528  0383              LSLS     r3,r0,#14
 00052a  4399              BICS     r1,r1,r3
 00052c  6001              STR      r1,[r0,#0]
-00052e  4916              LDR      r1,|L1.1416|
+00052e  4915              LDR      r1,|L1.1412|
 000530  3120              ADDS     r1,r1,#0x20
 000532  680c              LDR      r4,[r1,#0]
 000534  439c              BICS     r4,r4,r3
@@ -1013,15 +1013,14 @@
 ;;;378    //    tMotor.structMotor.MCR.bMotorNeedToRun = TRUE;
 ;;;379        /* ----=============== Test End ================---- */
 ;;;380    
-;;;381        while(1)
-;;;382        {
+;;;381    	while(1)
+;;;382    	{
 ;;;383    		BLDC_SensorLessManager();
 00054c  f7fffffe          BL       BLDC_SensorLessManager
 ;;;384    		COMM_Manager();
 000550  f7fffffe          BL       COMM_Manager
-;;;385    		ERR_Manager();
-000554  f7fffffe          BL       ERR_Manager
-000558  e7f8              B        |L1.1356|
+000554  e7fa              B        |L1.1356|
+;;;385    //		ERR_Manager();
 ;;;386    	}
 ;;;387    
 ;;;388    }
@@ -1031,38 +1030,38 @@
                   NVIC_EnableIRQ PROC
 ;;;503     */
 ;;;504    __STATIC_INLINE void NVIC_EnableIRQ(IRQn_Type IRQn)
-00055a  06c1              LSLS     r1,r0,#27
+000556  06c1              LSLS     r1,r0,#27
 ;;;505    {
 ;;;506      NVIC->ISER[0] = (1 << ((uint32_t)(IRQn) & 0x1F));
-00055c  0ec9              LSRS     r1,r1,#27
-00055e  2001              MOVS     r0,#1
-000560  4088              LSLS     r0,r0,r1
-000562  490a              LDR      r1,|L1.1420|
-000564  6008              STR      r0,[r1,#0]
+000558  0ec9              LSRS     r1,r1,#27
+00055a  2001              MOVS     r0,#1
+00055c  4088              LSLS     r0,r0,r1
+00055e  490a              LDR      r1,|L1.1416|
+000560  6008              STR      r0,[r1,#0]
 ;;;507    }
-000566  4770              BX       lr
+000562  4770              BX       lr
 ;;;508    
                           ENDP
 
-                  |L1.1384|
+                  |L1.1380|
                           DCD      0x40040000
-                  |L1.1388|
+                  |L1.1384|
                           DCD      0x0001affe
-                  |L1.1392|
+                  |L1.1388|
                           DCD      0xe000e000
-                  |L1.1396|
+                  |L1.1392|
                           DCD      unCOM_SPI_TransCNT
-                  |L1.1400|
+                  |L1.1396|
                           DCD      unCOM_SPI_TransErrCNT
-                  |L1.1404|
+                  |L1.1400|
                           DCD      unZXMatchCNT
-                  |L1.1408|
+                  |L1.1404|
                           DCD      tMotor
-                  |L1.1412|
+                  |L1.1408|
                           DCD      0x50004240
-                  |L1.1416|
+                  |L1.1412|
                           DCD      0x40010000
-                  |L1.1420|
+                  |L1.1416|
                           DCD      0xe000e100
 
                           AREA ||.constdata||, DATA, READONLY, ALIGN=1

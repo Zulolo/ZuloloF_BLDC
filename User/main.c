@@ -358,15 +358,15 @@ void initEnv(void)
 int main()
 {
 
-    initSys();
-    initEnv();
+	initSys();
+	initEnv();
 
-    PTC_checkMotor();
+	PTC_checkMotor();
 
-    /* ----==== Here is the parameter used for test ====----*/
-    // Max PWM Duty is: PWM_PERIOD = 441
-    // Max Period is:
-    MOTOR_SHUT_DOWN;
+	/* ----==== Here is the parameter used for test ====----*/
+	// Max PWM Duty is: PWM_PERIOD = 441
+	// Max Period is:
+	MOTOR_SHUT_DOWN;
 
     // Example parameter
 //    tMotor.structMotor.unLocatingDuty = 200;
@@ -378,11 +378,11 @@ int main()
 //    tMotor.structMotor.MCR.bMotorNeedToRun = TRUE;
     /* ----=============== Test End ================---- */
 
-    while(1)
-    {
+	while(1)
+	{
 		BLDC_SensorLessManager();
 		COMM_Manager();
-		ERR_Manager();
+//		ERR_Manager();
 	}
 
 }

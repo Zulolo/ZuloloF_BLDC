@@ -8135,6 +8135,7 @@ void WDT_DisableInt(void);
 
 
 
+
 extern volatile uint32_t unSystemTick;
 
 typedef struct
@@ -8261,7 +8262,7 @@ extern uint8_t unCurrentPhase;
 extern uint8_t FLAG_PHASE_CHANGED;
 extern __inline void BLDC_stopMotor(void);
 extern void BLDC_SensorLessManager(void);
-#line 68 "User\\global.h"
+#line 69 "User\\global.h"
 #line 1 "User\\Communication.h"
 
 
@@ -8313,7 +8314,7 @@ extern ENUM_COMM_REG tRegister;
 extern uint8_t FlagRegisterNeedWrite;
 
 extern void COMM_Manager(void);
-#line 69 "User\\global.h"
+#line 70 "User\\global.h"
 #line 1 "User\\Error.h"
 
 
@@ -8352,7 +8353,11 @@ typedef enum {
 	ERR_BRD_FAULT
 } ENUM_ERROR_LEVEL;
 
-#line 60 "User\\Error.h"
+
+
+
+
+#line 62 "User\\Error.h"
 
 extern uint32_t unErrorMaster;
 extern void delay(uint32_t unDelayMs);
@@ -8361,7 +8366,7 @@ extern void setError(ENUM_ERROR_LEVEL enumErrorType);
 extern void clearError(void);
 extern void ERR_Manager(void);
 
-#line 70 "User\\global.h"
+#line 71 "User\\global.h"
 #line 1 "User\\Protection.h"
 
 
@@ -8397,7 +8402,7 @@ extern void ERR_Manager(void);
 
 extern void PTC_checkMotor(void);
 
-#line 71 "User\\global.h"
+#line 72 "User\\global.h"
 #line 5 "User\\main.h"
 
 
@@ -8773,31 +8778,31 @@ void initEnv(void)
 int main()
 {
 
-    initSys();
-    initEnv();
+	initSys();
+	initEnv();
 
-    PTC_checkMotor();
+	PTC_checkMotor();
+
+	 
+	
+	
+	((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(3))) + ((0)<<2)))) = 0); (((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->PIER = 0); (TIMER_Stop(((TIMER_T *) (((uint32_t)0x40000000) + 0x10000)))); (TIMER_Stop(((TIMER_T *) (((uint32_t)0x40000000) + 0x10020)))); (TIMER_DisableInt(((TIMER_T *) (((uint32_t)0x40000000) + 0x10000)))); (TIMER_DisableInt(((TIMER_T *) (((uint32_t)0x40000000) + 0x10020)))); (((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->PHCHGNXT = (0x000000FFul)); (((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->PHCHG = (0x000000FFul));
+
+    
+
+
+
+
+
+
 
      
-    
-    
-    ((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(3))) + ((0)<<2)))) = 0); (((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->PIER = 0); (TIMER_Stop(((TIMER_T *) (((uint32_t)0x40000000) + 0x10000)))); (TIMER_Stop(((TIMER_T *) (((uint32_t)0x40000000) + 0x10020)))); (TIMER_DisableInt(((TIMER_T *) (((uint32_t)0x40000000) + 0x10000)))); (TIMER_DisableInt(((TIMER_T *) (((uint32_t)0x40000000) + 0x10020)))); (((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->PHCHGNXT = (0x000000FFul)); (((PWM_T *) (((uint32_t)0x40000000) + 0x40000))->PHCHG = (0x000000FFul));
 
-    
-
-
-
-
-
-
-
-     
-
-    while(1)
-    {
+	while(1)
+	{
 		BLDC_SensorLessManager();
 		COMM_Manager();
-		ERR_Manager();
+
 	}
 
 }

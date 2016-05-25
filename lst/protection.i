@@ -7234,6 +7234,7 @@ void WDT_DisableInt(void);
 
 
 
+
 extern volatile uint32_t unSystemTick;
 
 typedef struct
@@ -7360,7 +7361,7 @@ extern uint8_t unCurrentPhase;
 extern uint8_t FLAG_PHASE_CHANGED;
 extern __inline void BLDC_stopMotor(void);
 extern void BLDC_SensorLessManager(void);
-#line 68 "User\\global.h"
+#line 69 "User\\global.h"
 #line 1 "User\\Communication.h"
 
 
@@ -7412,7 +7413,7 @@ extern ENUM_COMM_REG tRegister;
 extern uint8_t FlagRegisterNeedWrite;
 
 extern void COMM_Manager(void);
-#line 69 "User\\global.h"
+#line 70 "User\\global.h"
 #line 1 "User\\Error.h"
 
 
@@ -7451,7 +7452,11 @@ typedef enum {
 	ERR_BRD_FAULT
 } ENUM_ERROR_LEVEL;
 
-#line 60 "User\\Error.h"
+
+
+
+
+#line 62 "User\\Error.h"
 
 extern uint32_t unErrorMaster;
 extern void delay(uint32_t unDelayMs);
@@ -7460,9 +7465,9 @@ extern void setError(ENUM_ERROR_LEVEL enumErrorType);
 extern void clearError(void);
 extern void ERR_Manager(void);
 
-#line 70 "User\\global.h"
-#line 1 "User\\Protection.h"
 #line 71 "User\\global.h"
+#line 1 "User\\Protection.h"
+#line 72 "User\\global.h"
 #line 5 "User\\Protection.h"
 
 

@@ -171,18 +171,18 @@ void ADC_IRQHandler(void)
 
 void SPI_IRQHandler(void)
 {
-	static uint32_t unSPI_RX_Value;
-	
+	uint32_t unSPI_RX_Value;
+	uint8_t unFIFO_RX_CNT;
+
 	if ((SPI->CNTRL & SPI_STATUS_IF_Msk) == SPI_STATUS_IF_Msk)
 	{
-		SPI_CLR_UNIT_TRANS_INT_FLAG(SPI);
-
 		// Check if it is really finished one unit transfer
 		if ((SPI->SSR & SPI_SSR_LTRIG_FLAG_Msk) == SPI_SSR_LTRIG_FLAG_Msk)
 		{
 			if (tMotor.structMotor.MSR.bNewComFrameReceived == FALSE)
 			{
-				if (SPI_GET_RX_FIFO_COUNT(SPI) == COMM_RD_CMD_CNT_IN_32BIT)
+				unFIFO_RX_CNT = SPI_GET_RX_FIFO_COUNT(SPI);
+				if (unFIFO_RX_CNT == COMM_RD_CMD_CNT_IN_32BIT)
 				{
 					// Received 2 uint16, copy to RAM buffer and infor communication manager
 					unSPI_RX_Value = SPI_READ_RX(SPI);
@@ -198,7 +198,7 @@ void SPI_IRQHandler(void)
 						unCOM_SPI_TransErrCNT++;
 					}
 				}
-				else if (SPI_GET_RX_FIFO_COUNT(SPI) == COMM_WR_CMD_CNT_IN_32BIT)
+				else if (unFIFO_RX_CNT == COMM_WR_CMD_CNT_IN_32BIT)
 				{
 					// Received 4 uint16, copy to RAM buffer and infor communication manager
 					unSPI_RX_Value = SPI_READ_RX(SPI);
@@ -233,6 +233,8 @@ void SPI_IRQHandler(void)
 			// So something strange happened
 			unCOM_SPI_TransErrCNT++;
 		}		
+		SPI_ClearRxFIFO(SPI);
+		SPI_CLR_UNIT_TRANS_INT_FLAG(SPI);
 	}
 }
 
