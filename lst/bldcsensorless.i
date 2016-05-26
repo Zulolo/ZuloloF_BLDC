@@ -7284,7 +7284,7 @@ typedef union
 #line 1 "User\\global.h"
 #line 5 "User\\Communication.h"
 
-#line 95 "User\\Communication.h"
+#line 64 "User\\Communication.h"
 
 
 
@@ -7302,7 +7302,7 @@ typedef union
 
 
 		
-#line 118 "User\\Communication.h"
+#line 87 "User\\Communication.h"
 
 typedef enum{
 	MOTOR_MCR = 0,	 

@@ -34,34 +34,21 @@
  * Because read command is 2 16bits length, it can only access one half word value and one CRC16.
  */
 
-uint16_t reflect16Bit(uint16_t unOrigin)
+uint16_t calCRC16(uint8_t* pBytes, uint32_t unLength)
 {
-	register uint8_t unVenier = 0;
-	register uint16_t unResult = 0;
-	while(unVenier < 16)
+	uint16_t crc = 0;
+	uint32_t unIndex;
+	uint8_t unPosInTable;
+	
+	for (unIndex = 0; unIndex < unLength; unIndex++)
 	{
-		if ((unOrigin & (BIT_MASK << unVenier)) != 0)
-		{
-			unResult |= (BIT_MASK << (15 - unVenier));
-		}
-		unVenier++;
+		/* XOR-in next input byte into MSB of crc, that's our new intermediate divident */
+		unPosInTable = (uint8_t)((crc >> 8) ^ (*(pBytes + REVS_BYTE_ORDER(unIndex)))); /* equal: ((crc ^ (b << 8)) >> 8) */
+		/* Shift out the MSB used for division per lookuptable and XOR with the remainder */
+		crc = (uint16_t)((crc << 8) ^ (uint16_t)(CRC_TABLE16[unPosInTable]));
 	}
-	return unResult;
-}
 
-uint16_t CRC16(uint8_t* pData, uint16_t unLength)
-{
-	uint8_t unCRCHi = 0x00;
-	uint8_t unCRCLo = 0x00;
-	int32_t nIndex;
-
-	while(unLength--)
-	{
-		nIndex = unCRCLo ^ *(pData++);
-		unCRCLo = (uint8_t)(unCRCHi ^ CRC_HIGH_FACTOR[nIndex]);
-		unCRCHi = CRC_LOW_FACTOR[nIndex];
-	}
-	return reflect16Bit((uint16_t)(unCRCHi << 8 | unCRCLo));
+	return crc;
 }
 
 int32_t nReadCommandHandler(uint16_t* pCOM_Buff)
@@ -69,7 +56,7 @@ int32_t nReadCommandHandler(uint16_t* pCOM_Buff)
 	if (COMM_GET_DATA(pCOM_Buff[0]) < COMM_READ_MAX)
 	{
 		SPI_WRITE_TX(SPI, tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])]);
-		SPI_WRITE_TX(SPI, CRC16((uint8_t*)(&(tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])])), 1));
+		SPI_WRITE_TX(SPI, calCRC16((uint8_t*)(&(tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])])), 1));
 		return 0;
 	}
 	else
@@ -118,7 +105,7 @@ void COMM_Manager(void)
 	{
 		memcpy(unCOM_Buff, unCOM_SPI_ReadData, COMM_FIFO_LENGTH);
 		tMotor.structMotor.MSR.bNewComFrameReceived = FALSE;
-		if (CRC16((uint8_t *)unCOM_Buff, (IS_COMM_RD_CMD(unCOM_Buff[0]) ? ((COMM_RD_CMD_CNT - 1) << 1) : ((COMM_WR_CMD_CNT - 1) << 1))) ==
+		if (calCRC16((uint8_t *)unCOM_Buff, (IS_COMM_RD_CMD(unCOM_Buff[0]) ? ((COMM_RD_CMD_CNT - 1) << 1) : ((COMM_WR_CMD_CNT - 1) << 1))) ==
 				(IS_COMM_RD_CMD(unCOM_Buff[0]) ? unCOM_Buff[COMM_RD_CMD_CNT - 1] : unCOM_Buff[COMM_WR_CMD_CNT - 1]))
 		{
 			unValidFrameCNT++;
