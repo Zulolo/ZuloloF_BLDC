@@ -112,14 +112,14 @@ void ACMP_IRQHandler(void)
 
 void ADC_IRQHandler(void)
 {
-    static uint32_t iADC_ComparatorFlag;
+  static uint32_t iADC_ComparatorFlag;
 	static uint32_t iSystemTickTemp;
 	static uint16_t iBatteryLowCNT = 0;
-    static uint32_t iBatteryLowLastTimeRCD = 0;
+  static uint32_t iBatteryLowLastTimeRCD = 0;
 
     // Get ADC comparator interrupt flag
-    iADC_ComparatorFlag = ADC_GET_INT_FLAG(ADC, ADC_CURRENT_CMP_MSK | ADC_BATTERY_CMP_MSK | ADC_ADF_MSK);
-    if(iADC_ComparatorFlag & ADC_ADF_MSK)
+  iADC_ComparatorFlag = ADC_GET_INT_FLAG(ADC, ADC_CURRENT_CMP_MSK | ADC_BATTERY_CMP_MSK | ADC_ADF_MSK);
+  if(iADC_ComparatorFlag & ADC_ADF_MSK)
 	{
 		// Change ADC channel
 		if (ADC->ADCHER & ADC_CURRENT_CHN_MSK)
@@ -196,6 +196,7 @@ void SPI_IRQHandler(void)
 					else
 					{
 						unCOM_SPI_TransErrCNT++;
+						
 					}
 				}
 				else if (unFIFO_RX_CNT == COMM_WR_CMD_CNT_IN_32BIT)
@@ -213,12 +214,12 @@ void SPI_IRQHandler(void)
 					}
 					else
 					{
-						unCOM_SPI_TransErrCNT++;
+						unCOM_SPI_TransErrCNT++;			
 					}
 				}
 				else
 				{
-					unCOM_SPI_TransErrCNT++;
+					unCOM_SPI_TransErrCNT++;			
 				}
 			}
 			else

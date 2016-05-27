@@ -162,6 +162,11 @@
           <WinNumber>1</WinNumber>
           <ItemText>unTestCRC</ItemText>
         </Ww>
+        <Ww>
+          <count>4</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>unTestCNT</ItemText>
+        </Ww>
       </WatchWindow1>
       <MemoryWindow1>
         <Mm>

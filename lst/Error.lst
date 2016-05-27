@@ -9755,7 +9755,6 @@ N	{
 N		iVernier--; 
 N		if (unErrorMaster >> iVernier)
 N		{
-W "User\Error.c" 56 11 enumerated type mixed with another type
 N			return (iVernier + 1);
 N		}		
 N	}

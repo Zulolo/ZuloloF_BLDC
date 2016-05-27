@@ -305,19 +305,19 @@
 ;;;113    void ADC_IRQHandler(void)
 000156  b5f8              PUSH     {r3-r7,lr}
 ;;;114    {
-;;;115        static uint32_t iADC_ComparatorFlag;
+;;;115      static uint32_t iADC_ComparatorFlag;
 ;;;116    	static uint32_t iSystemTickTemp;
 ;;;117    	static uint16_t iBatteryLowCNT = 0;
-;;;118        static uint32_t iBatteryLowLastTimeRCD = 0;
+;;;118      static uint32_t iBatteryLowLastTimeRCD = 0;
 ;;;119    
 ;;;120        // Get ADC comparator interrupt flag
-;;;121        iADC_ComparatorFlag = ADC_GET_INT_FLAG(ADC, ADC_CURRENT_CMP_MSK | ADC_BATTERY_CMP_MSK | ADC_ADF_MSK);
+;;;121      iADC_ComparatorFlag = ADC_GET_INT_FLAG(ADC, ADC_CURRENT_CMP_MSK | ADC_BATTERY_CMP_MSK | ADC_ADF_MSK);
 000158  4e65              LDR      r6,|L1.752|
 00015a  6b30              LDR      r0,[r6,#0x30]
 00015c  4c60              LDR      r4,|L1.736|
 00015e  0740              LSLS     r0,r0,#29
 000160  0f40              LSRS     r0,r0,#29
-;;;122        if(iADC_ComparatorFlag & ADC_ADF_MSK)
+;;;122      if(iADC_ComparatorFlag & ADC_ADF_MSK)
 000162  60e0              STR      r0,[r4,#0xc]  ; iADC_ComparatorFlag
 000164  07c1              LSLS     r1,r0,#31
 000166  d01d              BEQ      |L1.420|
@@ -542,9 +542,10 @@
 000270  0f00              LSRS     r0,r0,#28             ;189
 000272  2801              CMP      r0,#1                 ;185
 000274  d002              BEQ      |L1.636|
-;;;199    					}
-;;;200    				}
-;;;201    				else if (unFIFO_RX_CNT == COMM_WR_CMD_CNT_IN_32BIT)
+;;;199    						
+;;;200    					}
+;;;201    				}
+;;;202    				else if (unFIFO_RX_CNT == COMM_WR_CMD_CNT_IN_32BIT)
 000276  2802              CMP      r0,#2
 000278  d00b              BEQ      |L1.658|
 00027a  e014              B        |L1.678|
@@ -563,53 +564,53 @@
 000290  e00a              B        |L1.680|
                   |L1.658|
 000292  6923              LDR      r3,[r4,#0x10]         ;194
-;;;202    				{
-;;;203    					// Received 4 uint16, copy to RAM buffer and infor communication manager
-;;;204    					unSPI_RX_Value = SPI_READ_RX(SPI);
-;;;205    					unCOM_SPI_ReadData[0] = (uint16_t)(unSPI_RX_Value >> 16);
+;;;203    				{
+;;;204    					// Received 4 uint16, copy to RAM buffer and infor communication manager
+;;;205    					unSPI_RX_Value = SPI_READ_RX(SPI);
+;;;206    					unCOM_SPI_ReadData[0] = (uint16_t)(unSPI_RX_Value >> 16);
 000294  0c18              LSRS     r0,r3,#16
 000296  8028              STRH     r0,[r5,#0]
-;;;206    					unCOM_SPI_ReadData[1] = (uint16_t)unSPI_RX_Value;
+;;;207    					unCOM_SPI_ReadData[1] = (uint16_t)unSPI_RX_Value;
 000298  806b              STRH     r3,[r5,#2]
 00029a  6923              LDR      r3,[r4,#0x10]
-;;;207    					unSPI_RX_Value = SPI_READ_RX(SPI);
-;;;208    					unCOM_SPI_ReadData[2] = (uint16_t)(unSPI_RX_Value >> 16);
+;;;208    					unSPI_RX_Value = SPI_READ_RX(SPI);
+;;;209    					unCOM_SPI_ReadData[2] = (uint16_t)(unSPI_RX_Value >> 16);
 00029c  0c1f              LSRS     r7,r3,#16
 00029e  80af              STRH     r7,[r5,#4]
-;;;209    					unCOM_SPI_ReadData[3] = (uint16_t)unSPI_RX_Value;					
+;;;210    					unCOM_SPI_ReadData[3] = (uint16_t)unSPI_RX_Value;					
 0002a0  80eb              STRH     r3,[r5,#6]
-;;;210    					if (IS_COMM_WR_CMD(unCOM_SPI_ReadData[0]))
+;;;211    					if (IS_COMM_WR_CMD(unCOM_SPI_ReadData[0]))
 0002a2  0400              LSLS     r0,r0,#16
 0002a4  d5f0              BPL      |L1.648|
                   |L1.678|
-;;;211    					{
-;;;212    						tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
-;;;213    					}
-;;;214    					else
-;;;215    					{
-;;;216    						unCOM_SPI_TransErrCNT++;
-;;;217    					}
-;;;218    				}
-;;;219    				else
-;;;220    				{
-;;;221    					unCOM_SPI_TransErrCNT++;
-;;;222    				}
-;;;223    			}
-;;;224    			else
-;;;225    			{
-;;;226    				unCOM_SPI_TransErrCNT++;
+;;;212    					{
+;;;213    						tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
+;;;214    					}
+;;;215    					else
+;;;216    					{
+;;;217    						unCOM_SPI_TransErrCNT++;			
+;;;218    					}
+;;;219    				}
+;;;220    				else
+;;;221    				{
+;;;222    					unCOM_SPI_TransErrCNT++;			
+;;;223    				}
+;;;224    			}
+;;;225    			else
+;;;226    			{
+;;;227    				unCOM_SPI_TransErrCNT++;
 0002a6  6011              STR      r1,[r2,#0]  ; unCOM_SPI_TransErrCNT
                   |L1.680|
-;;;227    			}
-;;;228    			// Clear Receive FIFO interrupt
-;;;229    			// I don't know how to clear. Maybe just after I read out the data in FIFO and it is below threshold it will be OK
-;;;230    		}
-;;;231    		else
-;;;232    		{	// Receive FIFO interrupt should be the only interrupt enabled for SPI
-;;;233    			// So something strange happened
-;;;234    			unCOM_SPI_TransErrCNT++;
-;;;235    		}		
-;;;236    		SPI_ClearRxFIFO(SPI);
+;;;228    			}
+;;;229    			// Clear Receive FIFO interrupt
+;;;230    			// I don't know how to clear. Maybe just after I read out the data in FIFO and it is below threshold it will be OK
+;;;231    		}
+;;;232    		else
+;;;233    		{	// Receive FIFO interrupt should be the only interrupt enabled for SPI
+;;;234    			// So something strange happened
+;;;235    			unCOM_SPI_TransErrCNT++;
+;;;236    		}		
+;;;237    		SPI_ClearRxFIFO(SPI);
 0002a8  4620              MOV      r0,r4
 0002aa  f7fffffe          BL       SPI_ClearRxFIFO
 0002ae  6c61              LDR      r1,[r4,#0x44]
@@ -618,22 +619,22 @@
 0002b4  4311              ORRS     r1,r1,r2
 0002b6  6461              STR      r1,[r4,#0x44]
                   |L1.696|
-;;;237    		SPI_CLR_UNIT_TRANS_INT_FLAG(SPI);
-;;;238    	}
-;;;239    }
+;;;238    		SPI_CLR_UNIT_TRANS_INT_FLAG(SPI);
+;;;239    	}
+;;;240    }
 0002b8  bdf8              POP      {r3-r7,pc}
-;;;240    
+;;;241    
                           ENDP
 
                   SysTick_Handler PROC
-;;;241    void SysTick_Handler(void)
+;;;242    void SysTick_Handler(void)
 0002ba  480f              LDR      r0,|L1.760|
-;;;242    {
-;;;243    	unSystemTick += 5;
+;;;243    {
+;;;244    	unSystemTick += 5;
 0002bc  6801              LDR      r1,[r0,#0]  ; unSystemTick
 0002be  1d49              ADDS     r1,r1,#5
 0002c0  6001              STR      r1,[r0,#0]  ; unSystemTick
-;;;244    }
+;;;245    }
 0002c2  4770              BX       lr
                           ENDP
 

@@ -7619,14 +7619,14 @@ void ACMP_IRQHandler(void)
 
 void ADC_IRQHandler(void)
 {
-    static uint32_t iADC_ComparatorFlag;
+  static uint32_t iADC_ComparatorFlag;
 	static uint32_t iSystemTickTemp;
 	static uint16_t iBatteryLowCNT = 0;
-    static uint32_t iBatteryLowLastTimeRCD = 0;
+  static uint32_t iBatteryLowLastTimeRCD = 0;
 
     
-    iADC_ComparatorFlag = (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADSR & (((1ul << 1)) | ((1ul << 2)) | ((1ul << 0))));
-    if(iADC_ComparatorFlag & ((1ul << 0)))
+  iADC_ComparatorFlag = (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADSR & (((1ul << 1)) | ((1ul << 2)) | ((1ul << 0))));
+  if(iADC_ComparatorFlag & ((1ul << 0)))
 	{
 		
 		if (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCHER & (0x01 << 0))
@@ -7703,6 +7703,7 @@ void SPI_IRQHandler(void)
 					else
 					{
 						unCOM_SPI_TransErrCNT++;
+						
 					}
 				}
 				else if (unFIFO_RX_CNT == 2)
@@ -7720,12 +7721,12 @@ void SPI_IRQHandler(void)
 					}
 					else
 					{
-						unCOM_SPI_TransErrCNT++;
+						unCOM_SPI_TransErrCNT++;			
 					}
 				}
 				else
 				{
-					unCOM_SPI_TransErrCNT++;
+					unCOM_SPI_TransErrCNT++;			
 				}
 			}
 			else

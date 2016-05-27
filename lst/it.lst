@@ -9780,16 +9780,16 @@ N}
 N
 Nvoid ADC_IRQHandler(void)
 N{
-N    static uint32_t iADC_ComparatorFlag;
+N  static uint32_t iADC_ComparatorFlag;
 N	static uint32_t iSystemTickTemp;
 N	static uint16_t iBatteryLowCNT = 0;
-N    static uint32_t iBatteryLowLastTimeRCD = 0;
+N  static uint32_t iBatteryLowLastTimeRCD = 0;
 N
 N    // Get ADC comparator interrupt flag
-N    iADC_ComparatorFlag = ADC_GET_INT_FLAG(ADC, ADC_CURRENT_CMP_MSK | ADC_BATTERY_CMP_MSK | ADC_ADF_MSK);
-X    iADC_ComparatorFlag = (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADSR & (((1ul << 1)) | ((1ul << 2)) | ((1ul << 0))));
-N    if(iADC_ComparatorFlag & ADC_ADF_MSK)
-X    if(iADC_ComparatorFlag & ((1ul << 0)))
+N  iADC_ComparatorFlag = ADC_GET_INT_FLAG(ADC, ADC_CURRENT_CMP_MSK | ADC_BATTERY_CMP_MSK | ADC_ADF_MSK);
+X  iADC_ComparatorFlag = (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADSR & (((1ul << 1)) | ((1ul << 2)) | ((1ul << 0))));
+N  if(iADC_ComparatorFlag & ADC_ADF_MSK)
+X  if(iADC_ComparatorFlag & ((1ul << 0)))
 N	{
 N		// Change ADC channel
 N		if (ADC->ADCHER & ADC_CURRENT_CHN_MSK)
@@ -9888,6 +9888,7 @@ N					}
 N					else
 N					{
 N						unCOM_SPI_TransErrCNT++;
+N						
 N					}
 N				}
 N				else if (unFIFO_RX_CNT == COMM_WR_CMD_CNT_IN_32BIT)
@@ -9910,12 +9911,12 @@ X						tMotor.structMotor.MSR.bNewComFrameReceived = (1);
 N					}
 N					else
 N					{
-N						unCOM_SPI_TransErrCNT++;
+N						unCOM_SPI_TransErrCNT++;			
 N					}
 N				}
 N				else
 N				{
-N					unCOM_SPI_TransErrCNT++;
+N					unCOM_SPI_TransErrCNT++;			
 N				}
 N			}
 N			else

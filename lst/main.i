@@ -8802,7 +8802,7 @@ int main()
 	{
 		BLDC_SensorLessManager();
 		COMM_Manager();
-		ERR_Manager();
+
 	}
 
 }

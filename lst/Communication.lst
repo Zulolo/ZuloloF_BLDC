@@ -10344,10 +10344,8 @@ N{
 N	if (COMM_GET_DATA(pCOM_Buff[0]) < COMM_READ_MAX)
 X	if (((pCOM_Buff[0]) & (0x7FFF)) < COMM_READ_MAX)
 N	{
-N		SPI_WRITE_TX(SPI, tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])]);
-X		SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), tMotor.unValue[((pCOM_Buff[0]) & (0x7FFF))]);
-N		SPI_WRITE_TX(SPI, calCRC16((uint8_t*)(&(tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])])), 1));
-X		SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), calCRC16((uint8_t*)(&(tMotor.unValue[((pCOM_Buff[0]) & (0x7FFF))])), 1));
+N		SPI_WRITE_TX(SPI, tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])] + (calCRC16((uint8_t*)(&(tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])])), 2) << 16));
+X		SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), tMotor.unValue[((pCOM_Buff[0]) & (0x7FFF))] + (calCRC16((uint8_t*)(&(tMotor.unValue[((pCOM_Buff[0]) & (0x7FFF))])), 2) << 16));
 N		return 0;
 N	}
 N	else
@@ -10378,7 +10376,7 @@ N	case COMM_WRITE_LOCATING_PERIOD:
 N		tMotor.structMotor.unLocatingPeriod = pCOM_Buff[1];
 N		break;
 N	case COMM_WRITE_RAMP_UP_PERIOD:
-N		tMotor.structMotor.unRampUpPeriod = pCOM_Buff[1] + pCOM_Buff[2] << 16;
+N		tMotor.structMotor.unRampUpPeriod = pCOM_Buff[1] + (pCOM_Buff[2] << 16);
 N			break;
 N	default:
 N		return -1;
@@ -10401,45 +10399,43 @@ N		memcpy(unCOM_Buff, unCOM_SPI_ReadData, COMM_FIFO_LENGTH);
 X		memcpy(unCOM_Buff, unCOM_SPI_ReadData, 4);
 N		tMotor.structMotor.MSR.bNewComFrameReceived = FALSE;
 X		tMotor.structMotor.MSR.bNewComFrameReceived = (0);
-N		if (calCRC16((uint8_t *)unCOM_Buff, (IS_COMM_RD_CMD(unCOM_Buff[0]) ? ((COMM_RD_CMD_CNT - 1) << 1) : ((COMM_WR_CMD_CNT - 1) << 1))) ==
-X		if (calCRC16((uint8_t *)unCOM_Buff, ((((unCOM_Buff[0]) & (0x8000)) == (0x8000)) ? ((2 - 1) << 1) : ((4 - 1) << 1))) ==
-N				(IS_COMM_RD_CMD(unCOM_Buff[0]) ? unCOM_Buff[COMM_RD_CMD_CNT - 1] : unCOM_Buff[COMM_WR_CMD_CNT - 1]))
-X				((((unCOM_Buff[0]) & (0x8000)) == (0x8000)) ? unCOM_Buff[2 - 1] : unCOM_Buff[4 - 1]))
-N		{
+N//		if (calCRC16((uint8_t *)unCOM_Buff, (IS_COMM_RD_CMD(unCOM_Buff[0]) ? ((COMM_RD_CMD_CNT - 1) << 1) : ((COMM_WR_CMD_CNT - 1) << 1))) ==
+N//				(IS_COMM_RD_CMD(unCOM_Buff[0]) ? unCOM_Buff[COMM_RD_CMD_CNT - 1] : unCOM_Buff[COMM_WR_CMD_CNT - 1]))
+N//		{
 N			unValidFrameCNT++;
 N			// safe zone
-N			if (IS_COMM_RD_CMD(unCOM_Buff[0]))
-X			if ((((unCOM_Buff[0]) & (0x8000)) == (0x8000)))
-N			{
-N				nReadCommandHandler(unCOM_Buff);
-N			}
-N			else
-N			{
-N				nWriteCommandHandler(unCOM_Buff);
-N			}
-N		}
-N		else
-N		{
-N			unCOM_SPI_TransErrCNT++;
-N		}
+N//			if (IS_COMM_RD_CMD(unCOM_Buff[0]))
+N//			{
+N//				nReadCommandHandler(unCOM_Buff);
+N//			}
+N//			else
+N//			{
+N//				nWriteCommandHandler(unCOM_Buff);
+N//			}
+N//		}
+N//		else
+N//		{
+N//			unCOM_SPI_TransErrCNT++;
+N//		}
 N	}
 N	
 N	// Comm protection 1: If have NOT received any frame in 500ms, error
-N	if ((uint32_t)(unSystemTick - unLastCheckTime) > 500)
-N	{
-N		unLastCheckTime = unSystemTick;
-N		if ((uint32_t)(unValidFrameCNT - unLastFrameCNT) < 1)
-N		{
-N			BLDC_stopMotor();
-N			setError(ERR_COMMUNICATION_FAIL);
-N		}
-N		unLastFrameCNT = unValidFrameCNT;
-N	}
-N	// Comm protection 2: If received error frame exceed some threshold, error
-N	if (unCOM_SPI_TransErrCNT > COM_SPI_TRANS_ERR_THRESHOLD)
-X	if (unCOM_SPI_TransErrCNT > 6)
-N	{
-N		BLDC_stopMotor();
-N		setError(ERR_COMMUNICATION_FAIL);
-N	}
+N//	if ((uint32_t)(unSystemTick - unLastCheckTime) > 500)
+N//	{
+N//		unLastCheckTime = unSystemTick;
+N//		if ((uint32_t)(unValidFrameCNT - unLastFrameCNT) < 1)
+N//		{
+N//			BLDC_stopMotor();
+N//			setError(ERR_COMMUNICATION_FAIL);
+N//		}
+N//		unLastFrameCNT = unValidFrameCNT;
+N//	}
+N//	// Comm protection 2: If received error frame exceed some threshold, error
+N//	if (unCOM_SPI_TransErrCNT > COM_SPI_TRANS_ERR_THRESHOLD)
+N//	{
+N//		BLDC_stopMotor();
+N//		setError(ERR_COMMUNICATION_FAIL);
+N//	}
+W "User\Communication.c" 100 18 variable "unLastFrameCNT" was declared but never referenced
+W "User\Communication.c" 101 18 variable "unLastCheckTime" was declared but never referenced
 N}

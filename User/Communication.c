@@ -55,8 +55,7 @@ int32_t nReadCommandHandler(uint16_t* pCOM_Buff)
 {
 	if (COMM_GET_DATA(pCOM_Buff[0]) < COMM_READ_MAX)
 	{
-		SPI_WRITE_TX(SPI, tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])]);
-		SPI_WRITE_TX(SPI, calCRC16((uint8_t*)(&(tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])])), 1));
+		SPI_WRITE_TX(SPI, tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])] + (calCRC16((uint8_t*)(&(tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])])), 2) << 16));
 		return 0;
 	}
 	else
@@ -86,7 +85,7 @@ int32_t nWriteCommandHandler(uint16_t* pCOM_Buff)
 		tMotor.structMotor.unLocatingPeriod = pCOM_Buff[1];
 		break;
 	case COMM_WRITE_RAMP_UP_PERIOD:
-		tMotor.structMotor.unRampUpPeriod = pCOM_Buff[1] + pCOM_Buff[2] << 16;
+		tMotor.structMotor.unRampUpPeriod = pCOM_Buff[1] + (pCOM_Buff[2] << 16);
 			break;
 	default:
 		return -1;
@@ -105,41 +104,41 @@ void COMM_Manager(void)
 	{
 		memcpy(unCOM_Buff, unCOM_SPI_ReadData, COMM_FIFO_LENGTH);
 		tMotor.structMotor.MSR.bNewComFrameReceived = FALSE;
-		if (calCRC16((uint8_t *)unCOM_Buff, (IS_COMM_RD_CMD(unCOM_Buff[0]) ? ((COMM_RD_CMD_CNT - 1) << 1) : ((COMM_WR_CMD_CNT - 1) << 1))) ==
-				(IS_COMM_RD_CMD(unCOM_Buff[0]) ? unCOM_Buff[COMM_RD_CMD_CNT - 1] : unCOM_Buff[COMM_WR_CMD_CNT - 1]))
-		{
+//		if (calCRC16((uint8_t *)unCOM_Buff, (IS_COMM_RD_CMD(unCOM_Buff[0]) ? ((COMM_RD_CMD_CNT - 1) << 1) : ((COMM_WR_CMD_CNT - 1) << 1))) ==
+//				(IS_COMM_RD_CMD(unCOM_Buff[0]) ? unCOM_Buff[COMM_RD_CMD_CNT - 1] : unCOM_Buff[COMM_WR_CMD_CNT - 1]))
+//		{
 			unValidFrameCNT++;
 			// safe zone
-			if (IS_COMM_RD_CMD(unCOM_Buff[0]))
-			{
-				nReadCommandHandler(unCOM_Buff);
-			}
-			else
-			{
-				nWriteCommandHandler(unCOM_Buff);
-			}
-		}
-		else
-		{
-			unCOM_SPI_TransErrCNT++;
-		}
+//			if (IS_COMM_RD_CMD(unCOM_Buff[0]))
+//			{
+//				nReadCommandHandler(unCOM_Buff);
+//			}
+//			else
+//			{
+//				nWriteCommandHandler(unCOM_Buff);
+//			}
+//		}
+//		else
+//		{
+//			unCOM_SPI_TransErrCNT++;
+//		}
 	}
 	
 	// Comm protection 1: If have NOT received any frame in 500ms, error
-	if ((uint32_t)(unSystemTick - unLastCheckTime) > 500)
-	{
-		unLastCheckTime = unSystemTick;
-		if ((uint32_t)(unValidFrameCNT - unLastFrameCNT) < 1)
-		{
-			BLDC_stopMotor();
-			setError(ERR_COMMUNICATION_FAIL);
-		}
-		unLastFrameCNT = unValidFrameCNT;
-	}
-	// Comm protection 2: If received error frame exceed some threshold, error
-	if (unCOM_SPI_TransErrCNT > COM_SPI_TRANS_ERR_THRESHOLD)
-	{
-		BLDC_stopMotor();
-		setError(ERR_COMMUNICATION_FAIL);
-	}
+//	if ((uint32_t)(unSystemTick - unLastCheckTime) > 500)
+//	{
+//		unLastCheckTime = unSystemTick;
+//		if ((uint32_t)(unValidFrameCNT - unLastFrameCNT) < 1)
+//		{
+//			BLDC_stopMotor();
+//			setError(ERR_COMMUNICATION_FAIL);
+//		}
+//		unLastFrameCNT = unValidFrameCNT;
+//	}
+//	// Comm protection 2: If received error frame exceed some threshold, error
+//	if (unCOM_SPI_TransErrCNT > COM_SPI_TRANS_ERR_THRESHOLD)
+//	{
+//		BLDC_stopMotor();
+//		setError(ERR_COMMUNICATION_FAIL);
+//	}
 }

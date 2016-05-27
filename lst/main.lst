@@ -11291,7 +11291,7 @@ N	while(1)
 N	{
 N		BLDC_SensorLessManager();
 N		COMM_Manager();
-N		ERR_Manager();
+N//		ERR_Manager();
 N	}
 N
 N}
