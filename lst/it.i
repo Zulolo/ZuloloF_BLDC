@@ -7512,10 +7512,6 @@ extern void PTC_checkMotor(void);
 
 
 
-
-
-
-
 #line 13 "User\\it.c"
 
 
@@ -7696,14 +7692,18 @@ void SPI_IRQHandler(void)
 					unCOM_SPI_ReadData[0] = (uint16_t)(unSPI_RX_Value >> 16);
 					unCOM_SPI_ReadData[1] = (uint16_t)unSPI_RX_Value;
 
-					if ((((unCOM_SPI_ReadData[0]) & (0x8000)) == (0x8000)))
+					if (unCOM_SPI_ReadData[0] != 0xFFFF)
 					{
-						tMotor.structMotor.MSR.bNewComFrameReceived = (1);
-					}
-					else
-					{
-						unCOM_SPI_TransErrCNT++;
 						
+						
+						if ((((unCOM_SPI_ReadData[0]) & (0x8000)) == (0x8000)))
+						{
+							tMotor.structMotor.MSR.bNewComFrameReceived = (1);
+						}
+						else
+						{
+							unCOM_SPI_TransErrCNT++;		
+						}						
 					}
 				}
 				else if (unFIFO_RX_CNT == 2)

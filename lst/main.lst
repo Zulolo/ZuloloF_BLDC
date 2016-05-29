@@ -10227,13 +10227,13 @@ N#define ACMP_HYS_AVG_TIME			20	// Average Hysteresis time 20/2M = 10us
 N#define MIN_PHASE_TIME				500	//(AVOID_ZXD_AFTER_PHCHG + ZXD_FILTER_TIME + 100)	// 1200/2M=0.6ms, 8333RPM if 42PC=1MC==7EC
 N#define MAX_PHASE_TIME				(10000)	// Unit 2MH, 5ms, 286rpm if 42PC=1MC==7EC
 N
-N#define MINI51_TIM_CNT_MAX			0xFFFFFF
-N#define GET_TIM1_CMP_VALUE(x)		(((x) >= MINI51_TIM_CNT_MAX) ? ((x) - MINI51_TIM_CNT_MAX) : (x))
+N#define MINI51_TIM_CNT_MAX						0xFFFFFF
+N#define GET_TIM1_CMP_VALUE(x)					(((x) >= MINI51_TIM_CNT_MAX) ? ((x) - MINI51_TIM_CNT_MAX) : (x))
 N#define GET_TIMER_DIFF(iLast, iThis)	(((iThis) > (iLast)) ? ((iThis) - (iLast)) : ((iThis) + (MINI51_TIM_CNT_MAX - (iLast))))
-N#define MAX_MISS_ZXD_THRESHOLD		12
-N#define MIN_SUCC_ZXD_THRESHOLD		4
+N#define MAX_MISS_ZXD_THRESHOLD				12
+N#define MIN_SUCC_ZXD_THRESHOLD				4
 N
-N#define MOSFET_DRV_0_4_PORT			P2
+N#define MOSFET_DRV_0_4_PORT		P2
 N#define MOSFET_DRV_5_PORT			P0
 N#define MOSFET_DRV_0_PIN			BIT2
 N#define MOSFET_DRV_1_PIN			BIT3
@@ -10242,12 +10242,12 @@ N#define MOSFET_DRV_3_PIN			BIT5
 N#define MOSFET_DRV_4_PIN			BIT6
 N#define MOSFET_DRV_5_PIN			BIT4
 N
-N#define MOSFET_AS_PIN_ADDR      	GPIO_PIN_ADDR(2, 2)
-N#define MOSFET_BS_PIN_ADDR     		GPIO_PIN_ADDR(2, 4)
-N#define MOSFET_CS_PIN_ADDR     		GPIO_PIN_ADDR(2, 6)
-N#define MOSFET_AD_PIN_ADDR      	GPIO_PIN_ADDR(2, 3)
-N#define MOSFET_BD_PIN_ADDR          GPIO_PIN_ADDR(2, 5)
-N#define MOSFET_CD_PIN_ADDR			GPIO_PIN_ADDR(0, 4)
+N#define MOSFET_AS_PIN_ADDR		GPIO_PIN_ADDR(2, 2)
+N#define MOSFET_BS_PIN_ADDR		GPIO_PIN_ADDR(2, 4)
+N#define MOSFET_CS_PIN_ADDR    GPIO_PIN_ADDR(2, 6)
+N#define MOSFET_AD_PIN_ADDR		GPIO_PIN_ADDR(2, 3)
+N#define MOSFET_BD_PIN_ADDR		GPIO_PIN_ADDR(2, 5)
+N#define MOSFET_CD_PIN_ADDR		GPIO_PIN_ADDR(0, 4)
 N
 N#define GPIO_OFFD_OFF_SET			16
 N#define ZERO_DETECT_PORT			P1
@@ -10256,20 +10256,20 @@ N#define ZERO_DETECT_B_PIN			BIT3
 N#define ZERO_DETECT_C_PIN			BIT5
 N#define ZERO_DETECT_M_PIN			BIT4
 N
-N#define PWM_PHCHG_PWM_MASK			(0x00003F00ul)
-N#define PWM_PHCHG_D0_7_MASK			(0x000000FFul)
-N#define PWM_PERIOD 					(884-1)	// PWM T=0.08ms, if target is 3K PRM, 42 E-Circle per M-Circle,
+N#define PWM_PHCHG_PWM_MASK		(0x00003F00ul)
+N#define PWM_PHCHG_D0_7_MASK		(0x000000FFul)
+N#define PWM_PERIOD 						(884-1)	// PWM T=0.08ms, if target is 3K PRM, 42 E-Circle per M-Circle,
 N											// each PC should less than 0.5 ms.
 N											// So each E-Circle at least has 6 PWM circle
 N
-N#define ROTATE_CLOCKWISE		0
+N#define ROTATE_CLOCKWISE			0
 N#define ROTATE_ANTICLOCKWISE	1
 N
 N#define PWM_INT_ENABLE				(PWM_EnableDutyInt(PWM, 1, WHAT_EVER_DO_NOT_CARE))
 N
 N#define PWM_INT_DISABLE				(PWM->PIER = 0)
 N
-N#define IS_PWM_IRQ_ENABLED			(PWM->PIER)
+N#define IS_PWM_IRQ_ENABLED		(PWM->PIER)
 N
 N// To increase shut down speed we can just directly write a constant number into PHCHG register
 N// But since we also have protection form driver IC, it is not so critical here
@@ -10398,12 +10398,12 @@ S		} ENUM_STATUS;
 S
 S		const uint8_t unLocatePhaseSequencyTable[] = {0, 1, 2, 1};
 S
-S		#define IS_ROTATING_DETECTING				0xFFFF
-S		#define MAX_ROTATING_DETECT_PHASE_TIME		30	// half phase max 30ms
-S		#define MAX_ALREADY_ROTATING_DETECT_TIME	200	// 200ms used to detect is motor is already rotating
-S		#define RAMP_UP_MIN_PERIOD_NUM_THRS			300	// After ramp up to minimum period, force continue rotate these phases
-S		#define CHANGE_DT_PR_AFTER_PHASE_CHANGED_NUM				9		// Used in ramp up
-S		#define CHANGE_DUTY_AFTER_PHASE_CHANGED_NUM					5		// Used after locked
+S		#define IS_ROTATING_DETECTING											0xFFFF
+S		#define MAX_ROTATING_DETECT_PHASE_TIME						30	// half phase max 30ms
+S		#define MAX_ALREADY_ROTATING_DETECT_TIME					200	// 200ms used to detect is motor is already rotating
+S		#define RAMP_UP_MIN_PERIOD_NUM_THRS								300	// After ramp up to minimum period, force continue rotate these phases
+S		#define CHANGE_DT_PR_AFTER_PHASE_CHANGED_NUM			9		// Used in ramp up
+S		#define CHANGE_DUTY_AFTER_PHASE_CHANGED_NUM				5		// Used after locked
 S
 S//		#define MOTOR_RUNNING_MSK					(0x01ul)
 S//		#define MOTOR_R_DIRECTION_MSK				(0x02ul)
@@ -10411,7 +10411,7 @@ S//		#define IS_MOTOR_NEED_TO_RUN(x)				((x) & MOTOR_RUNNING_MSK)
 S
 S//		#define IS_MOTOR_R_CLOCKWISE				(((tMotor.structMotor.MCR & MOTOR_R_DIRECTION_MSK) == 0) ? TRUE : FALSE)
 S		#define GET_PHASE_VALUE(x)					((tMotor.structMotor.MCR.bRotateDirection == ROTATE_CLOCKWISE) ? PHASE_TAB_CLOCKWISE[(x)] : PHASE_TAB_ANTICLOCKWISE[(x)])
-S		#define PHASE_NUMBER						(sizeof(PHASE_TAB_CLOCKWISE)/sizeof(uint32_t))
+S		#define PHASE_NUMBER								(sizeof(PHASE_TAB_CLOCKWISE)/sizeof(uint32_t))
 S		#define PHASE_INCREASE(x) 					INDEX_INCREASE((x), PHASE_NUMBER) //((x) = (((x) == (PHASE_NUMBER - 1)) ? 0 : ((x) + 1)))
 S
 S//		#define RESET_MOTOR_SR_BIT(x)				(tMotor.structMotor.MSR &= (~(1ul << (x))))
@@ -10420,19 +10420,19 @@ S//		#define IS_MOTOR_STATUS_SET(x)				(tMotor.structMotor.MSR & (1ul << (x)))
 S
 S		#define WAIT_AFTER_LOCATE_TIME				0	// ms
 S
-S		#define MOTOR_RAMPUP_DT_MAX					(PWM_PERIOD - 200)
+S		#define MOTOR_RAMPUP_DT_MAX						(PWM_PERIOD - 200)
 S		#define MOTOR_RAMPUP_DT_FACTOR				(1.02)
-S//		#define MOTOR_RAMPUP_DT_INCR(x)				((x) = (((x) > MOTOR_RAMPUP_DT_MAX) ? (x) : (uint16_t)((x) * MOTOR_RAMPUP_DT_FACTOR)))
+S//		#define MOTOR_RAMPUP_DT_INCR(x)			((x) = (((x) > MOTOR_RAMPUP_DT_MAX) ? (x) : (uint16_t)((x) * MOTOR_RAMPUP_DT_FACTOR)))
 S		#define MOTOR_RAMPUP_DT_INCR(x)				((x) = (((x) > MOTOR_RAMPUP_DT_MAX) ? (x) : ((x) + 1)))
 S
-S		#define MOTOR_RAMPUP_PR_MIN					(1000 - 1)	// frequency 2M, 2857RPM if 1MC==7EC==42PC
+S		#define MOTOR_RAMPUP_PR_MIN						(1000 - 1)	// frequency 2M, 2857RPM if 1MC==7EC==42PC
 S		#define MOTOR_RAMPUP_PR_FACTOR				(0.98)
 S		#define MOTOR_RAMPUP_PR_DCR(x)				((x) = (((x) < MOTOR_RAMPUP_PR_MIN) ? (x) : (uint16_t)((x) * MOTOR_RAMPUP_PR_FACTOR)))
-S//		#define MOTOR_RAMPUP_PR_DCR(x)				((x) = (((x) < MOTOR_RAMPUP_PR_MIN) ? (x) : ((x) - 100)))
-S		#define MOTOR_START_ZXD_SPEED				(1600 - 1)	// frequency 2M,
+S//		#define MOTOR_RAMPUP_PR_DCR(x)			((x) = (((x) < MOTOR_RAMPUP_PR_MIN) ? (x) : ((x) - 100)))
+S		#define MOTOR_START_ZXD_SPEED					(1600 - 1)	// frequency 2M,
 S//		#define MOTOR_START_ZXD_MINROT_CNT			200	// After phase change xxx times at max speed of rampup, start to detect ZX
 S
-S		#define MAX_MOTOR_PWR_DUTY 					(PWM_PERIOD - 150)
+S		#define MAX_MOTOR_PWR_DUTY 						(PWM_PERIOD - 150)
 S		#define MAX_SINGLE_PHASE_DURATION			80  // 80ms,
 S//		typedef enum {
 S//			PHASE_AB = 0,

@@ -189,14 +189,18 @@ void SPI_IRQHandler(void)
 					unCOM_SPI_ReadData[0] = (uint16_t)(unSPI_RX_Value >> 16);
 					unCOM_SPI_ReadData[1] = (uint16_t)unSPI_RX_Value;
 
-					if (IS_COMM_RD_CMD(unCOM_SPI_ReadData[0]))
+					if (unCOM_SPI_ReadData[0] != MTR_INVALID_MOTOR_CMD)
 					{
-						tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
-					}
-					else
-					{
-						unCOM_SPI_TransErrCNT++;
-						
+						// If it is dummy command, master just want to retrieve last time read's data.
+						// For slave, do nothing
+						if (IS_COMM_RD_CMD(unCOM_SPI_ReadData[0]))
+						{
+							tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
+						}
+						else
+						{
+							unCOM_SPI_TransErrCNT++;		
+						}						
 					}
 				}
 				else if (unFIFO_RX_CNT == COMM_WR_CMD_CNT_IN_32BIT)

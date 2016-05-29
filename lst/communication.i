@@ -8072,41 +8072,41 @@ void COMM_Manager(void)
 	{
 		memcpy(unCOM_Buff, unCOM_SPI_ReadData, 4);
 		tMotor.structMotor.MSR.bNewComFrameReceived = (0);
-
-
-
+		if (calCRC16((uint8_t *)unCOM_Buff, ((((unCOM_Buff[0]) & (0x8000)) == (0x8000)) ? ((2 - 1) << 1) : ((4 - 1) << 1))) ==
+				((((unCOM_Buff[0]) & (0x8000)) == (0x8000)) ? unCOM_Buff[2 - 1] : unCOM_Buff[4 - 1]))
+		{
 			unValidFrameCNT++;
 			
-
-
-
-
-
-
-
-
-
-
-
-
-
+			if ((((unCOM_Buff[0]) & (0x8000)) == (0x8000)))
+			{
+				nReadCommandHandler(unCOM_Buff);
+			}
+			else
+			{
+				nWriteCommandHandler(unCOM_Buff);
+			}
+		}
+		else
+		{
+			unCOM_SPI_TransErrCNT++;
+		}
 	}
 	
 	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	if ((uint32_t)(unSystemTick - unLastCheckTime) > 500)
+	{
+		unLastCheckTime = unSystemTick;
+		if ((uint32_t)(unValidFrameCNT - unLastFrameCNT) < 1)
+		{
+			BLDC_stopMotor();
+			setError(ERR_COMMUNICATION_FAIL);
+		}
+		unLastFrameCNT = unValidFrameCNT;
+	}
+	
+	if (unCOM_SPI_TransErrCNT > 6)
+	{
+		BLDC_stopMotor();
+		setError(ERR_COMMUNICATION_FAIL);
+	}
 }

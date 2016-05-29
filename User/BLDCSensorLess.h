@@ -36,13 +36,13 @@ typedef enum {
 #define MIN_PHASE_TIME				500	//(AVOID_ZXD_AFTER_PHCHG + ZXD_FILTER_TIME + 100)	// 1200/2M=0.6ms, 8333RPM if 42PC=1MC==7EC
 #define MAX_PHASE_TIME				(10000)	// Unit 2MH, 5ms, 286rpm if 42PC=1MC==7EC
 
-#define MINI51_TIM_CNT_MAX			0xFFFFFF
-#define GET_TIM1_CMP_VALUE(x)		(((x) >= MINI51_TIM_CNT_MAX) ? ((x) - MINI51_TIM_CNT_MAX) : (x))
+#define MINI51_TIM_CNT_MAX						0xFFFFFF
+#define GET_TIM1_CMP_VALUE(x)					(((x) >= MINI51_TIM_CNT_MAX) ? ((x) - MINI51_TIM_CNT_MAX) : (x))
 #define GET_TIMER_DIFF(iLast, iThis)	(((iThis) > (iLast)) ? ((iThis) - (iLast)) : ((iThis) + (MINI51_TIM_CNT_MAX - (iLast))))
-#define MAX_MISS_ZXD_THRESHOLD		12
-#define MIN_SUCC_ZXD_THRESHOLD		4
+#define MAX_MISS_ZXD_THRESHOLD				12
+#define MIN_SUCC_ZXD_THRESHOLD				4
 
-#define MOSFET_DRV_0_4_PORT			P2
+#define MOSFET_DRV_0_4_PORT		P2
 #define MOSFET_DRV_5_PORT			P0
 #define MOSFET_DRV_0_PIN			BIT2
 #define MOSFET_DRV_1_PIN			BIT3
@@ -51,12 +51,12 @@ typedef enum {
 #define MOSFET_DRV_4_PIN			BIT6
 #define MOSFET_DRV_5_PIN			BIT4
 
-#define MOSFET_AS_PIN_ADDR      	GPIO_PIN_ADDR(2, 2)
-#define MOSFET_BS_PIN_ADDR     		GPIO_PIN_ADDR(2, 4)
-#define MOSFET_CS_PIN_ADDR     		GPIO_PIN_ADDR(2, 6)
-#define MOSFET_AD_PIN_ADDR      	GPIO_PIN_ADDR(2, 3)
-#define MOSFET_BD_PIN_ADDR          GPIO_PIN_ADDR(2, 5)
-#define MOSFET_CD_PIN_ADDR			GPIO_PIN_ADDR(0, 4)
+#define MOSFET_AS_PIN_ADDR		GPIO_PIN_ADDR(2, 2)
+#define MOSFET_BS_PIN_ADDR		GPIO_PIN_ADDR(2, 4)
+#define MOSFET_CS_PIN_ADDR    GPIO_PIN_ADDR(2, 6)
+#define MOSFET_AD_PIN_ADDR		GPIO_PIN_ADDR(2, 3)
+#define MOSFET_BD_PIN_ADDR		GPIO_PIN_ADDR(2, 5)
+#define MOSFET_CD_PIN_ADDR		GPIO_PIN_ADDR(0, 4)
 
 #define GPIO_OFFD_OFF_SET			16
 #define ZERO_DETECT_PORT			P1
@@ -65,20 +65,20 @@ typedef enum {
 #define ZERO_DETECT_C_PIN			BIT5
 #define ZERO_DETECT_M_PIN			BIT4
 
-#define PWM_PHCHG_PWM_MASK			(0x00003F00ul)
-#define PWM_PHCHG_D0_7_MASK			(0x000000FFul)
-#define PWM_PERIOD 					(884-1)	// PWM T=0.08ms, if target is 3K PRM, 42 E-Circle per M-Circle,
+#define PWM_PHCHG_PWM_MASK		(0x00003F00ul)
+#define PWM_PHCHG_D0_7_MASK		(0x000000FFul)
+#define PWM_PERIOD 						(884-1)	// PWM T=0.08ms, if target is 3K PRM, 42 E-Circle per M-Circle,
 											// each PC should less than 0.5 ms.
 											// So each E-Circle at least has 6 PWM circle
 
-#define ROTATE_CLOCKWISE		0
+#define ROTATE_CLOCKWISE			0
 #define ROTATE_ANTICLOCKWISE	1
 
 #define PWM_INT_ENABLE				(PWM_EnableDutyInt(PWM, 1, WHAT_EVER_DO_NOT_CARE))
 
 #define PWM_INT_DISABLE				(PWM->PIER = 0)
 
-#define IS_PWM_IRQ_ENABLED			(PWM->PIER)
+#define IS_PWM_IRQ_ENABLED		(PWM->PIER)
 
 // To increase shut down speed we can just directly write a constant number into PHCHG register
 // But since we also have protection form driver IC, it is not so critical here
@@ -202,12 +202,12 @@ typedef enum {
 
 		const uint8_t unLocatePhaseSequencyTable[] = {0, 1, 2, 1};
 
-		#define IS_ROTATING_DETECTING				0xFFFF
-		#define MAX_ROTATING_DETECT_PHASE_TIME		30	// half phase max 30ms
-		#define MAX_ALREADY_ROTATING_DETECT_TIME	200	// 200ms used to detect is motor is already rotating
-		#define RAMP_UP_MIN_PERIOD_NUM_THRS			300	// After ramp up to minimum period, force continue rotate these phases
-		#define CHANGE_DT_PR_AFTER_PHASE_CHANGED_NUM				9		// Used in ramp up
-		#define CHANGE_DUTY_AFTER_PHASE_CHANGED_NUM					5		// Used after locked
+		#define IS_ROTATING_DETECTING											0xFFFF
+		#define MAX_ROTATING_DETECT_PHASE_TIME						30	// half phase max 30ms
+		#define MAX_ALREADY_ROTATING_DETECT_TIME					200	// 200ms used to detect is motor is already rotating
+		#define RAMP_UP_MIN_PERIOD_NUM_THRS								300	// After ramp up to minimum period, force continue rotate these phases
+		#define CHANGE_DT_PR_AFTER_PHASE_CHANGED_NUM			9		// Used in ramp up
+		#define CHANGE_DUTY_AFTER_PHASE_CHANGED_NUM				5		// Used after locked
 
 //		#define MOTOR_RUNNING_MSK					(0x01ul)
 //		#define MOTOR_R_DIRECTION_MSK				(0x02ul)
@@ -215,7 +215,7 @@ typedef enum {
 
 //		#define IS_MOTOR_R_CLOCKWISE				(((tMotor.structMotor.MCR & MOTOR_R_DIRECTION_MSK) == 0) ? TRUE : FALSE)
 		#define GET_PHASE_VALUE(x)					((tMotor.structMotor.MCR.bRotateDirection == ROTATE_CLOCKWISE) ? PHASE_TAB_CLOCKWISE[(x)] : PHASE_TAB_ANTICLOCKWISE[(x)])
-		#define PHASE_NUMBER						(sizeof(PHASE_TAB_CLOCKWISE)/sizeof(uint32_t))
+		#define PHASE_NUMBER								(sizeof(PHASE_TAB_CLOCKWISE)/sizeof(uint32_t))
 		#define PHASE_INCREASE(x) 					INDEX_INCREASE((x), PHASE_NUMBER) //((x) = (((x) == (PHASE_NUMBER - 1)) ? 0 : ((x) + 1)))
 
 //		#define RESET_MOTOR_SR_BIT(x)				(tMotor.structMotor.MSR &= (~(1ul << (x))))
@@ -224,19 +224,19 @@ typedef enum {
 
 		#define WAIT_AFTER_LOCATE_TIME				0	// ms
 
-		#define MOTOR_RAMPUP_DT_MAX					(PWM_PERIOD - 200)
+		#define MOTOR_RAMPUP_DT_MAX						(PWM_PERIOD - 200)
 		#define MOTOR_RAMPUP_DT_FACTOR				(1.02)
-//		#define MOTOR_RAMPUP_DT_INCR(x)				((x) = (((x) > MOTOR_RAMPUP_DT_MAX) ? (x) : (uint16_t)((x) * MOTOR_RAMPUP_DT_FACTOR)))
+//		#define MOTOR_RAMPUP_DT_INCR(x)			((x) = (((x) > MOTOR_RAMPUP_DT_MAX) ? (x) : (uint16_t)((x) * MOTOR_RAMPUP_DT_FACTOR)))
 		#define MOTOR_RAMPUP_DT_INCR(x)				((x) = (((x) > MOTOR_RAMPUP_DT_MAX) ? (x) : ((x) + 1)))
 
-		#define MOTOR_RAMPUP_PR_MIN					(1000 - 1)	// frequency 2M, 2857RPM if 1MC==7EC==42PC
+		#define MOTOR_RAMPUP_PR_MIN						(1000 - 1)	// frequency 2M, 2857RPM if 1MC==7EC==42PC
 		#define MOTOR_RAMPUP_PR_FACTOR				(0.98)
 		#define MOTOR_RAMPUP_PR_DCR(x)				((x) = (((x) < MOTOR_RAMPUP_PR_MIN) ? (x) : (uint16_t)((x) * MOTOR_RAMPUP_PR_FACTOR)))
-//		#define MOTOR_RAMPUP_PR_DCR(x)				((x) = (((x) < MOTOR_RAMPUP_PR_MIN) ? (x) : ((x) - 100)))
-		#define MOTOR_START_ZXD_SPEED				(1600 - 1)	// frequency 2M,
+//		#define MOTOR_RAMPUP_PR_DCR(x)			((x) = (((x) < MOTOR_RAMPUP_PR_MIN) ? (x) : ((x) - 100)))
+		#define MOTOR_START_ZXD_SPEED					(1600 - 1)	// frequency 2M,
 //		#define MOTOR_START_ZXD_MINROT_CNT			200	// After phase change xxx times at max speed of rampup, start to detect ZX
 
-		#define MAX_MOTOR_PWR_DUTY 					(PWM_PERIOD - 150)
+		#define MAX_MOTOR_PWR_DUTY 						(PWM_PERIOD - 150)
 		#define MAX_SINGLE_PHASE_DURATION			80  // 80ms,
 //		typedef enum {
 //			PHASE_AB = 0,

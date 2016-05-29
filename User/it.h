@@ -15,5 +15,5 @@
 #else 
 	#define EXTERNAL_IT extern
 #endif
-
+#define MTR_INVALID_MOTOR_CMD		0xFFFF
 #endif
