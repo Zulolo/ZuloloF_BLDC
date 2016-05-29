@@ -51,11 +51,14 @@ uint16_t calCRC16(uint8_t* pBytes, uint32_t unLength)
 	return crc;
 }
 
+uint32_t unSPI_TX_WR_CNT = 0;
 int32_t nReadCommandHandler(uint16_t* pCOM_Buff)
 {
 	if (COMM_GET_DATA(pCOM_Buff[0]) < COMM_READ_MAX)
 	{
-		SPI_WRITE_TX(SPI, tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])] + (calCRC16((uint8_t*)(&(tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])])), 2) << 16));
+		SPI_WRITE_TX(SPI, (tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])] << 16) + 
+			calCRC16((uint8_t*)(&(tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])])), 2) );
+		unSPI_TX_WR_CNT++;
 		return 0;
 	}
 	else

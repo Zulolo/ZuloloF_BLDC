@@ -160,17 +160,12 @@
         <Ww>
           <count>3</count>
           <WinNumber>1</WinNumber>
-          <ItemText>unTestCRC</ItemText>
+          <ItemText>tMotor</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>1</WinNumber>
-          <ItemText>unTestCNT</ItemText>
-        </Ww>
-        <Ww>
-          <count>5</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>tMotor</ItemText>
+          <ItemText>unSPI_TX_WR_CNT</ItemText>
         </Ww>
       </WatchWindow1>
       <MemoryWindow1>

@@ -8019,11 +8019,14 @@ uint16_t calCRC16(uint8_t* pBytes, uint32_t unLength)
 	return crc;
 }
 
+uint32_t unSPI_TX_WR_CNT = 0;
 int32_t nReadCommandHandler(uint16_t* pCOM_Buff)
 {
 	if (((pCOM_Buff[0]) & (0x7FFF)) < COMM_READ_MAX)
 	{
-		SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), tMotor.unValue[((pCOM_Buff[0]) & (0x7FFF))] + (calCRC16((uint8_t*)(&(tMotor.unValue[((pCOM_Buff[0]) & (0x7FFF))])), 2) << 16));
+		SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), (tMotor.unValue[((pCOM_Buff[0]) & (0x7FFF))] << 16) + 
+			calCRC16((uint8_t*)(&(tMotor.unValue[((pCOM_Buff[0]) & (0x7FFF))])), 2) );
+		unSPI_TX_WR_CNT++;
 		return 0;
 	}
 	else

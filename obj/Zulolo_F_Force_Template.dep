@@ -266,7 +266,7 @@ I (.\StdDriver\inc\wdt.h)(0x57404D96)
 I (User\Communication.h)(0x5746F747)
 I (User\Error.h)(0x5745B25E)
 I (User\Protection.h)(0x57242229)
-F (.\User\Communication.c)(0x57495E9C)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I G:\Geek\Projects\Zulolo_F\Force\Code\Zulolo_F_Force\RTE-I D:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.0.7\Device\Mini51\Include-I D:\Keil_v5\ARM\CMSIS\Include-I \-D__UVISION_VERSION="518"-o .\obj\communication.o --list_dir ".\\lst\\" --list --omf_browse .\obj\communication.crf --depend .\obj\communication.d)
+F (.\User\Communication.c)(0x574AE63E)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I G:\Geek\Projects\Zulolo_F\Force\Code\Zulolo_F_Force\RTE-I D:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.0.7\Device\Mini51\Include-I D:\Keil_v5\ARM\CMSIS\Include-I \-D__UVISION_VERSION="518"-o .\obj\communication.o --list_dir ".\\lst\\" --list --omf_browse .\obj\communication.crf --depend .\obj\communication.d)
 I (User\Communication.h)(0x5746F747)
 I (User\global.h)(0x5745A413)
 I (.\CMSIS\Mini51Series.h)(0x57404D79)

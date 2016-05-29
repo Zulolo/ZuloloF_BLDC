@@ -10339,13 +10339,17 @@ N
 N	return crc;
 N}
 N
+Nuint32_t unSPI_TX_WR_CNT = 0;
 Nint32_t nReadCommandHandler(uint16_t* pCOM_Buff)
 N{
 N	if (COMM_GET_DATA(pCOM_Buff[0]) < COMM_READ_MAX)
 X	if (((pCOM_Buff[0]) & (0x7FFF)) < COMM_READ_MAX)
 N	{
-N		SPI_WRITE_TX(SPI, tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])] + (calCRC16((uint8_t*)(&(tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])])), 2) << 16));
-X		SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), tMotor.unValue[((pCOM_Buff[0]) & (0x7FFF))] + (calCRC16((uint8_t*)(&(tMotor.unValue[((pCOM_Buff[0]) & (0x7FFF))])), 2) << 16));
+N		SPI_WRITE_TX(SPI, (tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])] << 16) + 
+X		SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), (tMotor.unValue[((pCOM_Buff[0]) & (0x7FFF))] << 16) + 
+N			calCRC16((uint8_t*)(&(tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])])), 2) );
+X			calCRC16((uint8_t*)(&(tMotor.unValue[((pCOM_Buff[0]) & (0x7FFF))])), 2) );
+N		unSPI_TX_WR_CNT++;
 N		return 0;
 N	}
 N	else
