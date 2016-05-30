@@ -27,6 +27,8 @@
 		typedef enum {
 			COMM_READ_MCR = 0,
 			COMM_READ_MSR,
+			COMM_READ_MISS_ZXD_CNT,
+			COMM_READ_SCS_ZXD_CNT,
 			COMM_READ_LOCATING_DUTY,
 			COMM_READ_RAMP_UP_DUTY,
 			COMM_READ_TARGET_DUTY,
@@ -85,28 +87,30 @@
 #define COMM_GET_DATA(value)			((value) & COMM_DATA_MASK)
 #define COMM_BAUT_RATE						0	// 5MHz
 
-typedef enum{
-	MOTOR_MCR = 0,	/*!<  Motor Control  */
-	MOTOR_MSR,		/*!<  Motor Status  */
-	MOTOR_LCT_DUTY,		/*!<  PWM Locating Duty  */
-	MOTOR_RU_DUTY,		/*!<  PWM Ramp Up Start Duty  */
-	MOTOR_TGT_DUTY,		/*!<  PWM Target (Locked State) Duty  */
-	MOTOR_ACT_DUTY,		/*!<  PWM Actual Duty  */
-	MOTOR_LCT_PERIOD,	/*!<  Locating State One Phase Period  */
-	MOTOR_RU_PERIOD_LOW,	/*!<  Ramp Up Start One Phase Period  */
-	MOTOR_RU_PERIOD_HIGH,	/*!<  Ramp Up Start One Phase Period  */
-	MOTOR_ACT_PERIOD_LOW,	/*!<  Actual One Phase Period  */
-	MOTOR_ACT_PERIOD_HIGH,	/*!<  Actual One Phase Period  */
-	MOTOR_RPM,			/*!<  Actual RPM  */
-	MOTOR_RESERVE,		/*!<  Reserve for future use (round up 32bits) */
-	MOTOR_BATTERY,		/*!<  Battery Voltage  */
-	MOTOR_CURRENT		/*!<  Current  */
-} ENUM_COMM_REG;
+//typedef enum{
+//	MOTOR_MCR = 0,	/*!<  Motor Control  */
+//	MOTOR_MSR,		/*!<  Motor Status  */
+//	MOTOR_MISS_ZXD_CNT,
+//	MOTOR_SCS_ZXD_CNT,
+//	MOTOR_LCT_DUTY,		/*!<  PWM Locating Duty  */
+//	MOTOR_RU_DUTY,		/*!<  PWM Ramp Up Start Duty  */
+//	MOTOR_TGT_DUTY,		/*!<  PWM Target (Locked State) Duty  */
+//	MOTOR_ACT_DUTY,		/*!<  PWM Actual Duty  */
+//	MOTOR_LCT_PERIOD,	/*!<  Locating State One Phase Period  */
+//	MOTOR_RU_PERIOD_LOW,	/*!<  Ramp Up Start One Phase Period  */
+//	MOTOR_RU_PERIOD_HIGH,	/*!<  Ramp Up Start One Phase Period  */
+//	MOTOR_ACT_PERIOD_LOW,	/*!<  Actual One Phase Period  */
+//	MOTOR_ACT_PERIOD_HIGH,	/*!<  Actual One Phase Period  */
+//	MOTOR_RPM,			/*!<  Actual RPM  */
+//	MOTOR_RESERVE,		/*!<  Reserve for future use (round up 32bits) */
+//	MOTOR_BATTERY,		/*!<  Battery Voltage  */
+//	MOTOR_CURRENT		/*!<  Current  */
+//} ENUM_COMM_REG;
 EXTERNAL_COMM uint32_t unCOM_SPI_TransCNT;
 EXTERNAL_COMM uint32_t unCOM_SPI_TransErrCNT;
 EXTERNAL_COMM uint16_t unCOM_SPI_ReadData[COMM_FIFO_LENGTH];	// 0 or 0xFFFF means no data
 EXTERNAL_COMM uint16_t unRegisterValue;	// 0 or 0xFFFF means no data
-EXTERNAL_COMM ENUM_COMM_REG tRegister;
+//EXTERNAL_COMM ENUM_COMM_REG tRegister;
 EXTERNAL_COMM uint8_t FlagRegisterNeedWrite;
 
 EXTERNAL_COMM void COMM_Manager(void);

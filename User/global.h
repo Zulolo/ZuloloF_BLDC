@@ -40,22 +40,22 @@ typedef struct
 		__IO uint16_t bLocked:1;
 		__IO uint16_t bThisPhaseDetectedZX:1;
 		__IO uint16_t bNewComFrameReceived:1;
-		__IO uint16_t unMissedZXD_CNT:8;
-		__IO uint16_t unSuccessZXD_CNT:8;
 	}MSR;
-	__IO uint16_t  unLocatingDuty;		/*!<  PWM Locating Duty  */
-	__IO uint16_t  unRampUpDuty;		/*!<  PWM Ramp Up Start Duty  */
-	__IO uint16_t  unTargetDuty;		/*!<  PWM Target (Locked State) Duty  */
-	__IO uint16_t  unActualDuty;		/*!<  PWM Actual Duty  */
-	__IO uint16_t  unLocatingPeriod;	/*!<  Locating State One Phase Period  */
-	__IO uint16_t  unRESERVE_1;			/*!<  for 4 bytes align */
-	__IO uint32_t  unRampUpPeriod;		/*!<  Ramp Up Start One Phase Period  */
-	__IO uint32_t  unActualPeriod;		/*!<  Actual One Phase Period  */
-	__IO uint32_t  unPhaseChangeCNT;	/*!<  Phase changed counter  */
-	__IO uint16_t  unRPM;				/*!<  Actual RPM  */
-	__IO uint16_t  unBattery;			/*!<  Battery Voltage  */
-	__IO uint16_t  unCurrent;			/*!<  Current  */
-	__IO uint16_t  unRESERVE_2;			//*!<  for 4 bytes align */
+	__IO uint16_t	unMissedZXD_CNT;
+	__IO uint16_t	unSuccessZXD_CNT;
+	__IO uint16_t unLocatingDuty;		/*!<  PWM Locating Duty  */
+	__IO uint16_t unRampUpDuty;			/*!<  PWM Ramp Up Start Duty  */
+	__IO uint16_t unTargetDuty;			/*!<  PWM Target (Locked State) Duty  */
+	__IO uint16_t unActualDuty;			/*!<  PWM Actual Duty  */
+	__IO uint16_t unLocatingPeriod;	/*!<  Locating State One Phase Period  */
+	__IO uint16_t unRESERVE_1;				/*!<  for 4 bytes align */
+	__IO uint32_t unRampUpPeriod;		/*!<  Ramp Up Start One Phase Period  */
+	__IO uint32_t unActualPeriod;		/*!<  Actual One Phase Period  */
+	__IO uint32_t unPhaseChangeCNT;	/*!<  Phase changed counter  */
+	__IO uint16_t unRPM;							/*!<  Actual RPM  */
+	__IO uint16_t unBattery;					/*!<  Battery Voltage  */
+	__IO uint16_t unCurrent;					/*!<  Current  */
+	__IO uint16_t unRESERVE_2;				/*!<  for 4 bytes align */
 } MOTOR_T;
 
 typedef union

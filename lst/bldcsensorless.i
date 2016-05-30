@@ -7250,22 +7250,22 @@ typedef struct
 		volatile uint16_t bLocked:1;
 		volatile uint16_t bThisPhaseDetectedZX:1;
 		volatile uint16_t bNewComFrameReceived:1;
-		volatile uint16_t unMissedZXD_CNT:8;
-		volatile uint16_t unSuccessZXD_CNT:8;
 	}MSR;
-	volatile uint16_t  unLocatingDuty;		 
-	volatile uint16_t  unRampUpDuty;		 
-	volatile uint16_t  unTargetDuty;		 
-	volatile uint16_t  unActualDuty;		 
-	volatile uint16_t  unLocatingPeriod;	 
-	volatile uint16_t  unRESERVE_1;			 
-	volatile uint32_t  unRampUpPeriod;		 
-	volatile uint32_t  unActualPeriod;		 
-	volatile uint32_t  unPhaseChangeCNT;	 
-	volatile uint16_t  unRPM;				 
-	volatile uint16_t  unBattery;			 
-	volatile uint16_t  unCurrent;			 
-	volatile uint16_t  unRESERVE_2;			
+	volatile uint16_t	unMissedZXD_CNT;
+	volatile uint16_t	unSuccessZXD_CNT;
+	volatile uint16_t unLocatingDuty;		 
+	volatile uint16_t unRampUpDuty;			 
+	volatile uint16_t unTargetDuty;			 
+	volatile uint16_t unActualDuty;			 
+	volatile uint16_t unLocatingPeriod;	 
+	volatile uint16_t unRESERVE_1;				 
+	volatile uint32_t unRampUpPeriod;		 
+	volatile uint32_t unActualPeriod;		 
+	volatile uint32_t unPhaseChangeCNT;	 
+	volatile uint16_t unRPM;							 
+	volatile uint16_t unBattery;					 
+	volatile uint16_t unCurrent;					 
+	volatile uint16_t unRESERVE_2;				 
 } MOTOR_T;
 
 typedef union
@@ -7284,7 +7284,7 @@ typedef union
 #line 1 "User\\global.h"
 #line 5 "User\\Communication.h"
 
-#line 64 "User\\Communication.h"
+#line 66 "User\\Communication.h"
 
 
 
@@ -7302,30 +7302,32 @@ typedef union
 
 
 		
-#line 87 "User\\Communication.h"
+#line 89 "User\\Communication.h"
 
-typedef enum{
-	MOTOR_MCR = 0,	 
-	MOTOR_MSR,		 
-	MOTOR_LCT_DUTY,		 
-	MOTOR_RU_DUTY,		 
-	MOTOR_TGT_DUTY,		 
-	MOTOR_ACT_DUTY,		 
-	MOTOR_LCT_PERIOD,	 
-	MOTOR_RU_PERIOD_LOW,	 
-	MOTOR_RU_PERIOD_HIGH,	 
-	MOTOR_ACT_PERIOD_LOW,	 
-	MOTOR_ACT_PERIOD_HIGH,	 
-	MOTOR_RPM,			 
-	MOTOR_RESERVE,		 
-	MOTOR_BATTERY,		 
-	MOTOR_CURRENT		 
-} ENUM_COMM_REG;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 extern uint32_t unCOM_SPI_TransCNT;
 extern uint32_t unCOM_SPI_TransErrCNT;
 extern uint16_t unCOM_SPI_ReadData[4];	
 extern uint16_t unRegisterValue;	
-extern ENUM_COMM_REG tRegister;
+
 extern uint8_t FlagRegisterNeedWrite;
 
 extern void COMM_Manager(void);
@@ -7676,24 +7678,24 @@ __inline void PhaseChangedRoutine(void)
 		
 		if ((1) == tMotor.structMotor.MSR.bThisPhaseDetectedZX)
 		{
-			tMotor.structMotor.MSR.unMissedZXD_CNT = 0;
+			tMotor.structMotor.unMissedZXD_CNT = 0;
 
-			if (tMotor.structMotor.MSR.unSuccessZXD_CNT > 4)
+			if (tMotor.structMotor.unSuccessZXD_CNT > 4)
 			{
 				tMotor.structMotor.MSR.bLocked = (1);
 			}
 			else
 			{
-				tMotor.structMotor.MSR.unSuccessZXD_CNT++;
+				tMotor.structMotor.unSuccessZXD_CNT++;
 			}
 		}
 		else	
 		{
-			tMotor.structMotor.MSR.unSuccessZXD_CNT = 0;
+			tMotor.structMotor.unSuccessZXD_CNT = 0;
 			
 			
 			unLastZXDetectedTime = (((TIMER_GetCounter(((TIMER_T *) (((uint32_t)0x40000000) + 0x10020)))) > ((tMotor . structMotor . unActualPeriod >> 2))) ? ((TIMER_GetCounter(((TIMER_T *) (((uint32_t)0x40000000) + 0x10020)))) - ((tMotor . structMotor . unActualPeriod >> 2))) : ((TIMER_GetCounter(((TIMER_T *) (((uint32_t)0x40000000) + 0x10020)))) + (0xFFFFFF - ((tMotor . structMotor . unActualPeriod >> 2)))));
-			if (tMotor.structMotor.MSR.unMissedZXD_CNT > 12)
+			if (tMotor.structMotor.unMissedZXD_CNT > 12)
 			{
 				if ((1) == tMotor.structMotor.MSR.bLocked)
 				{	
@@ -7704,7 +7706,7 @@ __inline void PhaseChangedRoutine(void)
 			}
 			else
 			{
-				tMotor.structMotor.MSR.unMissedZXD_CNT++;
+				tMotor.structMotor.unMissedZXD_CNT++;
 			}
 		}
 
@@ -7948,7 +7950,7 @@ void BLDC_SensorLessManager(void)
 					
 					unCurrentPhase = 0;
 					unLocateIndex = 0;
-					tMotor.structMotor.MSR.unMissedZXD_CNT = 0;
+					tMotor.structMotor.unMissedZXD_CNT = 0;
 					unLastPhaseChangeTime = unSystemTick;
 					tMotor.structMotor.MSR.bMotorPowerOn = (1);
 					

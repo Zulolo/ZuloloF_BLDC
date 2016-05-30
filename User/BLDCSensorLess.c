@@ -36,24 +36,24 @@ __INLINE void PhaseChangedRoutine(void)
 		// If continuously detected more than MIN_SUCC_ZXD_THRESHOLD ZX, OK! GOOD!!
 		if (TRUE == tMotor.structMotor.MSR.bThisPhaseDetectedZX)
 		{
-			tMotor.structMotor.MSR.unMissedZXD_CNT = 0;
+			tMotor.structMotor.unMissedZXD_CNT = 0;
 
-			if (tMotor.structMotor.MSR.unSuccessZXD_CNT > MIN_SUCC_ZXD_THRESHOLD)
+			if (tMotor.structMotor.unSuccessZXD_CNT > MIN_SUCC_ZXD_THRESHOLD)
 			{
 				tMotor.structMotor.MSR.bLocked = TRUE;
 			}
 			else
 			{
-				tMotor.structMotor.MSR.unSuccessZXD_CNT++;
+				tMotor.structMotor.unSuccessZXD_CNT++;
 			}
 		}
 		else	// If continuously missing detected more than MAX_MISS_ZXD_THRESHOLD ZX, loss lock
 		{
-			tMotor.structMotor.MSR.unSuccessZXD_CNT = 0;
+			tMotor.structMotor.unSuccessZXD_CNT = 0;
 			// If ZX was not detected in last phase, unLastZXDetectedTime was also not updated
 			// Guess one value
 			unLastZXDetectedTime = GET_TIMER_DIFF((tMotor.structMotor.unActualPeriod >> 2), TIMER_GetCounter(TIMER1));
-			if (tMotor.structMotor.MSR.unMissedZXD_CNT > MAX_MISS_ZXD_THRESHOLD)
+			if (tMotor.structMotor.unMissedZXD_CNT > MAX_MISS_ZXD_THRESHOLD)
 			{
 				if (TRUE == tMotor.structMotor.MSR.bLocked)
 				{	
@@ -64,7 +64,7 @@ __INLINE void PhaseChangedRoutine(void)
 			}
 			else
 			{
-				tMotor.structMotor.MSR.unMissedZXD_CNT++;
+				tMotor.structMotor.unMissedZXD_CNT++;
 			}
 		}
 
@@ -308,7 +308,7 @@ void BLDC_SensorLessManager(void)
 					// MOTOR_SHUT_DOWN;
 					unCurrentPhase = 0;
 					unLocateIndex = 0;
-					tMotor.structMotor.MSR.unMissedZXD_CNT = 0;
+					tMotor.structMotor.unMissedZXD_CNT = 0;
 					unLastPhaseChangeTime = unSystemTick;
 					tMotor.structMotor.MSR.bMotorPowerOn = TRUE;
 					// Clear start detect zero cross flag

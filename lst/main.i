@@ -8152,22 +8152,22 @@ typedef struct
 		volatile uint16_t bLocked:1;
 		volatile uint16_t bThisPhaseDetectedZX:1;
 		volatile uint16_t bNewComFrameReceived:1;
-		volatile uint16_t unMissedZXD_CNT:8;
-		volatile uint16_t unSuccessZXD_CNT:8;
 	}MSR;
-	volatile uint16_t  unLocatingDuty;		 
-	volatile uint16_t  unRampUpDuty;		 
-	volatile uint16_t  unTargetDuty;		 
-	volatile uint16_t  unActualDuty;		 
-	volatile uint16_t  unLocatingPeriod;	 
-	volatile uint16_t  unRESERVE_1;			 
-	volatile uint32_t  unRampUpPeriod;		 
-	volatile uint32_t  unActualPeriod;		 
-	volatile uint32_t  unPhaseChangeCNT;	 
-	volatile uint16_t  unRPM;				 
-	volatile uint16_t  unBattery;			 
-	volatile uint16_t  unCurrent;			 
-	volatile uint16_t  unRESERVE_2;			
+	volatile uint16_t	unMissedZXD_CNT;
+	volatile uint16_t	unSuccessZXD_CNT;
+	volatile uint16_t unLocatingDuty;		 
+	volatile uint16_t unRampUpDuty;			 
+	volatile uint16_t unTargetDuty;			 
+	volatile uint16_t unActualDuty;			 
+	volatile uint16_t unLocatingPeriod;	 
+	volatile uint16_t unRESERVE_1;				 
+	volatile uint32_t unRampUpPeriod;		 
+	volatile uint32_t unActualPeriod;		 
+	volatile uint32_t unPhaseChangeCNT;	 
+	volatile uint16_t unRPM;							 
+	volatile uint16_t unBattery;					 
+	volatile uint16_t unCurrent;					 
+	volatile uint16_t unRESERVE_2;				 
 } MOTOR_T;
 
 typedef union
@@ -8269,7 +8269,7 @@ extern void BLDC_SensorLessManager(void);
 
 #line 5 "User\\Communication.h"
 
-#line 64 "User\\Communication.h"
+#line 66 "User\\Communication.h"
 
 
 
@@ -8287,30 +8287,32 @@ extern void BLDC_SensorLessManager(void);
 
 
 		
-#line 87 "User\\Communication.h"
+#line 89 "User\\Communication.h"
 
-typedef enum{
-	MOTOR_MCR = 0,	 
-	MOTOR_MSR,		 
-	MOTOR_LCT_DUTY,		 
-	MOTOR_RU_DUTY,		 
-	MOTOR_TGT_DUTY,		 
-	MOTOR_ACT_DUTY,		 
-	MOTOR_LCT_PERIOD,	 
-	MOTOR_RU_PERIOD_LOW,	 
-	MOTOR_RU_PERIOD_HIGH,	 
-	MOTOR_ACT_PERIOD_LOW,	 
-	MOTOR_ACT_PERIOD_HIGH,	 
-	MOTOR_RPM,			 
-	MOTOR_RESERVE,		 
-	MOTOR_BATTERY,		 
-	MOTOR_CURRENT		 
-} ENUM_COMM_REG;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 extern uint32_t unCOM_SPI_TransCNT;
 extern uint32_t unCOM_SPI_TransErrCNT;
 extern uint16_t unCOM_SPI_ReadData[4];	
 extern uint16_t unRegisterValue;	
-extern ENUM_COMM_REG tRegister;
+
 extern uint8_t FlagRegisterNeedWrite;
 
 extern void COMM_Manager(void);

@@ -7250,22 +7250,22 @@ typedef struct
 		volatile uint16_t bLocked:1;
 		volatile uint16_t bThisPhaseDetectedZX:1;
 		volatile uint16_t bNewComFrameReceived:1;
-		volatile uint16_t unMissedZXD_CNT:8;
-		volatile uint16_t unSuccessZXD_CNT:8;
 	}MSR;
-	volatile uint16_t  unLocatingDuty;		 
-	volatile uint16_t  unRampUpDuty;		 
-	volatile uint16_t  unTargetDuty;		 
-	volatile uint16_t  unActualDuty;		 
-	volatile uint16_t  unLocatingPeriod;	 
-	volatile uint16_t  unRESERVE_1;			 
-	volatile uint32_t  unRampUpPeriod;		 
-	volatile uint32_t  unActualPeriod;		 
-	volatile uint32_t  unPhaseChangeCNT;	 
-	volatile uint16_t  unRPM;				 
-	volatile uint16_t  unBattery;			 
-	volatile uint16_t  unCurrent;			 
-	volatile uint16_t  unRESERVE_2;			
+	volatile uint16_t	unMissedZXD_CNT;
+	volatile uint16_t	unSuccessZXD_CNT;
+	volatile uint16_t unLocatingDuty;		 
+	volatile uint16_t unRampUpDuty;			 
+	volatile uint16_t unTargetDuty;			 
+	volatile uint16_t unActualDuty;			 
+	volatile uint16_t unLocatingPeriod;	 
+	volatile uint16_t unRESERVE_1;				 
+	volatile uint32_t unRampUpPeriod;		 
+	volatile uint32_t unActualPeriod;		 
+	volatile uint32_t unPhaseChangeCNT;	 
+	volatile uint16_t unRPM;							 
+	volatile uint16_t unBattery;					 
+	volatile uint16_t unCurrent;					 
+	volatile uint16_t unRESERVE_2;				 
 } MOTOR_T;
 
 typedef union
@@ -7477,6 +7477,8 @@ extern void PTC_checkMotor(void);
 		typedef enum {
 			COMM_READ_MCR = 0,
 			COMM_READ_MSR,
+			COMM_READ_MISS_ZXD_CNT,
+			COMM_READ_SCS_ZXD_CNT,
 			COMM_READ_LOCATING_DUTY,
 			COMM_READ_RAMP_UP_DUTY,
 			COMM_READ_TARGET_DUTY,
@@ -7528,30 +7530,32 @@ extern void PTC_checkMotor(void);
 
 
 		
-#line 87 "User\\Communication.h"
+#line 89 "User\\Communication.h"
 
-typedef enum{
-	MOTOR_MCR = 0,	 
-	MOTOR_MSR,		 
-	MOTOR_LCT_DUTY,		 
-	MOTOR_RU_DUTY,		 
-	MOTOR_TGT_DUTY,		 
-	MOTOR_ACT_DUTY,		 
-	MOTOR_LCT_PERIOD,	 
-	MOTOR_RU_PERIOD_LOW,	 
-	MOTOR_RU_PERIOD_HIGH,	 
-	MOTOR_ACT_PERIOD_LOW,	 
-	MOTOR_ACT_PERIOD_HIGH,	 
-	MOTOR_RPM,			 
-	MOTOR_RESERVE,		 
-	MOTOR_BATTERY,		 
-	MOTOR_CURRENT		 
-} ENUM_COMM_REG;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  uint32_t unCOM_SPI_TransCNT;
  uint32_t unCOM_SPI_TransErrCNT;
  uint16_t unCOM_SPI_ReadData[4];	
  uint16_t unRegisterValue;	
- ENUM_COMM_REG tRegister;
+
  uint8_t FlagRegisterNeedWrite;
 
  void COMM_Manager(void);

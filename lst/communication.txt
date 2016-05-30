@@ -62,7 +62,7 @@
 000032  8800              LDRH     r0,[r0,#0]
 000034  0441              LSLS     r1,r0,#17
 000036  0c49              LSRS     r1,r1,#17
-000038  2912              CMP      r1,#0x12
+000038  2914              CMP      r1,#0x14
 00003a  d214              BCS      |L1.102|
 ;;;58     	{
 ;;;59     		SPI_WRITE_TX(SPI, (tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])] << 16) + 
@@ -133,25 +133,25 @@
 ;;;78     	case COMM_WRITE_LOCATING_DUTY:
 ;;;79     		tMotor.structMotor.unLocatingDuty = pCOM_Buff[1];
 000098  8840              LDRH     r0,[r0,#2]
-00009a  80c8              STRH     r0,[r1,#6]
+00009a  8108              STRH     r0,[r1,#8]
 ;;;80     		break;
 00009c  e00d              B        |L1.186|
 ;;;81     	case COMM_WRITE_RAMP_UP_DUTY:
 ;;;82     		tMotor.structMotor.unRampUpDuty = pCOM_Buff[1];
 00009e  8840              LDRH     r0,[r0,#2]
-0000a0  8108              STRH     r0,[r1,#8]
+0000a0  8148              STRH     r0,[r1,#0xa]
 ;;;83     		break;
 0000a2  e00a              B        |L1.186|
 ;;;84     	case COMM_WRITE_TARGET_DUTY:
 ;;;85     		tMotor.structMotor.unTargetDuty = pCOM_Buff[1];
 0000a4  8840              LDRH     r0,[r0,#2]
-0000a6  8148              STRH     r0,[r1,#0xa]
+0000a6  8188              STRH     r0,[r1,#0xc]
 ;;;86     		break;
 0000a8  e007              B        |L1.186|
 ;;;87     	case COMM_WRITE_LOCATING_PERIOD:
 ;;;88     		tMotor.structMotor.unLocatingPeriod = pCOM_Buff[1];
 0000aa  8840              LDRH     r0,[r0,#2]
-0000ac  81c8              STRH     r0,[r1,#0xe]
+0000ac  8208              STRH     r0,[r1,#0x10]
 ;;;89     		break;
 0000ae  e004              B        |L1.186|
 ;;;90     	case COMM_WRITE_RAMP_UP_PERIOD:
@@ -485,12 +485,6 @@
                           AREA ||area_number.7||, DATA, ALIGN=0
 
                           EXPORTAS ||area_number.7||, ||.data||
-                  tRegister
-000000  00                DCB      0x00
-
-                          AREA ||area_number.8||, DATA, ALIGN=0
-
-                          EXPORTAS ||area_number.8||, ||.data||
                   FlagRegisterNeedWrite
 000000  00                DCB      0x00
 
@@ -503,9 +497,9 @@
 000006  7825              LDRB     r5,[r4,#0]
 000008  1c64              ADDS     r4,r4,#1
 00000a  42ab              CMP      r3,r5
-00000c  d200              BCS      |L20.16|
+00000c  d200              BCS      |L19.16|
 00000e  461d              MOV      r5,r3
-                  |L20.16|
+                  |L19.16|
 000010  5d63              LDRB     r3,[r4,r5]
 000012  005b              LSLS     r3,r3,#1
 000014  18e3              ADDS     r3,r4,r3

@@ -8960,37 +8960,37 @@ N		__IO uint16_t bThisPhaseDetectedZX:1;
 X		volatile uint16_t bThisPhaseDetectedZX:1;
 N		__IO uint16_t bNewComFrameReceived:1;
 X		volatile uint16_t bNewComFrameReceived:1;
-N		__IO uint16_t unMissedZXD_CNT:8;
-X		volatile uint16_t unMissedZXD_CNT:8;
-N		__IO uint16_t unSuccessZXD_CNT:8;
-X		volatile uint16_t unSuccessZXD_CNT:8;
 N	}MSR;
-N	__IO uint16_t  unLocatingDuty;		/*!<  PWM Locating Duty  */
-X	volatile uint16_t  unLocatingDuty;		 
-N	__IO uint16_t  unRampUpDuty;		/*!<  PWM Ramp Up Start Duty  */
-X	volatile uint16_t  unRampUpDuty;		 
-N	__IO uint16_t  unTargetDuty;		/*!<  PWM Target (Locked State) Duty  */
-X	volatile uint16_t  unTargetDuty;		 
-N	__IO uint16_t  unActualDuty;		/*!<  PWM Actual Duty  */
-X	volatile uint16_t  unActualDuty;		 
-N	__IO uint16_t  unLocatingPeriod;	/*!<  Locating State One Phase Period  */
-X	volatile uint16_t  unLocatingPeriod;	 
-N	__IO uint16_t  unRESERVE_1;			/*!<  for 4 bytes align */
-X	volatile uint16_t  unRESERVE_1;			 
-N	__IO uint32_t  unRampUpPeriod;		/*!<  Ramp Up Start One Phase Period  */
-X	volatile uint32_t  unRampUpPeriod;		 
-N	__IO uint32_t  unActualPeriod;		/*!<  Actual One Phase Period  */
-X	volatile uint32_t  unActualPeriod;		 
-N	__IO uint32_t  unPhaseChangeCNT;	/*!<  Phase changed counter  */
-X	volatile uint32_t  unPhaseChangeCNT;	 
-N	__IO uint16_t  unRPM;				/*!<  Actual RPM  */
-X	volatile uint16_t  unRPM;				 
-N	__IO uint16_t  unBattery;			/*!<  Battery Voltage  */
-X	volatile uint16_t  unBattery;			 
-N	__IO uint16_t  unCurrent;			/*!<  Current  */
-X	volatile uint16_t  unCurrent;			 
-N	__IO uint16_t  unRESERVE_2;			//*!<  for 4 bytes align */
-X	volatile uint16_t  unRESERVE_2;			
+N	__IO uint16_t	unMissedZXD_CNT;
+X	volatile uint16_t	unMissedZXD_CNT;
+N	__IO uint16_t	unSuccessZXD_CNT;
+X	volatile uint16_t	unSuccessZXD_CNT;
+N	__IO uint16_t unLocatingDuty;		/*!<  PWM Locating Duty  */
+X	volatile uint16_t unLocatingDuty;		 
+N	__IO uint16_t unRampUpDuty;			/*!<  PWM Ramp Up Start Duty  */
+X	volatile uint16_t unRampUpDuty;			 
+N	__IO uint16_t unTargetDuty;			/*!<  PWM Target (Locked State) Duty  */
+X	volatile uint16_t unTargetDuty;			 
+N	__IO uint16_t unActualDuty;			/*!<  PWM Actual Duty  */
+X	volatile uint16_t unActualDuty;			 
+N	__IO uint16_t unLocatingPeriod;	/*!<  Locating State One Phase Period  */
+X	volatile uint16_t unLocatingPeriod;	 
+N	__IO uint16_t unRESERVE_1;				/*!<  for 4 bytes align */
+X	volatile uint16_t unRESERVE_1;				 
+N	__IO uint32_t unRampUpPeriod;		/*!<  Ramp Up Start One Phase Period  */
+X	volatile uint32_t unRampUpPeriod;		 
+N	__IO uint32_t unActualPeriod;		/*!<  Actual One Phase Period  */
+X	volatile uint32_t unActualPeriod;		 
+N	__IO uint32_t unPhaseChangeCNT;	/*!<  Phase changed counter  */
+X	volatile uint32_t unPhaseChangeCNT;	 
+N	__IO uint16_t unRPM;							/*!<  Actual RPM  */
+X	volatile uint16_t unRPM;							 
+N	__IO uint16_t unBattery;					/*!<  Battery Voltage  */
+X	volatile uint16_t unBattery;					 
+N	__IO uint16_t unCurrent;					/*!<  Current  */
+X	volatile uint16_t unCurrent;					 
+N	__IO uint16_t unRESERVE_2;				/*!<  for 4 bytes align */
+X	volatile uint16_t unRESERVE_2;				 
 N} MOTOR_T;
 N
 Ntypedef union
@@ -9049,22 +9049,22 @@ S		__IO uint16_t bZeroCrossDetecting:1;
 S		__IO uint16_t bLocked:1;
 S		__IO uint16_t bThisPhaseDetectedZX:1;
 S		__IO uint16_t bNewComFrameReceived:1;
-S		__IO uint16_t unMissedZXD_CNT:8;
-S		__IO uint16_t unSuccessZXD_CNT:8;
 S	}MSR;
-S	__IO uint16_t  unLocatingDuty;		/*!<  PWM Locating Duty  */
-S	__IO uint16_t  unRampUpDuty;		/*!<  PWM Ramp Up Start Duty  */
-S	__IO uint16_t  unTargetDuty;		/*!<  PWM Target (Locked State) Duty  */
-S	__IO uint16_t  unActualDuty;		/*!<  PWM Actual Duty  */
-S	__IO uint16_t  unLocatingPeriod;	/*!<  Locating State One Phase Period  */
-S	__IO uint16_t  unRESERVE_1;			/*!<  for 4 bytes align */
-S	__IO uint32_t  unRampUpPeriod;		/*!<  Ramp Up Start One Phase Period  */
-S	__IO uint32_t  unActualPeriod;		/*!<  Actual One Phase Period  */
-S	__IO uint32_t  unPhaseChangeCNT;	/*!<  Phase changed counter  */
-S	__IO uint16_t  unRPM;				/*!<  Actual RPM  */
-S	__IO uint16_t  unBattery;			/*!<  Battery Voltage  */
-S	__IO uint16_t  unCurrent;			/*!<  Current  */
-S	__IO uint16_t  unRESERVE_2;			//*!<  for 4 bytes align */
+S	__IO uint16_t	unMissedZXD_CNT;
+S	__IO uint16_t	unSuccessZXD_CNT;
+S	__IO uint16_t unLocatingDuty;		/*!<  PWM Locating Duty  */
+S	__IO uint16_t unRampUpDuty;			/*!<  PWM Ramp Up Start Duty  */
+S	__IO uint16_t unTargetDuty;			/*!<  PWM Target (Locked State) Duty  */
+S	__IO uint16_t unActualDuty;			/*!<  PWM Actual Duty  */
+S	__IO uint16_t unLocatingPeriod;	/*!<  Locating State One Phase Period  */
+S	__IO uint16_t unRESERVE_1;				/*!<  for 4 bytes align */
+S	__IO uint32_t unRampUpPeriod;		/*!<  Ramp Up Start One Phase Period  */
+S	__IO uint32_t unActualPeriod;		/*!<  Actual One Phase Period  */
+S	__IO uint32_t unPhaseChangeCNT;	/*!<  Phase changed counter  */
+S	__IO uint16_t unRPM;							/*!<  Actual RPM  */
+S	__IO uint16_t unBattery;					/*!<  Battery Voltage  */
+S	__IO uint16_t unCurrent;					/*!<  Current  */
+S	__IO uint16_t unRESERVE_2;				/*!<  for 4 bytes align */
 S} MOTOR_T;
 S
 Stypedef union
@@ -9410,6 +9410,8 @@ S
 S		typedef enum {
 S			COMM_READ_MCR = 0,
 S			COMM_READ_MSR,
+S			COMM_READ_MISS_ZXD_CNT,
+S			COMM_READ_SCS_ZXD_CNT,
 S			COMM_READ_LOCATING_DUTY,
 S			COMM_READ_RAMP_UP_DUTY,
 S			COMM_READ_TARGET_DUTY,
@@ -9468,23 +9470,25 @@ N#define COMM_DATA_MASK						(0x7FFF)
 N#define COMM_GET_DATA(value)			((value) & COMM_DATA_MASK)
 N#define COMM_BAUT_RATE						0	// 5MHz
 N
-Ntypedef enum{
-N	MOTOR_MCR = 0,	/*!<  Motor Control  */
-N	MOTOR_MSR,		/*!<  Motor Status  */
-N	MOTOR_LCT_DUTY,		/*!<  PWM Locating Duty  */
-N	MOTOR_RU_DUTY,		/*!<  PWM Ramp Up Start Duty  */
-N	MOTOR_TGT_DUTY,		/*!<  PWM Target (Locked State) Duty  */
-N	MOTOR_ACT_DUTY,		/*!<  PWM Actual Duty  */
-N	MOTOR_LCT_PERIOD,	/*!<  Locating State One Phase Period  */
-N	MOTOR_RU_PERIOD_LOW,	/*!<  Ramp Up Start One Phase Period  */
-N	MOTOR_RU_PERIOD_HIGH,	/*!<  Ramp Up Start One Phase Period  */
-N	MOTOR_ACT_PERIOD_LOW,	/*!<  Actual One Phase Period  */
-N	MOTOR_ACT_PERIOD_HIGH,	/*!<  Actual One Phase Period  */
-N	MOTOR_RPM,			/*!<  Actual RPM  */
-N	MOTOR_RESERVE,		/*!<  Reserve for future use (round up 32bits) */
-N	MOTOR_BATTERY,		/*!<  Battery Voltage  */
-N	MOTOR_CURRENT		/*!<  Current  */
-N} ENUM_COMM_REG;
+N//typedef enum{
+N//	MOTOR_MCR = 0,	/*!<  Motor Control  */
+N//	MOTOR_MSR,		/*!<  Motor Status  */
+N//	MOTOR_MISS_ZXD_CNT,
+N//	MOTOR_SCS_ZXD_CNT,
+N//	MOTOR_LCT_DUTY,		/*!<  PWM Locating Duty  */
+N//	MOTOR_RU_DUTY,		/*!<  PWM Ramp Up Start Duty  */
+N//	MOTOR_TGT_DUTY,		/*!<  PWM Target (Locked State) Duty  */
+N//	MOTOR_ACT_DUTY,		/*!<  PWM Actual Duty  */
+N//	MOTOR_LCT_PERIOD,	/*!<  Locating State One Phase Period  */
+N//	MOTOR_RU_PERIOD_LOW,	/*!<  Ramp Up Start One Phase Period  */
+N//	MOTOR_RU_PERIOD_HIGH,	/*!<  Ramp Up Start One Phase Period  */
+N//	MOTOR_ACT_PERIOD_LOW,	/*!<  Actual One Phase Period  */
+N//	MOTOR_ACT_PERIOD_HIGH,	/*!<  Actual One Phase Period  */
+N//	MOTOR_RPM,			/*!<  Actual RPM  */
+N//	MOTOR_RESERVE,		/*!<  Reserve for future use (round up 32bits) */
+N//	MOTOR_BATTERY,		/*!<  Battery Voltage  */
+N//	MOTOR_CURRENT		/*!<  Current  */
+N//} ENUM_COMM_REG;
 NEXTERNAL_COMM uint32_t unCOM_SPI_TransCNT;
 Xextern uint32_t unCOM_SPI_TransCNT;
 NEXTERNAL_COMM uint32_t unCOM_SPI_TransErrCNT;
@@ -9493,8 +9497,7 @@ NEXTERNAL_COMM uint16_t unCOM_SPI_ReadData[COMM_FIFO_LENGTH];	// 0 or 0xFFFF mea
 Xextern uint16_t unCOM_SPI_ReadData[4];	
 NEXTERNAL_COMM uint16_t unRegisterValue;	// 0 or 0xFFFF means no data
 Xextern uint16_t unRegisterValue;	
-NEXTERNAL_COMM ENUM_COMM_REG tRegister;
-Xextern ENUM_COMM_REG tRegister;
+N//EXTERNAL_COMM ENUM_COMM_REG tRegister;
 NEXTERNAL_COMM uint8_t FlagRegisterNeedWrite;
 Xextern uint8_t FlagRegisterNeedWrite;
 N
