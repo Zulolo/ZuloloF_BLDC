@@ -8,6 +8,7 @@
  * @note
  * Copyright (C) 2014 Zulolo Technology Corp. All rights reserved.
 *****************************************************************************/
+
 #define __USED_BY_ERROR_C__
 #include "Error.h"
 

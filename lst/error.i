@@ -9,6 +9,7 @@
 
 
  
+
 #line 1 "User\\Error.h"
 
 
@@ -7519,7 +7520,7 @@ typedef enum {
  void clearError(void);
  void ERR_Manager(void);
 
-#line 13 "User\\Error.c"
+#line 14 "User\\Error.c"
 
 void delay(uint32_t unDelayMs)
 {

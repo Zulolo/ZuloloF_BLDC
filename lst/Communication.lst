@@ -10346,21 +10346,28 @@ N
 N	return crc;
 N}
 N
-Nuint32_t unSPI_TX_WR_CNT = 0;
+Nuint32_t unSPI_TX_WR_Data;
+Nuint32_t unReadData;
 Nint32_t nReadCommandHandler(uint16_t* pCOM_Buff)
 N{
 N	if (COMM_GET_DATA(pCOM_Buff[0]) < COMM_READ_MAX)
 X	if (((pCOM_Buff[0]) & (0x7FFF)) < COMM_READ_MAX)
 N	{
-N		SPI_WRITE_TX(SPI, (tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])] << 16) + 
-X		SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), (tMotor.unValue[((pCOM_Buff[0]) & (0x7FFF))] << 16) + 
-N			calCRC16((uint8_t*)(&(tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])])), 2) );
-X			calCRC16((uint8_t*)(&(tMotor.unValue[((pCOM_Buff[0]) & (0x7FFF))])), 2) );
-N		unSPI_TX_WR_CNT++;
+N		unReadData = tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])];
+X		unReadData = tMotor.unValue[((pCOM_Buff[0]) & (0x7FFF))];
+N		unSPI_TX_WR_Data = (unReadData << 16) + calCRC16((uint8_t*)(&unReadData), 2);
+N		SPI_WRITE_TX(SPI, unSPI_TX_WR_Data);
+X		SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), unSPI_TX_WR_Data);
+N		SPI_TRIGGER(SPI);
+X		SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 N		return 0;
 N	}
 N	else
 N	{
+N		SPI_WRITE_TX(SPI, 0);
+X		SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 0);
+N		SPI_TRIGGER(SPI);
+X		SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 N		return -1;
 N	}
 N}
@@ -10390,18 +10397,27 @@ N	case COMM_WRITE_RAMP_UP_PERIOD:
 N		tMotor.structMotor.unRampUpPeriod = pCOM_Buff[1] + (pCOM_Buff[2] << 16);
 N			break;
 N	default:
+N		SPI_WRITE_TX(SPI, 0);
+X		SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 0);
+N		SPI_TRIGGER(SPI);
+X		SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 N		return -1;
 N	}
+N	SPI_WRITE_TX(SPI, 0);
+X	SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 0);
+N	SPI_TRIGGER(SPI);
+X	SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 N	return 0;
 N}
 N
 N// Communicating with mast via SPI
+N
 Nvoid COMM_Manager(void)
 N{
-N	static uint16_t unCOM_Buff[COMM_FIFO_LENGTH];
-X	static uint16_t unCOM_Buff[4];
 N	static uint32_t unLastFrameCNT = 0;
 N	static uint32_t unLastCheckTime = 0;
+N	static uint16_t unCOM_Buff[COMM_FIFO_LENGTH];
+X	static uint16_t unCOM_Buff[4];
 N	// All transactions are handled in interrupt
 N	if (tMotor.structMotor.MSR.bNewComFrameReceived == TRUE)
 X	if (tMotor.structMotor.MSR.bNewComFrameReceived == (1))
@@ -10430,6 +10446,10 @@ N		}
 N		else
 N		{
 N			unCOM_SPI_TransErrCNT++;
+N			SPI_WRITE_TX(SPI, 0);
+X			SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 0);
+N			SPI_TRIGGER(SPI);
+X			SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 N		}
 N	}
 N	

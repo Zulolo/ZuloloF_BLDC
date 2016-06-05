@@ -11037,40 +11037,40 @@ N
 Nvoid configADC(void)
 N{
 N
-N    ADC_SetExtraSampleTime(ADC, 0 , ADC_SAMPLE_CLOCK_16);
-X    ADC_SetExtraSampleTime(((ADC_T *) (((uint32_t)0x40000000) + 0xE0000)), 0 , (5UL));
+N	ADC_SetExtraSampleTime(ADC, 0 , ADC_SAMPLE_CLOCK_16);
+X	ADC_SetExtraSampleTime(((ADC_T *) (((uint32_t)0x40000000) + 0xE0000)), 0 , (5UL));
 N
-N    // Enable channel 0 and 7 (Current and Battery)
+N	// Enable channel 0 and 7 (Current and Battery)
 N//    ADC_Open(ADC, 0, 0, ADC_BATTERY_CHN_MSK);	//ADC_CURRENT_CHN_MSK | ADC_BATTERY_CHN_MSK);	
 N// Do NOT use this, it will clear all bit in ADCR
 N
 N
-N    // Power on ADC
-N    ADC_POWER_ON(ADC);
-X    (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCR |= (1ul << 0));
+N	// Power on ADC
+N	ADC_POWER_ON(ADC);
+X	(((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCR |= (1ul << 0));
 N
-N    // ADC start triggered by TIM and take turn between current and battery
-N    // Use two ADC comparator to hardware trace the big cuurent or battery low
-N 
-N    // Configure and enable Comperator 0 to monitor channel 0(current) input greater or euqal to 93
-N    ADC_ENABLE_CMP0(ADC, ADC_CURRENT_CHN_IDX, ADC_CMP_GREATER_OR_EQUAL_TO, ADC_CURRENT_HIGH_THRS, ADC_CURRENT_HIGH_CNT);
-X    (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCMPR[0] = ((0) << 3) | (((1ul << 2))) | ((68) << 16) | (((12) - 1) << 8) | (1ul << 0));
-N    // Configure and enable Comperator 1 to monitor channel 7(battery) input less than 0x200	
-N    ADC_ENABLE_CMP1(ADC, ADC_BATTERY_CHN_IDX, ADC_CMP_LESS_THAN, ADC_BAT_LOW_THRS, ADC_BAT_LOW_CNT);    
-X    (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCMPR[1] = ((7) << 3) | ((0UL)) | ((348) << 16) | ((16 - 1) << 8) | (1ul << 0));    
+N	// ADC start triggered by TIM and take turn between current and battery
+N	// Use two ADC comparator to hardware trace the big cuurent or battery low
 N
-N    // Enable ADC comparator 0 and 1 interrupt
-N    ADC_EnableInt(ADC, ADC_ADF_INT);
-X    ADC_EnableInt(((ADC_T *) (((uint32_t)0x40000000) + 0xE0000)), ((1ul << 0)));
-N    ADC_EnableInt(ADC, ADC_CMP0_INT);
-X    ADC_EnableInt(((ADC_T *) (((uint32_t)0x40000000) + 0xE0000)), ((1ul << 1)));
-N    ADC_EnableInt(ADC, ADC_CMP1_INT);
-X    ADC_EnableInt(((ADC_T *) (((uint32_t)0x40000000) + 0xE0000)), ((1ul << 2)));
+N	// Configure and enable Comperator 0 to monitor channel 0(current) input greater or euqal to 93
+N	ADC_ENABLE_CMP0(ADC, ADC_CURRENT_CHN_IDX, ADC_CMP_GREATER_OR_EQUAL_TO, ADC_CURRENT_HIGH_THRS, ADC_CURRENT_HIGH_CNT);
+X	(((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCMPR[0] = ((0) << 3) | (((1ul << 2))) | ((68) << 16) | (((12) - 1) << 8) | (1ul << 0));
+N	// Configure and enable Comperator 1 to monitor channel 7(battery) input less than 0x200	
+N	ADC_ENABLE_CMP1(ADC, ADC_BATTERY_CHN_IDX, ADC_CMP_LESS_THAN, ADC_BAT_LOW_THRS, ADC_BAT_LOW_CNT);    
+X	(((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCMPR[1] = ((7) << 3) | ((0UL)) | ((348) << 16) | ((16 - 1) << 8) | (1ul << 0));    
 N
-N    ADC_SET_INPUT_CHANNEL(ADC, ADC_BATTERY_CHN_MSK);
-X    (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCHER = (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCHER & ~(0xFFul << 0)) | ((0x01 << 7)));
-N    ADC_START_CONV(ADC);
-X    (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCR |= (1ul << 11));
+N	// Enable ADC comparator 0 and 1 interrupt
+N	ADC_EnableInt(ADC, ADC_ADF_INT);
+X	ADC_EnableInt(((ADC_T *) (((uint32_t)0x40000000) + 0xE0000)), ((1ul << 0)));
+N	ADC_EnableInt(ADC, ADC_CMP0_INT);
+X	ADC_EnableInt(((ADC_T *) (((uint32_t)0x40000000) + 0xE0000)), ((1ul << 1)));
+N	ADC_EnableInt(ADC, ADC_CMP1_INT);
+X	ADC_EnableInt(((ADC_T *) (((uint32_t)0x40000000) + 0xE0000)), ((1ul << 2)));
+N
+N	ADC_SET_INPUT_CHANNEL(ADC, ADC_BATTERY_CHN_MSK);
+X	(((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCHER = (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCHER & ~(0xFFul << 0)) | ((0x01 << 7)));
+N	ADC_START_CONV(ADC);
+X	(((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCR |= (1ul << 11));
 N}
 N
 Nvoid configSPI(void)
@@ -11078,41 +11078,42 @@ N{
 N/*---------------------------------------------------------------------------------------------------------*/
 N/* Init SPI                                                                                                */
 N/*---------------------------------------------------------------------------------------------------------*/
-N    /* Configure as a slave, clock idle low, falling clock edge Tx, rising edge Rx and 32-bit transaction */
-N    /* Set IP clock divider. SPI clock rate = 10MHz */
-N    SPI_Close(SPI);
-X    SPI_Close(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-N    SPI_ClearRxFIFO(SPI);
-X    SPI_ClearRxFIFO(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-N    SPI_ClearTxFIFO(SPI);
-X    SPI_ClearTxFIFO(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-N    // peripheral clock frequency of slave device must be faster than the bus clock frequency of the master
-N    SPI_Open(SPI, SPI_SLAVE, SPI_MODE_0, COMM_BIT_LENTH, COMM_BAUT_RATE);
-X    SPI_Open(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), ((1ul << 18)), ((1ul << 2)), 32, 0);
+N	/* Configure as a slave, clock idle low, falling clock edge Tx, rising edge Rx and 32-bit transaction */
+N	/* Set IP clock divider. SPI clock rate = 10MHz */
+N	SPI_Close(SPI);
+X	SPI_Close(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+N//    SPI_ClearRxFIFO(SPI);
+N//    SPI_ClearTxFIFO(SPI);
+N	// peripheral clock frequency of slave device must be faster than the bus clock frequency of the master
+N	SPI_Open(SPI, SPI_SLAVE, SPI_MODE_0, COMM_BIT_LENTH, COMM_BAUT_RATE);
+X	SPI_Open(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), ((1ul << 18)), ((1ul << 2)), 32, 0);
 N
 N//	  /* Enable the automatic hardware slave select function. Select the SS pin and configure as low-active. */
 N//    SPI_EnableAutoSS(SPI, SPI_SS, SPI_SS_ACTIVE_LOW);
-N	
-N    SPI_SET_MSB_FIRST(SPI);
-X    SPI_SET_MSB_FIRST(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 N
-N    // SS edge trigger
-N    // Set input slave select signal to edge-trigger
-N    SPI->SSR &= (~SPI_SSR_SS_LTRIG_Msk);
-X    ((SPI_T *) (((uint32_t)0x40000000) + 0x30000))->SSR &= (~(1ul << 4));
-N    // Set slave select signal SPISS to be active at Falling-edge.
-N    SPI->SSR &= (~SPI_SSR_SS_LVL_Msk);
-X    ((SPI_T *) (((uint32_t)0x40000000) + 0x30000))->SSR &= (~(1ul << 2));
+N	SPI_SET_MSB_FIRST(SPI);
+X	SPI_SET_MSB_FIRST(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 N
-N    /* Use FIFO */
-N    SPI_EnableFIFO(SPI, COMM_FIFO_LENGTH, COMM_FIFO_LENGTH);
-X    SPI_EnableFIFO(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 4, 4);
+N	// SS level trigger
+N	// Set input slave select signal to edge-trigger
+N	SPI->SSR |= SPI_SSR_SS_LTRIG_Msk;
+X	((SPI_T *) (((uint32_t)0x40000000) + 0x30000))->SSR |= (1ul << 4);
+N	// Set slave select signal SPISS to be active at low level.
+N	SPI->SSR &= (~SPI_SSR_SS_LVL_Msk);
+X	((SPI_T *) (((uint32_t)0x40000000) + 0x30000))->SSR &= (~(1ul << 2));
 N
-N    /* Enable SPI unit transfer interrupt */
-N    SPI_EnableInt(SPI, SPI_IE_MASK);
-X    SPI_EnableInt(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), (0x01));
+N	/* Use FIFO */
+N//	SPI_EnableFIFO(SPI, COMM_FIFO_LENGTH, COMM_FIFO_LENGTH);
+N
+N	/* Enable SPI unit transfer interrupt */
+N	SPI_EnableInt(SPI, SPI_IE_MASK);
+X	SPI_EnableInt(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), (0x01));
 N		
-N//		SPI_TRIGGER(SPI);
+N
+N	SPI_WRITE_TX(SPI, 0);
+X	SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 0);
+N	SPI_TRIGGER(SPI);
+X	SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 N}
 N
 N//void ACMP_Config(void)
@@ -11264,6 +11265,7 @@ N	unCOM_SPI_TransErrCNT = 0;
 N	unZXMatchCNT = 0;
 N	tMotor.structMotor.MSR.bNewComFrameReceived = FALSE;
 X	tMotor.structMotor.MSR.bNewComFrameReceived = (0);
+N//	tSPI_LastState = SPI_RCV_IDLE;
 N}
 N
 Nint main()

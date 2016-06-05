@@ -9641,6 +9641,8 @@ L 72 "User\global.h" 2
 N#endif 
 L 5 "User\it.h" 2
 N
+N#define MTR_INVALID_MOTOR_CMD		0xFFFF
+N
 N#ifdef __USED_BY_IT_C__
 N	#define EXTERNAL_IT
 N
@@ -9649,11 +9651,16 @@ N												// we think it is real low
 N	#define MAX_BATT_LOW_CNT				50	// 9.6ms*50=480ms	//1000	// 0.5ms*1000=500ms
 N	#define MAX_ZX_MATCH_IN_PWM				36
 N	#define PWM_ZX_FILTER_TIME				40
-N
+N	typedef enum {
+N		SPI_RCV_IDLE = 0,
+N		SPI_RCV_RD_CMD,
+N		SPI_RCV_WR_CMD,
+N		SPI_RCV_WR_DATA
+N	} ENUM_SPI_RECEIVE_STATE;
 N#else 
 S	#define EXTERNAL_IT extern
 N#endif
-N#define MTR_INVALID_MOTOR_CMD		0xFFFF
+N
 N#endif
 L 13 "User\it.c" 2
 N
@@ -9855,12 +9862,12 @@ N
 N    ADC_CLR_INT_FLAG(ADC, iADC_ComparatorFlag);
 X    (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADSR = (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADSR & ~((1ul << 0) | (1ul << 1) | (1ul << 2))) | (iADC_ComparatorFlag));
 N}
-N
+N	uint8_t unFIFO_RX_CNT;
 Nvoid SPI_IRQHandler(void)
 N{
-N	uint32_t unSPI_RX_Value;
-N	uint8_t unFIFO_RX_CNT;
-N
+N	static ENUM_SPI_RECEIVE_STATE tSPI_LastState = SPI_RCV_IDLE;
+N	static uint32_t unSPI_RX_Value;
+N	
 N	if ((SPI->CNTRL & SPI_STATUS_IF_Msk) == SPI_STATUS_IF_Msk)
 X	if ((((SPI_T *) (((uint32_t)0x40000000) + 0x30000))->CNTRL & (1ul << 16)) == (1ul << 16))
 N	{
@@ -9868,82 +9875,160 @@ N		// Check if it is really finished one unit transfer
 N		if ((SPI->SSR & SPI_SSR_LTRIG_FLAG_Msk) == SPI_SSR_LTRIG_FLAG_Msk)
 X		if ((((SPI_T *) (((uint32_t)0x40000000) + 0x30000))->SSR & (1ul << 5)) == (1ul << 5))
 N		{
+N			unSPI_RX_Value = SPI_READ_RX(SPI);
+X			unSPI_RX_Value = SPI_READ_RX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 N			if (tMotor.structMotor.MSR.bNewComFrameReceived == FALSE)
 X			if (tMotor.structMotor.MSR.bNewComFrameReceived == (0))
 N			{
-N				unFIFO_RX_CNT = SPI_GET_RX_FIFO_COUNT(SPI);
-X				unFIFO_RX_CNT = SPI_GET_RX_FIFO_COUNT(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-N				if (unFIFO_RX_CNT == COMM_RD_CMD_CNT_IN_32BIT)
-X				if (unFIFO_RX_CNT == 1)
+N				switch(tSPI_LastState)
 N				{
-N					// Received 2 uint16, copy to RAM buffer and infor communication manager
-N					unSPI_RX_Value = SPI_READ_RX(SPI);
-X					unSPI_RX_Value = SPI_READ_RX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+N				case SPI_RCV_IDLE:
+N				case SPI_RCV_RD_CMD:
+N				case SPI_RCV_WR_DATA:
 N					unCOM_SPI_ReadData[0] = (uint16_t)(unSPI_RX_Value >> 16);
 N					unCOM_SPI_ReadData[1] = (uint16_t)unSPI_RX_Value;
-N
-N					if (unCOM_SPI_ReadData[0] != MTR_INVALID_MOTOR_CMD)
-X					if (unCOM_SPI_ReadData[0] != 0xFFFF)
+N					if (MTR_INVALID_MOTOR_CMD == unCOM_SPI_ReadData[0] )
+X					if (0xFFFF == unCOM_SPI_ReadData[0] )
 N					{
-N						// If it is dummy command, master just want to retrieve last time read's data.
-N						// For slave, do nothing
+N						// If it is dummy command, means to clear communication.
+N						// What need to be read is already done in last transaction during receiving this dummy command
+N						// SO next time no matter read or write command is transmitting, a fresh new frame with 0 data and 0 CRC is responsing
+N						SPI_WRITE_TX(SPI, 0);
+X						SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 0);
+N						SPI_TRIGGER(SPI);
+X						SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+N						tSPI_LastState = SPI_RCV_IDLE;
+N					}
+N					else
+N					{
 N						if (IS_COMM_RD_CMD(unCOM_SPI_ReadData[0]))
 X						if ((((unCOM_SPI_ReadData[0]) & (0x8000)) == (0x8000)))
 N						{
+N							tSPI_LastState = SPI_RCV_RD_CMD;
+N							// Read command received, go to main procedure to handle
 N							tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
 X							tMotor.structMotor.MSR.bNewComFrameReceived = (1);
 N						}
 N						else
 N						{
-N							unCOM_SPI_TransErrCNT++;		
-N						}						
+N							SPI_WRITE_TX(SPI, 0);
+X							SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 0);
+N							SPI_TRIGGER(SPI);
+X							SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+N							tSPI_LastState = SPI_RCV_WR_CMD;
+N						}
 N					}
-N				}
-N				else if (unFIFO_RX_CNT == COMM_WR_CMD_CNT_IN_32BIT)
-X				else if (unFIFO_RX_CNT == 2)
-N				{
-N					// Received 4 uint16, copy to RAM buffer and infor communication manager
-N					unSPI_RX_Value = SPI_READ_RX(SPI);
-X					unSPI_RX_Value = SPI_READ_RX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-N					unCOM_SPI_ReadData[0] = (uint16_t)(unSPI_RX_Value >> 16);
-N					unCOM_SPI_ReadData[1] = (uint16_t)unSPI_RX_Value;
-N					unSPI_RX_Value = SPI_READ_RX(SPI);
-X					unSPI_RX_Value = SPI_READ_RX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+N					break;
+N
+N				case SPI_RCV_WR_CMD:
 N					unCOM_SPI_ReadData[2] = (uint16_t)(unSPI_RX_Value >> 16);
-N					unCOM_SPI_ReadData[3] = (uint16_t)unSPI_RX_Value;					
-N					if (IS_COMM_WR_CMD(unCOM_SPI_ReadData[0]))
-X					if ((((unCOM_SPI_ReadData[0]) & (0x8000)) == 0))
-N					{
-N						tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
-X						tMotor.structMotor.MSR.bNewComFrameReceived = (1);
-N					}
-N					else
-N					{
-N						unCOM_SPI_TransErrCNT++;			
-N					}
-N				}
-N				else
-N				{
-N					unCOM_SPI_TransErrCNT++;			
+N					unCOM_SPI_ReadData[3] = (uint16_t)unSPI_RX_Value;
+N					// Write command and data received, go to main procedure to handle
+N					tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
+X					tMotor.structMotor.MSR.bNewComFrameReceived = (1);
+N					tSPI_LastState = SPI_RCV_WR_DATA;
+N					break;
+N
+N				default:
+N					SPI_WRITE_TX(SPI, 0);
+X					SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 0);
+N					SPI_TRIGGER(SPI);
+X					SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+N					unCOM_SPI_TransErrCNT++;
+N					break;
 N				}
 N			}
 N			else
 N			{
+N				SPI_WRITE_TX(SPI, 0);
+X				SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 0);
+N				SPI_TRIGGER(SPI);
+X				SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 N				unCOM_SPI_TransErrCNT++;
 N			}
-N			// Clear Receive FIFO interrupt
-N			// I don't know how to clear. Maybe just after I read out the data in FIFO and it is below threshold it will be OK
 N		}
 N		else
-N		{	// Receive FIFO interrupt should be the only interrupt enabled for SPI
-N			// So something strange happened
+N		{
+N			SPI_WRITE_TX(SPI, 0);
+X			SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 0);
+N			SPI_TRIGGER(SPI);
+X			SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 N			unCOM_SPI_TransErrCNT++;
-N		}		
-N		SPI_ClearRxFIFO(SPI);
-X		SPI_ClearRxFIFO(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+N		}
+N//			unFIFO_RX_CNT = SPI_GET_RX_FIFO_COUNT(SPI);
+N//			if (unFIFO_RX_CNT == COMM_RD_CMD_CNT_IN_32BIT)
+N//			{
+N//				// Received 2 uint16, copy to RAM buffer and infor communication manager
+N//				unSPI_RX_Value = SPI_READ_RX(SPI);
+N//				unCOM_SPI_ReadData[0] = (uint16_t)(unSPI_RX_Value >> 16);
+N//				unCOM_SPI_ReadData[1] = (uint16_t)unSPI_RX_Value;
+N
+N//				if (unCOM_SPI_ReadData[0] != MTR_INVALID_MOTOR_CMD)
+N//				{
+N//					// If it is dummy command, master just want to retrieve last time read's data.
+N//					// For slave, do nothing
+N//					if (IS_COMM_RD_CMD(unCOM_SPI_ReadData[0]))
+N//					{
+N//						tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
+N//					}
+N//					else
+N//					{
+N//						unCOM_SPI_TransErrCNT++;
+N//					}
+N//				}
+N//			}
+N//			else if (unFIFO_RX_CNT == COMM_WR_CMD_CNT_IN_32BIT)
+N//			{
+N//				// Received 4 uint16, copy to RAM buffer and infor communication manager
+N//				unSPI_RX_Value = SPI_READ_RX(SPI);
+N//				unCOM_SPI_ReadData[0] = (uint16_t)(unSPI_RX_Value >> 16);
+N//				unCOM_SPI_ReadData[1] = (uint16_t)unSPI_RX_Value;
+N//				unSPI_RX_Value = SPI_READ_RX(SPI);
+N//				unCOM_SPI_ReadData[2] = (uint16_t)(unSPI_RX_Value >> 16);
+N//				unCOM_SPI_ReadData[3] = (uint16_t)unSPI_RX_Value;
+N//				if (IS_COMM_WR_CMD(unCOM_SPI_ReadData[0]))
+N//				{
+N//					tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
+N//				}
+N//				else
+N//				{
+N//					unCOM_SPI_TransErrCNT++;
+N//				}
+N//			}
+N//			else
+N//			{
+N//				unCOM_SPI_TransErrCNT++;
+N//			}
+N//		}
+N//		else
+N//		{
+N//			unCOM_SPI_TransErrCNT++;
+N//		}
+N			// Clear Receive FIFO interrupt
+N			// I don't know how to clear. Maybe just after I read out the data in FIFO and it is below threshold it will be OK
+N//		else
+N//		{	// Receive FIFO interrupt should be the only interrupt enabled for SPI
+N//			// So something strange happened
+N//			unCOM_SPI_TransErrCNT++;
+N//			SPI_WRITE_TX(SPI, 0);
+N//			SPI_WRITE_TX(SPI, 0);
+N//			SPI_TRIGGER(SPI);
+N//		}		
+N//		SPI_ClearRxFIFO(SPI);
+N//		SPI_ClearTxFIFO(SPI);
 N		SPI_CLR_UNIT_TRANS_INT_FLAG(SPI);
 X		SPI_CLR_UNIT_TRANS_INT_FLAG(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+N
 N	}
+N	else
+N	{
+N		SPI_WRITE_TX(SPI, 0);
+X		SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 0);
+N		SPI_TRIGGER(SPI);
+X		SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+N		unCOM_SPI_TransErrCNT++;
+N	}
+N	
 N}
 N
 Nvoid SysTick_Handler(void)

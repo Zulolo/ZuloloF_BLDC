@@ -8602,31 +8602,31 @@ void configTIM(void)
 void configADC(void)
 {
 
-    ADC_SetExtraSampleTime(((ADC_T *) (((uint32_t)0x40000000) + 0xE0000)), 0 , (5UL));
+	ADC_SetExtraSampleTime(((ADC_T *) (((uint32_t)0x40000000) + 0xE0000)), 0 , (5UL));
 
-    
-
-
+	
 
 
-    
-    (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCR |= (1ul << 0));
 
-    
-    
- 
-    
-    (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCMPR[0] = ((0) << 3) | (((1ul << 2))) | ((68) << 16) | (((12) - 1) << 8) | (1ul << 0));
-    
-    (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCMPR[1] = ((7) << 3) | ((0UL)) | ((348) << 16) | ((16 - 1) << 8) | (1ul << 0));    
 
-    
-    ADC_EnableInt(((ADC_T *) (((uint32_t)0x40000000) + 0xE0000)), ((1ul << 0)));
-    ADC_EnableInt(((ADC_T *) (((uint32_t)0x40000000) + 0xE0000)), ((1ul << 1)));
-    ADC_EnableInt(((ADC_T *) (((uint32_t)0x40000000) + 0xE0000)), ((1ul << 2)));
+	
+	(((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCR |= (1ul << 0));
 
-    (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCHER = (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCHER & ~(0xFFul << 0)) | ((0x01 << 7)));
-    (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCR |= (1ul << 11));
+	
+	
+
+	
+	(((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCMPR[0] = ((0) << 3) | (((1ul << 2))) | ((68) << 16) | (((12) - 1) << 8) | (1ul << 0));
+	
+	(((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCMPR[1] = ((7) << 3) | ((0UL)) | ((348) << 16) | ((16 - 1) << 8) | (1ul << 0));    
+
+	
+	ADC_EnableInt(((ADC_T *) (((uint32_t)0x40000000) + 0xE0000)), ((1ul << 0)));
+	ADC_EnableInt(((ADC_T *) (((uint32_t)0x40000000) + 0xE0000)), ((1ul << 1)));
+	ADC_EnableInt(((ADC_T *) (((uint32_t)0x40000000) + 0xE0000)), ((1ul << 2)));
+
+	(((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCHER = (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCHER & ~(0xFFul << 0)) | ((0x01 << 7)));
+	(((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADCR |= (1ul << 11));
 }
 
 void configSPI(void)
@@ -8634,32 +8634,34 @@ void configSPI(void)
  
  
  
-     
-     
-    SPI_Close(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-    SPI_ClearRxFIFO(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-    SPI_ClearTxFIFO(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-    
-    SPI_Open(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), ((1ul << 18)), ((1ul << 2)), 32, 0);
-
+	 
+	 
+	SPI_Close(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 
 
 	
-    SPI_SET_MSB_FIRST(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+	SPI_Open(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), ((1ul << 18)), ((1ul << 2)), 32, 0);
 
-    
-    
-    ((SPI_T *) (((uint32_t)0x40000000) + 0x30000))->SSR &= (~(1ul << 4));
-    
-    ((SPI_T *) (((uint32_t)0x40000000) + 0x30000))->SSR &= (~(1ul << 2));
 
-     
-    SPI_EnableFIFO(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 4, 4);
 
-     
-    SPI_EnableInt(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), (0x01));
+
+	SPI_SET_MSB_FIRST(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+
+	
+	
+	((SPI_T *) (((uint32_t)0x40000000) + 0x30000))->SSR |= (1ul << 4);
+	
+	((SPI_T *) (((uint32_t)0x40000000) + 0x30000))->SSR &= (~(1ul << 2));
+
+	 
+
+
+	 
+	SPI_EnableInt(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), (0x01));
 		
 
+	SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 0);
+	SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 }
 
 
@@ -8775,6 +8777,7 @@ void initEnv(void)
 	unCOM_SPI_TransErrCNT = 0;
 	unZXMatchCNT = 0;
 	tMotor.structMotor.MSR.bNewComFrameReceived = (0);
+
 }
 
 int main()

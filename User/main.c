@@ -180,31 +180,31 @@ void configTIM(void)
 void configADC(void)
 {
 
-    ADC_SetExtraSampleTime(ADC, 0 , ADC_SAMPLE_CLOCK_16);
+	ADC_SetExtraSampleTime(ADC, 0 , ADC_SAMPLE_CLOCK_16);
 
-    // Enable channel 0 and 7 (Current and Battery)
+	// Enable channel 0 and 7 (Current and Battery)
 //    ADC_Open(ADC, 0, 0, ADC_BATTERY_CHN_MSK);	//ADC_CURRENT_CHN_MSK | ADC_BATTERY_CHN_MSK);	
 // Do NOT use this, it will clear all bit in ADCR
 
 
-    // Power on ADC
-    ADC_POWER_ON(ADC);
+	// Power on ADC
+	ADC_POWER_ON(ADC);
 
-    // ADC start triggered by TIM and take turn between current and battery
-    // Use two ADC comparator to hardware trace the big cuurent or battery low
- 
-    // Configure and enable Comperator 0 to monitor channel 0(current) input greater or euqal to 93
-    ADC_ENABLE_CMP0(ADC, ADC_CURRENT_CHN_IDX, ADC_CMP_GREATER_OR_EQUAL_TO, ADC_CURRENT_HIGH_THRS, ADC_CURRENT_HIGH_CNT);
-    // Configure and enable Comperator 1 to monitor channel 7(battery) input less than 0x200	
-    ADC_ENABLE_CMP1(ADC, ADC_BATTERY_CHN_IDX, ADC_CMP_LESS_THAN, ADC_BAT_LOW_THRS, ADC_BAT_LOW_CNT);    
+	// ADC start triggered by TIM and take turn between current and battery
+	// Use two ADC comparator to hardware trace the big cuurent or battery low
 
-    // Enable ADC comparator 0 and 1 interrupt
-    ADC_EnableInt(ADC, ADC_ADF_INT);
-    ADC_EnableInt(ADC, ADC_CMP0_INT);
-    ADC_EnableInt(ADC, ADC_CMP1_INT);
+	// Configure and enable Comperator 0 to monitor channel 0(current) input greater or euqal to 93
+	ADC_ENABLE_CMP0(ADC, ADC_CURRENT_CHN_IDX, ADC_CMP_GREATER_OR_EQUAL_TO, ADC_CURRENT_HIGH_THRS, ADC_CURRENT_HIGH_CNT);
+	// Configure and enable Comperator 1 to monitor channel 7(battery) input less than 0x200	
+	ADC_ENABLE_CMP1(ADC, ADC_BATTERY_CHN_IDX, ADC_CMP_LESS_THAN, ADC_BAT_LOW_THRS, ADC_BAT_LOW_CNT);    
 
-    ADC_SET_INPUT_CHANNEL(ADC, ADC_BATTERY_CHN_MSK);
-    ADC_START_CONV(ADC);
+	// Enable ADC comparator 0 and 1 interrupt
+	ADC_EnableInt(ADC, ADC_ADF_INT);
+	ADC_EnableInt(ADC, ADC_CMP0_INT);
+	ADC_EnableInt(ADC, ADC_CMP1_INT);
+
+	ADC_SET_INPUT_CHANNEL(ADC, ADC_BATTERY_CHN_MSK);
+	ADC_START_CONV(ADC);
 }
 
 void configSPI(void)
@@ -212,32 +212,34 @@ void configSPI(void)
 /*---------------------------------------------------------------------------------------------------------*/
 /* Init SPI                                                                                                */
 /*---------------------------------------------------------------------------------------------------------*/
-    /* Configure as a slave, clock idle low, falling clock edge Tx, rising edge Rx and 32-bit transaction */
-    /* Set IP clock divider. SPI clock rate = 10MHz */
-    SPI_Close(SPI);
-    SPI_ClearRxFIFO(SPI);
-    SPI_ClearTxFIFO(SPI);
-    // peripheral clock frequency of slave device must be faster than the bus clock frequency of the master
-    SPI_Open(SPI, SPI_SLAVE, SPI_MODE_0, COMM_BIT_LENTH, COMM_BAUT_RATE);
+	/* Configure as a slave, clock idle low, falling clock edge Tx, rising edge Rx and 32-bit transaction */
+	/* Set IP clock divider. SPI clock rate = 10MHz */
+	SPI_Close(SPI);
+//    SPI_ClearRxFIFO(SPI);
+//    SPI_ClearTxFIFO(SPI);
+	// peripheral clock frequency of slave device must be faster than the bus clock frequency of the master
+	SPI_Open(SPI, SPI_SLAVE, SPI_MODE_0, COMM_BIT_LENTH, COMM_BAUT_RATE);
 
 //	  /* Enable the automatic hardware slave select function. Select the SS pin and configure as low-active. */
 //    SPI_EnableAutoSS(SPI, SPI_SS, SPI_SS_ACTIVE_LOW);
-	
-    SPI_SET_MSB_FIRST(SPI);
 
-    // SS edge trigger
-    // Set input slave select signal to edge-trigger
-    SPI->SSR &= (~SPI_SSR_SS_LTRIG_Msk);
-    // Set slave select signal SPISS to be active at Falling-edge.
-    SPI->SSR &= (~SPI_SSR_SS_LVL_Msk);
+	SPI_SET_MSB_FIRST(SPI);
 
-    /* Use FIFO */
-    SPI_EnableFIFO(SPI, COMM_FIFO_LENGTH, COMM_FIFO_LENGTH);
+	// SS level trigger
+	// Set input slave select signal to edge-trigger
+	SPI->SSR |= SPI_SSR_SS_LTRIG_Msk;
+	// Set slave select signal SPISS to be active at low level.
+	SPI->SSR &= (~SPI_SSR_SS_LVL_Msk);
 
-    /* Enable SPI unit transfer interrupt */
-    SPI_EnableInt(SPI, SPI_IE_MASK);
+	/* Use FIFO */
+//	SPI_EnableFIFO(SPI, COMM_FIFO_LENGTH, COMM_FIFO_LENGTH);
+
+	/* Enable SPI unit transfer interrupt */
+	SPI_EnableInt(SPI, SPI_IE_MASK);
 		
-//		SPI_TRIGGER(SPI);
+
+	SPI_WRITE_TX(SPI, 0);
+	SPI_TRIGGER(SPI);
 }
 
 //void ACMP_Config(void)
@@ -353,6 +355,7 @@ void initEnv(void)
 	unCOM_SPI_TransErrCNT = 0;
 	unZXMatchCNT = 0;
 	tMotor.structMotor.MSR.bNewComFrameReceived = FALSE;
+//	tSPI_LastState = SPI_RCV_IDLE;
 }
 
 int main()

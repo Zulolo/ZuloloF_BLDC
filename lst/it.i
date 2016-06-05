@@ -7509,7 +7509,18 @@ extern void PTC_checkMotor(void);
 
 
 
+
+
 												
+
+
+
+	typedef enum {
+		SPI_RCV_IDLE = 0,
+		SPI_RCV_RD_CMD,
+		SPI_RCV_WR_CMD,
+		SPI_RCV_WR_DATA
+	} ENUM_SPI_RECEIVE_STATE;
 
 
 
@@ -7673,79 +7684,152 @@ void ADC_IRQHandler(void)
     
     (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADSR = (((ADC_T *) (((uint32_t)0x40000000) + 0xE0000))->ADSR & ~((1ul << 0) | (1ul << 1) | (1ul << 2))) | (iADC_ComparatorFlag));
 }
-
+	uint8_t unFIFO_RX_CNT;
 void SPI_IRQHandler(void)
 {
-	uint32_t unSPI_RX_Value;
-	uint8_t unFIFO_RX_CNT;
-
+	static ENUM_SPI_RECEIVE_STATE tSPI_LastState = SPI_RCV_IDLE;
+	static uint32_t unSPI_RX_Value;
+	
 	if ((((SPI_T *) (((uint32_t)0x40000000) + 0x30000))->CNTRL & (1ul << 16)) == (1ul << 16))
 	{
 		
 		if ((((SPI_T *) (((uint32_t)0x40000000) + 0x30000))->SSR & (1ul << 5)) == (1ul << 5))
 		{
+			unSPI_RX_Value = SPI_READ_RX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 			if (tMotor.structMotor.MSR.bNewComFrameReceived == (0))
 			{
-				unFIFO_RX_CNT = SPI_GET_RX_FIFO_COUNT(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-				if (unFIFO_RX_CNT == 1)
+				switch(tSPI_LastState)
 				{
-					
-					unSPI_RX_Value = SPI_READ_RX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+				case SPI_RCV_IDLE:
+				case SPI_RCV_RD_CMD:
+				case SPI_RCV_WR_DATA:
 					unCOM_SPI_ReadData[0] = (uint16_t)(unSPI_RX_Value >> 16);
 					unCOM_SPI_ReadData[1] = (uint16_t)unSPI_RX_Value;
-
-					if (unCOM_SPI_ReadData[0] != 0xFFFF)
+					if (0xFFFF == unCOM_SPI_ReadData[0] )
 					{
 						
 						
+						
+						SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 0);
+						SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+						tSPI_LastState = SPI_RCV_IDLE;
+					}
+					else
+					{
 						if ((((unCOM_SPI_ReadData[0]) & (0x8000)) == (0x8000)))
 						{
+							tSPI_LastState = SPI_RCV_RD_CMD;
+							
 							tMotor.structMotor.MSR.bNewComFrameReceived = (1);
 						}
 						else
 						{
-							unCOM_SPI_TransErrCNT++;		
-						}						
+							SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 0);
+							SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+							tSPI_LastState = SPI_RCV_WR_CMD;
+						}
 					}
-				}
-				else if (unFIFO_RX_CNT == 2)
-				{
-					
-					unSPI_RX_Value = SPI_READ_RX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-					unCOM_SPI_ReadData[0] = (uint16_t)(unSPI_RX_Value >> 16);
-					unCOM_SPI_ReadData[1] = (uint16_t)unSPI_RX_Value;
-					unSPI_RX_Value = SPI_READ_RX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+					break;
+
+				case SPI_RCV_WR_CMD:
 					unCOM_SPI_ReadData[2] = (uint16_t)(unSPI_RX_Value >> 16);
-					unCOM_SPI_ReadData[3] = (uint16_t)unSPI_RX_Value;					
-					if ((((unCOM_SPI_ReadData[0]) & (0x8000)) == 0))
-					{
-						tMotor.structMotor.MSR.bNewComFrameReceived = (1);
-					}
-					else
-					{
-						unCOM_SPI_TransErrCNT++;			
-					}
-				}
-				else
-				{
-					unCOM_SPI_TransErrCNT++;			
+					unCOM_SPI_ReadData[3] = (uint16_t)unSPI_RX_Value;
+					
+					tMotor.structMotor.MSR.bNewComFrameReceived = (1);
+					tSPI_LastState = SPI_RCV_WR_DATA;
+					break;
+
+				default:
+					SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 0);
+					SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+					unCOM_SPI_TransErrCNT++;
+					break;
 				}
 			}
 			else
 			{
+				SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 0);
+				SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 				unCOM_SPI_TransErrCNT++;
 			}
-			
-			
 		}
 		else
-		{	
-			
+		{
+			SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 0);
+			SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 			unCOM_SPI_TransErrCNT++;
-		}		
-		SPI_ClearRxFIFO(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+			
+			
+
+
+
+
+
+
+
+
+
+
 		SPI_CLR_UNIT_TRANS_INT_FLAG(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+
 	}
+	else
+	{
+		SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 0);
+		SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+		unCOM_SPI_TransErrCNT++;
+	}
+	
 }
 
 void SysTick_Handler(void)

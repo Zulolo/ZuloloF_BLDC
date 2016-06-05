@@ -9,6 +9,7 @@ N *
 N * @note
 N * Copyright (C) 2014 Zulolo Technology Corp. All rights reserved.
 N*****************************************************************************/
+N
 N#define __USED_BY_ERROR_C__
 N#include "Error.h"
 L 1 "User\Error.h" 1
@@ -9713,7 +9714,7 @@ NEXTERNAL_ERROR void ERR_Manager(void);
 X void ERR_Manager(void);
 N
 N#endif
-L 13 "User\Error.c" 2
+L 14 "User\Error.c" 2
 N
 Nvoid delay(uint32_t unDelayMs)
 N{
@@ -9758,7 +9759,7 @@ N	{
 N		iVernier--; 
 N		if (unErrorMaster >> iVernier)
 N		{
-W "User\Error.c" 56 11 enumerated type mixed with another type
+W "User\Error.c" 57 11 enumerated type mixed with another type
 N			return (iVernier + 1);
 N		}		
 N	}

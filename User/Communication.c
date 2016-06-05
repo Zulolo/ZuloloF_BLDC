@@ -51,18 +51,22 @@ uint16_t calCRC16(uint8_t* pBytes, uint32_t unLength)
 	return crc;
 }
 
-uint32_t unSPI_TX_WR_CNT = 0;
+uint32_t unSPI_TX_WR_Data;
+uint32_t unReadData;
 int32_t nReadCommandHandler(uint16_t* pCOM_Buff)
 {
 	if (COMM_GET_DATA(pCOM_Buff[0]) < COMM_READ_MAX)
 	{
-		SPI_WRITE_TX(SPI, (tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])] << 16) + 
-			calCRC16((uint8_t*)(&(tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])])), 2) );
-		unSPI_TX_WR_CNT++;
+		unReadData = tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])];
+		unSPI_TX_WR_Data = (unReadData << 16) + calCRC16((uint8_t*)(&unReadData), 2);
+		SPI_WRITE_TX(SPI, unSPI_TX_WR_Data);
+		SPI_TRIGGER(SPI);
 		return 0;
 	}
 	else
 	{
+		SPI_WRITE_TX(SPI, 0);
+		SPI_TRIGGER(SPI);
 		return -1;
 	}
 }
@@ -91,17 +95,22 @@ int32_t nWriteCommandHandler(uint16_t* pCOM_Buff)
 		tMotor.structMotor.unRampUpPeriod = pCOM_Buff[1] + (pCOM_Buff[2] << 16);
 			break;
 	default:
+		SPI_WRITE_TX(SPI, 0);
+		SPI_TRIGGER(SPI);
 		return -1;
 	}
+	SPI_WRITE_TX(SPI, 0);
+	SPI_TRIGGER(SPI);
 	return 0;
 }
 
 // Communicating with mast via SPI
+
 void COMM_Manager(void)
 {
-	static uint16_t unCOM_Buff[COMM_FIFO_LENGTH];
 	static uint32_t unLastFrameCNT = 0;
 	static uint32_t unLastCheckTime = 0;
+	static uint16_t unCOM_Buff[COMM_FIFO_LENGTH];
 	// All transactions are handled in interrupt
 	if (tMotor.structMotor.MSR.bNewComFrameReceived == TRUE)
 	{
@@ -124,6 +133,8 @@ void COMM_Manager(void)
 		else
 		{
 			unCOM_SPI_TransErrCNT++;
+			SPI_WRITE_TX(SPI, 0);
+			SPI_TRIGGER(SPI);
 		}
 	}
 	
