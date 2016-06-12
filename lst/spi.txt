@@ -240,7 +240,7 @@
 ;;;162    void SPI_EnableFIFO(SPI_T *spi, uint32_t u32TxThreshold, uint32_t u32RxThreshold)
 0000ec  b510              PUSH     {r4,lr}
 ;;;163    {
-;;;164        spi->FIFO_CTL = (spi->FIFO_CTL & ~(SPI_FIFO_CTL_TX_THRESHOLD_Msk | SPI_FIFO_CTL_RX_THRESHOLD_Msk) | 
+;;;164        spi->FIFO_CTL = ((spi->FIFO_CTL & (~(SPI_FIFO_CTL_TX_THRESHOLD_Msk | SPI_FIFO_CTL_RX_THRESHOLD_Msk))) | 
 0000ee  6c03              LDR      r3,[r0,#0x40]
 0000f0  2433              MOVS     r4,#0x33
 0000f2  0624              LSLS     r4,r4,#24

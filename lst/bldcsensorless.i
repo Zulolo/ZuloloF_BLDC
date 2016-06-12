@@ -7302,8 +7302,7 @@ typedef union
 
 
 		
-#line 89 "User\\Communication.h"
-
+#line 90 "User\\Communication.h"
 
 
 
@@ -7329,7 +7328,7 @@ extern uint16_t unCOM_SPI_ReadData[4];
 extern uint16_t unRegisterValue;	
 
 extern uint8_t FlagRegisterNeedWrite;
-
+extern uint16_t unReadValueCRC;
 extern void COMM_Manager(void);
 #line 70 "User\\global.h"
 #line 1 "User\\Error.h"

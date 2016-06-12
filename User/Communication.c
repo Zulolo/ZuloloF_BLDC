@@ -51,22 +51,22 @@ uint16_t calCRC16(uint8_t* pBytes, uint32_t unLength)
 	return crc;
 }
 
-uint32_t unSPI_TX_WR_Data;
-uint32_t unReadData;
-int32_t nReadCommandHandler(uint16_t* pCOM_Buff)
+int32_t nReadCommandHandler(uint16_t unReadCommand)
 {
-	if (COMM_GET_DATA(pCOM_Buff[0]) < COMM_READ_MAX)
+	static uint8_t unRegSelect;
+	static uint16_t unReadValue;	// tMotor.unValue may be changed in interrupt between SPI_WRITE_TX and calculating CRC
+	unRegSelect = COMM_GET_DATA(unReadCommand);
+	if (unRegSelect < COMM_READ_MAX)
 	{
-		unReadData = tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])];
-		unSPI_TX_WR_Data = (unReadData << 16) + calCRC16((uint8_t*)(&unReadData), 2);
-		SPI_WRITE_TX(SPI, unSPI_TX_WR_Data);
-		SPI_TRIGGER(SPI);
+		unReadValue = tMotor.unValue[unRegSelect];
+		SPI_WRITE_TX(SPI, unReadValue);
+		unReadValueCRC = calCRC16((uint8_t *)(&unReadValue), 2);
 		return 0;
 	}
 	else
 	{
-		SPI_WRITE_TX(SPI, 0);
-		SPI_TRIGGER(SPI);
+//		SPI_WRITE_TX(SPI, 0);
+		unReadValueCRC = 0;
 		return -1;
 	}
 }
@@ -95,12 +95,12 @@ int32_t nWriteCommandHandler(uint16_t* pCOM_Buff)
 		tMotor.structMotor.unRampUpPeriod = pCOM_Buff[1] + (pCOM_Buff[2] << 16);
 			break;
 	default:
-		SPI_WRITE_TX(SPI, 0);
-		SPI_TRIGGER(SPI);
+//		SPI_WRITE_TX(SPI, 0);
+//		SPI_TRIGGER(SPI);
 		return -1;
 	}
-	SPI_WRITE_TX(SPI, 0);
-	SPI_TRIGGER(SPI);
+//	SPI_WRITE_TX(SPI, 0);
+//	SPI_TRIGGER(SPI);
 	return 0;
 }
 
@@ -110,49 +110,68 @@ void COMM_Manager(void)
 {
 	static uint32_t unLastFrameCNT = 0;
 	static uint32_t unLastCheckTime = 0;
-	static uint16_t unCOM_Buff[COMM_FIFO_LENGTH];
+
 	// All transactions are handled in interrupt
 	if (tMotor.structMotor.MSR.bNewComFrameReceived == TRUE)
 	{
-		memcpy(unCOM_Buff, unCOM_SPI_ReadData, COMM_FIFO_LENGTH);
 		tMotor.structMotor.MSR.bNewComFrameReceived = FALSE;
-		if (calCRC16((uint8_t *)unCOM_Buff, (IS_COMM_RD_CMD(unCOM_Buff[0]) ? ((COMM_RD_CMD_CNT - 1) << 1) : ((COMM_WR_CMD_CNT - 1) << 1))) ==
-				(IS_COMM_RD_CMD(unCOM_Buff[0]) ? unCOM_Buff[COMM_RD_CMD_CNT - 1] : unCOM_Buff[COMM_WR_CMD_CNT - 1]))
+		if (MTR_INVALID_MOTOR_CMD == unCOM_SPI_ReadData[0])
 		{
-			unValidFrameCNT++;
-			// safe zone
-			if (IS_COMM_RD_CMD(unCOM_Buff[0]))
-			{
-				nReadCommandHandler(unCOM_Buff);
-			}
-			else
-			{
-				nWriteCommandHandler(unCOM_Buff);
-			}
+			unCOM_SPI_TransErrCNT++;
+//			SPI_WRITE_TX(SPI, 0);
 		}
 		else
 		{
-			unCOM_SPI_TransErrCNT++;
-			SPI_WRITE_TX(SPI, 0);
-			SPI_TRIGGER(SPI);
+			if (IS_COMM_RD_CMD(unCOM_SPI_ReadData[0]))
+			{
+				if (nReadCommandHandler(unCOM_SPI_ReadData[0]) == 0)
+				{
+					unValidFrameCNT++;
+				}
+				else
+				{
+					unCOM_SPI_TransErrCNT++;
+				}
+			}
+			else
+			{
+				// Must be write command here, check crc first
+				if (calCRC16((uint8_t *)unCOM_SPI_ReadData, 4) == unCOM_SPI_ReadData[2])
+				{
+					if (nWriteCommandHandler(unCOM_SPI_ReadData) == 0)
+					{
+						unValidFrameCNT++;
+					}
+					else
+					{
+						unCOM_SPI_TransErrCNT++;
+					}
+				}
+//				SPI_WRITE_TX(SPI, 0);	
+			}
 		}
+		SPI_TRIGGER(SPI);
 	}
 	
 	// Comm protection 1: If have NOT received any frame in 500ms, error
-	if ((uint32_t)(unSystemTick - unLastCheckTime) > 500)
-	{
-		unLastCheckTime = unSystemTick;
-		if ((uint32_t)(unValidFrameCNT - unLastFrameCNT) < 1)
-		{
-			BLDC_stopMotor();
-			setError(ERR_COMMUNICATION_FAIL);
-		}
-		unLastFrameCNT = unValidFrameCNT;
-	}
-	// Comm protection 2: If received error frame exceed some threshold, error
-	if (unCOM_SPI_TransErrCNT > COM_SPI_TRANS_ERR_THRESHOLD)
-	{
-		BLDC_stopMotor();
-		setError(ERR_COMMUNICATION_FAIL);
-	}
+//	if ((uint32_t)(unSystemTick - unLastCheckTime) > 500)
+//	{
+//		unLastCheckTime = unSystemTick;
+//		if ((uint32_t)(unValidFrameCNT - unLastFrameCNT) < 1)
+//		{
+//			BLDC_stopMotor();
+//			setError(ERR_COMMUNICATION_FAIL);
+//			// I don't know why,
+//			// But seems every time enter here, the GO_BUSY bit of SPI Control register will be reset
+//			SPI_TRIGGER(SPI);			
+//		}
+//		unLastFrameCNT = unValidFrameCNT;
+//	}
+//	// Comm protection 2: If received error frame exceed some threshold, error
+//	if (unCOM_SPI_TransErrCNT > COM_SPI_TRANS_ERR_THRESHOLD)
+//	{
+//		BLDC_stopMotor();
+//		setError(ERR_COMMUNICATION_FAIL);
+//		SPI_TRIGGER(SPI);	
+//	}
 }

@@ -22,7 +22,7 @@
 ;;;46     		unPosInTable = (uint8_t)((crc >> 8) ^ (*(pBytes + REVS_BYTE_ORDER(unIndex)))); /* equal: ((crc ^ (b << 8)) >> 8) */
 ;;;47     		/* Shift out the MSB used for division per lookuptable and XOR with the remainder */
 ;;;48     		crc = (uint16_t)((crc << 8) ^ (uint16_t)(CRC_TABLE16[unPosInTable]));
-000008  4e62              LDR      r6,|L1.404|
+000008  4e43              LDR      r6,|L1.280|
 00000a  e00b              B        |L1.36|
                   |L1.12|
 00000c  0a04              LSRS     r4,r0,#8              ;46
@@ -53,457 +53,407 @@
                           ENDP
 
                   nReadCommandHandler PROC
-;;;55     uint32_t unReadData;
-;;;56     int32_t nReadCommandHandler(uint16_t* pCOM_Buff)
-00002e  b570              PUSH     {r4-r6,lr}
-;;;57     {
-;;;58     	if (COMM_GET_DATA(pCOM_Buff[0]) < COMM_READ_MAX)
-000030  8800              LDRH     r0,[r0,#0]
-000032  4c59              LDR      r4,|L1.408|
-000034  0440              LSLS     r0,r0,#17
-000036  0c40              LSRS     r0,r0,#17
-000038  2501              MOVS     r5,#1
-00003a  2814              CMP      r0,#0x14
-00003c  d214              BCS      |L1.104|
-;;;59     	{
-;;;60     		unReadData = tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])];
-00003e  4957              LDR      r1,|L1.412|
-000040  0040              LSLS     r0,r0,#1
-000042  5a08              LDRH     r0,[r1,r0]
-000044  4e53              LDR      r6,|L1.404|
-;;;61     		unSPI_TX_WR_Data = (unReadData << 16) + calCRC16((uint8_t*)(&unReadData), 2);
-000046  2102              MOVS     r1,#2
-000048  3e28              SUBS     r6,r6,#0x28           ;60
-00004a  6170              STR      r0,[r6,#0x14]  ; unReadData
-00004c  4630              MOV      r0,r6
-00004e  3014              ADDS     r0,r0,#0x14
-000050  f7fffffe          BL       calCRC16
-000054  8ab1              LDRH     r1,[r6,#0x14]  ; unReadData
-000056  0409              LSLS     r1,r1,#16
-000058  1840              ADDS     r0,r0,r1
-00005a  6130              STR      r0,[r6,#0x10]  ; unSPI_TX_WR_Data
-00005c  6220              STR      r0,[r4,#0x20]
-00005e  6820              LDR      r0,[r4,#0]
-000060  4328              ORRS     r0,r0,r5
-000062  6020              STR      r0,[r4,#0]
-;;;62     		SPI_WRITE_TX(SPI, unSPI_TX_WR_Data);
-;;;63     		SPI_TRIGGER(SPI);
+;;;54     int32_t nReadCommandHandler(uint16_t unReadCommand)
+00002e  b510              PUSH     {r4,lr}
+;;;55     {
+;;;56     	static uint8_t unRegSelect;
+;;;57     	static uint16_t unReadValue;	// tMotor.unValue may be changed in interrupt between SPI_WRITE_TX and calculating CRC
+;;;58     	unRegSelect = COMM_GET_DATA(unReadCommand);
+000030  4c39              LDR      r4,|L1.280|
+000032  b2c0              UXTB     r0,r0
+000034  3c18              SUBS     r4,r4,#0x18
+000036  7020              STRB     r0,[r4,#0]
+;;;59     	if (unRegSelect < COMM_READ_MAX)
+000038  2814              CMP      r0,#0x14
+00003a  d20d              BCS      |L1.88|
+;;;60     	{
+;;;61     		unReadValue = tMotor.unValue[unRegSelect];
+00003c  4937              LDR      r1,|L1.284|
+00003e  0040              LSLS     r0,r0,#1
+000040  5a08              LDRH     r0,[r1,r0]
+000042  8060              STRH     r0,[r4,#2]
+000044  4936              LDR      r1,|L1.288|
+;;;62     		SPI_WRITE_TX(SPI, unReadValue);
+000046  b280              UXTH     r0,r0
+000048  6208              STR      r0,[r1,#0x20]
+;;;63     		unReadValueCRC = calCRC16((uint8_t *)(&unReadValue), 2);
+00004a  2102              MOVS     r1,#2
+00004c  1ca0              ADDS     r0,r4,#2
+00004e  f7fffffe          BL       calCRC16
+000052  80a0              STRH     r0,[r4,#4]
 ;;;64     		return 0;
-000064  2000              MOVS     r0,#0
+000054  2000              MOVS     r0,#0
 ;;;65     	}
 ;;;66     	else
 ;;;67     	{
-;;;68     		SPI_WRITE_TX(SPI, 0);
-;;;69     		SPI_TRIGGER(SPI);
+;;;68     //		SPI_WRITE_TX(SPI, 0);
+;;;69     		unReadValueCRC = 0;
 ;;;70     		return -1;
 ;;;71     	}
 ;;;72     }
-000066  bd70              POP      {r4-r6,pc}
-                  |L1.104|
-000068  2000              MOVS     r0,#0                 ;68
-00006a  6220              STR      r0,[r4,#0x20]         ;68
-00006c  6820              LDR      r0,[r4,#0]            ;68
-00006e  4328              ORRS     r0,r0,r5              ;68
-000070  6020              STR      r0,[r4,#0]            ;68
-000072  2000              MOVS     r0,#0                 ;70
-000074  43c0              MVNS     r0,r0                 ;70
-000076  bd70              POP      {r4-r6,pc}
+000056  bd10              POP      {r4,pc}
+                  |L1.88|
+000058  2000              MOVS     r0,#0                 ;69
+00005a  80a0              STRH     r0,[r4,#4]            ;69
+00005c  1e40              SUBS     r0,r0,#1              ;70
+00005e  bd10              POP      {r4,pc}
 ;;;73     
                           ENDP
 
                   nWriteCommandHandler PROC
 ;;;74     int32_t nWriteCommandHandler(uint16_t* pCOM_Buff)
-000078  b530              PUSH     {r4,r5,lr}
+000060  b500              PUSH     {lr}
 ;;;75     {
 ;;;76     	switch(COMM_GET_DATA(pCOM_Buff[0]))
-00007a  8801              LDRH     r1,[r0,#0]
-00007c  4a46              LDR      r2,|L1.408|
-00007e  044d              LSLS     r5,r1,#17
-000080  0c6d              LSRS     r5,r5,#17
+000062  8801              LDRH     r1,[r0,#0]
+000064  044a              LSLS     r2,r1,#17
+000066  0c52              LSRS     r2,r2,#17
 ;;;77     	{
 ;;;78     	case COMM_WRITE_MOTOR_NEED_TO_RUN:
 ;;;79     	case COMM_WRITE_ROTATE_DIRECTION:
 ;;;80     		tMotor.structMotor.MCR.bMotorNeedToRun = pCOM_Buff[1];
-000082  4946              LDR      r1,|L1.412|
-000084  2401              MOVS     r4,#1
-000086  002b              MOVS     r3,r5                 ;76
-000088  f7fffffe          BL       __ARM_common_switch8
-00008c  08260505          DCB      0x08,0x26,0x05,0x05
-000090  0e111417          DCB      0x0e,0x11,0x14,0x17
-000094  1a26              DCB      0x1a,0x26
-000096  880b              LDRH     r3,[r1,#0]  ; tMotor
-000098  7880              LDRB     r0,[r0,#2]
-00009a  085b              LSRS     r3,r3,#1
-00009c  005b              LSLS     r3,r3,#1
-00009e  07c0              LSLS     r0,r0,#31
-0000a0  0fc0              LSRS     r0,r0,#31
-0000a2  4303              ORRS     r3,r3,r0
-0000a4  800b              STRH     r3,[r1,#0]
+000068  492c              LDR      r1,|L1.284|
+00006a  0013              MOVS     r3,r2                 ;76
+00006c  f7fffffe          BL       __ARM_common_switch8
+000070  08210505          DCB      0x08,0x21,0x05,0x05
+000074  0e111417          DCB      0x0e,0x11,0x14,0x17
+000078  1a21              DCB      0x1a,0x21
+00007a  880a              LDRH     r2,[r1,#0]  ; tMotor
+00007c  7880              LDRB     r0,[r0,#2]
+00007e  0852              LSRS     r2,r2,#1
+000080  0052              LSLS     r2,r2,#1
+000082  07c0              LSLS     r0,r0,#31
+000084  0fc0              LSRS     r0,r0,#31
+000086  4302              ORRS     r2,r2,r0
+000088  800a              STRH     r2,[r1,#0]
 ;;;81     		break;
-0000a6  e010              B        |L1.202|
+00008a  e010              B        |L1.174|
 ;;;82     	case COMM_WRITE_LOCATING_DUTY:
 ;;;83     		tMotor.structMotor.unLocatingDuty = pCOM_Buff[1];
-0000a8  8840              LDRH     r0,[r0,#2]
-0000aa  8108              STRH     r0,[r1,#8]
+00008c  8840              LDRH     r0,[r0,#2]
+00008e  8108              STRH     r0,[r1,#8]
 ;;;84     		break;
-0000ac  e00d              B        |L1.202|
+000090  e00d              B        |L1.174|
 ;;;85     	case COMM_WRITE_RAMP_UP_DUTY:
 ;;;86     		tMotor.structMotor.unRampUpDuty = pCOM_Buff[1];
-0000ae  8840              LDRH     r0,[r0,#2]
-0000b0  8148              STRH     r0,[r1,#0xa]
+000092  8840              LDRH     r0,[r0,#2]
+000094  8148              STRH     r0,[r1,#0xa]
 ;;;87     		break;
-0000b2  e00a              B        |L1.202|
+000096  e00a              B        |L1.174|
 ;;;88     	case COMM_WRITE_TARGET_DUTY:
 ;;;89     		tMotor.structMotor.unTargetDuty = pCOM_Buff[1];
-0000b4  8840              LDRH     r0,[r0,#2]
-0000b6  8188              STRH     r0,[r1,#0xc]
+000098  8840              LDRH     r0,[r0,#2]
+00009a  8188              STRH     r0,[r1,#0xc]
 ;;;90     		break;
-0000b8  e007              B        |L1.202|
+00009c  e007              B        |L1.174|
 ;;;91     	case COMM_WRITE_LOCATING_PERIOD:
 ;;;92     		tMotor.structMotor.unLocatingPeriod = pCOM_Buff[1];
-0000ba  8840              LDRH     r0,[r0,#2]
-0000bc  8208              STRH     r0,[r1,#0x10]
+00009e  8840              LDRH     r0,[r0,#2]
+0000a0  8208              STRH     r0,[r1,#0x10]
 ;;;93     		break;
-0000be  e004              B        |L1.202|
+0000a2  e004              B        |L1.174|
 ;;;94     	case COMM_WRITE_RAMP_UP_PERIOD:
 ;;;95     		tMotor.structMotor.unRampUpPeriod = pCOM_Buff[1] + (pCOM_Buff[2] << 16);
-0000c0  8843              LDRH     r3,[r0,#2]
-0000c2  8880              LDRH     r0,[r0,#4]
-0000c4  0400              LSLS     r0,r0,#16
-0000c6  1818              ADDS     r0,r3,r0
-0000c8  6148              STR      r0,[r1,#0x14]  ; tMotor
-                  |L1.202|
+0000a4  8842              LDRH     r2,[r0,#2]
+0000a6  8880              LDRH     r0,[r0,#4]
+0000a8  0400              LSLS     r0,r0,#16
+0000aa  1810              ADDS     r0,r2,r0
+0000ac  6148              STR      r0,[r1,#0x14]  ; tMotor
+                  |L1.174|
 ;;;96     			break;
 ;;;97     	default:
-;;;98     		SPI_WRITE_TX(SPI, 0);
-;;;99     		SPI_TRIGGER(SPI);
+;;;98     //		SPI_WRITE_TX(SPI, 0);
+;;;99     //		SPI_TRIGGER(SPI);
 ;;;100    		return -1;
 ;;;101    	}
-;;;102    	SPI_WRITE_TX(SPI, 0);
-0000ca  2000              MOVS     r0,#0
-0000cc  6210              STR      r0,[r2,#0x20]
-0000ce  6810              LDR      r0,[r2,#0]
-0000d0  4320              ORRS     r0,r0,r4
-0000d2  6010              STR      r0,[r2,#0]
-;;;103    	SPI_TRIGGER(SPI);
+;;;102    //	SPI_WRITE_TX(SPI, 0);
+;;;103    //	SPI_TRIGGER(SPI);
 ;;;104    	return 0;
-0000d4  2000              MOVS     r0,#0
+0000ae  2000              MOVS     r0,#0
 ;;;105    }
-0000d6  bd30              POP      {r4,r5,pc}
-0000d8  2000              MOVS     r0,#0                 ;98
-0000da  6210              STR      r0,[r2,#0x20]         ;98
-0000dc  6810              LDR      r0,[r2,#0]            ;98
-0000de  4320              ORRS     r0,r0,r4              ;98
-0000e0  6010              STR      r0,[r2,#0]            ;98
-0000e2  2000              MOVS     r0,#0                 ;100
-0000e4  43c0              MVNS     r0,r0                 ;100
-0000e6  bd30              POP      {r4,r5,pc}
+0000b0  bd00              POP      {pc}
+0000b2  2000              MOVS     r0,#0                 ;100
+0000b4  43c0              MVNS     r0,r0                 ;100
+0000b6  bd00              POP      {pc}
 ;;;106    
                           ENDP
 
                   COMM_Manager PROC
 ;;;108    
 ;;;109    void COMM_Manager(void)
-0000e8  b570              PUSH     {r4-r6,lr}
+0000b8  b530              PUSH     {r4,r5,lr}
 ;;;110    {
 ;;;111    	static uint32_t unLastFrameCNT = 0;
 ;;;112    	static uint32_t unLastCheckTime = 0;
-;;;113    	static uint16_t unCOM_Buff[COMM_FIFO_LENGTH];
+;;;113    
 ;;;114    	// All transactions are handled in interrupt
 ;;;115    	if (tMotor.structMotor.MSR.bNewComFrameReceived == TRUE)
-0000ea  4a2c              LDR      r2,|L1.412|
-0000ec  8850              LDRH     r0,[r2,#2]  ; tMotor
+0000ba  4818              LDR      r0,|L1.284|
+0000bc  8841              LDRH     r1,[r0,#2]  ; tMotor
+0000be  06c9              LSLS     r1,r1,#27
+0000c0  d525              BPL      |L1.270|
 ;;;116    	{
-;;;117    		memcpy(unCOM_Buff, unCOM_SPI_ReadData, COMM_FIFO_LENGTH);
-0000ee  4c2c              LDR      r4,|L1.416|
-0000f0  06c0              LSLS     r0,r0,#27             ;115
-0000f2  d531              BPL      |L1.344|
-0000f4  4621              MOV      r1,r4
-0000f6  8c08              LDRH     r0,[r1,#0x20]  ; unCOM_SPI_ReadData
-0000f8  8320              STRH     r0,[r4,#0x18]
-0000fa  8c49              LDRH     r1,[r1,#0x22]  ; unCOM_SPI_ReadData
-0000fc  8361              STRH     r1,[r4,#0x1a]
-;;;118    		tMotor.structMotor.MSR.bNewComFrameReceived = FALSE;
-0000fe  8851              LDRH     r1,[r2,#2]  ; tMotor
-000100  2310              MOVS     r3,#0x10
-000102  4399              BICS     r1,r1,r3
-000104  8051              STRH     r1,[r2,#2]
-;;;119    		if (calCRC16((uint8_t *)unCOM_Buff, (IS_COMM_RD_CMD(unCOM_Buff[0]) ? ((COMM_RD_CMD_CNT - 1) << 1) : ((COMM_WR_CMD_CNT - 1) << 1))) ==
-000106  4625              MOV      r5,r4
-000108  3518              ADDS     r5,r5,#0x18
-00010a  0bc0              LSRS     r0,r0,#15
-00010c  d001              BEQ      |L1.274|
-00010e  2102              MOVS     r1,#2
-000110  e000              B        |L1.276|
-                  |L1.274|
-000112  2106              MOVS     r1,#6
-                  |L1.276|
-000114  481f              LDR      r0,|L1.404|
-000116  3810              SUBS     r0,r0,#0x10
-000118  f7fffffe          BL       calCRC16
-00011c  8829              LDRH     r1,[r5,#0]  ; unCOM_Buff
-00011e  0bca              LSRS     r2,r1,#15
-000120  d001              BEQ      |L1.294|
-;;;120    				(IS_COMM_RD_CMD(unCOM_Buff[0]) ? unCOM_Buff[COMM_RD_CMD_CNT - 1] : unCOM_Buff[COMM_WR_CMD_CNT - 1]))
-000122  886a              LDRH     r2,[r5,#2]  ; unCOM_Buff
-000124  e000              B        |L1.296|
-                  |L1.294|
-000126  88ea              LDRH     r2,[r5,#6]  ; unCOM_Buff
-                  |L1.296|
-000128  4290              CMP      r0,r2
-00012a  d10b              BNE      |L1.324|
-;;;121    		{
-;;;122    			unValidFrameCNT++;
-00012c  68a0              LDR      r0,[r4,#8]  ; unValidFrameCNT
-00012e  1c40              ADDS     r0,r0,#1
-;;;123    			// safe zone
-;;;124    			if (IS_COMM_RD_CMD(unCOM_Buff[0]))
-000130  60a0              STR      r0,[r4,#8]  ; unValidFrameCNT
-000132  0bc8              LSRS     r0,r1,#15
-;;;125    			{
-;;;126    				nReadCommandHandler(unCOM_Buff);
-;;;127    			}
-;;;128    			else
-;;;129    			{
-;;;130    				nWriteCommandHandler(unCOM_Buff);
-000134  481b              LDR      r0,|L1.420|
-000136  d002              BEQ      |L1.318|
-000138  f7fffffe          BL       nReadCommandHandler
-00013c  e00c              B        |L1.344|
-                  |L1.318|
-00013e  f7fffffe          BL       nWriteCommandHandler
-000142  e009              B        |L1.344|
-                  |L1.324|
-;;;131    			}
-;;;132    		}
-;;;133    		else
-;;;134    		{
-;;;135    			unCOM_SPI_TransErrCNT++;
-000144  68e0              LDR      r0,[r4,#0xc]  ; unCOM_SPI_TransErrCNT
-000146  1c40              ADDS     r0,r0,#1
-000148  60e0              STR      r0,[r4,#0xc]  ; unCOM_SPI_TransErrCNT
-00014a  4813              LDR      r0,|L1.408|
-;;;136    			SPI_WRITE_TX(SPI, 0);
-00014c  2100              MOVS     r1,#0
-00014e  6201              STR      r1,[r0,#0x20]
-000150  6801              LDR      r1,[r0,#0]
-000152  2201              MOVS     r2,#1
-000154  4311              ORRS     r1,r1,r2
-000156  6001              STR      r1,[r0,#0]
-                  |L1.344|
-;;;137    			SPI_TRIGGER(SPI);
-;;;138    		}
-;;;139    	}
-;;;140    	
-;;;141    	// Comm protection 1: If have NOT received any frame in 500ms, error
-;;;142    	if ((uint32_t)(unSystemTick - unLastCheckTime) > 500)
-000158  4813              LDR      r0,|L1.424|
-00015a  6801              LDR      r1,[r0,#0]  ; unSystemTick
-00015c  6862              LDR      r2,[r4,#4]  ; unLastCheckTime
-00015e  1a89              SUBS     r1,r1,r2
-000160  22ff              MOVS     r2,#0xff
-000162  32f5              ADDS     r2,r2,#0xf5
-000164  4291              CMP      r1,r2
-000166  d90c              BLS      |L1.386|
-;;;143    	{
-;;;144    		unLastCheckTime = unSystemTick;
-000168  6800              LDR      r0,[r0,#0]  ; unSystemTick
-;;;145    		if ((uint32_t)(unValidFrameCNT - unLastFrameCNT) < 1)
-00016a  6060              STR      r0,[r4,#4]  ; unLastCheckTime
-00016c  6821              LDR      r1,[r4,#0]  ; unLastFrameCNT
-00016e  68a0              LDR      r0,[r4,#8]  ; unValidFrameCNT
-000170  4288              CMP      r0,r1
-000172  d104              BNE      |L1.382|
-;;;146    		{
-;;;147    			BLDC_stopMotor();
-000174  f7fffffe          BL       BLDC_stopMotor
-;;;148    			setError(ERR_COMMUNICATION_FAIL);
-000178  2002              MOVS     r0,#2
-00017a  f7fffffe          BL       setError
-                  |L1.382|
-;;;149    		}
-;;;150    		unLastFrameCNT = unValidFrameCNT;
-00017e  68a0              LDR      r0,[r4,#8]  ; unValidFrameCNT
-000180  6020              STR      r0,[r4,#0]  ; unLastFrameCNT
-                  |L1.386|
-;;;151    	}
-;;;152    	// Comm protection 2: If received error frame exceed some threshold, error
-;;;153    	if (unCOM_SPI_TransErrCNT > COM_SPI_TRANS_ERR_THRESHOLD)
-000182  68e0              LDR      r0,[r4,#0xc]  ; unCOM_SPI_TransErrCNT
-000184  2806              CMP      r0,#6
-000186  d904              BLS      |L1.402|
-;;;154    	{
-;;;155    		BLDC_stopMotor();
-000188  f7fffffe          BL       BLDC_stopMotor
-;;;156    		setError(ERR_COMMUNICATION_FAIL);
-00018c  2002              MOVS     r0,#2
-00018e  f7fffffe          BL       setError
-                  |L1.402|
-;;;157    	}
-;;;158    }
-000192  bd70              POP      {r4-r6,pc}
+;;;117    		tMotor.structMotor.MSR.bNewComFrameReceived = FALSE;
+0000c2  8841              LDRH     r1,[r0,#2]  ; tMotor
+0000c4  2210              MOVS     r2,#0x10
+0000c6  4391              BICS     r1,r1,r2
+0000c8  8041              STRH     r1,[r0,#2]
+;;;118    		if (MTR_INVALID_MOTOR_CMD == unCOM_SPI_ReadData[0])
+0000ca  4d13              LDR      r5,|L1.280|
+0000cc  4915              LDR      r1,|L1.292|
+0000ce  3d08              SUBS     r5,r5,#8
+0000d0  8828              LDRH     r0,[r5,#0]  ; unCOM_SPI_ReadData
+;;;119    		{
+;;;120    			unCOM_SPI_TransErrCNT++;
+0000d2  1aac              SUBS     r4,r5,r2
+0000d4  4288              CMP      r0,r1                 ;118
+0000d6  d012              BEQ      |L1.254|
+;;;121    //			SPI_WRITE_TX(SPI, 0);
+;;;122    		}
+;;;123    		else
+;;;124    		{
+;;;125    			if (IS_COMM_RD_CMD(unCOM_SPI_ReadData[0]))
+0000d8  0bc1              LSRS     r1,r0,#15
+0000da  d002              BEQ      |L1.226|
+;;;126    			{
+;;;127    				if (nReadCommandHandler(unCOM_SPI_ReadData[0]) == 0)
+0000dc  f7fffffe          BL       nReadCommandHandler
+0000e0  e00b              B        |L1.250|
+                  |L1.226|
+;;;128    				{
+;;;129    					unValidFrameCNT++;
+;;;130    				}
+;;;131    				else
+;;;132    				{
+;;;133    					unCOM_SPI_TransErrCNT++;
+;;;134    				}
+;;;135    			}
+;;;136    			else
+;;;137    			{
+;;;138    				// Must be write command here, check crc first
+;;;139    				if (calCRC16((uint8_t *)unCOM_SPI_ReadData, 4) == unCOM_SPI_ReadData[2])
+0000e2  480d              LDR      r0,|L1.280|
+0000e4  2104              MOVS     r1,#4
+0000e6  3808              SUBS     r0,r0,#8
+0000e8  f7fffffe          BL       calCRC16
+0000ec  88a9              LDRH     r1,[r5,#4]  ; unCOM_SPI_ReadData
+0000ee  4288              CMP      r0,r1
+0000f0  d108              BNE      |L1.260|
+;;;140    				{
+;;;141    					if (nWriteCommandHandler(unCOM_SPI_ReadData) == 0)
+0000f2  4809              LDR      r0,|L1.280|
+0000f4  3808              SUBS     r0,r0,#8
+0000f6  f7fffffe          BL       nWriteCommandHandler
+                  |L1.250|
+0000fa  2800              CMP      r0,#0                 ;127
+0000fc  d008              BEQ      |L1.272|
+                  |L1.254|
+;;;142    					{
+;;;143    						unValidFrameCNT++;
+;;;144    					}
+;;;145    					else
+;;;146    					{
+;;;147    						unCOM_SPI_TransErrCNT++;
+0000fe  68e0              LDR      r0,[r4,#0xc]  ; unCOM_SPI_TransErrCNT
+000100  1c40              ADDS     r0,r0,#1
+000102  60e0              STR      r0,[r4,#0xc]  ; unCOM_SPI_TransErrCNT
+                  |L1.260|
+000104  4806              LDR      r0,|L1.288|
+000106  6801              LDR      r1,[r0,#0]
+000108  2201              MOVS     r2,#1
+00010a  4311              ORRS     r1,r1,r2
+00010c  6001              STR      r1,[r0,#0]
+                  |L1.270|
+;;;148    					}
+;;;149    				}
+;;;150    //				SPI_WRITE_TX(SPI, 0);	
+;;;151    			}
+;;;152    		}
+;;;153    		SPI_TRIGGER(SPI);
+;;;154    	}
+;;;155    	
+;;;156    	// Comm protection 1: If have NOT received any frame in 500ms, error
+;;;157    //	if ((uint32_t)(unSystemTick - unLastCheckTime) > 500)
+;;;158    //	{
+;;;159    //		unLastCheckTime = unSystemTick;
+;;;160    //		if ((uint32_t)(unValidFrameCNT - unLastFrameCNT) < 1)
+;;;161    //		{
+;;;162    //			BLDC_stopMotor();
+;;;163    //			setError(ERR_COMMUNICATION_FAIL);
+;;;164    //			// I don't know why,
+;;;165    //			// But seems every time enter here, the GO_BUSY bit of SPI Control register will be reset
+;;;166    //			SPI_TRIGGER(SPI);			
+;;;167    //		}
+;;;168    //		unLastFrameCNT = unValidFrameCNT;
+;;;169    //	}
+;;;170    //	// Comm protection 2: If received error frame exceed some threshold, error
+;;;171    //	if (unCOM_SPI_TransErrCNT > COM_SPI_TRANS_ERR_THRESHOLD)
+;;;172    //	{
+;;;173    //		BLDC_stopMotor();
+;;;174    //		setError(ERR_COMMUNICATION_FAIL);
+;;;175    //		SPI_TRIGGER(SPI);	
+;;;176    //	}
+;;;177    }
+00010e  bd30              POP      {r4,r5,pc}
+                  |L1.272|
+000110  68a0              LDR      r0,[r4,#8]            ;143  ; unValidFrameCNT
+000112  1c40              ADDS     r0,r0,#1              ;143
+000114  60a0              STR      r0,[r4,#8]            ;143  ; unValidFrameCNT
+000116  e7f5              B        |L1.260|
                           ENDP
 
-                  |L1.404|
-                          DCD      ||.data||+0x28
-                  |L1.408|
-                          DCD      0x40030000
-                  |L1.412|
-                          DCD      tMotor
-                  |L1.416|
-                          DCD      ||.data||
-                  |L1.420|
+                  |L1.280|
                           DCD      ||.data||+0x18
-                  |L1.424|
-                          DCD      unSystemTick
+                  |L1.284|
+                          DCD      tMotor
+                  |L1.288|
+                          DCD      0x40030000
+                  |L1.292|
+                          DCD      0x0000ffff
 
                           AREA ||.data||, DATA, ALIGN=2
 
-                  unLastFrameCNT
-                          DCD      0x00000000
-                  unLastCheckTime
-                          DCD      0x00000000
+                  unRegSelect
+000000  0000              DCB      0x00,0x00
+                  unReadValue
+000002  0000              DCB      0x00,0x00
+                  unReadValueCRC
+000004  00000000          DCB      0x00,0x00,0x00,0x00
                   unValidFrameCNT
                           DCD      0x00000000
                   unCOM_SPI_TransErrCNT
                           DCD      0x00000000
-                  unSPI_TX_WR_Data
-                          DCD      0x00000000
-                  unReadData
-                          DCD      0x00000000
-                  unCOM_Buff
-                          %        8
                   unCOM_SPI_ReadData
                           %        8
                   CRC_TABLE16
-000028  00008005          DCW      0x0000,0x8005
-00002c  800f000a          DCW      0x800f,0x000a
-000030  801b001e          DCW      0x801b,0x001e
-000034  00148011          DCW      0x0014,0x8011
-000038  80330036          DCW      0x8033,0x0036
-00003c  003c8039          DCW      0x003c,0x8039
-000040  0028802d          DCW      0x0028,0x802d
-000044  80270022          DCW      0x8027,0x0022
-000048  80630066          DCW      0x8063,0x0066
-00004c  006c8069          DCW      0x006c,0x8069
-000050  0078807d          DCW      0x0078,0x807d
-000054  80770072          DCW      0x8077,0x0072
-000058  00508055          DCW      0x0050,0x8055
-00005c  805f005a          DCW      0x805f,0x005a
-000060  804b004e          DCW      0x804b,0x004e
-000064  00448041          DCW      0x0044,0x8041
-000068  80c300c6          DCW      0x80c3,0x00c6
-00006c  00cc80c9          DCW      0x00cc,0x80c9
-000070  00d880dd          DCW      0x00d8,0x80dd
-000074  80d700d2          DCW      0x80d7,0x00d2
-000078  00f080f5          DCW      0x00f0,0x80f5
-00007c  80ff00fa          DCW      0x80ff,0x00fa
-000080  80eb00ee          DCW      0x80eb,0x00ee
-000084  00e480e1          DCW      0x00e4,0x80e1
-000088  00a080a5          DCW      0x00a0,0x80a5
-00008c  80af00aa          DCW      0x80af,0x00aa
-000090  80bb00be          DCW      0x80bb,0x00be
-000094  00b480b1          DCW      0x00b4,0x80b1
-000098  80930096          DCW      0x8093,0x0096
-00009c  009c8099          DCW      0x009c,0x8099
-0000a0  0088808d          DCW      0x0088,0x808d
-0000a4  80870082          DCW      0x8087,0x0082
-0000a8  81830186          DCW      0x8183,0x0186
-0000ac  018c8189          DCW      0x018c,0x8189
-0000b0  0198819d          DCW      0x0198,0x819d
-0000b4  81970192          DCW      0x8197,0x0192
-0000b8  01b081b5          DCW      0x01b0,0x81b5
-0000bc  81bf01ba          DCW      0x81bf,0x01ba
-0000c0  81ab01ae          DCW      0x81ab,0x01ae
-0000c4  01a481a1          DCW      0x01a4,0x81a1
-0000c8  01e081e5          DCW      0x01e0,0x81e5
-0000cc  81ef01ea          DCW      0x81ef,0x01ea
-0000d0  81fb01fe          DCW      0x81fb,0x01fe
-0000d4  01f481f1          DCW      0x01f4,0x81f1
-0000d8  81d301d6          DCW      0x81d3,0x01d6
-0000dc  01dc81d9          DCW      0x01dc,0x81d9
-0000e0  01c881cd          DCW      0x01c8,0x81cd
-0000e4  81c701c2          DCW      0x81c7,0x01c2
-0000e8  01408145          DCW      0x0140,0x8145
-0000ec  814f014a          DCW      0x814f,0x014a
-0000f0  815b015e          DCW      0x815b,0x015e
-0000f4  01548151          DCW      0x0154,0x8151
-0000f8  81730176          DCW      0x8173,0x0176
-0000fc  017c8179          DCW      0x017c,0x8179
-000100  0168816d          DCW      0x0168,0x816d
-000104  81670162          DCW      0x8167,0x0162
-000108  81230126          DCW      0x8123,0x0126
-00010c  012c8129          DCW      0x012c,0x8129
-000110  0138813d          DCW      0x0138,0x813d
-000114  81370132          DCW      0x8137,0x0132
-000118  01108115          DCW      0x0110,0x8115
-00011c  811f011a          DCW      0x811f,0x011a
-000120  810b010e          DCW      0x810b,0x010e
-000124  01048101          DCW      0x0104,0x8101
-000128  83030306          DCW      0x8303,0x0306
-00012c  030c8309          DCW      0x030c,0x8309
-000130  0318831d          DCW      0x0318,0x831d
-000134  83170312          DCW      0x8317,0x0312
-000138  03308335          DCW      0x0330,0x8335
-00013c  833f033a          DCW      0x833f,0x033a
-000140  832b032e          DCW      0x832b,0x032e
-000144  03248321          DCW      0x0324,0x8321
-000148  03608365          DCW      0x0360,0x8365
-00014c  836f036a          DCW      0x836f,0x036a
-000150  837b037e          DCW      0x837b,0x037e
-000154  03748371          DCW      0x0374,0x8371
-000158  83530356          DCW      0x8353,0x0356
-00015c  035c8359          DCW      0x035c,0x8359
-000160  0348834d          DCW      0x0348,0x834d
-000164  83470342          DCW      0x8347,0x0342
-000168  03c083c5          DCW      0x03c0,0x83c5
-00016c  83cf03ca          DCW      0x83cf,0x03ca
-000170  83db03de          DCW      0x83db,0x03de
-000174  03d483d1          DCW      0x03d4,0x83d1
-000178  83f303f6          DCW      0x83f3,0x03f6
-00017c  03fc83f9          DCW      0x03fc,0x83f9
-000180  03e883ed          DCW      0x03e8,0x83ed
-000184  83e703e2          DCW      0x83e7,0x03e2
-000188  83a303a6          DCW      0x83a3,0x03a6
-00018c  03ac83a9          DCW      0x03ac,0x83a9
-000190  03b883bd          DCW      0x03b8,0x83bd
-000194  83b703b2          DCW      0x83b7,0x03b2
-000198  03908395          DCW      0x0390,0x8395
-00019c  839f039a          DCW      0x839f,0x039a
-0001a0  838b038e          DCW      0x838b,0x038e
-0001a4  03848381          DCW      0x0384,0x8381
-0001a8  02808285          DCW      0x0280,0x8285
-0001ac  828f028a          DCW      0x828f,0x028a
-0001b0  829b029e          DCW      0x829b,0x029e
-0001b4  02948291          DCW      0x0294,0x8291
-0001b8  82b302b6          DCW      0x82b3,0x02b6
-0001bc  02bc82b9          DCW      0x02bc,0x82b9
-0001c0  02a882ad          DCW      0x02a8,0x82ad
-0001c4  82a702a2          DCW      0x82a7,0x02a2
-0001c8  82e302e6          DCW      0x82e3,0x02e6
-0001cc  02ec82e9          DCW      0x02ec,0x82e9
-0001d0  02f882fd          DCW      0x02f8,0x82fd
-0001d4  82f702f2          DCW      0x82f7,0x02f2
-0001d8  02d082d5          DCW      0x02d0,0x82d5
-0001dc  82df02da          DCW      0x82df,0x02da
-0001e0  82cb02ce          DCW      0x82cb,0x02ce
-0001e4  02c482c1          DCW      0x02c4,0x82c1
-0001e8  82430246          DCW      0x8243,0x0246
-0001ec  024c8249          DCW      0x024c,0x8249
-0001f0  0258825d          DCW      0x0258,0x825d
-0001f4  82570252          DCW      0x8257,0x0252
-0001f8  02708275          DCW      0x0270,0x8275
-0001fc  827f027a          DCW      0x827f,0x027a
-000200  826b026e          DCW      0x826b,0x026e
-000204  02648261          DCW      0x0264,0x8261
-000208  02208225          DCW      0x0220,0x8225
-00020c  822f022a          DCW      0x822f,0x022a
-000210  823b023e          DCW      0x823b,0x023e
-000214  02348231          DCW      0x0234,0x8231
-000218  82130216          DCW      0x8213,0x0216
-00021c  021c8219          DCW      0x021c,0x8219
-000220  0208820d          DCW      0x0208,0x820d
-000224  82070202          DCW      0x8207,0x0202
+000018  00008005          DCW      0x0000,0x8005
+00001c  800f000a          DCW      0x800f,0x000a
+000020  801b001e          DCW      0x801b,0x001e
+000024  00148011          DCW      0x0014,0x8011
+000028  80330036          DCW      0x8033,0x0036
+00002c  003c8039          DCW      0x003c,0x8039
+000030  0028802d          DCW      0x0028,0x802d
+000034  80270022          DCW      0x8027,0x0022
+000038  80630066          DCW      0x8063,0x0066
+00003c  006c8069          DCW      0x006c,0x8069
+000040  0078807d          DCW      0x0078,0x807d
+000044  80770072          DCW      0x8077,0x0072
+000048  00508055          DCW      0x0050,0x8055
+00004c  805f005a          DCW      0x805f,0x005a
+000050  804b004e          DCW      0x804b,0x004e
+000054  00448041          DCW      0x0044,0x8041
+000058  80c300c6          DCW      0x80c3,0x00c6
+00005c  00cc80c9          DCW      0x00cc,0x80c9
+000060  00d880dd          DCW      0x00d8,0x80dd
+000064  80d700d2          DCW      0x80d7,0x00d2
+000068  00f080f5          DCW      0x00f0,0x80f5
+00006c  80ff00fa          DCW      0x80ff,0x00fa
+000070  80eb00ee          DCW      0x80eb,0x00ee
+000074  00e480e1          DCW      0x00e4,0x80e1
+000078  00a080a5          DCW      0x00a0,0x80a5
+00007c  80af00aa          DCW      0x80af,0x00aa
+000080  80bb00be          DCW      0x80bb,0x00be
+000084  00b480b1          DCW      0x00b4,0x80b1
+000088  80930096          DCW      0x8093,0x0096
+00008c  009c8099          DCW      0x009c,0x8099
+000090  0088808d          DCW      0x0088,0x808d
+000094  80870082          DCW      0x8087,0x0082
+000098  81830186          DCW      0x8183,0x0186
+00009c  018c8189          DCW      0x018c,0x8189
+0000a0  0198819d          DCW      0x0198,0x819d
+0000a4  81970192          DCW      0x8197,0x0192
+0000a8  01b081b5          DCW      0x01b0,0x81b5
+0000ac  81bf01ba          DCW      0x81bf,0x01ba
+0000b0  81ab01ae          DCW      0x81ab,0x01ae
+0000b4  01a481a1          DCW      0x01a4,0x81a1
+0000b8  01e081e5          DCW      0x01e0,0x81e5
+0000bc  81ef01ea          DCW      0x81ef,0x01ea
+0000c0  81fb01fe          DCW      0x81fb,0x01fe
+0000c4  01f481f1          DCW      0x01f4,0x81f1
+0000c8  81d301d6          DCW      0x81d3,0x01d6
+0000cc  01dc81d9          DCW      0x01dc,0x81d9
+0000d0  01c881cd          DCW      0x01c8,0x81cd
+0000d4  81c701c2          DCW      0x81c7,0x01c2
+0000d8  01408145          DCW      0x0140,0x8145
+0000dc  814f014a          DCW      0x814f,0x014a
+0000e0  815b015e          DCW      0x815b,0x015e
+0000e4  01548151          DCW      0x0154,0x8151
+0000e8  81730176          DCW      0x8173,0x0176
+0000ec  017c8179          DCW      0x017c,0x8179
+0000f0  0168816d          DCW      0x0168,0x816d
+0000f4  81670162          DCW      0x8167,0x0162
+0000f8  81230126          DCW      0x8123,0x0126
+0000fc  012c8129          DCW      0x012c,0x8129
+000100  0138813d          DCW      0x0138,0x813d
+000104  81370132          DCW      0x8137,0x0132
+000108  01108115          DCW      0x0110,0x8115
+00010c  811f011a          DCW      0x811f,0x011a
+000110  810b010e          DCW      0x810b,0x010e
+000114  01048101          DCW      0x0104,0x8101
+000118  83030306          DCW      0x8303,0x0306
+00011c  030c8309          DCW      0x030c,0x8309
+000120  0318831d          DCW      0x0318,0x831d
+000124  83170312          DCW      0x8317,0x0312
+000128  03308335          DCW      0x0330,0x8335
+00012c  833f033a          DCW      0x833f,0x033a
+000130  832b032e          DCW      0x832b,0x032e
+000134  03248321          DCW      0x0324,0x8321
+000138  03608365          DCW      0x0360,0x8365
+00013c  836f036a          DCW      0x836f,0x036a
+000140  837b037e          DCW      0x837b,0x037e
+000144  03748371          DCW      0x0374,0x8371
+000148  83530356          DCW      0x8353,0x0356
+00014c  035c8359          DCW      0x035c,0x8359
+000150  0348834d          DCW      0x0348,0x834d
+000154  83470342          DCW      0x8347,0x0342
+000158  03c083c5          DCW      0x03c0,0x83c5
+00015c  83cf03ca          DCW      0x83cf,0x03ca
+000160  83db03de          DCW      0x83db,0x03de
+000164  03d483d1          DCW      0x03d4,0x83d1
+000168  83f303f6          DCW      0x83f3,0x03f6
+00016c  03fc83f9          DCW      0x03fc,0x83f9
+000170  03e883ed          DCW      0x03e8,0x83ed
+000174  83e703e2          DCW      0x83e7,0x03e2
+000178  83a303a6          DCW      0x83a3,0x03a6
+00017c  03ac83a9          DCW      0x03ac,0x83a9
+000180  03b883bd          DCW      0x03b8,0x83bd
+000184  83b703b2          DCW      0x83b7,0x03b2
+000188  03908395          DCW      0x0390,0x8395
+00018c  839f039a          DCW      0x839f,0x039a
+000190  838b038e          DCW      0x838b,0x038e
+000194  03848381          DCW      0x0384,0x8381
+000198  02808285          DCW      0x0280,0x8285
+00019c  828f028a          DCW      0x828f,0x028a
+0001a0  829b029e          DCW      0x829b,0x029e
+0001a4  02948291          DCW      0x0294,0x8291
+0001a8  82b302b6          DCW      0x82b3,0x02b6
+0001ac  02bc82b9          DCW      0x02bc,0x82b9
+0001b0  02a882ad          DCW      0x02a8,0x82ad
+0001b4  82a702a2          DCW      0x82a7,0x02a2
+0001b8  82e302e6          DCW      0x82e3,0x02e6
+0001bc  02ec82e9          DCW      0x02ec,0x82e9
+0001c0  02f882fd          DCW      0x02f8,0x82fd
+0001c4  82f702f2          DCW      0x82f7,0x02f2
+0001c8  02d082d5          DCW      0x02d0,0x82d5
+0001cc  82df02da          DCW      0x82df,0x02da
+0001d0  82cb02ce          DCW      0x82cb,0x02ce
+0001d4  02c482c1          DCW      0x02c4,0x82c1
+0001d8  82430246          DCW      0x8243,0x0246
+0001dc  024c8249          DCW      0x024c,0x8249
+0001e0  0258825d          DCW      0x0258,0x825d
+0001e4  82570252          DCW      0x8257,0x0252
+0001e8  02708275          DCW      0x0270,0x8275
+0001ec  827f027a          DCW      0x827f,0x027a
+0001f0  826b026e          DCW      0x826b,0x026e
+0001f4  02648261          DCW      0x0264,0x8261
+0001f8  02208225          DCW      0x0220,0x8225
+0001fc  822f022a          DCW      0x822f,0x022a
+000200  823b023e          DCW      0x823b,0x023e
+000204  02348231          DCW      0x0234,0x8231
+000208  82130216          DCW      0x8213,0x0216
+00020c  021c8219          DCW      0x021c,0x8219
+000210  0208820d          DCW      0x0208,0x820d
+000214  82070202          DCW      0x8207,0x0202
 
                           AREA ||area_number.5||, DATA, ALIGN=2
 

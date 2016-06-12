@@ -7363,7 +7363,7 @@ uint32_t SPI_SetBusClock(SPI_T *spi, uint32_t u32BusClock)
  
 void SPI_EnableFIFO(SPI_T *spi, uint32_t u32TxThreshold, uint32_t u32RxThreshold)
 {
-    spi->FIFO_CTL = (spi->FIFO_CTL & ~((3ul << 28) | (3ul << 24)) | 
+    spi->FIFO_CTL = ((spi->FIFO_CTL & (~((3ul << 28) | (3ul << 24)))) | 
                             (u32TxThreshold << 28) |
                             (u32RxThreshold << 24));
     

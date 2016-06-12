@@ -10566,8 +10566,8 @@ N#define COMM_CS_PIN					BIT1
 N#define COMM_TX_PIN					BIT6
 N#define COMM_RX_PIN					BIT5
 N
-N#define COMM_FIFO_LENGTH					4
-N#define COMM_BIT_LENTH						32	// Because STM32F407 can only configure SPI to be 8bits/16bits width
+N#define COMM_FIFO_LENGTH					3
+N#define COMM_BIT_LENTH						16	// Because STM32F407 can only configure SPI to be 8bits/16bits width
 N										// highest bit in first half word is used to indicate command or data
 N#define COMM_RD_CMD_CNT						2	// R(0):Address | CRC
 N#define COMM_WR_CMD_CNT						4	// W(1):Address | Data Low | Data High | CRC
@@ -10582,7 +10582,7 @@ N#define IS_COMM_WR_CMD(value)			(((value) & COMM_RW_CMD_MASK) == 0)
 N#define COMM_DATA_MASK						(0x7FFF)
 N#define COMM_GET_DATA(value)			((value) & COMM_DATA_MASK)
 N#define COMM_BAUT_RATE						0	// 5MHz
-N
+N#define MTR_INVALID_MOTOR_CMD			0xFFFF
 N//typedef enum{
 N//	MOTOR_MCR = 0,	/*!<  Motor Control  */
 N//	MOTOR_MSR,		/*!<  Motor Status  */
@@ -10606,14 +10606,15 @@ NEXTERNAL_COMM uint32_t unCOM_SPI_TransCNT;
 Xextern uint32_t unCOM_SPI_TransCNT;
 NEXTERNAL_COMM uint32_t unCOM_SPI_TransErrCNT;
 Xextern uint32_t unCOM_SPI_TransErrCNT;
-NEXTERNAL_COMM uint16_t unCOM_SPI_ReadData[COMM_FIFO_LENGTH];	// 0 or 0xFFFF means no data
+NEXTERNAL_COMM uint16_t unCOM_SPI_ReadData[4];	//COMM_FIFO_LENGTH];	// 0 or 0xFFFF means no data
 Xextern uint16_t unCOM_SPI_ReadData[4];	
 NEXTERNAL_COMM uint16_t unRegisterValue;	// 0 or 0xFFFF means no data
 Xextern uint16_t unRegisterValue;	
 N//EXTERNAL_COMM ENUM_COMM_REG tRegister;
 NEXTERNAL_COMM uint8_t FlagRegisterNeedWrite;
 Xextern uint8_t FlagRegisterNeedWrite;
-N
+NEXTERNAL_COMM uint16_t unReadValueCRC;
+Xextern uint16_t unReadValueCRC;
 NEXTERNAL_COMM void COMM_Manager(void);
 Xextern void COMM_Manager(void);
 N#endif
@@ -11078,15 +11079,20 @@ N{
 N/*---------------------------------------------------------------------------------------------------------*/
 N/* Init SPI                                                                                                */
 N/*---------------------------------------------------------------------------------------------------------*/
+N	
+N	/* Fuck mini51's SPI, seems the TX DR will have influence on RX DR 
+N		 SOOOOOOOO, when master is TXing, slave only receive. 
+N		 When master is RXing, master's MOSI need to be always high
+N	*/
+N	
 N	/* Configure as a slave, clock idle low, falling clock edge Tx, rising edge Rx and 32-bit transaction */
 N	/* Set IP clock divider. SPI clock rate = 10MHz */
 N	SPI_Close(SPI);
 X	SPI_Close(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-N//    SPI_ClearRxFIFO(SPI);
-N//    SPI_ClearTxFIFO(SPI);
+N
 N	// peripheral clock frequency of slave device must be faster than the bus clock frequency of the master
 N	SPI_Open(SPI, SPI_SLAVE, SPI_MODE_0, COMM_BIT_LENTH, COMM_BAUT_RATE);
-X	SPI_Open(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), ((1ul << 18)), ((1ul << 2)), 32, 0);
+X	SPI_Open(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), ((1ul << 18)), ((1ul << 2)), 16, 0);
 N
 N//	  /* Enable the automatic hardware slave select function. Select the SS pin and configure as low-active. */
 N//    SPI_EnableAutoSS(SPI, SPI_SS, SPI_SS_ACTIVE_LOW);
@@ -11109,9 +11115,10 @@ N	/* Enable SPI unit transfer interrupt */
 N	SPI_EnableInt(SPI, SPI_IE_MASK);
 X	SPI_EnableInt(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), (0x01));
 N		
-N
-N	SPI_WRITE_TX(SPI, 0);
-X	SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 0);
+N//	SPI_ClearRxFIFO(SPI);
+N//	SPI_ClearTxFIFO(SPI);	
+N	
+N//	SPI_WRITE_TX(SPI, 0);
 N	SPI_TRIGGER(SPI);
 X	SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 N}
@@ -11267,7 +11274,7 @@ N	tMotor.structMotor.MSR.bNewComFrameReceived = FALSE;
 X	tMotor.structMotor.MSR.bNewComFrameReceived = (0);
 N//	tSPI_LastState = SPI_RCV_IDLE;
 N}
-N
+Nuint32_t unWTF_Value = 0xA5D4;
 Nint main()
 N{
 N
@@ -11294,7 +11301,7 @@ N    /* ----=============== Test End ================---- */
 N
 N	while(1)
 N	{
-N		BLDC_SensorLessManager();
+N//		BLDC_SensorLessManager();
 N		COMM_Manager();
 N//		ERR_Manager();
 N	}

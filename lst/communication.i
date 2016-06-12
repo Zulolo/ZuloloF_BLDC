@@ -7530,8 +7530,7 @@ extern void PTC_checkMotor(void);
 
 
 		
-#line 89 "User\\Communication.h"
-
+#line 90 "User\\Communication.h"
 
 
 
@@ -7557,7 +7556,7 @@ extern void PTC_checkMotor(void);
  uint16_t unRegisterValue;	
 
  uint8_t FlagRegisterNeedWrite;
-
+ uint16_t unReadValueCRC;
  void COMM_Manager(void);
 #line 13 "User\\Communication.c"
 #line 1 "D:\\Keil_v5\\ARM\\ARMCC\\Bin\\..\\include\\string.h"
@@ -8023,22 +8022,22 @@ uint16_t calCRC16(uint8_t* pBytes, uint32_t unLength)
 	return crc;
 }
 
-uint32_t unSPI_TX_WR_Data;
-uint32_t unReadData;
-int32_t nReadCommandHandler(uint16_t* pCOM_Buff)
+int32_t nReadCommandHandler(uint16_t unReadCommand)
 {
-	if (((pCOM_Buff[0]) & (0x7FFF)) < COMM_READ_MAX)
+	static uint8_t unRegSelect;
+	static uint16_t unReadValue;	
+	unRegSelect = ((unReadCommand) & (0x7FFF));
+	if (unRegSelect < COMM_READ_MAX)
 	{
-		unReadData = tMotor.unValue[((pCOM_Buff[0]) & (0x7FFF))];
-		unSPI_TX_WR_Data = (unReadData << 16) + calCRC16((uint8_t*)(&unReadData), 2);
-		SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), unSPI_TX_WR_Data);
-		SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+		unReadValue = tMotor.unValue[unRegSelect];
+		SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), unReadValue);
+		unReadValueCRC = calCRC16((uint8_t *)(&unReadValue), 2);
 		return 0;
 	}
 	else
 	{
-		SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 0);
-		SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+
+		unReadValueCRC = 0;
 		return -1;
 	}
 }
@@ -8067,12 +8066,12 @@ int32_t nWriteCommandHandler(uint16_t* pCOM_Buff)
 		tMotor.structMotor.unRampUpPeriod = pCOM_Buff[1] + (pCOM_Buff[2] << 16);
 			break;
 	default:
-		SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 0);
-		SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+
+
 		return -1;
 	}
-	SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 0);
-	SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+
+
 	return 0;
 }
 
@@ -8082,49 +8081,68 @@ void COMM_Manager(void)
 {
 	static uint32_t unLastFrameCNT = 0;
 	static uint32_t unLastCheckTime = 0;
-	static uint16_t unCOM_Buff[4];
+
 	
 	if (tMotor.structMotor.MSR.bNewComFrameReceived == (1))
 	{
-		memcpy(unCOM_Buff, unCOM_SPI_ReadData, 4);
 		tMotor.structMotor.MSR.bNewComFrameReceived = (0);
-		if (calCRC16((uint8_t *)unCOM_Buff, ((((unCOM_Buff[0]) & (0x8000)) == (0x8000)) ? ((2 - 1) << 1) : ((4 - 1) << 1))) ==
-				((((unCOM_Buff[0]) & (0x8000)) == (0x8000)) ? unCOM_Buff[2 - 1] : unCOM_Buff[4 - 1]))
+		if (0xFFFF == unCOM_SPI_ReadData[0])
 		{
-			unValidFrameCNT++;
-			
-			if ((((unCOM_Buff[0]) & (0x8000)) == (0x8000)))
-			{
-				nReadCommandHandler(unCOM_Buff);
-			}
-			else
-			{
-				nWriteCommandHandler(unCOM_Buff);
-			}
+			unCOM_SPI_TransErrCNT++;
+
 		}
 		else
 		{
-			unCOM_SPI_TransErrCNT++;
-			SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 0);
-			SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+			if ((((unCOM_SPI_ReadData[0]) & (0x8000)) == (0x8000)))
+			{
+				if (nReadCommandHandler(unCOM_SPI_ReadData[0]) == 0)
+				{
+					unValidFrameCNT++;
+				}
+				else
+				{
+					unCOM_SPI_TransErrCNT++;
+				}
+			}
+			else
+			{
+				
+				if (calCRC16((uint8_t *)unCOM_SPI_ReadData, 4) == unCOM_SPI_ReadData[2])
+				{
+					if (nWriteCommandHandler(unCOM_SPI_ReadData) == 0)
+					{
+						unValidFrameCNT++;
+					}
+					else
+					{
+						unCOM_SPI_TransErrCNT++;
+					}
+				}
+
+			}
 		}
+		SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 	}
 	
 	
-	if ((uint32_t)(unSystemTick - unLastCheckTime) > 500)
-	{
-		unLastCheckTime = unSystemTick;
-		if ((uint32_t)(unValidFrameCNT - unLastFrameCNT) < 1)
-		{
-			BLDC_stopMotor();
-			setError(ERR_COMMUNICATION_FAIL);
-		}
-		unLastFrameCNT = unValidFrameCNT;
-	}
-	
-	if (unCOM_SPI_TransErrCNT > 6)
-	{
-		BLDC_stopMotor();
-		setError(ERR_COMMUNICATION_FAIL);
-	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

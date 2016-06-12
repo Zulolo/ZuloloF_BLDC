@@ -168,81 +168,170 @@ void ADC_IRQHandler(void)
     
     ADC_CLR_INT_FLAG(ADC, iADC_ComparatorFlag);
 }
-	uint8_t unFIFO_RX_CNT;
+	
 void SPI_IRQHandler(void)
 {
 	static ENUM_SPI_RECEIVE_STATE tSPI_LastState = SPI_RCV_IDLE;
-	static uint32_t unSPI_RX_Value;
+	static uint16_t unSPI_RX_Value;
+//	static uint8_t unSelectedReg = 0;
 	
-	if ((SPI->CNTRL & SPI_STATUS_IF_Msk) == SPI_STATUS_IF_Msk)
+	// Check if it is really finished one unit transfer
+	if ((SPI->SSR & SPI_SSR_LTRIG_FLAG_Msk) == SPI_SSR_LTRIG_FLAG_Msk)
 	{
-		// Check if it is really finished one unit transfer
-		if ((SPI->SSR & SPI_SSR_LTRIG_FLAG_Msk) == SPI_SSR_LTRIG_FLAG_Msk)
+		unSPI_RX_Value = SPI_READ_RX(SPI);
+		
+		if (tMotor.structMotor.MSR.bNewComFrameReceived == FALSE)
 		{
-			unSPI_RX_Value = SPI_READ_RX(SPI);
-			if (tMotor.structMotor.MSR.bNewComFrameReceived == FALSE)
-			{
-				switch(tSPI_LastState)
-				{
+			switch(tSPI_LastState)
+			{	
 				case SPI_RCV_IDLE:
-				case SPI_RCV_RD_CMD:
-				case SPI_RCV_WR_DATA:
-					unCOM_SPI_ReadData[0] = (uint16_t)(unSPI_RX_Value >> 16);
-					unCOM_SPI_ReadData[1] = (uint16_t)unSPI_RX_Value;
-					if (MTR_INVALID_MOTOR_CMD == unCOM_SPI_ReadData[0] )
+				case SPI_RCV_CRC:
+					if (MTR_INVALID_MOTOR_CMD == unSPI_RX_Value)
 					{
-						// If it is dummy command, means to clear communication.
-						// What need to be read is already done in last transaction during receiving this dummy command
-						// SO next time no matter read or write command is transmitting, a fresh new frame with 0 data and 0 CRC is responsing
-						SPI_WRITE_TX(SPI, 0);
+//						SPI_WRITE_TX(SPI, unReadValueCRC);
 						SPI_TRIGGER(SPI);
 						tSPI_LastState = SPI_RCV_IDLE;
 					}
 					else
 					{
-						if (IS_COMM_RD_CMD(unCOM_SPI_ReadData[0]))
+						if (IS_COMM_RD_CMD(unSPI_RX_Value))
 						{
+							unCOM_SPI_ReadData[0] = unSPI_RX_Value;
+//							tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
+							SPI_TRIGGER(SPI);
 							tSPI_LastState = SPI_RCV_RD_CMD;
-							// Read command received, go to main procedure to handle
-							tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
 						}
 						else
 						{
-							SPI_WRITE_TX(SPI, 0);
+							unCOM_SPI_ReadData[0] = unSPI_RX_Value;
+//							SPI_WRITE_TX(SPI, 0);
 							SPI_TRIGGER(SPI);
 							tSPI_LastState = SPI_RCV_WR_CMD;
-						}
-					}
-					break;
+						}						
+					}	
+				break;
+			
+				case SPI_RCV_RD_CMD:
+					// If last time is read command, this time must be read CRC and next time must be 0xFFFF on MOSI to read
+					// So the data received is the CRC of read command, now the slave doesn't care
+					unCOM_SPI_ReadData[1] = unSPI_RX_Value;
+//					SPI_WRITE_TX(SPI, unReadValueCRC);
+//					SPI_TRIGGER(SPI);		
+					tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;				
+					tSPI_LastState = SPI_RCV_CRC;	
+				break;
 
 				case SPI_RCV_WR_CMD:
-					unCOM_SPI_ReadData[2] = (uint16_t)(unSPI_RX_Value >> 16);
-					unCOM_SPI_ReadData[3] = (uint16_t)unSPI_RX_Value;
-					// Write command and data received, go to main procedure to handle
-					tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
-					tSPI_LastState = SPI_RCV_WR_DATA;
-					break;
-
-				default:
-					SPI_WRITE_TX(SPI, 0);
+					// No need to comment
+//					SPI_WRITE_TX(SPI, 0);
 					SPI_TRIGGER(SPI);
+					unCOM_SPI_ReadData[1] = unSPI_RX_Value;
+					tSPI_LastState = SPI_RCV_WR_DATA;	
+				break;
+				
+				case SPI_RCV_WR_DATA:
+					// No need to comment
+					unCOM_SPI_ReadData[2] = unSPI_RX_Value;
+					tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
+					tSPI_LastState = SPI_RCV_CRC;	
+				break;
+			
+				default:
 					unCOM_SPI_TransErrCNT++;
-					break;
-				}
-			}
-			else
-			{
-				SPI_WRITE_TX(SPI, 0);
-				SPI_TRIGGER(SPI);
-				unCOM_SPI_TransErrCNT++;
+//					SPI_WRITE_TX(SPI, 0);
+					SPI_TRIGGER(SPI);
+				break;
 			}
 		}
 		else
 		{
-			SPI_WRITE_TX(SPI, 0);
-			SPI_TRIGGER(SPI);
-			unCOM_SPI_TransErrCNT++;
-		}
+			SPI_TRIGGER(SPI);			
+		}		
+	}
+	else
+	{
+//		SPI_WRITE_TX(SPI, 0);
+		SPI_TRIGGER(SPI);
+	}
+
+	SPI_CLR_UNIT_TRANS_INT_FLAG(SPI);
+}
+
+
+
+//	if ((SPI->CNTRL & SPI_STATUS_IF_Msk) == SPI_STATUS_IF_Msk)
+//	{
+//		// Check if it is really finished one unit transfer
+//		if ((SPI->SSR & SPI_SSR_LTRIG_FLAG_Msk) == SPI_SSR_LTRIG_FLAG_Msk)
+//		{
+//			SPI_WRITE_TX(SPI, unSPI_RX_Value);
+//			SPI_TRIGGER(SPI);
+//			
+//			unSPI_RX_Value = SPI_READ_RX(SPI);
+//			if (tMotor.structMotor.MSR.bNewComFrameReceived == FALSE)
+//			{
+//				switch(tSPI_LastState)
+//				{
+//				case SPI_RCV_IDLE:
+//				case SPI_RCV_RD_CMD:
+//				case SPI_RCV_WR_DATA:
+//					unCOM_SPI_ReadData[0] = (uint16_t)(unSPI_RX_Value >> 16);
+//					unCOM_SPI_ReadData[1] = (uint16_t)unSPI_RX_Value;
+//					if (MTR_INVALID_MOTOR_CMD == unCOM_SPI_ReadData[0] )
+//					{
+//						// If it is dummy command, means to clear communication.
+//						// What need to be read is already done in last transaction during receiving this dummy command
+//						// SO next time no matter read or write command is transmitting, a fresh new frame with 0 data and 0 CRC is responsing
+//						SPI_WRITE_TX(SPI, 0);
+//						SPI_TRIGGER(SPI);
+//						tSPI_LastState = SPI_RCV_IDLE;
+//					}
+//					else
+//					{
+//						if (IS_COMM_RD_CMD(unCOM_SPI_ReadData[0]))
+//						{
+//							tSPI_LastState = SPI_RCV_RD_CMD;
+//							// Read command received, go to main procedure to handle
+//							tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
+//						}
+//						else
+//						{
+//							SPI_WRITE_TX(SPI, 0);
+//							SPI_TRIGGER(SPI);
+//							tSPI_LastState = SPI_RCV_WR_CMD;
+//						}
+//					}
+//					break;
+
+//				case SPI_RCV_WR_CMD:
+//					unCOM_SPI_ReadData[2] = (uint16_t)(unSPI_RX_Value >> 16);
+//					unCOM_SPI_ReadData[3] = (uint16_t)unSPI_RX_Value;
+//					// Write command and data received, go to main procedure to handle
+//					tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
+//					tSPI_LastState = SPI_RCV_WR_DATA;
+//					break;
+
+//				default:
+//					SPI_WRITE_TX(SPI, 0);
+//					SPI_TRIGGER(SPI);
+//					unCOM_SPI_TransErrCNT++;
+//					break;
+//				}
+//			}
+//			else
+//			{
+//				SPI_WRITE_TX(SPI, 0);
+//				SPI_TRIGGER(SPI);
+//				unCOM_SPI_TransErrCNT++;
+//			}
+//		}
+//		else
+//		{
+//			unWTF = SPI->SSR;
+//			SPI_WRITE_TX(SPI, 0);
+//			SPI_TRIGGER(SPI);
+//			unCOM_SPI_TransErrCNT++;
+//		}
 //			unFIFO_RX_CNT = SPI_GET_RX_FIFO_COUNT(SPI);
 //			if (unFIFO_RX_CNT == COMM_RD_CMD_CNT_IN_32BIT)
 //			{
@@ -304,17 +393,17 @@ void SPI_IRQHandler(void)
 //		}		
 //		SPI_ClearRxFIFO(SPI);
 //		SPI_ClearTxFIFO(SPI);
-		SPI_CLR_UNIT_TRANS_INT_FLAG(SPI);
+//		SPI_CLR_UNIT_TRANS_INT_FLAG(SPI);
 
-	}
-	else
-	{
-		SPI_WRITE_TX(SPI, 0);
-		SPI_TRIGGER(SPI);
-		unCOM_SPI_TransErrCNT++;
-	}
+//	}
+//	else
+//	{
+//		SPI_WRITE_TX(SPI, 0);
+//		SPI_TRIGGER(SPI);
+//		unCOM_SPI_TransErrCNT++;
+//	}
 	
-}
+//}
 
 void SysTick_Handler(void)
 {

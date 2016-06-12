@@ -140,24 +140,7 @@
           <Name>UL2CM3(-S0 -C0 -P0 Nano100 Series$Flash\Nano100_AP_123.FLM))  -FN1 -FC800 -FD20000000 -FF0Mini51_AP_16 -FL04000 -FS00 -FP0($$Device:(Generic)</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
-      <Breakpoint>
-        <Bp>
-          <Number>0</Number>
-          <Type>0</Type>
-          <LineNumber>147</LineNumber>
-          <EnabledFlag>1</EnabledFlag>
-          <Address>4944</Address>
-          <ByteObject>0</ByteObject>
-          <HtxType>0</HtxType>
-          <ManyObjects>0</ManyObjects>
-          <SizeOfObject>0</SizeOfObject>
-          <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>.\User\Communication.c</Filename>
-          <ExecCommand></ExecCommand>
-          <Expression>\\Power\User/Communication.c\147</Expression>
-        </Bp>
-      </Breakpoint>
+      <Breakpoint/>
       <WatchWindow1>
         <Ww>
           <count>0</count>
@@ -172,37 +155,32 @@
         <Ww>
           <count>2</count>
           <WinNumber>1</WinNumber>
-          <ItemText>unValidFrameCNT</ItemText>
+          <ItemText>tMotor</ItemText>
         </Ww>
         <Ww>
           <count>3</count>
           <WinNumber>1</WinNumber>
-          <ItemText>tMotor</ItemText>
+          <ItemText>SPI</ItemText>
         </Ww>
         <Ww>
           <count>4</count>
           <WinNumber>1</WinNumber>
-          <ItemText>unReadData</ItemText>
+          <ItemText>unCOM_SPI_ReadData</ItemText>
         </Ww>
         <Ww>
           <count>5</count>
           <WinNumber>1</WinNumber>
-          <ItemText>unSPI_TX_WR_Data</ItemText>
+          <ItemText>unValidFrameCNT</ItemText>
         </Ww>
         <Ww>
           <count>6</count>
           <WinNumber>1</WinNumber>
-          <ItemText>SPI</ItemText>
+          <ItemText>unYouDontHaveEnoughTime</ItemText>
         </Ww>
         <Ww>
           <count>7</count>
           <WinNumber>1</WinNumber>
-          <ItemText>unCOM_SPI_ReadData</ItemText>
-        </Ww>
-        <Ww>
-          <count>8</count>
-          <WinNumber>1</WinNumber>
-          <ItemText>unFIFO_RX_CNT</ItemText>
+          <ItemText>unWTF_GAN</ItemText>
         </Ww>
       </WatchWindow1>
       <MemoryWindow1>
@@ -249,6 +227,10 @@
       <Lin2ConfigFile></Lin2ConfigFile>
       <bLin2Auto>0</bLin2Auto>
       <SystemViewers>
+        <Entry>
+          <Name>System Viewer\CLK</Name>
+          <WinId>35905</WinId>
+        </Entry>
         <Entry>
           <Name>System Viewer\SPI</Name>
           <WinId>35900</WinId>

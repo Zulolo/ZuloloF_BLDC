@@ -212,11 +212,16 @@ void configSPI(void)
 /*---------------------------------------------------------------------------------------------------------*/
 /* Init SPI                                                                                                */
 /*---------------------------------------------------------------------------------------------------------*/
+	
+	/* Fuck mini51's SPI, seems the TX DR will have influence on RX DR 
+		 SOOOOOOOO, when master is TXing, slave only receive. 
+		 When master is RXing, master's MOSI need to be always high
+	*/
+	
 	/* Configure as a slave, clock idle low, falling clock edge Tx, rising edge Rx and 32-bit transaction */
 	/* Set IP clock divider. SPI clock rate = 10MHz */
 	SPI_Close(SPI);
-//    SPI_ClearRxFIFO(SPI);
-//    SPI_ClearTxFIFO(SPI);
+
 	// peripheral clock frequency of slave device must be faster than the bus clock frequency of the master
 	SPI_Open(SPI, SPI_SLAVE, SPI_MODE_0, COMM_BIT_LENTH, COMM_BAUT_RATE);
 
@@ -237,8 +242,10 @@ void configSPI(void)
 	/* Enable SPI unit transfer interrupt */
 	SPI_EnableInt(SPI, SPI_IE_MASK);
 		
-
-	SPI_WRITE_TX(SPI, 0);
+//	SPI_ClearRxFIFO(SPI);
+//	SPI_ClearTxFIFO(SPI);	
+	
+//	SPI_WRITE_TX(SPI, 0);
 	SPI_TRIGGER(SPI);
 }
 
@@ -357,7 +364,7 @@ void initEnv(void)
 	tMotor.structMotor.MSR.bNewComFrameReceived = FALSE;
 //	tSPI_LastState = SPI_RCV_IDLE;
 }
-
+uint32_t unWTF_Value = 0xA5D4;
 int main()
 {
 
@@ -383,7 +390,7 @@ int main()
 
 	while(1)
 	{
-		BLDC_SensorLessManager();
+//		BLDC_SensorLessManager();
 		COMM_Manager();
 //		ERR_Manager();
 	}

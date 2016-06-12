@@ -3,8 +3,6 @@
 
 #include "global.h"
 
-#define MTR_INVALID_MOTOR_CMD		0xFFFF
-
 #ifdef __USED_BY_IT_C__
 	#define EXTERNAL_IT
 
@@ -17,7 +15,8 @@
 		SPI_RCV_IDLE = 0,
 		SPI_RCV_RD_CMD,
 		SPI_RCV_WR_CMD,
-		SPI_RCV_WR_DATA
+		SPI_RCV_WR_DATA,
+		SPI_RCV_CRC
 	} ENUM_SPI_RECEIVE_STATE;
 #else 
 	#define EXTERNAL_IT extern

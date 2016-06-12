@@ -9452,8 +9452,8 @@ S#define COMM_CS_PIN					BIT1
 S#define COMM_TX_PIN					BIT6
 S#define COMM_RX_PIN					BIT5
 S
-S#define COMM_FIFO_LENGTH					4
-S#define COMM_BIT_LENTH						32	// Because STM32F407 can only configure SPI to be 8bits/16bits width
+S#define COMM_FIFO_LENGTH					3
+S#define COMM_BIT_LENTH						16	// Because STM32F407 can only configure SPI to be 8bits/16bits width
 S										// highest bit in first half word is used to indicate command or data
 S#define COMM_RD_CMD_CNT						2	// R(0):Address | CRC
 S#define COMM_WR_CMD_CNT						4	// W(1):Address | Data Low | Data High | CRC
@@ -9468,7 +9468,7 @@ S#define IS_COMM_WR_CMD(value)			(((value) & COMM_RW_CMD_MASK) == 0)
 S#define COMM_DATA_MASK						(0x7FFF)
 S#define COMM_GET_DATA(value)			((value) & COMM_DATA_MASK)
 S#define COMM_BAUT_RATE						0	// 5MHz
-S
+S#define MTR_INVALID_MOTOR_CMD			0xFFFF
 S//typedef enum{
 S//	MOTOR_MCR = 0,	/*!<  Motor Control  */
 S//	MOTOR_MSR,		/*!<  Motor Status  */
@@ -9490,11 +9490,11 @@ S//	MOTOR_CURRENT		/*!<  Current  */
 S//} ENUM_COMM_REG;
 SEXTERNAL_COMM uint32_t unCOM_SPI_TransCNT;
 SEXTERNAL_COMM uint32_t unCOM_SPI_TransErrCNT;
-SEXTERNAL_COMM uint16_t unCOM_SPI_ReadData[COMM_FIFO_LENGTH];	// 0 or 0xFFFF means no data
+SEXTERNAL_COMM uint16_t unCOM_SPI_ReadData[4];	//COMM_FIFO_LENGTH];	// 0 or 0xFFFF means no data
 SEXTERNAL_COMM uint16_t unRegisterValue;	// 0 or 0xFFFF means no data
 S//EXTERNAL_COMM ENUM_COMM_REG tRegister;
 SEXTERNAL_COMM uint8_t FlagRegisterNeedWrite;
-S
+SEXTERNAL_COMM uint16_t unReadValueCRC;
 SEXTERNAL_COMM void COMM_Manager(void);
 N#endif
 L 70 "User\global.h" 2
@@ -9702,8 +9702,8 @@ N#define COMM_CS_PIN					BIT1
 N#define COMM_TX_PIN					BIT6
 N#define COMM_RX_PIN					BIT5
 N
-N#define COMM_FIFO_LENGTH					4
-N#define COMM_BIT_LENTH						32	// Because STM32F407 can only configure SPI to be 8bits/16bits width
+N#define COMM_FIFO_LENGTH					3
+N#define COMM_BIT_LENTH						16	// Because STM32F407 can only configure SPI to be 8bits/16bits width
 N										// highest bit in first half word is used to indicate command or data
 N#define COMM_RD_CMD_CNT						2	// R(0):Address | CRC
 N#define COMM_WR_CMD_CNT						4	// W(1):Address | Data Low | Data High | CRC
@@ -9718,7 +9718,7 @@ N#define IS_COMM_WR_CMD(value)			(((value) & COMM_RW_CMD_MASK) == 0)
 N#define COMM_DATA_MASK						(0x7FFF)
 N#define COMM_GET_DATA(value)			((value) & COMM_DATA_MASK)
 N#define COMM_BAUT_RATE						0	// 5MHz
-N
+N#define MTR_INVALID_MOTOR_CMD			0xFFFF
 N//typedef enum{
 N//	MOTOR_MCR = 0,	/*!<  Motor Control  */
 N//	MOTOR_MSR,		/*!<  Motor Status  */
@@ -9742,14 +9742,15 @@ NEXTERNAL_COMM uint32_t unCOM_SPI_TransCNT;
 X uint32_t unCOM_SPI_TransCNT;
 NEXTERNAL_COMM uint32_t unCOM_SPI_TransErrCNT;
 X uint32_t unCOM_SPI_TransErrCNT;
-NEXTERNAL_COMM uint16_t unCOM_SPI_ReadData[COMM_FIFO_LENGTH];	// 0 or 0xFFFF means no data
+NEXTERNAL_COMM uint16_t unCOM_SPI_ReadData[4];	//COMM_FIFO_LENGTH];	// 0 or 0xFFFF means no data
 X uint16_t unCOM_SPI_ReadData[4];	
 NEXTERNAL_COMM uint16_t unRegisterValue;	// 0 or 0xFFFF means no data
 X uint16_t unRegisterValue;	
 N//EXTERNAL_COMM ENUM_COMM_REG tRegister;
 NEXTERNAL_COMM uint8_t FlagRegisterNeedWrite;
 X uint8_t FlagRegisterNeedWrite;
-N
+NEXTERNAL_COMM uint16_t unReadValueCRC;
+X uint16_t unReadValueCRC;
 NEXTERNAL_COMM void COMM_Manager(void);
 X void COMM_Manager(void);
 N#endif
@@ -10346,28 +10347,24 @@ N
 N	return crc;
 N}
 N
-Nuint32_t unSPI_TX_WR_Data;
-Nuint32_t unReadData;
-Nint32_t nReadCommandHandler(uint16_t* pCOM_Buff)
+Nint32_t nReadCommandHandler(uint16_t unReadCommand)
 N{
-N	if (COMM_GET_DATA(pCOM_Buff[0]) < COMM_READ_MAX)
-X	if (((pCOM_Buff[0]) & (0x7FFF)) < COMM_READ_MAX)
+N	static uint8_t unRegSelect;
+N	static uint16_t unReadValue;	// tMotor.unValue may be changed in interrupt between SPI_WRITE_TX and calculating CRC
+N	unRegSelect = COMM_GET_DATA(unReadCommand);
+X	unRegSelect = ((unReadCommand) & (0x7FFF));
+N	if (unRegSelect < COMM_READ_MAX)
 N	{
-N		unReadData = tMotor.unValue[COMM_GET_DATA(pCOM_Buff[0])];
-X		unReadData = tMotor.unValue[((pCOM_Buff[0]) & (0x7FFF))];
-N		unSPI_TX_WR_Data = (unReadData << 16) + calCRC16((uint8_t*)(&unReadData), 2);
-N		SPI_WRITE_TX(SPI, unSPI_TX_WR_Data);
-X		SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), unSPI_TX_WR_Data);
-N		SPI_TRIGGER(SPI);
-X		SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+N		unReadValue = tMotor.unValue[unRegSelect];
+N		SPI_WRITE_TX(SPI, unReadValue);
+X		SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), unReadValue);
+N		unReadValueCRC = calCRC16((uint8_t *)(&unReadValue), 2);
 N		return 0;
 N	}
 N	else
 N	{
-N		SPI_WRITE_TX(SPI, 0);
-X		SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 0);
-N		SPI_TRIGGER(SPI);
-X		SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+N//		SPI_WRITE_TX(SPI, 0);
+N		unReadValueCRC = 0;
 N		return -1;
 N	}
 N}
@@ -10397,16 +10394,12 @@ N	case COMM_WRITE_RAMP_UP_PERIOD:
 N		tMotor.structMotor.unRampUpPeriod = pCOM_Buff[1] + (pCOM_Buff[2] << 16);
 N			break;
 N	default:
-N		SPI_WRITE_TX(SPI, 0);
-X		SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 0);
-N		SPI_TRIGGER(SPI);
-X		SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+N//		SPI_WRITE_TX(SPI, 0);
+N//		SPI_TRIGGER(SPI);
 N		return -1;
 N	}
-N	SPI_WRITE_TX(SPI, 0);
-X	SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 0);
-N	SPI_TRIGGER(SPI);
-X	SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+N//	SPI_WRITE_TX(SPI, 0);
+N//	SPI_TRIGGER(SPI);
 N	return 0;
 N}
 N
@@ -10416,59 +10409,75 @@ Nvoid COMM_Manager(void)
 N{
 N	static uint32_t unLastFrameCNT = 0;
 N	static uint32_t unLastCheckTime = 0;
-N	static uint16_t unCOM_Buff[COMM_FIFO_LENGTH];
-X	static uint16_t unCOM_Buff[4];
+N
 N	// All transactions are handled in interrupt
 N	if (tMotor.structMotor.MSR.bNewComFrameReceived == TRUE)
 X	if (tMotor.structMotor.MSR.bNewComFrameReceived == (1))
 N	{
-N		memcpy(unCOM_Buff, unCOM_SPI_ReadData, COMM_FIFO_LENGTH);
-X		memcpy(unCOM_Buff, unCOM_SPI_ReadData, 4);
 N		tMotor.structMotor.MSR.bNewComFrameReceived = FALSE;
 X		tMotor.structMotor.MSR.bNewComFrameReceived = (0);
-N		if (calCRC16((uint8_t *)unCOM_Buff, (IS_COMM_RD_CMD(unCOM_Buff[0]) ? ((COMM_RD_CMD_CNT - 1) << 1) : ((COMM_WR_CMD_CNT - 1) << 1))) ==
-X		if (calCRC16((uint8_t *)unCOM_Buff, ((((unCOM_Buff[0]) & (0x8000)) == (0x8000)) ? ((2 - 1) << 1) : ((4 - 1) << 1))) ==
-N				(IS_COMM_RD_CMD(unCOM_Buff[0]) ? unCOM_Buff[COMM_RD_CMD_CNT - 1] : unCOM_Buff[COMM_WR_CMD_CNT - 1]))
-X				((((unCOM_Buff[0]) & (0x8000)) == (0x8000)) ? unCOM_Buff[2 - 1] : unCOM_Buff[4 - 1]))
+N		if (MTR_INVALID_MOTOR_CMD == unCOM_SPI_ReadData[0])
+X		if (0xFFFF == unCOM_SPI_ReadData[0])
 N		{
-N			unValidFrameCNT++;
-N			// safe zone
-N			if (IS_COMM_RD_CMD(unCOM_Buff[0]))
-X			if ((((unCOM_Buff[0]) & (0x8000)) == (0x8000)))
-N			{
-N				nReadCommandHandler(unCOM_Buff);
-N			}
-N			else
-N			{
-N				nWriteCommandHandler(unCOM_Buff);
-N			}
+N			unCOM_SPI_TransErrCNT++;
+N//			SPI_WRITE_TX(SPI, 0);
 N		}
 N		else
 N		{
-N			unCOM_SPI_TransErrCNT++;
-N			SPI_WRITE_TX(SPI, 0);
-X			SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 0);
-N			SPI_TRIGGER(SPI);
-X			SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
+N			if (IS_COMM_RD_CMD(unCOM_SPI_ReadData[0]))
+X			if ((((unCOM_SPI_ReadData[0]) & (0x8000)) == (0x8000)))
+N			{
+N				if (nReadCommandHandler(unCOM_SPI_ReadData[0]) == 0)
+N				{
+N					unValidFrameCNT++;
+N				}
+N				else
+N				{
+N					unCOM_SPI_TransErrCNT++;
+N				}
+N			}
+N			else
+N			{
+N				// Must be write command here, check crc first
+N				if (calCRC16((uint8_t *)unCOM_SPI_ReadData, 4) == unCOM_SPI_ReadData[2])
+N				{
+N					if (nWriteCommandHandler(unCOM_SPI_ReadData) == 0)
+N					{
+N						unValidFrameCNT++;
+N					}
+N					else
+N					{
+N						unCOM_SPI_TransErrCNT++;
+N					}
+N				}
+N//				SPI_WRITE_TX(SPI, 0);	
+N			}
 N		}
+N		SPI_TRIGGER(SPI);
+X		SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 N	}
 N	
 N	// Comm protection 1: If have NOT received any frame in 500ms, error
-N	if ((uint32_t)(unSystemTick - unLastCheckTime) > 500)
-N	{
-N		unLastCheckTime = unSystemTick;
-N		if ((uint32_t)(unValidFrameCNT - unLastFrameCNT) < 1)
-N		{
-N			BLDC_stopMotor();
-N			setError(ERR_COMMUNICATION_FAIL);
-N		}
-N		unLastFrameCNT = unValidFrameCNT;
-N	}
-N	// Comm protection 2: If received error frame exceed some threshold, error
-N	if (unCOM_SPI_TransErrCNT > COM_SPI_TRANS_ERR_THRESHOLD)
-X	if (unCOM_SPI_TransErrCNT > 6)
-N	{
-N		BLDC_stopMotor();
-N		setError(ERR_COMMUNICATION_FAIL);
-N	}
+N//	if ((uint32_t)(unSystemTick - unLastCheckTime) > 500)
+N//	{
+N//		unLastCheckTime = unSystemTick;
+N//		if ((uint32_t)(unValidFrameCNT - unLastFrameCNT) < 1)
+N//		{
+N//			BLDC_stopMotor();
+N//			setError(ERR_COMMUNICATION_FAIL);
+N//			// I don't know why,
+N//			// But seems every time enter here, the GO_BUSY bit of SPI Control register will be reset
+N//			SPI_TRIGGER(SPI);			
+N//		}
+N//		unLastFrameCNT = unValidFrameCNT;
+N//	}
+N//	// Comm protection 2: If received error frame exceed some threshold, error
+N//	if (unCOM_SPI_TransErrCNT > COM_SPI_TRANS_ERR_THRESHOLD)
+N//	{
+N//		BLDC_stopMotor();
+N//		setError(ERR_COMMUNICATION_FAIL);
+N//		SPI_TRIGGER(SPI);	
+N//	}
+W "User\Communication.c" 111 18 variable "unLastFrameCNT" was declared but never referenced
+W "User\Communication.c" 112 18 variable "unLastCheckTime" was declared but never referenced
 N}

@@ -8287,8 +8287,7 @@ extern void BLDC_SensorLessManager(void);
 
 
 		
-#line 89 "User\\Communication.h"
-
+#line 90 "User\\Communication.h"
 
 
 
@@ -8314,7 +8313,7 @@ extern uint16_t unCOM_SPI_ReadData[4];
 extern uint16_t unRegisterValue;	
 
 extern uint8_t FlagRegisterNeedWrite;
-
+extern uint16_t unReadValueCRC;
 extern void COMM_Manager(void);
 #line 70 "User\\global.h"
 #line 1 "User\\Error.h"
@@ -8634,13 +8633,18 @@ void configSPI(void)
  
  
  
+	
+	
+
+
+ 
+	
 	 
 	 
 	SPI_Close(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 
-
 	
-	SPI_Open(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), ((1ul << 18)), ((1ul << 2)), 32, 0);
+	SPI_Open(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), ((1ul << 18)), ((1ul << 2)), 16, 0);
 
 
 
@@ -8660,7 +8664,9 @@ void configSPI(void)
 	SPI_EnableInt(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), (0x01));
 		
 
-	SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 0);
+
+	
+
 	SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 }
 
@@ -8779,7 +8785,7 @@ void initEnv(void)
 	tMotor.structMotor.MSR.bNewComFrameReceived = (0);
 
 }
-
+uint32_t unWTF_Value = 0xA5D4;
 int main()
 {
 
@@ -8805,7 +8811,7 @@ int main()
 
 	while(1)
 	{
-		BLDC_SensorLessManager();
+
 		COMM_Manager();
 
 	}
