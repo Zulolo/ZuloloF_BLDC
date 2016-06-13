@@ -11,13 +11,7 @@
 	#define MAX_BATT_LOW_CNT				50	// 9.6ms*50=480ms	//1000	// 0.5ms*1000=500ms
 	#define MAX_ZX_MATCH_IN_PWM				36
 	#define PWM_ZX_FILTER_TIME				40
-	typedef enum {
-		SPI_RCV_IDLE = 0,
-		SPI_RCV_RD_CMD,
-		SPI_RCV_WR_CMD,
-		SPI_RCV_WR_DATA,
-		SPI_RCV_CRC
-	} ENUM_SPI_RECEIVE_STATE;
+
 #else 
 	#define EXTERNAL_IT extern
 #endif

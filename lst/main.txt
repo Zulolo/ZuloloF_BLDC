@@ -645,7 +645,7 @@
 ;;;245    //	SPI_ClearRxFIFO(SPI);
 ;;;246    //	SPI_ClearTxFIFO(SPI);	
 ;;;247    	
-;;;248    //	SPI_WRITE_TX(SPI, 0);
+;;;248    //	SPI_WRITE_TX(SPI, 0xFFFF);
 ;;;249    	SPI_TRIGGER(SPI);
 ;;;250    }
 000360  bd38              POP      {r3-r5,pc}

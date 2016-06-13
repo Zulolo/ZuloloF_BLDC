@@ -22,7 +22,7 @@
 ;;;46     		unPosInTable = (uint8_t)((crc >> 8) ^ (*(pBytes + REVS_BYTE_ORDER(unIndex)))); /* equal: ((crc ^ (b << 8)) >> 8) */
 ;;;47     		/* Shift out the MSB used for division per lookuptable and XOR with the remainder */
 ;;;48     		crc = (uint16_t)((crc << 8) ^ (uint16_t)(CRC_TABLE16[unPosInTable]));
-000008  4e43              LDR      r6,|L1.280|
+000008  4e5b              LDR      r6,|L1.376|
 00000a  e00b              B        |L1.36|
                   |L1.12|
 00000c  0a04              LSRS     r4,r0,#8              ;46
@@ -59,7 +59,7 @@
 ;;;56     	static uint8_t unRegSelect;
 ;;;57     	static uint16_t unReadValue;	// tMotor.unValue may be changed in interrupt between SPI_WRITE_TX and calculating CRC
 ;;;58     	unRegSelect = COMM_GET_DATA(unReadCommand);
-000030  4c39              LDR      r4,|L1.280|
+000030  4c51              LDR      r4,|L1.376|
 000032  b2c0              UXTB     r0,r0
 000034  3c18              SUBS     r4,r4,#0x18
 000036  7020              STRB     r0,[r4,#0]
@@ -68,11 +68,11 @@
 00003a  d20d              BCS      |L1.88|
 ;;;60     	{
 ;;;61     		unReadValue = tMotor.unValue[unRegSelect];
-00003c  4937              LDR      r1,|L1.284|
+00003c  494f              LDR      r1,|L1.380|
 00003e  0040              LSLS     r0,r0,#1
 000040  5a08              LDRH     r0,[r1,r0]
 000042  8060              STRH     r0,[r4,#2]
-000044  4936              LDR      r1,|L1.288|
+000044  494e              LDR      r1,|L1.384|
 ;;;62     		SPI_WRITE_TX(SPI, unReadValue);
 000046  b280              UXTH     r0,r0
 000048  6208              STR      r0,[r1,#0x20]
@@ -80,40 +80,39 @@
 00004a  2102              MOVS     r1,#2
 00004c  1ca0              ADDS     r0,r4,#2
 00004e  f7fffffe          BL       calCRC16
-000052  80a0              STRH     r0,[r4,#4]
+000052  80e0              STRH     r0,[r4,#6]
 ;;;64     		return 0;
 000054  2000              MOVS     r0,#0
 ;;;65     	}
 ;;;66     	else
 ;;;67     	{
-;;;68     //		SPI_WRITE_TX(SPI, 0);
-;;;69     		unReadValueCRC = 0;
-;;;70     		return -1;
-;;;71     	}
-;;;72     }
+;;;68     		unReadValueCRC = 0;
+;;;69     		return -1;
+;;;70     	}
+;;;71     }
 000056  bd10              POP      {r4,pc}
                   |L1.88|
-000058  2000              MOVS     r0,#0                 ;69
-00005a  80a0              STRH     r0,[r4,#4]            ;69
-00005c  1e40              SUBS     r0,r0,#1              ;70
+000058  2000              MOVS     r0,#0                 ;68
+00005a  80e0              STRH     r0,[r4,#6]            ;68
+00005c  1e40              SUBS     r0,r0,#1              ;69
 00005e  bd10              POP      {r4,pc}
-;;;73     
+;;;72     
                           ENDP
 
                   nWriteCommandHandler PROC
-;;;74     int32_t nWriteCommandHandler(uint16_t* pCOM_Buff)
+;;;73     int32_t nWriteCommandHandler(uint16_t* pCOM_Buff)
 000060  b500              PUSH     {lr}
-;;;75     {
-;;;76     	switch(COMM_GET_DATA(pCOM_Buff[0]))
+;;;74     {
+;;;75     	switch(COMM_GET_DATA(pCOM_Buff[0]))
 000062  8801              LDRH     r1,[r0,#0]
 000064  044a              LSLS     r2,r1,#17
 000066  0c52              LSRS     r2,r2,#17
-;;;77     	{
-;;;78     	case COMM_WRITE_MOTOR_NEED_TO_RUN:
-;;;79     	case COMM_WRITE_ROTATE_DIRECTION:
-;;;80     		tMotor.structMotor.MCR.bMotorNeedToRun = pCOM_Buff[1];
-000068  492c              LDR      r1,|L1.284|
-00006a  0013              MOVS     r3,r2                 ;76
+;;;76     	{
+;;;77     	case COMM_WRITE_MOTOR_NEED_TO_RUN:
+;;;78     	case COMM_WRITE_ROTATE_DIRECTION:
+;;;79     		tMotor.structMotor.MCR.bMotorNeedToRun = pCOM_Buff[1];
+000068  4944              LDR      r1,|L1.380|
+00006a  0013              MOVS     r3,r2                 ;75
 00006c  f7fffffe          BL       __ARM_common_switch8
 000070  08210505          DCB      0x08,0x21,0x05,0x05
 000074  0e111417          DCB      0x0e,0x11,0x14,0x17
@@ -126,199 +125,303 @@
 000084  0fc0              LSRS     r0,r0,#31
 000086  4302              ORRS     r2,r2,r0
 000088  800a              STRH     r2,[r1,#0]
-;;;81     		break;
+;;;80     		break;
 00008a  e010              B        |L1.174|
-;;;82     	case COMM_WRITE_LOCATING_DUTY:
-;;;83     		tMotor.structMotor.unLocatingDuty = pCOM_Buff[1];
+;;;81     	case COMM_WRITE_LOCATING_DUTY:
+;;;82     		tMotor.structMotor.unLocatingDuty = pCOM_Buff[1];
 00008c  8840              LDRH     r0,[r0,#2]
 00008e  8108              STRH     r0,[r1,#8]
-;;;84     		break;
+;;;83     		break;
 000090  e00d              B        |L1.174|
-;;;85     	case COMM_WRITE_RAMP_UP_DUTY:
-;;;86     		tMotor.structMotor.unRampUpDuty = pCOM_Buff[1];
+;;;84     	case COMM_WRITE_RAMP_UP_DUTY:
+;;;85     		tMotor.structMotor.unRampUpDuty = pCOM_Buff[1];
 000092  8840              LDRH     r0,[r0,#2]
 000094  8148              STRH     r0,[r1,#0xa]
-;;;87     		break;
+;;;86     		break;
 000096  e00a              B        |L1.174|
-;;;88     	case COMM_WRITE_TARGET_DUTY:
-;;;89     		tMotor.structMotor.unTargetDuty = pCOM_Buff[1];
+;;;87     	case COMM_WRITE_TARGET_DUTY:
+;;;88     		tMotor.structMotor.unTargetDuty = pCOM_Buff[1];
 000098  8840              LDRH     r0,[r0,#2]
 00009a  8188              STRH     r0,[r1,#0xc]
-;;;90     		break;
+;;;89     		break;
 00009c  e007              B        |L1.174|
-;;;91     	case COMM_WRITE_LOCATING_PERIOD:
-;;;92     		tMotor.structMotor.unLocatingPeriod = pCOM_Buff[1];
+;;;90     	case COMM_WRITE_LOCATING_PERIOD:
+;;;91     		tMotor.structMotor.unLocatingPeriod = pCOM_Buff[1];
 00009e  8840              LDRH     r0,[r0,#2]
 0000a0  8208              STRH     r0,[r1,#0x10]
-;;;93     		break;
+;;;92     		break;
 0000a2  e004              B        |L1.174|
-;;;94     	case COMM_WRITE_RAMP_UP_PERIOD:
-;;;95     		tMotor.structMotor.unRampUpPeriod = pCOM_Buff[1] + (pCOM_Buff[2] << 16);
+;;;93     	case COMM_WRITE_RAMP_UP_PERIOD:
+;;;94     		tMotor.structMotor.unRampUpPeriod = pCOM_Buff[1] + (pCOM_Buff[2] << 16);
 0000a4  8842              LDRH     r2,[r0,#2]
 0000a6  8880              LDRH     r0,[r0,#4]
 0000a8  0400              LSLS     r0,r0,#16
 0000aa  1810              ADDS     r0,r2,r0
 0000ac  6148              STR      r0,[r1,#0x14]  ; tMotor
                   |L1.174|
-;;;96     			break;
-;;;97     	default:
-;;;98     //		SPI_WRITE_TX(SPI, 0);
-;;;99     //		SPI_TRIGGER(SPI);
-;;;100    		return -1;
-;;;101    	}
-;;;102    //	SPI_WRITE_TX(SPI, 0);
-;;;103    //	SPI_TRIGGER(SPI);
-;;;104    	return 0;
+;;;95     			break;
+;;;96     	default:
+;;;97     
+;;;98     		return -1;
+;;;99     	}
+;;;100    
+;;;101    	return 0;
 0000ae  2000              MOVS     r0,#0
-;;;105    }
+;;;102    }
 0000b0  bd00              POP      {pc}
-0000b2  2000              MOVS     r0,#0                 ;100
-0000b4  43c0              MVNS     r0,r0                 ;100
+0000b2  2000              MOVS     r0,#0                 ;98
+0000b4  43c0              MVNS     r0,r0                 ;98
 0000b6  bd00              POP      {pc}
-;;;106    
+;;;103    
                           ENDP
 
                   COMM_Manager PROC
-;;;108    
-;;;109    void COMM_Manager(void)
-0000b8  b530              PUSH     {r4,r5,lr}
-;;;110    {
-;;;111    	static uint32_t unLastFrameCNT = 0;
-;;;112    	static uint32_t unLastCheckTime = 0;
-;;;113    
+;;;105    
+;;;106    void COMM_Manager(void)
+0000b8  b5f0              PUSH     {r4-r7,lr}
+;;;107    {
+;;;108    	static uint32_t unLastFrameCNT = 0;
+;;;109    	static uint32_t unLastCheckTime = 0;
+;;;110    	static ENUM_SPI_RECEIVE_STATE tSPI_LastState = SPI_RCV_IDLE;
+;;;111    	static uint16_t unSPI_RX_Value;
+;;;112    	static uint16_t unCOM_SPI_ReadData[4];	//COMM_FIFO_LENGTH];	// 0 or 0xFFFF means no data
+;;;113    	
 ;;;114    	// All transactions are handled in interrupt
 ;;;115    	if (tMotor.structMotor.MSR.bNewComFrameReceived == TRUE)
-0000ba  4818              LDR      r0,|L1.284|
+0000ba  4830              LDR      r0,|L1.380|
 0000bc  8841              LDRH     r1,[r0,#2]  ; tMotor
 0000be  06c9              LSLS     r1,r1,#27
-0000c0  d525              BPL      |L1.270|
+0000c0  d559              BPL      |L1.374|
 ;;;116    	{
-;;;117    		tMotor.structMotor.MSR.bNewComFrameReceived = FALSE;
+;;;117    		tMotor.structMotor.MSR.bNewComFrameReceived = FALSE;	
 0000c2  8841              LDRH     r1,[r0,#2]  ; tMotor
 0000c4  2210              MOVS     r2,#0x10
 0000c6  4391              BICS     r1,r1,r2
 0000c8  8041              STRH     r1,[r0,#2]
-;;;118    		if (MTR_INVALID_MOTOR_CMD == unCOM_SPI_ReadData[0])
-0000ca  4d13              LDR      r5,|L1.280|
-0000cc  4915              LDR      r1,|L1.292|
-0000ce  3d08              SUBS     r5,r5,#8
-0000d0  8828              LDRH     r0,[r5,#0]  ; unCOM_SPI_ReadData
-;;;119    		{
-;;;120    			unCOM_SPI_TransErrCNT++;
-0000d2  1aac              SUBS     r4,r5,r2
-0000d4  4288              CMP      r0,r1                 ;118
-0000d6  d012              BEQ      |L1.254|
-;;;121    //			SPI_WRITE_TX(SPI, 0);
-;;;122    		}
-;;;123    		else
-;;;124    		{
-;;;125    			if (IS_COMM_RD_CMD(unCOM_SPI_ReadData[0]))
-0000d8  0bc1              LSRS     r1,r0,#15
-0000da  d002              BEQ      |L1.226|
-;;;126    			{
-;;;127    				if (nReadCommandHandler(unCOM_SPI_ReadData[0]) == 0)
-0000dc  f7fffffe          BL       nReadCommandHandler
-0000e0  e00b              B        |L1.250|
-                  |L1.226|
-;;;128    				{
-;;;129    					unValidFrameCNT++;
-;;;130    				}
-;;;131    				else
-;;;132    				{
-;;;133    					unCOM_SPI_TransErrCNT++;
-;;;134    				}
-;;;135    			}
-;;;136    			else
-;;;137    			{
-;;;138    				// Must be write command here, check crc first
-;;;139    				if (calCRC16((uint8_t *)unCOM_SPI_ReadData, 4) == unCOM_SPI_ReadData[2])
-0000e2  480d              LDR      r0,|L1.280|
-0000e4  2104              MOVS     r1,#4
-0000e6  3808              SUBS     r0,r0,#8
-0000e8  f7fffffe          BL       calCRC16
-0000ec  88a9              LDRH     r1,[r5,#4]  ; unCOM_SPI_ReadData
-0000ee  4288              CMP      r0,r1
-0000f0  d108              BNE      |L1.260|
-;;;140    				{
-;;;141    					if (nWriteCommandHandler(unCOM_SPI_ReadData) == 0)
-0000f2  4809              LDR      r0,|L1.280|
-0000f4  3808              SUBS     r0,r0,#8
-0000f6  f7fffffe          BL       nWriteCommandHandler
-                  |L1.250|
-0000fa  2800              CMP      r0,#0                 ;127
-0000fc  d008              BEQ      |L1.272|
-                  |L1.254|
-;;;142    					{
-;;;143    						unValidFrameCNT++;
-;;;144    					}
-;;;145    					else
-;;;146    					{
-;;;147    						unCOM_SPI_TransErrCNT++;
-0000fe  68e0              LDR      r0,[r4,#0xc]  ; unCOM_SPI_TransErrCNT
-000100  1c40              ADDS     r0,r0,#1
-000102  60e0              STR      r0,[r4,#0xc]  ; unCOM_SPI_TransErrCNT
-                  |L1.260|
-000104  4806              LDR      r0,|L1.288|
-000106  6801              LDR      r1,[r0,#0]
-000108  2201              MOVS     r2,#1
-00010a  4311              ORRS     r1,r1,r2
-00010c  6001              STR      r1,[r0,#0]
-                  |L1.270|
-;;;148    					}
-;;;149    				}
-;;;150    //				SPI_WRITE_TX(SPI, 0);	
-;;;151    			}
-;;;152    		}
-;;;153    		SPI_TRIGGER(SPI);
-;;;154    	}
-;;;155    	
-;;;156    	// Comm protection 1: If have NOT received any frame in 500ms, error
-;;;157    //	if ((uint32_t)(unSystemTick - unLastCheckTime) > 500)
-;;;158    //	{
-;;;159    //		unLastCheckTime = unSystemTick;
-;;;160    //		if ((uint32_t)(unValidFrameCNT - unLastFrameCNT) < 1)
-;;;161    //		{
-;;;162    //			BLDC_stopMotor();
-;;;163    //			setError(ERR_COMMUNICATION_FAIL);
-;;;164    //			// I don't know why,
-;;;165    //			// But seems every time enter here, the GO_BUSY bit of SPI Control register will be reset
-;;;166    //			SPI_TRIGGER(SPI);			
-;;;167    //		}
-;;;168    //		unLastFrameCNT = unValidFrameCNT;
-;;;169    //	}
-;;;170    //	// Comm protection 2: If received error frame exceed some threshold, error
-;;;171    //	if (unCOM_SPI_TransErrCNT > COM_SPI_TRANS_ERR_THRESHOLD)
-;;;172    //	{
-;;;173    //		BLDC_stopMotor();
-;;;174    //		setError(ERR_COMMUNICATION_FAIL);
-;;;175    //		SPI_TRIGGER(SPI);	
-;;;176    //	}
-;;;177    }
-00010e  bd30              POP      {r4,r5,pc}
-                  |L1.272|
-000110  68a0              LDR      r0,[r4,#8]            ;143  ; unValidFrameCNT
-000112  1c40              ADDS     r0,r0,#1              ;143
-000114  60a0              STR      r0,[r4,#8]            ;143  ; unValidFrameCNT
-000116  e7f5              B        |L1.260|
+0000ca  4e2d              LDR      r6,|L1.384|
+0000cc  6930              LDR      r0,[r6,#0x10]
+;;;118    		unSPI_RX_Value = SPI_READ_RX(SPI);
+0000ce  4c2a              LDR      r4,|L1.376|
+0000d0  b280              UXTH     r0,r0
+0000d2  3c18              SUBS     r4,r4,#0x18
+0000d4  80a0              STRH     r0,[r4,#4]
+;;;119    		
+;;;120    		switch(tSPI_LastState)
+0000d6  7867              LDRB     r7,[r4,#1]  ; tSPI_LastState
+;;;121    		{	
+;;;122    			case SPI_RCV_IDLE:
+;;;123    				if ((MTR_INVALID_MOTOR_CMD == unSPI_RX_Value) || (0 == unSPI_RX_Value))
+;;;124    				{
+;;;125    //						SPI_WRITE_TX(SPI, unReadValueCRC);
+;;;126    					SPI_WRITE_TX(SPI, 0);
+;;;127    					tSPI_LastState = SPI_RCV_IDLE;
+;;;128    				}
+;;;129    				else
+;;;130    				{
+;;;131    					unCOM_SPI_ReadData[0] = unSPI_RX_Value;
+0000d8  4625              MOV      r5,r4
+0000da  2100              MOVS     r1,#0                 ;120
+0000dc  2202              MOVS     r2,#2                 ;120
+0000de  3510              ADDS     r5,r5,#0x10
+0000e0  003b              MOVS     r3,r7                 ;120
+0000e2  f7fffffe          BL       __ARM_common_switch8
+0000e6  0504              DCB      0x05,0x04
+0000e8  222d3013          DCB      0x22,0x2d,0x30,0x13
+0000ec  4100              DCB      0x41,0x00
+0000ee  4925              LDR      r1,|L1.388|
+0000f0  4288              CMP      r0,r1                 ;123
+0000f2  d006              BEQ      |L1.258|
+0000f4  2800              CMP      r0,#0                 ;123
+0000f6  d004              BEQ      |L1.258|
+0000f8  8028              STRH     r0,[r5,#0]
+;;;132    					if (IS_COMM_RD_CMD(unSPI_RX_Value))
+0000fa  0bc0              LSRS     r0,r0,#15
+0000fc  d004              BEQ      |L1.264|
+;;;133    					{
+;;;134    						tSPI_LastState = SPI_RCV_RD_CMD;
+0000fe  2001              MOVS     r0,#1
+000100  e01c              B        |L1.316|
+                  |L1.258|
+000102  2000              MOVS     r0,#0                 ;126
+000104  6230              STR      r0,[r6,#0x20]         ;126
+000106  e032              B        |L1.366|
+                  |L1.264|
+;;;135    					}
+;;;136    					else
+;;;137    					{
+;;;138    						tSPI_LastState = SPI_RCV_WR_CMD;
+000108  7062              STRB     r2,[r4,#1]
+00010a  e030              B        |L1.366|
+;;;139    					}						
+;;;140    				}						
+;;;141    			break;
+;;;142    			
+;;;143    			case SPI_RCV_CRC:
+;;;144    				if (MTR_INVALID_MOTOR_CMD == unSPI_RX_Value)
+00010c  4b1d              LDR      r3,|L1.388|
+00010e  4298              CMP      r0,r3
+000110  d102              BNE      |L1.280|
+;;;145    				{	// After read command and CRC
+;;;146    					SPI_WRITE_TX(SPI, unReadValueCRC);
+000112  88e0              LDRH     r0,[r4,#6]  ; unReadValueCRC
+000114  6230              STR      r0,[r6,#0x20]
+;;;147    					tSPI_LastState = SPI_RCV_IDLE;
+000116  e006              B        |L1.294|
+                  |L1.280|
+;;;148    				}
+;;;149    				else if (IS_COMM_RD_CMD(unSPI_RX_Value))
+000118  0bc3              LSRS     r3,r0,#15
+00011a  d001              BEQ      |L1.288|
+;;;150    				{
+;;;151    					// write command after write CRC
+;;;152    					unCOM_SPI_ReadData[0] = unSPI_RX_Value;
+00011c  8028              STRH     r0,[r5,#0]
+;;;153    					tSPI_LastState = SPI_RCV_WR_CMD;
+00011e  e7f3              B        |L1.264|
+                  |L1.288|
+;;;154    				}
+;;;155    				else
+;;;156    				{
+;;;157    					unCOM_SPI_TransErrCNT++;
+000120  68e0              LDR      r0,[r4,#0xc]  ; unCOM_SPI_TransErrCNT
+000122  1c40              ADDS     r0,r0,#1
+000124  60e0              STR      r0,[r4,#0xc]  ; unCOM_SPI_TransErrCNT
+                  |L1.294|
+;;;158    					tSPI_LastState = SPI_RCV_IDLE;									
+000126  7061              STRB     r1,[r4,#1]
+000128  e021              B        |L1.366|
+;;;159    				}	
+;;;160    			break;
+;;;161    		
+;;;162    			case SPI_RCV_RD_CMD:
+;;;163    				// If last time is read command, this time must be read CRC and next time must be 0xFFFF on MOSI to read
+;;;164    				// So the data received is the CRC of read command, now the slave doesn't care
+;;;165    				unCOM_SPI_ReadData[1] = unSPI_RX_Value;
+00012a  8068              STRH     r0,[r5,#2]
+;;;166    				if (nReadCommandHandler(unCOM_SPI_ReadData[0]) == 0)
+00012c  8828              LDRH     r0,[r5,#0]  ; unCOM_SPI_ReadData
+00012e  f7fffffe          BL       nReadCommandHandler
+000132  e015              B        |L1.352|
+                  |L1.308|
+;;;167    				{
+;;;168    					unValidFrameCNT++;
+000134  68a0              LDR      r0,[r4,#8]  ; unValidFrameCNT
+000136  1c40              ADDS     r0,r0,#1
+000138  60a0              STR      r0,[r4,#8]  ; unValidFrameCNT
+00013a  e013              B        |L1.356|
+                  |L1.316|
+00013c  7060              STRB     r0,[r4,#1]            ;134
+00013e  e016              B        |L1.366|
+;;;169    				}				
+;;;170    				tSPI_LastState = SPI_RCV_CRC;	
+;;;171    			break;
+;;;172    
+;;;173    			case SPI_RCV_WR_CMD:
+;;;174    				// No need to comment
+;;;175    //					SPI_WRITE_TX(SPI, 0);
+;;;176    				unCOM_SPI_ReadData[1] = unSPI_RX_Value;
+000140  8068              STRH     r0,[r5,#2]
+;;;177    				tSPI_LastState = SPI_RCV_WR_DATA;	
+000142  2003              MOVS     r0,#3
+;;;178    			break;
+000144  e7fa              B        |L1.316|
+;;;179    			
+;;;180    			case SPI_RCV_WR_DATA:
+;;;181    				// No need to comment
+;;;182    				unCOM_SPI_ReadData[2] = unSPI_RX_Value;
+000146  80a8              STRH     r0,[r5,#4]
+;;;183    				if (calCRC16((uint8_t *)unCOM_SPI_ReadData, 4) == unCOM_SPI_ReadData[2])
+000148  480b              LDR      r0,|L1.376|
+00014a  2104              MOVS     r1,#4
+00014c  3808              SUBS     r0,r0,#8
+00014e  f7fffffe          BL       calCRC16
+000152  88a9              LDRH     r1,[r5,#4]  ; unCOM_SPI_ReadData
+000154  4288              CMP      r0,r1
+000156  d105              BNE      |L1.356|
+;;;184    				{
+;;;185    					if (nWriteCommandHandler(unCOM_SPI_ReadData) == 0)
+000158  4807              LDR      r0,|L1.376|
+00015a  3808              SUBS     r0,r0,#8
+00015c  f7fffffe          BL       nWriteCommandHandler
+                  |L1.352|
+000160  2800              CMP      r0,#0                 ;166
+000162  d0e7              BEQ      |L1.308|
+                  |L1.356|
+;;;186    					{
+;;;187    						unValidFrameCNT++;
+;;;188    					}
+;;;189    					else
+;;;190    					{
+;;;191    //						unCOM_SPI_TransErrCNT++;
+;;;192    					}
+;;;193    				}
+;;;194    				tSPI_LastState = SPI_RCV_CRC;	
+000164  2004              MOVS     r0,#4
+;;;195    			break;
+000166  e7e9              B        |L1.316|
+;;;196    		
+;;;197    			default:
+;;;198    				unCOM_SPI_TransErrCNT++;
+000168  68e0              LDR      r0,[r4,#0xc]  ; unCOM_SPI_TransErrCNT
+00016a  1c40              ADDS     r0,r0,#1
+00016c  60e0              STR      r0,[r4,#0xc]  ; unCOM_SPI_TransErrCNT
+                  |L1.366|
+00016e  6830              LDR      r0,[r6,#0]
+000170  2101              MOVS     r1,#1
+000172  4308              ORRS     r0,r0,r1
+000174  6030              STR      r0,[r6,#0]
+                  |L1.374|
+;;;199    			break;
+;;;200    		}
+;;;201    		SPI_TRIGGER(SPI);
+;;;202    	}
+;;;203    	
+;;;204    	// Comm protection 1: If have NOT received any frame in 500ms, error
+;;;205    //	if ((uint32_t)(unSystemTick - unLastCheckTime) > 500)
+;;;206    //	{
+;;;207    //		unLastCheckTime = unSystemTick;
+;;;208    //		if ((uint32_t)(unValidFrameCNT - unLastFrameCNT) < 1)
+;;;209    //		{
+;;;210    //			BLDC_stopMotor();
+;;;211    //			setError(ERR_COMMUNICATION_FAIL);
+;;;212    //			// I don't know why,
+;;;213    //			// But seems every time enter here, the GO_BUSY bit of SPI Control register will be reset
+;;;214    //			SPI_TRIGGER(SPI);			
+;;;215    //		}
+;;;216    //		unLastFrameCNT = unValidFrameCNT;
+;;;217    //	}
+;;;218    //	// Comm protection 2: If received error frame exceed some threshold, error
+;;;219    //	if (unCOM_SPI_TransErrCNT > COM_SPI_TRANS_ERR_THRESHOLD)
+;;;220    //	{
+;;;221    //		BLDC_stopMotor();
+;;;222    //		setError(ERR_COMMUNICATION_FAIL);
+;;;223    //		SPI_TRIGGER(SPI);	
+;;;224    //	}
+;;;225    }
+000176  bdf0              POP      {r4-r7,pc}
                           ENDP
 
-                  |L1.280|
+                  |L1.376|
                           DCD      ||.data||+0x18
-                  |L1.284|
+                  |L1.380|
                           DCD      tMotor
-                  |L1.288|
+                  |L1.384|
                           DCD      0x40030000
-                  |L1.292|
+                  |L1.388|
                           DCD      0x0000ffff
 
                           AREA ||.data||, DATA, ALIGN=2
 
                   unRegSelect
-000000  0000              DCB      0x00,0x00
+000000  00                DCB      0x00
+                  tSPI_LastState
+000001  00                DCB      0x00
                   unReadValue
 000002  0000              DCB      0x00,0x00
+                  unSPI_RX_Value
+000004  0000              DCB      0x00,0x00
                   unReadValueCRC
-000004  00000000          DCB      0x00,0x00,0x00,0x00
+000006  0000              DCB      0x00,0x00
                   unValidFrameCNT
                           DCD      0x00000000
                   unCOM_SPI_TransErrCNT

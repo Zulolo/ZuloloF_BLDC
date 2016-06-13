@@ -8269,7 +8269,7 @@ extern void BLDC_SensorLessManager(void);
 
 #line 5 "User\\Communication.h"
 
-#line 66 "User\\Communication.h"
+#line 76 "User\\Communication.h"
 
 
 
@@ -8287,7 +8287,7 @@ extern void BLDC_SensorLessManager(void);
 
 
 		
-#line 90 "User\\Communication.h"
+#line 100 "User\\Communication.h"
 
 
 
@@ -8309,7 +8309,7 @@ extern void BLDC_SensorLessManager(void);
 
 extern uint32_t unCOM_SPI_TransCNT;
 extern uint32_t unCOM_SPI_TransErrCNT;
-extern uint16_t unCOM_SPI_ReadData[4];	
+
 extern uint16_t unRegisterValue;	
 
 extern uint8_t FlagRegisterNeedWrite;

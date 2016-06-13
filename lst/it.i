@@ -7367,7 +7367,7 @@ extern void BLDC_SensorLessManager(void);
 
 #line 5 "User\\Communication.h"
 
-#line 66 "User\\Communication.h"
+#line 76 "User\\Communication.h"
 
 
 
@@ -7385,7 +7385,7 @@ extern void BLDC_SensorLessManager(void);
 
 
 		
-#line 90 "User\\Communication.h"
+#line 100 "User\\Communication.h"
 
 
 
@@ -7407,7 +7407,7 @@ extern void BLDC_SensorLessManager(void);
 
 extern uint32_t unCOM_SPI_TransCNT;
 extern uint32_t unCOM_SPI_TransErrCNT;
-extern uint16_t unCOM_SPI_ReadData[4];	
+
 extern uint16_t unRegisterValue;	
 
 extern uint8_t FlagRegisterNeedWrite;
@@ -7512,13 +7512,7 @@ extern void PTC_checkMotor(void);
 
 
 
-	typedef enum {
-		SPI_RCV_IDLE = 0,
-		SPI_RCV_RD_CMD,
-		SPI_RCV_WR_CMD,
-		SPI_RCV_WR_DATA,
-		SPI_RCV_CRC
-	} ENUM_SPI_RECEIVE_STATE;
+
 
 
 
@@ -7685,90 +7679,20 @@ void ADC_IRQHandler(void)
 	
 void SPI_IRQHandler(void)
 {
-	static ENUM_SPI_RECEIVE_STATE tSPI_LastState = SPI_RCV_IDLE;
-	static uint16_t unSPI_RX_Value;
+
 
 	
 	
+	SPI_CLR_UNIT_TRANS_INT_FLAG(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 	if ((((SPI_T *) (((uint32_t)0x40000000) + 0x30000))->SSR & (1ul << 5)) == (1ul << 5))
 	{
-		unSPI_RX_Value = SPI_READ_RX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-		
-		if (tMotor.structMotor.MSR.bNewComFrameReceived == (0))
-		{
-			switch(tSPI_LastState)
-			{	
-				case SPI_RCV_IDLE:
-				case SPI_RCV_CRC:
-					if (0xFFFF == unSPI_RX_Value)
-					{
-
-						SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-						tSPI_LastState = SPI_RCV_IDLE;
-					}
-					else
-					{
-						if ((((unSPI_RX_Value) & (0x8000)) == (0x8000)))
-						{
-							unCOM_SPI_ReadData[0] = unSPI_RX_Value;
-
-							SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-							tSPI_LastState = SPI_RCV_RD_CMD;
-						}
-						else
-						{
-							unCOM_SPI_ReadData[0] = unSPI_RX_Value;
-
-							SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-							tSPI_LastState = SPI_RCV_WR_CMD;
-						}						
-					}	
-				break;
-			
-				case SPI_RCV_RD_CMD:
-					
-					
-					unCOM_SPI_ReadData[1] = unSPI_RX_Value;
-
-
-					tMotor.structMotor.MSR.bNewComFrameReceived = (1);				
-					tSPI_LastState = SPI_RCV_CRC;	
-				break;
-
-				case SPI_RCV_WR_CMD:
-					
-
-					SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-					unCOM_SPI_ReadData[1] = unSPI_RX_Value;
-					tSPI_LastState = SPI_RCV_WR_DATA;	
-				break;
-				
-				case SPI_RCV_WR_DATA:
-					
-					unCOM_SPI_ReadData[2] = unSPI_RX_Value;
-					tMotor.structMotor.MSR.bNewComFrameReceived = (1);
-					tSPI_LastState = SPI_RCV_CRC;	
-				break;
-			
-				default:
-					unCOM_SPI_TransErrCNT++;
-
-					SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-				break;
-			}
-		}
-		else
-		{
-			SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));			
-		}		
+		tMotor.structMotor.MSR.bNewComFrameReceived = (1);	
 	}
 	else
 	{
-
 		SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 	}
 
-	SPI_CLR_UNIT_TRANS_INT_FLAG(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 }
 
 

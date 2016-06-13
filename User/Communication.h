@@ -59,7 +59,17 @@
 			COMM_WRITE_RAMP_UP_PERIOD,
 			COMM_WRITE_CMD_MAX
 		} ENUM_COMM_WRITE_CMD;
+		
+		typedef enum {
+			SPI_RCV_IDLE = 0,
+			SPI_RCV_RD_CMD,
+			SPI_RCV_WR_CMD,
+			SPI_RCV_WR_DATA,
+			SPI_RCV_CRC
+		} ENUM_SPI_RECEIVE_STATE;
+			
 		uint32_t unValidFrameCNT;
+		
 	#else 
 		#define EXTERNAL_COMM extern
 	#endif
@@ -108,7 +118,7 @@
 //} ENUM_COMM_REG;
 EXTERNAL_COMM uint32_t unCOM_SPI_TransCNT;
 EXTERNAL_COMM uint32_t unCOM_SPI_TransErrCNT;
-EXTERNAL_COMM uint16_t unCOM_SPI_ReadData[4];	//COMM_FIFO_LENGTH];	// 0 or 0xFFFF means no data
+
 EXTERNAL_COMM uint16_t unRegisterValue;	// 0 or 0xFFFF means no data
 //EXTERNAL_COMM ENUM_COMM_REG tRegister;
 EXTERNAL_COMM uint8_t FlagRegisterNeedWrite;

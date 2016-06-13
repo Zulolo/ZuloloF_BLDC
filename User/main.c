@@ -245,7 +245,7 @@ void configSPI(void)
 //	SPI_ClearRxFIFO(SPI);
 //	SPI_ClearTxFIFO(SPI);	
 	
-//	SPI_WRITE_TX(SPI, 0);
+//	SPI_WRITE_TX(SPI, 0xFFFF);
 	SPI_TRIGGER(SPI);
 }
 

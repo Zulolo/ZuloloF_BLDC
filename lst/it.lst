@@ -9441,7 +9441,17 @@ S			COMM_WRITE_LOCATING_PERIOD,
 S			COMM_WRITE_RAMP_UP_PERIOD,
 S			COMM_WRITE_CMD_MAX
 S		} ENUM_COMM_WRITE_CMD;
+S		
+S		typedef enum {
+S			SPI_RCV_IDLE = 0,
+S			SPI_RCV_RD_CMD,
+S			SPI_RCV_WR_CMD,
+S			SPI_RCV_WR_DATA,
+S			SPI_RCV_CRC
+S		} ENUM_SPI_RECEIVE_STATE;
+S			
 S		uint32_t unValidFrameCNT;
+S		
 N	#else 
 N		#define EXTERNAL_COMM extern
 N	#endif
@@ -9492,8 +9502,7 @@ NEXTERNAL_COMM uint32_t unCOM_SPI_TransCNT;
 Xextern uint32_t unCOM_SPI_TransCNT;
 NEXTERNAL_COMM uint32_t unCOM_SPI_TransErrCNT;
 Xextern uint32_t unCOM_SPI_TransErrCNT;
-NEXTERNAL_COMM uint16_t unCOM_SPI_ReadData[4];	//COMM_FIFO_LENGTH];	// 0 or 0xFFFF means no data
-Xextern uint16_t unCOM_SPI_ReadData[4];	
+N
 NEXTERNAL_COMM uint16_t unRegisterValue;	// 0 or 0xFFFF means no data
 Xextern uint16_t unRegisterValue;	
 N//EXTERNAL_COMM ENUM_COMM_REG tRegister;
@@ -9650,13 +9659,7 @@ N												// we think it is real low
 N	#define MAX_BATT_LOW_CNT				50	// 9.6ms*50=480ms	//1000	// 0.5ms*1000=500ms
 N	#define MAX_ZX_MATCH_IN_PWM				36
 N	#define PWM_ZX_FILTER_TIME				40
-N	typedef enum {
-N		SPI_RCV_IDLE = 0,
-N		SPI_RCV_RD_CMD,
-N		SPI_RCV_WR_CMD,
-N		SPI_RCV_WR_DATA,
-N		SPI_RCV_CRC
-N	} ENUM_SPI_RECEIVE_STATE;
+N
 N#else 
 S	#define EXTERNAL_IT extern
 N#endif
@@ -9865,105 +9868,24 @@ N}
 N	
 Nvoid SPI_IRQHandler(void)
 N{
-N	static ENUM_SPI_RECEIVE_STATE tSPI_LastState = SPI_RCV_IDLE;
-N	static uint16_t unSPI_RX_Value;
+N
 N//	static uint8_t unSelectedReg = 0;
 N	
 N	// Check if it is really finished one unit transfer
+N	SPI_CLR_UNIT_TRANS_INT_FLAG(SPI);
+X	SPI_CLR_UNIT_TRANS_INT_FLAG(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 N	if ((SPI->SSR & SPI_SSR_LTRIG_FLAG_Msk) == SPI_SSR_LTRIG_FLAG_Msk)
 X	if ((((SPI_T *) (((uint32_t)0x40000000) + 0x30000))->SSR & (1ul << 5)) == (1ul << 5))
 N	{
-N		unSPI_RX_Value = SPI_READ_RX(SPI);
-X		unSPI_RX_Value = SPI_READ_RX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-N		
-N		if (tMotor.structMotor.MSR.bNewComFrameReceived == FALSE)
-X		if (tMotor.structMotor.MSR.bNewComFrameReceived == (0))
-N		{
-N			switch(tSPI_LastState)
-N			{	
-N				case SPI_RCV_IDLE:
-N				case SPI_RCV_CRC:
-N					if (MTR_INVALID_MOTOR_CMD == unSPI_RX_Value)
-X					if (0xFFFF == unSPI_RX_Value)
-N					{
-N//						SPI_WRITE_TX(SPI, unReadValueCRC);
-N						SPI_TRIGGER(SPI);
-X						SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-N						tSPI_LastState = SPI_RCV_IDLE;
-N					}
-N					else
-N					{
-N						if (IS_COMM_RD_CMD(unSPI_RX_Value))
-X						if ((((unSPI_RX_Value) & (0x8000)) == (0x8000)))
-N						{
-N							unCOM_SPI_ReadData[0] = unSPI_RX_Value;
-N//							tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
-N							SPI_TRIGGER(SPI);
-X							SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-N							tSPI_LastState = SPI_RCV_RD_CMD;
-N						}
-N						else
-N						{
-N							unCOM_SPI_ReadData[0] = unSPI_RX_Value;
-N//							SPI_WRITE_TX(SPI, 0);
-N							SPI_TRIGGER(SPI);
-X							SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-N							tSPI_LastState = SPI_RCV_WR_CMD;
-N						}						
-N					}	
-N				break;
-N			
-N				case SPI_RCV_RD_CMD:
-N					// If last time is read command, this time must be read CRC and next time must be 0xFFFF on MOSI to read
-N					// So the data received is the CRC of read command, now the slave doesn't care
-N					unCOM_SPI_ReadData[1] = unSPI_RX_Value;
-N//					SPI_WRITE_TX(SPI, unReadValueCRC);
-N//					SPI_TRIGGER(SPI);		
-N					tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;				
-X					tMotor.structMotor.MSR.bNewComFrameReceived = (1);				
-N					tSPI_LastState = SPI_RCV_CRC;	
-N				break;
-N
-N				case SPI_RCV_WR_CMD:
-N					// No need to comment
-N//					SPI_WRITE_TX(SPI, 0);
-N					SPI_TRIGGER(SPI);
-X					SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-N					unCOM_SPI_ReadData[1] = unSPI_RX_Value;
-N					tSPI_LastState = SPI_RCV_WR_DATA;	
-N				break;
-N				
-N				case SPI_RCV_WR_DATA:
-N					// No need to comment
-N					unCOM_SPI_ReadData[2] = unSPI_RX_Value;
-N					tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
-X					tMotor.structMotor.MSR.bNewComFrameReceived = (1);
-N					tSPI_LastState = SPI_RCV_CRC;	
-N				break;
-N			
-N				default:
-N					unCOM_SPI_TransErrCNT++;
-N//					SPI_WRITE_TX(SPI, 0);
-N					SPI_TRIGGER(SPI);
-X					SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
-N				break;
-N			}
-N		}
-N		else
-N		{
-N			SPI_TRIGGER(SPI);			
-X			SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));			
-N		}		
+N		tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;	
+X		tMotor.structMotor.MSR.bNewComFrameReceived = (1);	
 N	}
 N	else
 N	{
-N//		SPI_WRITE_TX(SPI, 0);
 N		SPI_TRIGGER(SPI);
 X		SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 N	}
 N
-N	SPI_CLR_UNIT_TRANS_INT_FLAG(SPI);
-X	SPI_CLR_UNIT_TRANS_INT_FLAG(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 N}
 N
 N

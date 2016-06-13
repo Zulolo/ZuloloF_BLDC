@@ -16,28 +16,28 @@ Image Symbol Table
 
     RESET                                    0x00000000   Section      192  startup_mini51series.o(RESET)
     ../clib/microlib/division.c              0x00000000   Number         0  uidiv.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry8a.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry7b.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry8b.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry7a.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry5.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry2.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry9b.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry11b.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry11a.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry8b.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry11b.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry8a.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry9a.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry7b.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry2.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry5.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry7a.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry10b.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry10a.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry9a.o ABSOLUTE
-    ../clib/microlib/longlong.c              0x00000000   Number         0  llshl.o ABSOLUTE
     ../clib/microlib/longlong.c              0x00000000   Number         0  llushr.o ABSOLUTE
+    ../clib/microlib/longlong.c              0x00000000   Number         0  llshl.o ABSOLUTE
     ../clib/microlib/printf/stubs.s          0x00000000   Number         0  stubs.o ABSOLUTE
     ../clib/microlib/stubs.s                 0x00000000   Number         0  iusefp.o ABSOLUTE
     ../fplib/microlib/fpdiv.c                0x00000000   Number         0  fdiv.o ABSOLUTE
     ../fplib/microlib/fpepilogue.c           0x00000000   Number         0  depilogue.o ABSOLUTE
     ../fplib/microlib/fpepilogue.c           0x00000000   Number         0  fepilogue.o ABSOLUTE
-    ../fplib/microlib/fpfix.c                0x00000000   Number         0  dfixui.o ABSOLUTE
     ../fplib/microlib/fpfix.c                0x00000000   Number         0  ffixui.o ABSOLUTE
+    ../fplib/microlib/fpfix.c                0x00000000   Number         0  dfixui.o ABSOLUTE
     ../fplib/microlib/fpflt.c                0x00000000   Number         0  ffltui.o ABSOLUTE
     ../fplib/microlib/fpflt.c                0x00000000   Number         0  dfltui.o ABSOLUTE
     ../fplib/microlib/fpmul.c                0x00000000   Number         0  fmul.o ABSOLUTE
@@ -103,20 +103,20 @@ Image Symbol Table
     NVIC_SetPriority                         0x00000959   Thumb Code    60  main.o(.text)
     NVIC_EnableIRQ                           0x00000e9f   Thumb Code    14  main.o(.text)
     .text                                    0x00000ed4   Section        0  communication.o(.text)
-    .text                                    0x00000ffc   Section        0  it.o(.text)
-    .text                                    0x0000132c   Section        0  error.o(.text)
-    .text                                    0x00001408   Section        0  protection.o(.text)
-    .text                                    0x0000146c   Section        0  system_mini51series.o(.text)
-    .text                                    0x000014bc   Section       20  startup_mini51series.o(.text)
-    Default_Handler                          0x000014cb   Thumb Code     2  startup_mini51series.o(.text)
-    .text                                    0x000014d0   Section        0  uidiv.o(.text)
-    .text                                    0x000014fc   Section       36  init.o(.text)
-    i.BLDC_stopMotor                         0x00001520   Section        0  bldcsensorless.o(i.BLDC_stopMotor)
-    i.__ARM_common_switch8                   0x00001580   Section        0  bldcsensorless.o(i.__ARM_common_switch8)
-    i.__scatterload_copy                     0x0000159a   Section       14  handlers.o(i.__scatterload_copy)
-    i.__scatterload_null                     0x000015a8   Section        2  handlers.o(i.__scatterload_null)
-    i.__scatterload_zeroinit                 0x000015aa   Section       14  handlers.o(i.__scatterload_zeroinit)
-    .constdata                               0x000015b8   Section       32  error.o(.constdata)
+    .text                                    0x0000105c   Section        0  it.o(.text)
+    .text                                    0x00001314   Section        0  error.o(.text)
+    .text                                    0x000013f0   Section        0  protection.o(.text)
+    .text                                    0x00001454   Section        0  system_mini51series.o(.text)
+    .text                                    0x000014a4   Section       20  startup_mini51series.o(.text)
+    Default_Handler                          0x000014b3   Thumb Code     2  startup_mini51series.o(.text)
+    .text                                    0x000014b8   Section        0  uidiv.o(.text)
+    .text                                    0x000014e4   Section       36  init.o(.text)
+    i.BLDC_stopMotor                         0x00001508   Section        0  bldcsensorless.o(i.BLDC_stopMotor)
+    i.__ARM_common_switch8                   0x00001568   Section        0  bldcsensorless.o(i.__ARM_common_switch8)
+    i.__scatterload_copy                     0x00001582   Section       14  handlers.o(i.__scatterload_copy)
+    i.__scatterload_null                     0x00001590   Section        2  handlers.o(i.__scatterload_null)
+    i.__scatterload_zeroinit                 0x00001592   Section       14  handlers.o(i.__scatterload_zeroinit)
+    .constdata                               0x000015a0   Section       32  error.o(.constdata)
     .data                                    0x20000000   Section        4  main.o(.data)
     .data                                    0x20000004   Section       32  bldcsensorless.o(.data)
     tMotorState                              0x20000004   Data           1  bldcsensorless.o(.data)
@@ -133,23 +133,24 @@ Image Symbol Table
     .data                                    0x20000028   Section        4  bldcsensorless.o(.data)
     .data                                    0x2000002c   Section      536  communication.o(.data)
     unRegSelect                              0x2000002c   Data           1  communication.o(.data)
+    tSPI_LastState                           0x2000002d   Data           1  communication.o(.data)
     unReadValue                              0x2000002e   Data           2  communication.o(.data)
+    unSPI_RX_Value                           0x20000030   Data           2  communication.o(.data)
+    unCOM_SPI_ReadData                       0x2000003c   Data           8  communication.o(.data)
     .data                                    0x20000244   Section        4  communication.o(.data)
-    .data                                    0x20000248   Section       28  it.o(.data)
-    tSPI_LastState                           0x20000248   Data           1  it.o(.data)
-    iBatteryLowCNT                           0x2000024a   Data           2  it.o(.data)
-    unSPI_RX_Value                           0x2000024c   Data           2  it.o(.data)
-    iTempDeltaZXD                            0x20000250   Data           4  it.o(.data)
-    iHalfPeriod                              0x20000254   Data           4  it.o(.data)
-    iADC_ComparatorFlag                      0x20000258   Data           4  it.o(.data)
-    iSystemTickTemp                          0x2000025c   Data           4  it.o(.data)
-    iBatteryLowLastTimeRCD                   0x20000260   Data           4  it.o(.data)
-    .data                                    0x20000264   Section       12  error.o(.data)
-    tLastErrorType                           0x20000264   Data           1  error.o(.data)
-    unLastErrorChangeTime                    0x20000268   Data           4  error.o(.data)
-    .data                                    0x20000270   Section       24  protection.o(.data)
-    .data                                    0x20000288   Section        8  system_mini51series.o(.data)
-    .bss                                     0x20000290   Section       40  bldcsensorless.o(.bss)
+    .data                                    0x20000248   Section       24  it.o(.data)
+    iBatteryLowCNT                           0x20000248   Data           2  it.o(.data)
+    iTempDeltaZXD                            0x2000024c   Data           4  it.o(.data)
+    iHalfPeriod                              0x20000250   Data           4  it.o(.data)
+    iADC_ComparatorFlag                      0x20000254   Data           4  it.o(.data)
+    iSystemTickTemp                          0x20000258   Data           4  it.o(.data)
+    iBatteryLowLastTimeRCD                   0x2000025c   Data           4  it.o(.data)
+    .data                                    0x20000260   Section       12  error.o(.data)
+    tLastErrorType                           0x20000260   Data           1  error.o(.data)
+    unLastErrorChangeTime                    0x20000264   Data           4  error.o(.data)
+    .data                                    0x2000026c   Section       24  protection.o(.data)
+    .data                                    0x20000284   Section        8  system_mini51series.o(.data)
+    .bss                                     0x2000028c   Section       40  bldcsensorless.o(.bss)
     STACK                                    0x200002b8   Section      512  startup_mini51series.o(STACK)
 
     Global Symbols
@@ -304,70 +305,69 @@ Image Symbol Table
     calCRC16                                 0x00000ed5   Thumb Code    46  communication.o(.text)
     nReadCommandHandler                      0x00000f03   Thumb Code    50  communication.o(.text)
     nWriteCommandHandler                     0x00000f35   Thumb Code    88  communication.o(.text)
-    COMM_Manager                             0x00000f8d   Thumb Code    96  communication.o(.text)
-    TMR0_IRQHandler                          0x00000ffd   Thumb Code    76  it.o(.text)
-    PhaseZXDedHandler                        0x00001049   Thumb Code   112  it.o(.text)
-    TMR1_IRQHandler                          0x000010b9   Thumb Code    96  it.o(.text)
-    ACMP_IRQHandler                          0x00001119   Thumb Code    58  it.o(.text)
-    ADC_IRQHandler                           0x00001153   Thumb Code   244  it.o(.text)
-    SPI_IRQHandler                           0x00001247   Thumb Code   146  it.o(.text)
-    SysTick_Handler                          0x000012d9   Thumb Code    10  it.o(.text)
-    delay                                    0x0000132d   Thumb Code    18  error.o(.text)
-    clearError                               0x0000133f   Thumb Code     8  error.o(.text)
-    resetError                               0x00001347   Thumb Code    20  error.o(.text)
-    setError                                 0x0000135b   Thumb Code    26  error.o(.text)
-    getPrecedenceError                       0x00001375   Thumb Code    28  error.o(.text)
-    LEDBlinkHandler                          0x00001391   Thumb Code    68  error.o(.text)
-    ERR_Manager                              0x000013d5   Thumb Code    36  error.o(.text)
-    PTC_checkMotor                           0x00001409   Thumb Code    70  protection.o(.text)
-    SystemCoreClockUpdate                    0x0000146d   Thumb Code    56  system_mini51series.o(.text)
-    Reset_Handler                            0x000014bd   Thumb Code     4  startup_mini51series.o(.text)
-    NMI_Handler                              0x000014c1   Thumb Code     2  startup_mini51series.o(.text)
-    HardFault_Handler                        0x000014c3   Thumb Code     2  startup_mini51series.o(.text)
-    SVC_Handler                              0x000014c5   Thumb Code     2  startup_mini51series.o(.text)
-    PendSV_Handler                           0x000014c7   Thumb Code     2  startup_mini51series.o(.text)
-    BOD_IRQHandler                           0x000014cb   Thumb Code     0  startup_mini51series.o(.text)
-    EINT0_IRQHandler                         0x000014cb   Thumb Code     0  startup_mini51series.o(.text)
-    EINT1_IRQHandler                         0x000014cb   Thumb Code     0  startup_mini51series.o(.text)
-    FB_IRQHandler                            0x000014cb   Thumb Code     0  startup_mini51series.o(.text)
-    GPIO01_IRQHandler                        0x000014cb   Thumb Code     0  startup_mini51series.o(.text)
-    GPIO234_IRQHandler                       0x000014cb   Thumb Code     0  startup_mini51series.o(.text)
-    GPIO5_IRQHandler                         0x000014cb   Thumb Code     0  startup_mini51series.o(.text)
-    HIRC_IRQHandler                          0x000014cb   Thumb Code     0  startup_mini51series.o(.text)
-    I2C_IRQHandler                           0x000014cb   Thumb Code     0  startup_mini51series.o(.text)
-    PDWU_IRQHandler                          0x000014cb   Thumb Code     0  startup_mini51series.o(.text)
-    PWM_IRQHandler                           0x000014cb   Thumb Code     0  startup_mini51series.o(.text)
-    UART_IRQHandler                          0x000014cb   Thumb Code     0  startup_mini51series.o(.text)
-    WDT_IRQHandler                           0x000014cb   Thumb Code     0  startup_mini51series.o(.text)
-    __aeabi_uidiv                            0x000014d1   Thumb Code     0  uidiv.o(.text)
-    __aeabi_uidivmod                         0x000014d1   Thumb Code    44  uidiv.o(.text)
-    __scatterload                            0x000014fd   Thumb Code    28  init.o(.text)
-    __scatterload_rt2                        0x000014fd   Thumb Code     0  init.o(.text)
-    BLDC_stopMotor                           0x00001521   Thumb Code    76  bldcsensorless.o(i.BLDC_stopMotor)
-    __ARM_common_switch8                     0x00001581   Thumb Code    26  bldcsensorless.o(i.__ARM_common_switch8)
-    __scatterload_copy                       0x0000159b   Thumb Code    14  handlers.o(i.__scatterload_copy)
-    __scatterload_null                       0x000015a9   Thumb Code     2  handlers.o(i.__scatterload_null)
-    __scatterload_zeroinit                   0x000015ab   Thumb Code    14  handlers.o(i.__scatterload_zeroinit)
-    unLED_BLINK_PATTERN_TABLE                0x000015b8   Data          32  error.o(.constdata)
-    Region$$Table$$Base                      0x000015d8   Number         0  anon$$obj.o(Region$$Table)
-    Region$$Table$$Limit                     0x000015f8   Number         0  anon$$obj.o(Region$$Table)
+    COMM_Manager                             0x00000f8d   Thumb Code   192  communication.o(.text)
+    TMR0_IRQHandler                          0x0000105d   Thumb Code    76  it.o(.text)
+    PhaseZXDedHandler                        0x000010a9   Thumb Code   112  it.o(.text)
+    TMR1_IRQHandler                          0x00001119   Thumb Code    96  it.o(.text)
+    ACMP_IRQHandler                          0x00001179   Thumb Code    58  it.o(.text)
+    ADC_IRQHandler                           0x000011b3   Thumb Code   244  it.o(.text)
+    SPI_IRQHandler                           0x000012a7   Thumb Code    40  it.o(.text)
+    SysTick_Handler                          0x000012cf   Thumb Code    10  it.o(.text)
+    delay                                    0x00001315   Thumb Code    18  error.o(.text)
+    clearError                               0x00001327   Thumb Code     8  error.o(.text)
+    resetError                               0x0000132f   Thumb Code    20  error.o(.text)
+    setError                                 0x00001343   Thumb Code    26  error.o(.text)
+    getPrecedenceError                       0x0000135d   Thumb Code    28  error.o(.text)
+    LEDBlinkHandler                          0x00001379   Thumb Code    68  error.o(.text)
+    ERR_Manager                              0x000013bd   Thumb Code    36  error.o(.text)
+    PTC_checkMotor                           0x000013f1   Thumb Code    70  protection.o(.text)
+    SystemCoreClockUpdate                    0x00001455   Thumb Code    56  system_mini51series.o(.text)
+    Reset_Handler                            0x000014a5   Thumb Code     4  startup_mini51series.o(.text)
+    NMI_Handler                              0x000014a9   Thumb Code     2  startup_mini51series.o(.text)
+    HardFault_Handler                        0x000014ab   Thumb Code     2  startup_mini51series.o(.text)
+    SVC_Handler                              0x000014ad   Thumb Code     2  startup_mini51series.o(.text)
+    PendSV_Handler                           0x000014af   Thumb Code     2  startup_mini51series.o(.text)
+    BOD_IRQHandler                           0x000014b3   Thumb Code     0  startup_mini51series.o(.text)
+    EINT0_IRQHandler                         0x000014b3   Thumb Code     0  startup_mini51series.o(.text)
+    EINT1_IRQHandler                         0x000014b3   Thumb Code     0  startup_mini51series.o(.text)
+    FB_IRQHandler                            0x000014b3   Thumb Code     0  startup_mini51series.o(.text)
+    GPIO01_IRQHandler                        0x000014b3   Thumb Code     0  startup_mini51series.o(.text)
+    GPIO234_IRQHandler                       0x000014b3   Thumb Code     0  startup_mini51series.o(.text)
+    GPIO5_IRQHandler                         0x000014b3   Thumb Code     0  startup_mini51series.o(.text)
+    HIRC_IRQHandler                          0x000014b3   Thumb Code     0  startup_mini51series.o(.text)
+    I2C_IRQHandler                           0x000014b3   Thumb Code     0  startup_mini51series.o(.text)
+    PDWU_IRQHandler                          0x000014b3   Thumb Code     0  startup_mini51series.o(.text)
+    PWM_IRQHandler                           0x000014b3   Thumb Code     0  startup_mini51series.o(.text)
+    UART_IRQHandler                          0x000014b3   Thumb Code     0  startup_mini51series.o(.text)
+    WDT_IRQHandler                           0x000014b3   Thumb Code     0  startup_mini51series.o(.text)
+    __aeabi_uidiv                            0x000014b9   Thumb Code     0  uidiv.o(.text)
+    __aeabi_uidivmod                         0x000014b9   Thumb Code    44  uidiv.o(.text)
+    __scatterload                            0x000014e5   Thumb Code    28  init.o(.text)
+    __scatterload_rt2                        0x000014e5   Thumb Code     0  init.o(.text)
+    BLDC_stopMotor                           0x00001509   Thumb Code    76  bldcsensorless.o(i.BLDC_stopMotor)
+    __ARM_common_switch8                     0x00001569   Thumb Code    26  bldcsensorless.o(i.__ARM_common_switch8)
+    __scatterload_copy                       0x00001583   Thumb Code    14  handlers.o(i.__scatterload_copy)
+    __scatterload_null                       0x00001591   Thumb Code     2  handlers.o(i.__scatterload_null)
+    __scatterload_zeroinit                   0x00001593   Thumb Code    14  handlers.o(i.__scatterload_zeroinit)
+    unLED_BLINK_PATTERN_TABLE                0x000015a0   Data          32  error.o(.constdata)
+    Region$$Table$$Base                      0x000015c0   Number         0  anon$$obj.o(Region$$Table)
+    Region$$Table$$Limit                     0x000015e0   Number         0  anon$$obj.o(Region$$Table)
     unSystemTick                             0x20000000   Data           4  main.o(.data)
     unCurrentPhase                           0x20000009   Data           1  bldcsensorless.o(.data)
     FLAG_PHASE_CHANGED                       0x2000000a   Data           1  bldcsensorless.o(.data)
     unLastZXDetectedTime                     0x20000020   Data           4  bldcsensorless.o(.data)
     FLAG_TIM1_USEAGE                         0x20000024   Data           1  bldcsensorless.o(.data)
     unZXMatchCNT                             0x20000028   Data           4  bldcsensorless.o(.data)
-    unReadValueCRC                           0x20000030   Data           2  communication.o(.data)
+    unReadValueCRC                           0x20000032   Data           2  communication.o(.data)
     unValidFrameCNT                          0x20000034   Data           4  communication.o(.data)
     unCOM_SPI_TransErrCNT                    0x20000038   Data           4  communication.o(.data)
-    unCOM_SPI_ReadData                       0x2000003c   Data           8  communication.o(.data)
     CRC_TABLE16                              0x20000044   Data         512  communication.o(.data)
     unCOM_SPI_TransCNT                       0x20000244   Data           4  communication.o(.data)
-    unErrorMaster                            0x2000026c   Data           4  error.o(.data)
-    unMosfetTestTable                        0x20000270   Data          24  protection.o(.data)
-    SystemCoreClock                          0x20000288   Data           4  system_mini51series.o(.data)
-    CyclesPerUs                              0x2000028c   Data           4  system_mini51series.o(.data)
-    tMotor                                   0x20000290   Data          40  bldcsensorless.o(.bss)
+    unErrorMaster                            0x20000268   Data           4  error.o(.data)
+    unMosfetTestTable                        0x2000026c   Data          24  protection.o(.data)
+    SystemCoreClock                          0x20000284   Data           4  system_mini51series.o(.data)
+    CyclesPerUs                              0x20000288   Data           4  system_mini51series.o(.data)
+    tMotor                                   0x2000028c   Data          40  bldcsensorless.o(.bss)
     __initial_sp                             0x200004b8   Data           0  startup_mini51series.o(STACK)
 
 
@@ -376,11 +376,11 @@ Image Symbol Table
 
 Memory Map of the image
 
-  Image Entry point : 0x000014bd
+  Image Entry point : 0x000014a5
 
-  Load Region LR_1 (Base: 0x00000000, Size: 0x00001888, Max: 0xffffffff, ABSOLUTE)
+  Load Region LR_1 (Base: 0x00000000, Size: 0x0000186c, Max: 0xffffffff, ABSOLUTE)
 
-    Execution Region ER_RO (Base: 0x00000000, Size: 0x000015f8, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_RO (Base: 0x00000000, Size: 0x000015e0, Max: 0xffffffff, ABSOLUTE)
 
     Base Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -401,24 +401,24 @@ Memory Map of the image
     0x0000068c   0x00000200   Code   RO          251    .text               spi.o
     0x0000088c   0x000000cc   Code   RO          271    .text               sys.o
     0x00000958   0x0000057c   Code   RO          355    .text               main.o
-    0x00000ed4   0x00000128   Code   RO          484    .text               communication.o
-    0x00000ffc   0x00000330   Code   RO          523    .text               it.o
-    0x0000132c   0x000000dc   Code   RO          553    .text               error.o
-    0x00001408   0x00000064   Code   RO          581    .text               protection.o
-    0x0000146c   0x00000050   Code   RO          607    .text               system_mini51series.o
-    0x000014bc   0x00000014   Code   RO          653  * .text               startup_mini51series.o
-    0x000014d0   0x0000002c   Code   RO          658    .text               mc_p.l(uidiv.o)
-    0x000014fc   0x00000024   Code   RO          698    .text               mc_p.l(init.o)
-    0x00001520   0x00000060   Code   RO          441    i.BLDC_stopMotor    bldcsensorless.o
-    0x00001580   0x0000001a   Code   RO          460    i.__ARM_common_switch8  bldcsensorless.o
-    0x0000159a   0x0000000e   Code   RO          704    i.__scatterload_copy  mc_p.l(handlers.o)
-    0x000015a8   0x00000002   Code   RO          705    i.__scatterload_null  mc_p.l(handlers.o)
-    0x000015aa   0x0000000e   Code   RO          706    i.__scatterload_zeroinit  mc_p.l(handlers.o)
-    0x000015b8   0x00000020   Data   RO          554    .constdata          error.o
-    0x000015d8   0x00000020   Data   RO          702    Region$$Table       anon$$obj.o
+    0x00000ed4   0x00000188   Code   RO          484    .text               communication.o
+    0x0000105c   0x000002b8   Code   RO          523    .text               it.o
+    0x00001314   0x000000dc   Code   RO          553    .text               error.o
+    0x000013f0   0x00000064   Code   RO          581    .text               protection.o
+    0x00001454   0x00000050   Code   RO          607    .text               system_mini51series.o
+    0x000014a4   0x00000014   Code   RO          653  * .text               startup_mini51series.o
+    0x000014b8   0x0000002c   Code   RO          658    .text               mc_p.l(uidiv.o)
+    0x000014e4   0x00000024   Code   RO          698    .text               mc_p.l(init.o)
+    0x00001508   0x00000060   Code   RO          441    i.BLDC_stopMotor    bldcsensorless.o
+    0x00001568   0x0000001a   Code   RO          460    i.__ARM_common_switch8  bldcsensorless.o
+    0x00001582   0x0000000e   Code   RO          704    i.__scatterload_copy  mc_p.l(handlers.o)
+    0x00001590   0x00000002   Code   RO          705    i.__scatterload_null  mc_p.l(handlers.o)
+    0x00001592   0x0000000e   Code   RO          706    i.__scatterload_zeroinit  mc_p.l(handlers.o)
+    0x000015a0   0x00000020   Data   RO          554    .constdata          error.o
+    0x000015c0   0x00000020   Data   RO          702    Region$$Table       anon$$obj.o
 
 
-    Execution Region ER_RW (Base: 0x20000000, Size: 0x00000290, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_RW (Base: 0x20000000, Size: 0x0000028c, Max: 0xffffffff, ABSOLUTE)
 
     Base Addr    Size         Type   Attr      Idx    E Section Name        Object
 
@@ -429,17 +429,18 @@ Memory Map of the image
     0x20000028   0x00000004   Data   RW          418    .data               bldcsensorless.o
     0x2000002c   0x00000218   Data   RW          485    .data               communication.o
     0x20000244   0x00000004   Data   RW          486    .data               communication.o
-    0x20000248   0x0000001c   Data   RW          524    .data               it.o
-    0x20000264   0x0000000c   Data   RW          555    .data               error.o
-    0x20000270   0x00000018   Data   RW          582    .data               protection.o
-    0x20000288   0x00000008   Data   RW          608    .data               system_mini51series.o
+    0x20000248   0x00000018   Data   RW          524    .data               it.o
+    0x20000260   0x0000000c   Data   RW          555    .data               error.o
+    0x2000026c   0x00000018   Data   RW          582    .data               protection.o
+    0x20000284   0x00000008   Data   RW          608    .data               system_mini51series.o
 
 
-    Execution Region ER_ZI (Base: 0x20000290, Size: 0x00000228, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_ZI (Base: 0x2000028c, Size: 0x0000022c, Max: 0xffffffff, ABSOLUTE)
 
     Base Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x20000290   0x00000028   Zero   RW          414    .bss                bldcsensorless.o
+    0x2000028c   0x00000028   Zero   RW          414    .bss                bldcsensorless.o
+    0x200002b4   0x00000004   PAD
     0x200002b8   0x00000200   Zero   RW          650    STACK               startup_mini51series.o
 
 
@@ -453,11 +454,11 @@ Image component sizes
        200          6          0          0          0      59806   adc.o
        122         20          0         37         40      12305   bldcsensorless.o
        396         26          0          0          0       3385   clk.o
-       296         26          0        540          0       6204   communication.o
+       392         34          0        540          0       6601   communication.o
        220         16         32         12          0       3418   error.o
          0          0          0          0          0      53176   fmc.o
         92          4          0          0          0      54466   gpio.o
-       816         82          0         28          0       7214   it.o
+       696         60          0         24          0       6342   it.o
       1404        172          0          4          0      13799   main.o
        100         30          0         24          0       1657   protection.o
        776         14          0          0          0       7250   pwm.o
@@ -467,9 +468,9 @@ Image component sizes
         80         24          0          8          0        838   system_mini51series.o
 
     ----------------------------------------------------------------------
-      5238        444        256        656        552     229694   Object Totals
+      5214        430        256        652        556     229219   Object Totals
          0          0         32          0          0          0   (incl. Generated)
-         0          0          0          3          0          0   (incl. Padding)
+         0          0          0          3          4          0   (incl. Padding)
 
     ----------------------------------------------------------------------
 
@@ -507,15 +508,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-      5368        460        256        656        552     228578   Grand Totals
-      5368        460        256        656        552     228578   ELF Image Totals
-      5368        460        256        656          0          0   ROM Totals
+      5344        446        256        652        556     228103   Grand Totals
+      5344        446        256        652        556     228103   ELF Image Totals
+      5344        446        256        652          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                 5624 (   5.49kB)
+    Total RO  Size (Code + RO Data)                 5600 (   5.47kB)
     Total RW  Size (RW Data + ZI Data)              1208 (   1.18kB)
-    Total ROM Size (Code + RO Data + RW Data)       6280 (   6.13kB)
+    Total ROM Size (Code + RO Data + RW Data)       6252 (   6.11kB)
 
 ==============================================================================
 

@@ -171,90 +171,20 @@ void ADC_IRQHandler(void)
 	
 void SPI_IRQHandler(void)
 {
-	static ENUM_SPI_RECEIVE_STATE tSPI_LastState = SPI_RCV_IDLE;
-	static uint16_t unSPI_RX_Value;
+
 //	static uint8_t unSelectedReg = 0;
 	
 	// Check if it is really finished one unit transfer
+	SPI_CLR_UNIT_TRANS_INT_FLAG(SPI);
 	if ((SPI->SSR & SPI_SSR_LTRIG_FLAG_Msk) == SPI_SSR_LTRIG_FLAG_Msk)
 	{
-		unSPI_RX_Value = SPI_READ_RX(SPI);
-		
-		if (tMotor.structMotor.MSR.bNewComFrameReceived == FALSE)
-		{
-			switch(tSPI_LastState)
-			{	
-				case SPI_RCV_IDLE:
-				case SPI_RCV_CRC:
-					if (MTR_INVALID_MOTOR_CMD == unSPI_RX_Value)
-					{
-//						SPI_WRITE_TX(SPI, unReadValueCRC);
-						SPI_TRIGGER(SPI);
-						tSPI_LastState = SPI_RCV_IDLE;
-					}
-					else
-					{
-						if (IS_COMM_RD_CMD(unSPI_RX_Value))
-						{
-							unCOM_SPI_ReadData[0] = unSPI_RX_Value;
-//							tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
-							SPI_TRIGGER(SPI);
-							tSPI_LastState = SPI_RCV_RD_CMD;
-						}
-						else
-						{
-							unCOM_SPI_ReadData[0] = unSPI_RX_Value;
-//							SPI_WRITE_TX(SPI, 0);
-							SPI_TRIGGER(SPI);
-							tSPI_LastState = SPI_RCV_WR_CMD;
-						}						
-					}	
-				break;
-			
-				case SPI_RCV_RD_CMD:
-					// If last time is read command, this time must be read CRC and next time must be 0xFFFF on MOSI to read
-					// So the data received is the CRC of read command, now the slave doesn't care
-					unCOM_SPI_ReadData[1] = unSPI_RX_Value;
-//					SPI_WRITE_TX(SPI, unReadValueCRC);
-//					SPI_TRIGGER(SPI);		
-					tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;				
-					tSPI_LastState = SPI_RCV_CRC;	
-				break;
-
-				case SPI_RCV_WR_CMD:
-					// No need to comment
-//					SPI_WRITE_TX(SPI, 0);
-					SPI_TRIGGER(SPI);
-					unCOM_SPI_ReadData[1] = unSPI_RX_Value;
-					tSPI_LastState = SPI_RCV_WR_DATA;	
-				break;
-				
-				case SPI_RCV_WR_DATA:
-					// No need to comment
-					unCOM_SPI_ReadData[2] = unSPI_RX_Value;
-					tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
-					tSPI_LastState = SPI_RCV_CRC;	
-				break;
-			
-				default:
-					unCOM_SPI_TransErrCNT++;
-//					SPI_WRITE_TX(SPI, 0);
-					SPI_TRIGGER(SPI);
-				break;
-			}
-		}
-		else
-		{
-			SPI_TRIGGER(SPI);			
-		}		
+		tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;	
 	}
 	else
 	{
-//		SPI_WRITE_TX(SPI, 0);
 		SPI_TRIGGER(SPI);
 	}
 
-	SPI_CLR_UNIT_TRANS_INT_FLAG(SPI);
 }
 
 
