@@ -358,8 +358,8 @@ void initSys(void)
 
 void initEnv(void)
 {
-	unCOM_SPI_TransCNT = 0;
-	unCOM_SPI_TransErrCNT = 0;
+	tMotor.structMotor.unCommOK_CNT = 0;
+	tMotor.structMotor.unCommErrCNT = 0;
 	unZXMatchCNT = 0;
 	tMotor.structMotor.MSR.bNewComFrameReceived = FALSE;
 //	tSPI_LastState = SPI_RCV_IDLE;

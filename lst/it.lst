@@ -8924,6 +8924,8 @@ N#define DEBUG_TX_PORT						P0
 N#define DEBUG_TX_PIN						BIT0
 N#define DEBUG_RX_PORT						P1
 N#define DEBUG_RX_PIN						BIT2
+N#define LOW_REG_CLR_MASK				0xFFFF0000
+N#define HIGH_REG_CLR_MASK				0x0000FFFF
 N
 N#define TIMER_INVALID_CNT 		0xFFFFFFFF
 N#define BIT_MASK							0x00000001
@@ -8940,6 +8942,8 @@ Xextern volatile uint32_t unSystemTick;
 N
 Ntypedef struct
 N{
+N	__IO uint16_t	unNULL;
+X	volatile uint16_t	unNULL;
 N	struct
 N	{
 N		__IO uint16_t bMotorNeedToRun:1;
@@ -8964,32 +8968,38 @@ N	__IO uint16_t	unMissedZXD_CNT;
 X	volatile uint16_t	unMissedZXD_CNT;
 N	__IO uint16_t	unSuccessZXD_CNT;
 X	volatile uint16_t	unSuccessZXD_CNT;
-N	__IO uint16_t unLocatingDuty;		/*!<  PWM Locating Duty  */
-X	volatile uint16_t unLocatingDuty;		 
-N	__IO uint16_t unRampUpDuty;			/*!<  PWM Ramp Up Start Duty  */
-X	volatile uint16_t unRampUpDuty;			 
-N	__IO uint16_t unTargetDuty;			/*!<  PWM Target (Locked State) Duty  */
-X	volatile uint16_t unTargetDuty;			 
-N	__IO uint16_t unActualDuty;			/*!<  PWM Actual Duty  */
-X	volatile uint16_t unActualDuty;			 
-N	__IO uint16_t unLocatingPeriod;	/*!<  Locating State One Phase Period  */
-X	volatile uint16_t unLocatingPeriod;	 
-N	__IO uint16_t unRESERVE_1;				/*!<  for 4 bytes align */
-X	volatile uint16_t unRESERVE_1;				 
-N	__IO uint32_t unRampUpPeriod;		/*!<  Ramp Up Start One Phase Period  */
-X	volatile uint32_t unRampUpPeriod;		 
-N	__IO uint32_t unActualPeriod;		/*!<  Actual One Phase Period  */
-X	volatile uint32_t unActualPeriod;		 
-N	__IO uint32_t unPhaseChangeCNT;	/*!<  Phase changed counter  */
-X	volatile uint32_t unPhaseChangeCNT;	 
+N	__IO uint16_t unLocatingDuty;			/*!<  PWM Locating Duty  */
+X	volatile uint16_t unLocatingDuty;			 
+N	__IO uint16_t unRampUpDuty;				/*!<  PWM Ramp Up Start Duty  */
+X	volatile uint16_t unRampUpDuty;				 
+N	__IO uint16_t unTargetDuty;				/*!<  PWM Target (Locked State) Duty  */
+X	volatile uint16_t unTargetDuty;				 
+N	__IO uint16_t unActualDuty;				/*!<  PWM Actual Duty  */
+X	volatile uint16_t unActualDuty;				 
+N	__IO uint16_t unLocatingPeriod;		/*!<  Locating State One Phase Period  */
+X	volatile uint16_t unLocatingPeriod;		 
+N	__IO uint16_t unSpeedADC;					/*!<  ADC read data, used to determine Target Duty */
+X	volatile uint16_t unSpeedADC;					 
+N	__IO uint16_t unReserved1;					/*!<  For 4 bytes alignment */
+X	volatile uint16_t unReserved1;					 
+N	__IO uint32_t unRampUpPeriod;			/*!<  Ramp Up Start One Phase Period  */
+X	volatile uint32_t unRampUpPeriod;			 
+N	__IO uint32_t unActualPeriod;			/*!<  Actual One Phase Period  */
+X	volatile uint32_t unActualPeriod;			 
+N	__IO uint32_t unPhaseChangeCNT;		/*!<  Phase changed counter  */
+X	volatile uint32_t unPhaseChangeCNT;		 
 N	__IO uint16_t unRPM;							/*!<  Actual RPM  */
 X	volatile uint16_t unRPM;							 
 N	__IO uint16_t unBattery;					/*!<  Battery Voltage  */
 X	volatile uint16_t unBattery;					 
 N	__IO uint16_t unCurrent;					/*!<  Current  */
 X	volatile uint16_t unCurrent;					 
-N	__IO uint16_t unRESERVE_2;				/*!<  for 4 bytes align */
-X	volatile uint16_t unRESERVE_2;				 
+N	__IO uint16_t unReserved2;					/*!<  For 4 bytes alignment  */
+X	volatile uint16_t unReserved2;					 
+N	__IO uint32_t unCommOK_CNT;				/*!<  Communication OK number */
+X	volatile uint32_t unCommOK_CNT;				 
+N	__IO uint32_t unCommErrCNT;				/*!<  Communication error number */
+X	volatile uint32_t unCommErrCNT;				 
 N} MOTOR_T;
 N
 Ntypedef union
@@ -9021,6 +9031,8 @@ S#define DEBUG_TX_PORT						P0
 S#define DEBUG_TX_PIN						BIT0
 S#define DEBUG_RX_PORT						P1
 S#define DEBUG_RX_PIN						BIT2
+S#define LOW_REG_CLR_MASK				0xFFFF0000
+S#define HIGH_REG_CLR_MASK				0x0000FFFF
 S
 S#define TIMER_INVALID_CNT 		0xFFFFFFFF
 S#define BIT_MASK							0x00000001
@@ -9036,6 +9048,7 @@ Sextern __IO uint32_t unSystemTick;
 S
 Stypedef struct
 S{
+S	__IO uint16_t	unNULL;
 S	struct
 S	{
 S		__IO uint16_t bMotorNeedToRun:1;
@@ -9051,19 +9064,22 @@ S		__IO uint16_t bNewComFrameReceived:1;
 S	}MSR;
 S	__IO uint16_t	unMissedZXD_CNT;
 S	__IO uint16_t	unSuccessZXD_CNT;
-S	__IO uint16_t unLocatingDuty;		/*!<  PWM Locating Duty  */
-S	__IO uint16_t unRampUpDuty;			/*!<  PWM Ramp Up Start Duty  */
-S	__IO uint16_t unTargetDuty;			/*!<  PWM Target (Locked State) Duty  */
-S	__IO uint16_t unActualDuty;			/*!<  PWM Actual Duty  */
-S	__IO uint16_t unLocatingPeriod;	/*!<  Locating State One Phase Period  */
-S	__IO uint16_t unRESERVE_1;				/*!<  for 4 bytes align */
-S	__IO uint32_t unRampUpPeriod;		/*!<  Ramp Up Start One Phase Period  */
-S	__IO uint32_t unActualPeriod;		/*!<  Actual One Phase Period  */
-S	__IO uint32_t unPhaseChangeCNT;	/*!<  Phase changed counter  */
+S	__IO uint16_t unLocatingDuty;			/*!<  PWM Locating Duty  */
+S	__IO uint16_t unRampUpDuty;				/*!<  PWM Ramp Up Start Duty  */
+S	__IO uint16_t unTargetDuty;				/*!<  PWM Target (Locked State) Duty  */
+S	__IO uint16_t unActualDuty;				/*!<  PWM Actual Duty  */
+S	__IO uint16_t unLocatingPeriod;		/*!<  Locating State One Phase Period  */
+S	__IO uint16_t unSpeedADC;					/*!<  ADC read data, used to determine Target Duty */
+S	__IO uint16_t unReserved1;					/*!<  For 4 bytes alignment */
+S	__IO uint32_t unRampUpPeriod;			/*!<  Ramp Up Start One Phase Period  */
+S	__IO uint32_t unActualPeriod;			/*!<  Actual One Phase Period  */
+S	__IO uint32_t unPhaseChangeCNT;		/*!<  Phase changed counter  */
 S	__IO uint16_t unRPM;							/*!<  Actual RPM  */
 S	__IO uint16_t unBattery;					/*!<  Battery Voltage  */
 S	__IO uint16_t unCurrent;					/*!<  Current  */
-S	__IO uint16_t unRESERVE_2;				/*!<  for 4 bytes align */
+S	__IO uint16_t unReserved2;					/*!<  For 4 bytes alignment  */
+S	__IO uint32_t unCommOK_CNT;				/*!<  Communication OK number */
+S	__IO uint32_t unCommErrCNT;				/*!<  Communication error number */
 S} MOTOR_T;
 S
 Stypedef union
@@ -9377,7 +9393,7 @@ Xextern __inline void BLDC_stopMotor(void);
 NEXTERNAL_BLDC void BLDC_SensorLessManager(void);
 Xextern void BLDC_SensorLessManager(void);
 N#endif
-L 69 "User\global.h" 2
+L 75 "User\global.h" 2
 N#include "Communication.h"
 L 1 "User\Communication.h" 1
 N#ifndef __COMMUNICATION_H__
@@ -9406,8 +9422,10 @@ S		0x82E3,0x02E6,0x02EC,0x82E9,0x02F8,0x82FD,0x82F7,0x02F2,0x02D0,0x82D5,0x82DF,
 S		0x8243,0x0246,0x024C,0x8249,0x0258,0x825D,0x8257,0x0252,0x0270,0x8275,0x827F,0x027A,0x826B,0x026E,0x0264,0x8261,
 S		0x0220,0x8225,0x822F,0x022A,0x823B,0x023E,0x0234,0x8231,0x8213,0x0216,0x021C,0x8219,0x0208,0x820D,0x8207,0x0202};
 S		
+S	
 S		typedef enum {
-S			COMM_READ_MCR = 0,
+S			COMM_READ_NULL = 0,
+S			COMM_READ_MCR,
 S			COMM_READ_MSR,
 S			COMM_READ_MISS_ZXD_CNT,
 S			COMM_READ_SCS_ZXD_CNT,
@@ -9416,6 +9434,7 @@ S			COMM_READ_RAMP_UP_DUTY,
 S			COMM_READ_TARGET_DUTY,
 S			COMM_READ_ACTUAL_DUTY,
 S			COMM_READ_LOCATING_PERIOD,
+S			COMM_READ_SPEED_ADC,
 S			COMM_READ_RESERVED_1,
 S			COMM_READ_RAMP_UP_PERIOD_LOW,
 S			COMM_READ_RAMP_UP_PERIOD_HIGH,
@@ -9426,7 +9445,11 @@ S			COMM_READ_PHASE_CHANGE_CNT_HIGH,
 S			COMM_READ_RPM,
 S			COMM_READ_BATTERY,
 S			COMM_READ_CURRENT,
-S			COMM_READ_RESERVE_2,
+S			COMM_READ_RESERVED_2,
+S			COMM_READ_COMM_OK_LOW,
+S			COMM_READ_COMM_OK_HIGH,
+S			COMM_READ_COMM_ERR_LOW,
+S			COMM_READ_COMM_ERR_HIGH,
 S			COMM_READ_MAX
 S		} ENUM_COMM_READ_CMD;
 S
@@ -9438,7 +9461,8 @@ S			COMM_WRITE_LOCATING_DUTY,
 S			COMM_WRITE_RAMP_UP_DUTY,
 S			COMM_WRITE_TARGET_DUTY,
 S			COMM_WRITE_LOCATING_PERIOD,
-S			COMM_WRITE_RAMP_UP_PERIOD,
+S			COMM_WRITE_RAMP_UP_PERIOD_LOW,
+S			COMM_WRITE_RAMP_UP_PERIOD_HIGH,
 S			COMM_WRITE_CMD_MAX
 S		} ENUM_COMM_WRITE_CMD;
 S		
@@ -9449,8 +9473,6 @@ S			SPI_RCV_WR_CMD,
 S			SPI_RCV_WR_DATA,
 S			SPI_RCV_CRC
 S		} ENUM_SPI_RECEIVE_STATE;
-S			
-S		uint32_t unValidFrameCNT;
 S		
 N	#else 
 N		#define EXTERNAL_COMM extern
@@ -9479,6 +9501,7 @@ N#define COMM_DATA_MASK						(0x7FFF)
 N#define COMM_GET_DATA(value)			((value) & COMM_DATA_MASK)
 N#define COMM_BAUT_RATE						0	// 5MHz
 N#define MTR_INVALID_MOTOR_CMD			0xFFFF
+N#define MTR_NULL_MOTOR_CMD				0
 N//typedef enum{
 N//	MOTOR_MCR = 0,	/*!<  Motor Control  */
 N//	MOTOR_MSR,		/*!<  Motor Status  */
@@ -9498,10 +9521,6 @@ N//	MOTOR_RESERVE,		/*!<  Reserve for future use (round up 32bits) */
 N//	MOTOR_BATTERY,		/*!<  Battery Voltage  */
 N//	MOTOR_CURRENT		/*!<  Current  */
 N//} ENUM_COMM_REG;
-NEXTERNAL_COMM uint32_t unCOM_SPI_TransCNT;
-Xextern uint32_t unCOM_SPI_TransCNT;
-NEXTERNAL_COMM uint32_t unCOM_SPI_TransErrCNT;
-Xextern uint32_t unCOM_SPI_TransErrCNT;
 N
 NEXTERNAL_COMM uint16_t unRegisterValue;	// 0 or 0xFFFF means no data
 Xextern uint16_t unRegisterValue;	
@@ -9513,7 +9532,7 @@ Xextern uint16_t unReadValueCRC;
 NEXTERNAL_COMM void COMM_Manager(void);
 Xextern void COMM_Manager(void);
 N#endif
-L 70 "User\global.h" 2
+L 76 "User\global.h" 2
 N#include "Error.h"
 L 1 "User\Error.h" 1
 N#ifndef __ERROR_H__
@@ -9592,7 +9611,7 @@ NEXTERNAL_ERROR void ERR_Manager(void);
 Xextern void ERR_Manager(void);
 N
 N#endif
-L 71 "User\global.h" 2
+L 77 "User\global.h" 2
 N#include "Protection.h"
 L 1 "User\Protection.h" 1
 N#ifndef __PROTECTION_H__
@@ -9647,7 +9666,7 @@ NEXTERNAL_PTC void PTC_checkMotor(void);
 Xextern void PTC_checkMotor(void);
 N
 N#endif
-L 72 "User\global.h" 2
+L 78 "User\global.h" 2
 N#endif 
 L 5 "User\it.h" 2
 N
@@ -9887,154 +9906,6 @@ X		SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 N	}
 N
 N}
-N
-N
-N
-N//	if ((SPI->CNTRL & SPI_STATUS_IF_Msk) == SPI_STATUS_IF_Msk)
-N//	{
-N//		// Check if it is really finished one unit transfer
-N//		if ((SPI->SSR & SPI_SSR_LTRIG_FLAG_Msk) == SPI_SSR_LTRIG_FLAG_Msk)
-N//		{
-N//			SPI_WRITE_TX(SPI, unSPI_RX_Value);
-N//			SPI_TRIGGER(SPI);
-N//			
-N//			unSPI_RX_Value = SPI_READ_RX(SPI);
-N//			if (tMotor.structMotor.MSR.bNewComFrameReceived == FALSE)
-N//			{
-N//				switch(tSPI_LastState)
-N//				{
-N//				case SPI_RCV_IDLE:
-N//				case SPI_RCV_RD_CMD:
-N//				case SPI_RCV_WR_DATA:
-N//					unCOM_SPI_ReadData[0] = (uint16_t)(unSPI_RX_Value >> 16);
-N//					unCOM_SPI_ReadData[1] = (uint16_t)unSPI_RX_Value;
-N//					if (MTR_INVALID_MOTOR_CMD == unCOM_SPI_ReadData[0] )
-N//					{
-N//						// If it is dummy command, means to clear communication.
-N//						// What need to be read is already done in last transaction during receiving this dummy command
-N//						// SO next time no matter read or write command is transmitting, a fresh new frame with 0 data and 0 CRC is responsing
-N//						SPI_WRITE_TX(SPI, 0);
-N//						SPI_TRIGGER(SPI);
-N//						tSPI_LastState = SPI_RCV_IDLE;
-N//					}
-N//					else
-N//					{
-N//						if (IS_COMM_RD_CMD(unCOM_SPI_ReadData[0]))
-N//						{
-N//							tSPI_LastState = SPI_RCV_RD_CMD;
-N//							// Read command received, go to main procedure to handle
-N//							tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
-N//						}
-N//						else
-N//						{
-N//							SPI_WRITE_TX(SPI, 0);
-N//							SPI_TRIGGER(SPI);
-N//							tSPI_LastState = SPI_RCV_WR_CMD;
-N//						}
-N//					}
-N//					break;
-N
-N//				case SPI_RCV_WR_CMD:
-N//					unCOM_SPI_ReadData[2] = (uint16_t)(unSPI_RX_Value >> 16);
-N//					unCOM_SPI_ReadData[3] = (uint16_t)unSPI_RX_Value;
-N//					// Write command and data received, go to main procedure to handle
-N//					tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
-N//					tSPI_LastState = SPI_RCV_WR_DATA;
-N//					break;
-N
-N//				default:
-N//					SPI_WRITE_TX(SPI, 0);
-N//					SPI_TRIGGER(SPI);
-N//					unCOM_SPI_TransErrCNT++;
-N//					break;
-N//				}
-N//			}
-N//			else
-N//			{
-N//				SPI_WRITE_TX(SPI, 0);
-N//				SPI_TRIGGER(SPI);
-N//				unCOM_SPI_TransErrCNT++;
-N//			}
-N//		}
-N//		else
-N//		{
-N//			unWTF = SPI->SSR;
-N//			SPI_WRITE_TX(SPI, 0);
-N//			SPI_TRIGGER(SPI);
-N//			unCOM_SPI_TransErrCNT++;
-N//		}
-N//			unFIFO_RX_CNT = SPI_GET_RX_FIFO_COUNT(SPI);
-N//			if (unFIFO_RX_CNT == COMM_RD_CMD_CNT_IN_32BIT)
-N//			{
-N//				// Received 2 uint16, copy to RAM buffer and infor communication manager
-N//				unSPI_RX_Value = SPI_READ_RX(SPI);
-N//				unCOM_SPI_ReadData[0] = (uint16_t)(unSPI_RX_Value >> 16);
-N//				unCOM_SPI_ReadData[1] = (uint16_t)unSPI_RX_Value;
-N
-N//				if (unCOM_SPI_ReadData[0] != MTR_INVALID_MOTOR_CMD)
-N//				{
-N//					// If it is dummy command, master just want to retrieve last time read's data.
-N//					// For slave, do nothing
-N//					if (IS_COMM_RD_CMD(unCOM_SPI_ReadData[0]))
-N//					{
-N//						tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
-N//					}
-N//					else
-N//					{
-N//						unCOM_SPI_TransErrCNT++;
-N//					}
-N//				}
-N//			}
-N//			else if (unFIFO_RX_CNT == COMM_WR_CMD_CNT_IN_32BIT)
-N//			{
-N//				// Received 4 uint16, copy to RAM buffer and infor communication manager
-N//				unSPI_RX_Value = SPI_READ_RX(SPI);
-N//				unCOM_SPI_ReadData[0] = (uint16_t)(unSPI_RX_Value >> 16);
-N//				unCOM_SPI_ReadData[1] = (uint16_t)unSPI_RX_Value;
-N//				unSPI_RX_Value = SPI_READ_RX(SPI);
-N//				unCOM_SPI_ReadData[2] = (uint16_t)(unSPI_RX_Value >> 16);
-N//				unCOM_SPI_ReadData[3] = (uint16_t)unSPI_RX_Value;
-N//				if (IS_COMM_WR_CMD(unCOM_SPI_ReadData[0]))
-N//				{
-N//					tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;
-N//				}
-N//				else
-N//				{
-N//					unCOM_SPI_TransErrCNT++;
-N//				}
-N//			}
-N//			else
-N//			{
-N//				unCOM_SPI_TransErrCNT++;
-N//			}
-N//		}
-N//		else
-N//		{
-N//			unCOM_SPI_TransErrCNT++;
-N//		}
-N			// Clear Receive FIFO interrupt
-N			// I don't know how to clear. Maybe just after I read out the data in FIFO and it is below threshold it will be OK
-N//		else
-N//		{	// Receive FIFO interrupt should be the only interrupt enabled for SPI
-N//			// So something strange happened
-N//			unCOM_SPI_TransErrCNT++;
-N//			SPI_WRITE_TX(SPI, 0);
-N//			SPI_WRITE_TX(SPI, 0);
-N//			SPI_TRIGGER(SPI);
-N//		}		
-N//		SPI_ClearRxFIFO(SPI);
-N//		SPI_ClearTxFIFO(SPI);
-N//		SPI_CLR_UNIT_TRANS_INT_FLAG(SPI);
-N
-N//	}
-N//	else
-N//	{
-N//		SPI_WRITE_TX(SPI, 0);
-N//		SPI_TRIGGER(SPI);
-N//		unCOM_SPI_TransErrCNT++;
-N//	}
-N	
-N//}
 N
 Nvoid SysTick_Handler(void)
 N{

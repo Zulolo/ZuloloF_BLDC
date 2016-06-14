@@ -90,9 +90,12 @@ int32_t nWriteCommandHandler(uint16_t* pCOM_Buff)
 	case COMM_WRITE_LOCATING_PERIOD:
 		tMotor.structMotor.unLocatingPeriod = pCOM_Buff[1];
 		break;
-	case COMM_WRITE_RAMP_UP_PERIOD:
-		tMotor.structMotor.unRampUpPeriod = pCOM_Buff[1] + (pCOM_Buff[2] << 16);
-			break;
+	case COMM_WRITE_RAMP_UP_PERIOD_LOW:
+		tMotor.structMotor.unRampUpPeriod = (tMotor.structMotor.unRampUpPeriod & LOW_REG_CLR_MASK) | ((uint32_t)(pCOM_Buff[1]));
+		break;
+	case COMM_WRITE_RAMP_UP_PERIOD_HIGH:
+		tMotor.structMotor.unRampUpPeriod = (tMotor.structMotor.unRampUpPeriod & HIGH_REG_CLR_MASK) | (((uint32_t)(pCOM_Buff[1])) << 16);
+		break;
 	default:
 
 		return -1;
@@ -120,9 +123,8 @@ void COMM_Manager(void)
 		switch(tSPI_LastState)
 		{	
 			case SPI_RCV_IDLE:
-				if ((MTR_INVALID_MOTOR_CMD == unSPI_RX_Value) || (0 == unSPI_RX_Value))
+				if ((MTR_INVALID_MOTOR_CMD == unSPI_RX_Value) || (MTR_NULL_MOTOR_CMD == unSPI_RX_Value))
 				{
-//						SPI_WRITE_TX(SPI, unReadValueCRC);
 					SPI_WRITE_TX(SPI, 0);
 					tSPI_LastState = SPI_RCV_IDLE;
 				}
@@ -154,7 +156,7 @@ void COMM_Manager(void)
 				}
 				else
 				{
-					unCOM_SPI_TransErrCNT++;
+					tMotor.structMotor.unCommErrCNT++;
 					tSPI_LastState = SPI_RCV_IDLE;									
 				}	
 			break;
@@ -165,7 +167,7 @@ void COMM_Manager(void)
 				unCOM_SPI_ReadData[1] = unSPI_RX_Value;
 				if (nReadCommandHandler(unCOM_SPI_ReadData[0]) == 0)
 				{
-					unValidFrameCNT++;
+					tMotor.structMotor.unCommOK_CNT++;
 				}				
 				tSPI_LastState = SPI_RCV_CRC;	
 			break;
@@ -184,7 +186,7 @@ void COMM_Manager(void)
 				{
 					if (nWriteCommandHandler(unCOM_SPI_ReadData) == 0)
 					{
-						unValidFrameCNT++;
+						tMotor.structMotor.unCommOK_CNT++;
 					}
 					else
 					{
@@ -195,31 +197,31 @@ void COMM_Manager(void)
 			break;
 		
 			default:
-				unCOM_SPI_TransErrCNT++;
+				tMotor.structMotor.unCommErrCNT++;
 			break;
 		}
 		SPI_TRIGGER(SPI);
 	}
 	
 	// Comm protection 1: If have NOT received any frame in 500ms, error
-//	if ((uint32_t)(unSystemTick - unLastCheckTime) > 500)
-//	{
-//		unLastCheckTime = unSystemTick;
-//		if ((uint32_t)(unValidFrameCNT - unLastFrameCNT) < 1)
-//		{
-//			BLDC_stopMotor();
-//			setError(ERR_COMMUNICATION_FAIL);
-//			// I don't know why,
-//			// But seems every time enter here, the GO_BUSY bit of SPI Control register will be reset
-//			SPI_TRIGGER(SPI);			
-//		}
-//		unLastFrameCNT = unValidFrameCNT;
-//	}
-//	// Comm protection 2: If received error frame exceed some threshold, error
-//	if (unCOM_SPI_TransErrCNT > COM_SPI_TRANS_ERR_THRESHOLD)
-//	{
-//		BLDC_stopMotor();
-//		setError(ERR_COMMUNICATION_FAIL);
-//		SPI_TRIGGER(SPI);	
-//	}
+	if ((uint32_t)(unSystemTick - unLastCheckTime) > 500)
+	{
+		unLastCheckTime = unSystemTick;
+		if ((uint32_t)(tMotor.structMotor.unCommOK_CNT - unLastFrameCNT) < 1)
+		{
+			BLDC_stopMotor();
+			setError(ERR_COMMUNICATION_FAIL);
+			// I don't know why,
+			// But seems every time enter here, the GO_BUSY bit of SPI Control register will be reset
+			SPI_TRIGGER(SPI);			
+		}
+		unLastFrameCNT = tMotor.structMotor.unCommOK_CNT;
+	}
+	// Comm protection 2: If received error frame exceed some threshold, error
+	if (tMotor.structMotor.unCommErrCNT > COM_SPI_TRANS_ERR_THRESHOLD)
+	{
+		BLDC_stopMotor();
+		setError(ERR_COMMUNICATION_FAIL);
+		SPI_TRIGGER(SPI);	
+	}
 }

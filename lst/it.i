@@ -7222,7 +7222,7 @@ void WDT_DisableInt(void);
 
 
 
-#line 16 "User\\global.h"
+#line 18 "User\\global.h"
 
 
 
@@ -7238,6 +7238,7 @@ extern volatile uint32_t unSystemTick;
 
 typedef struct
 {
+	volatile uint16_t	unNULL;
 	struct
 	{
 		volatile uint16_t bMotorNeedToRun:1;
@@ -7253,19 +7254,22 @@ typedef struct
 	}MSR;
 	volatile uint16_t	unMissedZXD_CNT;
 	volatile uint16_t	unSuccessZXD_CNT;
-	volatile uint16_t unLocatingDuty;		 
-	volatile uint16_t unRampUpDuty;			 
-	volatile uint16_t unTargetDuty;			 
-	volatile uint16_t unActualDuty;			 
-	volatile uint16_t unLocatingPeriod;	 
-	volatile uint16_t unRESERVE_1;				 
-	volatile uint32_t unRampUpPeriod;		 
-	volatile uint32_t unActualPeriod;		 
-	volatile uint32_t unPhaseChangeCNT;	 
+	volatile uint16_t unLocatingDuty;			 
+	volatile uint16_t unRampUpDuty;				 
+	volatile uint16_t unTargetDuty;				 
+	volatile uint16_t unActualDuty;				 
+	volatile uint16_t unLocatingPeriod;		 
+	volatile uint16_t unSpeedADC;					 
+	volatile uint16_t unReserved1;					 
+	volatile uint32_t unRampUpPeriod;			 
+	volatile uint32_t unActualPeriod;			 
+	volatile uint32_t unPhaseChangeCNT;		 
 	volatile uint16_t unRPM;							 
 	volatile uint16_t unBattery;					 
 	volatile uint16_t unCurrent;					 
-	volatile uint16_t unRESERVE_2;				 
+	volatile uint16_t unReserved2;					 
+	volatile uint32_t unCommOK_CNT;				 
+	volatile uint32_t unCommErrCNT;				 
 } MOTOR_T;
 
 typedef union
@@ -7360,14 +7364,14 @@ extern uint8_t unCurrentPhase;
 extern uint8_t FLAG_PHASE_CHANGED;
 extern __inline void BLDC_stopMotor(void);
 extern void BLDC_SensorLessManager(void);
-#line 69 "User\\global.h"
+#line 75 "User\\global.h"
 #line 1 "User\\Communication.h"
 
 
 
 #line 5 "User\\Communication.h"
 
-#line 76 "User\\Communication.h"
+#line 82 "User\\Communication.h"
 
 
 
@@ -7385,7 +7389,7 @@ extern void BLDC_SensorLessManager(void);
 
 
 		
-#line 100 "User\\Communication.h"
+#line 107 "User\\Communication.h"
 
 
 
@@ -7405,15 +7409,13 @@ extern void BLDC_SensorLessManager(void);
 
 
 
-extern uint32_t unCOM_SPI_TransCNT;
-extern uint32_t unCOM_SPI_TransErrCNT;
 
 extern uint16_t unRegisterValue;	
 
 extern uint8_t FlagRegisterNeedWrite;
 extern uint16_t unReadValueCRC;
 extern void COMM_Manager(void);
-#line 70 "User\\global.h"
+#line 76 "User\\global.h"
 #line 1 "User\\Error.h"
 
 
@@ -7465,7 +7467,7 @@ extern void setError(ENUM_ERROR_LEVEL enumErrorType);
 extern void clearError(void);
 extern void ERR_Manager(void);
 
-#line 71 "User\\global.h"
+#line 77 "User\\global.h"
 #line 1 "User\\Protection.h"
 
 
@@ -7501,7 +7503,7 @@ extern void ERR_Manager(void);
 
 extern void PTC_checkMotor(void);
 
-#line 72 "User\\global.h"
+#line 78 "User\\global.h"
 #line 5 "User\\it.h"
 
 
@@ -7694,154 +7696,6 @@ void SPI_IRQHandler(void)
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-			
-			
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	
-
 
 void SysTick_Handler(void)
 {

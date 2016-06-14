@@ -864,7 +864,7 @@
                   |L1.1176|
                           DCD      0x00000373
                   |L1.1180|
-00049c  492d              LDR      r1,|L1.1364|
+00049c  492c              LDR      r1,|L1.1360|
 00049e  3180              ADDS     r1,r1,#0x80
 0004a0  6008              STR      r0,[r1,#0]
 ;;;313    }
@@ -889,8 +889,8 @@
 ;;;325        /* User can use SystemCoreClockUpdate() to calculate SystemCoreClock and cyclesPerUs automatically. */
 ;;;326        SystemCoreClockUpdate(); 
 0004ae  f7fffffe          BL       SystemCoreClockUpdate
-0004b2  4c2a              LDR      r4,|L1.1372|
-0004b4  4828              LDR      r0,|L1.1368|
+0004b2  4c29              LDR      r4,|L1.1368|
+0004b4  4827              LDR      r0,|L1.1364|
 0004b6  6160              STR      r0,[r4,#0x14]
 0004b8  2103              MOVS     r1,#3
 0004ba  1f08              SUBS     r0,r1,#4
@@ -943,72 +943,70 @@
 
                   initEnv PROC
 ;;;359    void initEnv(void)
-0004e6  491e              LDR      r1,|L1.1376|
+0004e6  481d              LDR      r0,|L1.1372|
 ;;;360    {
-;;;361    	unCOM_SPI_TransCNT = 0;
-0004e8  2000              MOVS     r0,#0
-;;;362    	unCOM_SPI_TransErrCNT = 0;
-0004ea  6008              STR      r0,[r1,#0]  ; unCOM_SPI_TransCNT
-0004ec  491d              LDR      r1,|L1.1380|
+;;;361    	tMotor.structMotor.unCommOK_CNT = 0;
+0004e8  2100              MOVS     r1,#0
+0004ea  62c1              STR      r1,[r0,#0x2c]  ; tMotor
+;;;362    	tMotor.structMotor.unCommErrCNT = 0;
+0004ec  6301              STR      r1,[r0,#0x30]  ; tMotor
 ;;;363    	unZXMatchCNT = 0;
-0004ee  6008              STR      r0,[r1,#0]  ; unCOM_SPI_TransErrCNT
-0004f0  491d              LDR      r1,|L1.1384|
-0004f2  6008              STR      r0,[r1,#0]  ; unZXMatchCNT
+0004ee  4a1c              LDR      r2,|L1.1376|
+0004f0  6011              STR      r1,[r2,#0]  ; unZXMatchCNT
 ;;;364    	tMotor.structMotor.MSR.bNewComFrameReceived = FALSE;
-0004f4  481d              LDR      r0,|L1.1388|
-0004f6  8841              LDRH     r1,[r0,#2]  ; tMotor
-0004f8  2210              MOVS     r2,#0x10
-0004fa  4391              BICS     r1,r1,r2
-0004fc  8041              STRH     r1,[r0,#2]
+0004f2  8881              LDRH     r1,[r0,#4]  ; tMotor
+0004f4  2210              MOVS     r2,#0x10
+0004f6  4391              BICS     r1,r1,r2
+0004f8  8081              STRH     r1,[r0,#4]
 ;;;365    //	tSPI_LastState = SPI_RCV_IDLE;
 ;;;366    }
-0004fe  4770              BX       lr
+0004fa  4770              BX       lr
 ;;;367    uint32_t unWTF_Value = 0xA5D4;
                           ENDP
 
                   main PROC
 ;;;368    int main()
-000500  f7fffffe          BL       initSys
+0004fc  f7fffffe          BL       initSys
 ;;;369    {
 ;;;370    
 ;;;371    	initSys();
 ;;;372    	initEnv();
-000504  f7fffffe          BL       initEnv
+000500  f7fffffe          BL       initEnv
 ;;;373    
 ;;;374    	PTC_checkMotor();
-000508  f7fffffe          BL       PTC_checkMotor
+000504  f7fffffe          BL       PTC_checkMotor
 ;;;375    
 ;;;376    	/* ----==== Here is the parameter used for test ====----*/
 ;;;377    	// Max PWM Duty is: PWM_PERIOD = 441
 ;;;378    	// Max Period is:
 ;;;379    	MOTOR_SHUT_DOWN;
-00050c  4918              LDR      r1,|L1.1392|
-00050e  2000              MOVS     r0,#0
-000510  6208              STR      r0,[r1,#0x20]
-000512  4a10              LDR      r2,|L1.1364|
-000514  3240              ADDS     r2,r2,#0x40
-000516  6150              STR      r0,[r2,#0x14]
-000518  4816              LDR      r0,|L1.1396|
-00051a  6801              LDR      r1,[r0,#0]
-00051c  0383              LSLS     r3,r0,#14
-00051e  4399              BICS     r1,r1,r3
-000520  6001              STR      r1,[r0,#0]
-000522  4914              LDR      r1,|L1.1396|
-000524  3120              ADDS     r1,r1,#0x20
-000526  680c              LDR      r4,[r1,#0]
-000528  439c              BICS     r4,r4,r3
-00052a  600c              STR      r4,[r1,#0]
-00052c  6804              LDR      r4,[r0,#0]
-00052e  0343              LSLS     r3,r0,#13
-000530  439c              BICS     r4,r4,r3
-000532  6004              STR      r4,[r0,#0]
-000534  6808              LDR      r0,[r1,#0]
-000536  4398              BICS     r0,r0,r3
-000538  6008              STR      r0,[r1,#0]
-00053a  20ff              MOVS     r0,#0xff
-00053c  63d0              STR      r0,[r2,#0x3c]
-00053e  6390              STR      r0,[r2,#0x38]
-                  |L1.1344|
+000508  4916              LDR      r1,|L1.1380|
+00050a  2000              MOVS     r0,#0
+00050c  6208              STR      r0,[r1,#0x20]
+00050e  4a10              LDR      r2,|L1.1360|
+000510  3240              ADDS     r2,r2,#0x40
+000512  6150              STR      r0,[r2,#0x14]
+000514  4814              LDR      r0,|L1.1384|
+000516  6801              LDR      r1,[r0,#0]
+000518  0383              LSLS     r3,r0,#14
+00051a  4399              BICS     r1,r1,r3
+00051c  6001              STR      r1,[r0,#0]
+00051e  4912              LDR      r1,|L1.1384|
+000520  3120              ADDS     r1,r1,#0x20
+000522  680c              LDR      r4,[r1,#0]
+000524  439c              BICS     r4,r4,r3
+000526  600c              STR      r4,[r1,#0]
+000528  6804              LDR      r4,[r0,#0]
+00052a  0343              LSLS     r3,r0,#13
+00052c  439c              BICS     r4,r4,r3
+00052e  6004              STR      r4,[r0,#0]
+000530  6808              LDR      r0,[r1,#0]
+000532  4398              BICS     r0,r0,r3
+000534  6008              STR      r0,[r1,#0]
+000536  20ff              MOVS     r0,#0xff
+000538  63d0              STR      r0,[r2,#0x3c]
+00053a  6390              STR      r0,[r2,#0x38]
+                  |L1.1340|
 ;;;380    
 ;;;381        // Example parameter
 ;;;382    //    tMotor.structMotor.unLocatingDuty = 200;
@@ -1024,8 +1022,8 @@
 ;;;392    	{
 ;;;393    //		BLDC_SensorLessManager();
 ;;;394    		COMM_Manager();
-000540  f7fffffe          BL       COMM_Manager
-000544  e7fc              B        |L1.1344|
+00053c  f7fffffe          BL       COMM_Manager
+000540  e7fc              B        |L1.1340|
 ;;;395    //		ERR_Manager();
 ;;;396    	}
 ;;;397    
@@ -1036,38 +1034,34 @@
                   NVIC_EnableIRQ PROC
 ;;;503     */
 ;;;504    __STATIC_INLINE void NVIC_EnableIRQ(IRQn_Type IRQn)
-000546  06c1              LSLS     r1,r0,#27
+000542  06c1              LSLS     r1,r0,#27
 ;;;505    {
 ;;;506      NVIC->ISER[0] = (1 << ((uint32_t)(IRQn) & 0x1F));
-000548  0ec9              LSRS     r1,r1,#27
-00054a  2001              MOVS     r0,#1
-00054c  4088              LSLS     r0,r0,r1
-00054e  490a              LDR      r1,|L1.1400|
-000550  6008              STR      r0,[r1,#0]
+000544  0ec9              LSRS     r1,r1,#27
+000546  2001              MOVS     r0,#1
+000548  4088              LSLS     r0,r0,r1
+00054a  4908              LDR      r1,|L1.1388|
+00054c  6008              STR      r0,[r1,#0]
 ;;;507    }
-000552  4770              BX       lr
+00054e  4770              BX       lr
 ;;;508    
                           ENDP
 
-                  |L1.1364|
+                  |L1.1360|
                           DCD      0x40040000
-                  |L1.1368|
+                  |L1.1364|
                           DCD      0x0001affe
-                  |L1.1372|
+                  |L1.1368|
                           DCD      0xe000e000
-                  |L1.1376|
-                          DCD      unCOM_SPI_TransCNT
-                  |L1.1380|
-                          DCD      unCOM_SPI_TransErrCNT
-                  |L1.1384|
-                          DCD      unZXMatchCNT
-                  |L1.1388|
+                  |L1.1372|
                           DCD      tMotor
-                  |L1.1392|
+                  |L1.1376|
+                          DCD      unZXMatchCNT
+                  |L1.1380|
                           DCD      0x50004240
-                  |L1.1396|
+                  |L1.1384|
                           DCD      0x40010000
-                  |L1.1400|
+                  |L1.1388|
                           DCD      0xe000e100
 
                           AREA ||.constdata||, DATA, READONLY, ALIGN=1

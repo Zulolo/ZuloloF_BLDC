@@ -21,7 +21,7 @@
 ;;;20     
 ;;;21     	if (TRUE == tMotor.structMotor.MSR.bZeroCrossDetecting)
 00000e  489d              LDR      r0,|L1.644|
-000010  8840              LDRH     r0,[r0,#2]  ; tMotor
+000010  8880              LDRH     r0,[r0,#4]  ; tMotor
 000012  0780              LSLS     r0,r0,#30
 000014  d519              BPL      |L1.74|
 000016  4a99              LDR      r2,|L1.636|
@@ -109,23 +109,23 @@
 000074  6010              STR      r0,[r2,#0]  ; unLastZXDetectedTime
 ;;;49     		tMotor.structMotor.MSR.bThisPhaseDetectedZX = TRUE;
 000076  4883              LDR      r0,|L1.644|
-000078  8842              LDRH     r2,[r0,#2]  ; tMotor
+000078  8882              LDRH     r2,[r0,#4]  ; tMotor
 00007a  2408              MOVS     r4,#8
 00007c  4322              ORRS     r2,r2,r4
-00007e  8042              STRH     r2,[r0,#2]
+00007e  8082              STRH     r2,[r0,#4]
 ;;;50     //		iTestDetectedZX++;
 ;;;51     		if (TRUE == tMotor.structMotor.MSR.bLocked)
-000080  8842              LDRH     r2,[r0,#2]  ; tMotor
+000080  8882              LDRH     r2,[r0,#4]  ; tMotor
 000082  0752              LSLS     r2,r2,#29
 000084  d516              BPL      |L1.180|
 ;;;52     		{
 ;;;53     			tMotor.structMotor.unActualPeriod = (iTempDeltaZXD + tMotor.structMotor.unActualPeriod) >> 1;
-000086  6982              LDR      r2,[r0,#0x18]  ; tMotor
+000086  69c2              LDR      r2,[r0,#0x1c]  ; tMotor
 000088  1851              ADDS     r1,r2,r1
 00008a  0849              LSRS     r1,r1,#1
-00008c  6181              STR      r1,[r0,#0x18]  ; tMotor
+00008c  61c1              STR      r1,[r0,#0x1c]  ; tMotor
 ;;;54     			iHalfPeriod = tMotor.structMotor.unActualPeriod >> 1;
-00008e  6980              LDR      r0,[r0,#0x18]  ; tMotor
+00008e  69c0              LDR      r0,[r0,#0x1c]  ; tMotor
 ;;;55     			TIMER_SET_CMP_VALUE(TIMER0, TIMER0->TDR + (iHalfPeriod > TIME_DEBT) ? (iHalfPeriod - TIME_DEBT) : ZXD_BEFORE_PHCHG);
 000090  4a7a              LDR      r2,|L1.636|
 000092  0840              LSRS     r0,r0,#1              ;54
@@ -333,7 +333,7 @@
 000170  6832              LDR      r2,[r6,#0]
 000172  0592              LSLS     r2,r2,#22
 000174  0d92              LSRS     r2,r2,#22
-000176  848a              STRH     r2,[r1,#0x24]
+000176  850a              STRH     r2,[r1,#0x28]
 ;;;128    			ADC_SET_INPUT_CHANNEL(ADC, ADC_BATTERY_CHN_MSK);		
 000178  6a71              LDR      r1,[r6,#0x24]
 00017a  0a09              LSRS     r1,r1,#8
@@ -351,7 +351,7 @@
 000188  6832              LDR      r2,[r6,#0]
 00018a  0592              LSLS     r2,r2,#22
 00018c  0d92              LSRS     r2,r2,#22
-00018e  844a              STRH     r2,[r1,#0x22]
+00018e  84ca              STRH     r2,[r1,#0x26]
 ;;;133    			ADC_SET_INPUT_CHANNEL(ADC, ADC_CURRENT_CHN_MSK);
 000190  6a71              LDR      r1,[r6,#0x24]
 000192  0a09              LSRS     r1,r1,#8
@@ -513,10 +513,10 @@
 ;;;180    	{
 ;;;181    		tMotor.structMotor.MSR.bNewComFrameReceived = TRUE;	
 00025c  4809              LDR      r0,|L1.644|
-00025e  8841              LDRH     r1,[r0,#2]  ; tMotor
+00025e  8881              LDRH     r1,[r0,#4]  ; tMotor
 000260  2210              MOVS     r2,#0x10
 000262  4311              ORRS     r1,r1,r2
-000264  8041              STRH     r1,[r0,#2]
+000264  8081              STRH     r1,[r0,#4]
 ;;;182    	}
 ;;;183    	else
 ;;;184    	{
@@ -535,15 +535,14 @@
                           ENDP
 
                   SysTick_Handler PROC
-;;;337    
-;;;338    void SysTick_Handler(void)
+;;;190    void SysTick_Handler(void)
 000272  480f              LDR      r0,|L1.688|
-;;;339    {
-;;;340    	unSystemTick += 5;
+;;;191    {
+;;;192    	unSystemTick += 5;
 000274  6801              LDR      r1,[r0,#0]  ; unSystemTick
 000276  1d49              ADDS     r1,r1,#5
 000278  6001              STR      r1,[r0,#0]  ; unSystemTick
-;;;341    }
+;;;193    }
 00027a  4770              BX       lr
                           ENDP
 

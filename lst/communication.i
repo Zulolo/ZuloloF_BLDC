@@ -7222,7 +7222,7 @@ void WDT_DisableInt(void);
 
 
 
-#line 16 "User\\global.h"
+#line 18 "User\\global.h"
 
 
 
@@ -7238,6 +7238,7 @@ extern volatile uint32_t unSystemTick;
 
 typedef struct
 {
+	volatile uint16_t	unNULL;
 	struct
 	{
 		volatile uint16_t bMotorNeedToRun:1;
@@ -7253,19 +7254,22 @@ typedef struct
 	}MSR;
 	volatile uint16_t	unMissedZXD_CNT;
 	volatile uint16_t	unSuccessZXD_CNT;
-	volatile uint16_t unLocatingDuty;		 
-	volatile uint16_t unRampUpDuty;			 
-	volatile uint16_t unTargetDuty;			 
-	volatile uint16_t unActualDuty;			 
-	volatile uint16_t unLocatingPeriod;	 
-	volatile uint16_t unRESERVE_1;				 
-	volatile uint32_t unRampUpPeriod;		 
-	volatile uint32_t unActualPeriod;		 
-	volatile uint32_t unPhaseChangeCNT;	 
+	volatile uint16_t unLocatingDuty;			 
+	volatile uint16_t unRampUpDuty;				 
+	volatile uint16_t unTargetDuty;				 
+	volatile uint16_t unActualDuty;				 
+	volatile uint16_t unLocatingPeriod;		 
+	volatile uint16_t unSpeedADC;					 
+	volatile uint16_t unReserved1;					 
+	volatile uint32_t unRampUpPeriod;			 
+	volatile uint32_t unActualPeriod;			 
+	volatile uint32_t unPhaseChangeCNT;		 
 	volatile uint16_t unRPM;							 
 	volatile uint16_t unBattery;					 
 	volatile uint16_t unCurrent;					 
-	volatile uint16_t unRESERVE_2;				 
+	volatile uint16_t unReserved2;					 
+	volatile uint32_t unCommOK_CNT;				 
+	volatile uint32_t unCommErrCNT;				 
 } MOTOR_T;
 
 typedef union
@@ -7360,9 +7364,9 @@ extern uint8_t unCurrentPhase;
 extern uint8_t FLAG_PHASE_CHANGED;
 extern __inline void BLDC_stopMotor(void);
 extern void BLDC_SensorLessManager(void);
-#line 69 "User\\global.h"
+#line 75 "User\\global.h"
 #line 1 "User\\Communication.h"
-#line 70 "User\\global.h"
+#line 76 "User\\global.h"
 #line 1 "User\\Error.h"
 
 
@@ -7414,7 +7418,7 @@ extern void setError(ENUM_ERROR_LEVEL enumErrorType);
 extern void clearError(void);
 extern void ERR_Manager(void);
 
-#line 71 "User\\global.h"
+#line 77 "User\\global.h"
 #line 1 "User\\Protection.h"
 
 
@@ -7450,7 +7454,7 @@ extern void ERR_Manager(void);
 
 extern void PTC_checkMotor(void);
 
-#line 72 "User\\global.h"
+#line 78 "User\\global.h"
 #line 5 "User\\Communication.h"
 
 
@@ -7474,8 +7478,10 @@ extern void PTC_checkMotor(void);
 		0x8243,0x0246,0x024C,0x8249,0x0258,0x825D,0x8257,0x0252,0x0270,0x8275,0x827F,0x027A,0x826B,0x026E,0x0264,0x8261,
 		0x0220,0x8225,0x822F,0x022A,0x823B,0x023E,0x0234,0x8231,0x8213,0x0216,0x021C,0x8219,0x0208,0x820D,0x8207,0x0202};
 		
+	
 		typedef enum {
-			COMM_READ_MCR = 0,
+			COMM_READ_NULL = 0,
+			COMM_READ_MCR,
 			COMM_READ_MSR,
 			COMM_READ_MISS_ZXD_CNT,
 			COMM_READ_SCS_ZXD_CNT,
@@ -7484,6 +7490,7 @@ extern void PTC_checkMotor(void);
 			COMM_READ_TARGET_DUTY,
 			COMM_READ_ACTUAL_DUTY,
 			COMM_READ_LOCATING_PERIOD,
+			COMM_READ_SPEED_ADC,
 			COMM_READ_RESERVED_1,
 			COMM_READ_RAMP_UP_PERIOD_LOW,
 			COMM_READ_RAMP_UP_PERIOD_HIGH,
@@ -7494,7 +7501,11 @@ extern void PTC_checkMotor(void);
 			COMM_READ_RPM,
 			COMM_READ_BATTERY,
 			COMM_READ_CURRENT,
-			COMM_READ_RESERVE_2,
+			COMM_READ_RESERVED_2,
+			COMM_READ_COMM_OK_LOW,
+			COMM_READ_COMM_OK_HIGH,
+			COMM_READ_COMM_ERR_LOW,
+			COMM_READ_COMM_ERR_HIGH,
 			COMM_READ_MAX
 		} ENUM_COMM_READ_CMD;
 
@@ -7506,7 +7517,8 @@ extern void PTC_checkMotor(void);
 			COMM_WRITE_RAMP_UP_DUTY,
 			COMM_WRITE_TARGET_DUTY,
 			COMM_WRITE_LOCATING_PERIOD,
-			COMM_WRITE_RAMP_UP_PERIOD,
+			COMM_WRITE_RAMP_UP_PERIOD_LOW,
+			COMM_WRITE_RAMP_UP_PERIOD_HIGH,
 			COMM_WRITE_CMD_MAX
 		} ENUM_COMM_WRITE_CMD;
 		
@@ -7517,8 +7529,6 @@ extern void PTC_checkMotor(void);
 			SPI_RCV_WR_DATA,
 			SPI_RCV_CRC
 		} ENUM_SPI_RECEIVE_STATE;
-			
-		uint32_t unValidFrameCNT;
 		
 
 
@@ -7540,7 +7550,7 @@ extern void PTC_checkMotor(void);
 
 
 		
-#line 100 "User\\Communication.h"
+#line 107 "User\\Communication.h"
 
 
 
@@ -7560,8 +7570,6 @@ extern void PTC_checkMotor(void);
 
 
 
- uint32_t unCOM_SPI_TransCNT;
- uint32_t unCOM_SPI_TransErrCNT;
 
  uint16_t unRegisterValue;	
 
@@ -8071,9 +8079,12 @@ int32_t nWriteCommandHandler(uint16_t* pCOM_Buff)
 	case COMM_WRITE_LOCATING_PERIOD:
 		tMotor.structMotor.unLocatingPeriod = pCOM_Buff[1];
 		break;
-	case COMM_WRITE_RAMP_UP_PERIOD:
-		tMotor.structMotor.unRampUpPeriod = pCOM_Buff[1] + (pCOM_Buff[2] << 16);
-			break;
+	case COMM_WRITE_RAMP_UP_PERIOD_LOW:
+		tMotor.structMotor.unRampUpPeriod = (tMotor.structMotor.unRampUpPeriod & 0xFFFF0000) | ((uint32_t)(pCOM_Buff[1]));
+		break;
+	case COMM_WRITE_RAMP_UP_PERIOD_HIGH:
+		tMotor.structMotor.unRampUpPeriod = (tMotor.structMotor.unRampUpPeriod & 0x0000FFFF) | (((uint32_t)(pCOM_Buff[1])) << 16);
+		break;
 	default:
 
 		return -1;
@@ -8103,7 +8114,6 @@ void COMM_Manager(void)
 			case SPI_RCV_IDLE:
 				if ((0xFFFF == unSPI_RX_Value) || (0 == unSPI_RX_Value))
 				{
-
 					SPI_WRITE_TX(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)), 0);
 					tSPI_LastState = SPI_RCV_IDLE;
 				}
@@ -8135,7 +8145,7 @@ void COMM_Manager(void)
 				}
 				else
 				{
-					unCOM_SPI_TransErrCNT++;
+					tMotor.structMotor.unCommErrCNT++;
 					tSPI_LastState = SPI_RCV_IDLE;									
 				}	
 			break;
@@ -8146,7 +8156,7 @@ void COMM_Manager(void)
 				unCOM_SPI_ReadData[1] = unSPI_RX_Value;
 				if (nReadCommandHandler(unCOM_SPI_ReadData[0]) == 0)
 				{
-					unValidFrameCNT++;
+					tMotor.structMotor.unCommOK_CNT++;
 				}				
 				tSPI_LastState = SPI_RCV_CRC;	
 			break;
@@ -8165,7 +8175,7 @@ void COMM_Manager(void)
 				{
 					if (nWriteCommandHandler(unCOM_SPI_ReadData) == 0)
 					{
-						unValidFrameCNT++;
+						tMotor.structMotor.unCommOK_CNT++;
 					}
 					else
 					{
@@ -8176,31 +8186,31 @@ void COMM_Manager(void)
 			break;
 		
 			default:
-				unCOM_SPI_TransErrCNT++;
+				tMotor.structMotor.unCommErrCNT++;
 			break;
 		}
 		SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));
 	}
 	
 	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	if ((uint32_t)(unSystemTick - unLastCheckTime) > 500)
+	{
+		unLastCheckTime = unSystemTick;
+		if ((uint32_t)(tMotor.structMotor.unCommOK_CNT - unLastFrameCNT) < 1)
+		{
+			BLDC_stopMotor();
+			setError(ERR_COMMUNICATION_FAIL);
+			
+			
+			SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));			
+		}
+		unLastFrameCNT = tMotor.structMotor.unCommOK_CNT;
+	}
+	
+	if (tMotor.structMotor.unCommErrCNT > 6)
+	{
+		BLDC_stopMotor();
+		setError(ERR_COMMUNICATION_FAIL);
+		SPI_TRIGGER(((SPI_T *) (((uint32_t)0x40000000) + 0x30000)));	
+	}
 }
