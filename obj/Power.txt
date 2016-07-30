@@ -31,8 +31,8 @@
     Program header entries: 1
     Section header entries: 16
 
-    Program header offset: 268980 (0x00041ab4)
-    Section header offset: 269012 (0x00041ad4)
+    Program header offset: 268904 (0x00041a68)
+    Section header offset: 268936 (0x00041a88)
 
     Section header string table index: 15
 
@@ -2845,7 +2845,7 @@
 
 
 ** Section #6 '.debug_info' (SHT_PROGBITS)
-    Size   : 37616 bytes
+    Size   : 37568 bytes
 
 
 ** Section #7 '.debug_line' (SHT_PROGBITS)
@@ -2879,7 +2879,7 @@
 
 
 ** Section #14 '.comment' (SHT_PROGBITS)
-    Size   : 22500 bytes
+    Size   : 22472 bytes
 
 
 ** Section #15 '.shstrtab' (SHT_STRTAB)
