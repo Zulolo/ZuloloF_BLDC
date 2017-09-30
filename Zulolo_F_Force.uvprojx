@@ -334,7 +334,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>CLK_APBCLK_ACMP_EN_Pos=CLK_APBCLK_CMP_EN_Pos</Define>
+              <Define>CLK_APBCLK_ACMP_EN_Pos=CLK_APBCLK_CMP_EN_Pos,FOR_CAR</Define>
               <Undefine></Undefine>
               <IncludePath>..\..\..\Library\CMSIS\Include;..\..\..\Library\Device\Nuvoton\Mini51Series\Include;..\..\..\Library\StdDriver\inc;.\StdDriver\inc;.\CMSIS</IncludePath>
             </VariousControls>

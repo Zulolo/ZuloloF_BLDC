@@ -12166,19 +12166,19 @@ S#define MOSFET_DRV_3_PIN			BIT5
 S#define MOSFET_DRV_4_PIN			BIT6
 S#define MOSFET_DRV_5_PIN			BIT4
 S
-S#define MOSFET_AS_PIN_ADDR		P22
-S#define MOSFET_BS_PIN_ADDR		P24
-S#define MOSFET_CS_PIN_ADDR		P26
-S#define MOSFET_AD_PIN_ADDR		P23
-S#define MOSFET_BD_PIN_ADDR		P25
-S#define MOSFET_CD_PIN_ADDR		P04
+S#define MOSFET_AS_PIN_ADDR		(P22)
+S#define MOSFET_BS_PIN_ADDR		(P24)
+S#define MOSFET_CS_PIN_ADDR		(P26)
+S#define MOSFET_AD_PIN_ADDR		(P23)
+S#define MOSFET_BD_PIN_ADDR		(P25)
+S#define MOSFET_CD_PIN_ADDR		(P04)
 S
 S#define GPIO_OFFD_OFF_SET		16
 S#define ZERO_DETECT_PORT		P1
-S#define ZERO_DETECT_A_PIN		BIT0
-S#define ZERO_DETECT_B_PIN		BIT3
-S#define ZERO_DETECT_C_PIN		BIT5
-S#define ZERO_DETECT_M_PIN		BIT4
+S#define ZERO_DETECT_A_PIN		((uint32_t)BIT0)
+S#define ZERO_DETECT_B_PIN		((uint32_t)BIT3)
+S#define ZERO_DETECT_C_PIN		((uint32_t)BIT5)
+S#define ZERO_DETECT_M_PIN		((uint32_t)BIT4)
 S
 S#define PWM_PHCHG_PWM_MASK		(0x00003F00ul)
 S#define PWM_PHCHG_D0_7_MASK		(0x000000FFul)
@@ -12703,9 +12703,9 @@ N
 N#include "global.h"
 N
 N#define BATTERY_V_PORT				P3
-N#define BATTERY_V_PIN				BIT1
+N#define BATTERY_V_PIN				((uint32_t)BIT1)
 N#define CURRENT_PORT				P5
-N#define CURRENT_PIN					BIT3
+N#define CURRENT_PIN					((uint32_t)BIT3)
 N
 N#define ADC_CURRENT_CHN_IDX			0
 N#define ADC_BATTERY_CHN_IDX			7
@@ -12736,8 +12736,8 @@ N
 N#ifdef __USED_BY_PTC_C__
 S#define EXTERNAL_PTC
 S
-Suint32_t* unMosfetTestTable[] = {MOSFET_AS_PIN_ADDR, MOSFET_BS_PIN_ADDR, MOSFET_CS_PIN_ADDR,
-S	MOSFET_AD_PIN_ADDR, MOSFET_BD_PIN_ADDR, MOSFET_CD_PIN_ADDR};
+Svolatile uint32_t* unMosfetTestTable[] = {&MOSFET_AS_PIN_ADDR, &MOSFET_BS_PIN_ADDR, &MOSFET_CS_PIN_ADDR,
+S	&MOSFET_AD_PIN_ADDR, &MOSFET_BD_PIN_ADDR, &MOSFET_CD_PIN_ADDR};
 S#define SET_MOSFET_ON_MANUAL(pinAddr)		(*(pinAddr) = 0)
 S#define SET_MOSFET_OFF_MANUAL(pinAddr)		(*(pinAddr) = 1)
 S
@@ -12800,19 +12800,19 @@ N#define MOSFET_DRV_3_PIN			BIT5
 N#define MOSFET_DRV_4_PIN			BIT6
 N#define MOSFET_DRV_5_PIN			BIT4
 N
-N#define MOSFET_AS_PIN_ADDR		P22
-N#define MOSFET_BS_PIN_ADDR		P24
-N#define MOSFET_CS_PIN_ADDR		P26
-N#define MOSFET_AD_PIN_ADDR		P23
-N#define MOSFET_BD_PIN_ADDR		P25
-N#define MOSFET_CD_PIN_ADDR		P04
+N#define MOSFET_AS_PIN_ADDR		(P22)
+N#define MOSFET_BS_PIN_ADDR		(P24)
+N#define MOSFET_CS_PIN_ADDR		(P26)
+N#define MOSFET_AD_PIN_ADDR		(P23)
+N#define MOSFET_BD_PIN_ADDR		(P25)
+N#define MOSFET_CD_PIN_ADDR		(P04)
 N
 N#define GPIO_OFFD_OFF_SET		16
 N#define ZERO_DETECT_PORT		P1
-N#define ZERO_DETECT_A_PIN		BIT0
-N#define ZERO_DETECT_B_PIN		BIT3
-N#define ZERO_DETECT_C_PIN		BIT5
-N#define ZERO_DETECT_M_PIN		BIT4
+N#define ZERO_DETECT_A_PIN		((uint32_t)BIT0)
+N#define ZERO_DETECT_B_PIN		((uint32_t)BIT3)
+N#define ZERO_DETECT_C_PIN		((uint32_t)BIT5)
+N#define ZERO_DETECT_M_PIN		((uint32_t)BIT4)
 N
 N#define PWM_PHCHG_PWM_MASK		(0x00003F00ul)
 N#define PWM_PHCHG_D0_7_MASK		(0x000000FFul)
@@ -13138,58 +13138,57 @@ N/* return STATUS_WORKING: still detecting
 N 0: no rotation detected
 N 1-65534: phase time */
 Nuint16_t canMotorContinueRunning(void) {
-N	uint16_t unPhaseDuration = 0;
-N	static uint32_t unStateEnterTime;
 N// Later implement this when motor can rotate
 N// Then stop it while rotating to measure the waveform
 N// Manually rotate it is too slow 
+N#ifdef FOR_CAR
 N	return 0;
-N
-W "User\BLDCSensorLess.c" 84 2 statement is unreachable
-N	if ((uint32_t) (unSystemTick - unRotateDetectStartTime) > MAX_ALREADY_ROTATING_DETECT_TIME) {
-X	if ((uint32_t) (unSystemTick - unRotateDetectStartTime) > 200) {
-N		return 0;
-N	}
-N	switch (tRotateDetectState) {
-N	case DETECT_START:
-N		unStateEnterTime = unSystemTick;
-N		tRotateDetectState = DETECT_PHASE_1_P;
-N		break;
-N
-N	case DETECT_PHASE_1_P:
-N		if ((uint32_t) (unSystemTick - unStateEnterTime) > MAX_ROTATING_DETECT_PHASE_TIME) {
-X		if ((uint32_t) (unSystemTick - unStateEnterTime) > 30) {
-N			return (uint16_t) 0;
-N		} else {
-N
-N		}
-N		break;
-N
-N	case DETECT_PHASE_1_A:
-N
-N		break;
-N
-N	case DETECT_PHASE_2_P:
-N
-N		break;
-N
-N	case DETECT_PHASE_2_A:
-N
-N		break;
-N
-N	case DETECT_PHASE_3_P:
-N
-N		break;
-N
-N	case DETECT_PHASE_3_A:
-N
-N		break;
-N
-N	default:
-N		break;
-N	}
-N
-N	return unPhaseDuration;
+N#else
+S	uint16_t unPhaseDuration = 0;
+S	static uint32_t unStateEnterTime;
+S	if ((uint32_t) (unSystemTick - unRotateDetectStartTime) > MAX_ALREADY_ROTATING_DETECT_TIME) {
+S		return 0;
+S	}
+S	switch (tRotateDetectState) {
+S	case DETECT_START:
+S		unStateEnterTime = unSystemTick;
+S		tRotateDetectState = DETECT_PHASE_1_P;
+S		break;
+S
+S	case DETECT_PHASE_1_P:
+S		if ((uint32_t) (unSystemTick - unStateEnterTime) > MAX_ROTATING_DETECT_PHASE_TIME) {
+S			return (uint16_t) 0;
+S		} else {
+S
+S		}
+S		break;
+S
+S	case DETECT_PHASE_1_A:
+S
+S		break;
+S
+S	case DETECT_PHASE_2_P:
+S
+S		break;
+S
+S	case DETECT_PHASE_2_A:
+S
+S		break;
+S
+S	case DETECT_PHASE_3_P:
+S
+S		break;
+S
+S	case DETECT_PHASE_3_A:
+S
+S		break;
+S
+S	default:
+S		break;
+S	}
+S
+S	return unPhaseDuration;
+N#endif
 N}
 N
 N// Mainly PWM duty increase/decrease
@@ -13390,9 +13389,9 @@ N
 N	case MOTOR_WAIT_AFTER_LOCATE:
 N		if (tMotor.structMotor.MCR.bMotorNeedToRun && NO_MOTOR_EEROR) {
 X		if (tMotor.structMotor.MCR.bMotorNeedToRun && (((unErrorMaster & 0xFFFFFFFEul) == 0) ? (1) : (0))) {
-W "User\BLDCSensorLess.c" 288 57 pointless comparison of unsigned integer with zero
-N			if ((uint32_t) (unSystemTick - iEnterTimeBeforeWait) >= WAIT_AFTER_LOCATE_TIME) {
-X			if ((uint32_t) (unSystemTick - iEnterTimeBeforeWait) >= 0) {
+N#ifdef WAIT_AFTER_LOCATE
+S			if ((uint32_t) (unSystemTick - iEnterTimeBeforeWait) >= WAIT_AFTER_LOCATE_TIME) {
+N#endif					
 N				tMotor.structMotor.unActualDuty = tMotor.structMotor.unRampUpDuty;
 N				tMotor.structMotor.unActualPeriod = tMotor.structMotor.unRampUpPeriod;
 N				tMotor.structMotor.MSR.bMotorPowerOn = TRUE;
@@ -13426,7 +13425,9 @@ N				unPeriodChangeCNT_AfterPR_ReachMini = 0;
 N				unPhaseChangeCNT_AtCurrentDuty = 0;
 N				unPhaseChangeCNT_AtCurrentPeriod = 0;
 N				tMotorState = MOTOR_RAMPUP_WO_ZXD;
-N			}
+N#ifdef WAIT_AFTER_LOCATE
+S			}
+N#endif
 N		} else {
 N			BLDC_stopMotor();
 N		}
@@ -13498,5 +13499,6 @@ N
 N	default:
 N		break;
 N	}
+W "User\BLDCSensorLess.c" 232 18 variable "iEnterTimeBeforeWait"  was set but never used
 N}
 N

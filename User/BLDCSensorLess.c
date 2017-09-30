@@ -74,13 +74,14 @@ __INLINE void PhaseChangedRoutine(void) {
  0: no rotation detected
  1-65534: phase time */
 uint16_t canMotorContinueRunning(void) {
-	uint16_t unPhaseDuration = 0;
-	static uint32_t unStateEnterTime;
 // Later implement this when motor can rotate
 // Then stop it while rotating to measure the waveform
 // Manually rotate it is too slow 
+#ifdef FOR_CAR
 	return 0;
-
+#else
+	uint16_t unPhaseDuration = 0;
+	static uint32_t unStateEnterTime;
 	if ((uint32_t) (unSystemTick - unRotateDetectStartTime) > MAX_ALREADY_ROTATING_DETECT_TIME) {
 		return 0;
 	}
@@ -123,6 +124,7 @@ uint16_t canMotorContinueRunning(void) {
 	}
 
 	return unPhaseDuration;
+#endif
 }
 
 // Mainly PWM duty increase/decrease
@@ -285,7 +287,9 @@ void BLDC_SensorLessManager(void) {
 
 	case MOTOR_WAIT_AFTER_LOCATE:
 		if (tMotor.structMotor.MCR.bMotorNeedToRun && NO_MOTOR_EEROR) {
+#ifdef WAIT_AFTER_LOCATE
 			if ((uint32_t) (unSystemTick - iEnterTimeBeforeWait) >= WAIT_AFTER_LOCATE_TIME) {
+#endif					
 				tMotor.structMotor.unActualDuty = tMotor.structMotor.unRampUpDuty;
 				tMotor.structMotor.unActualPeriod = tMotor.structMotor.unRampUpPeriod;
 				tMotor.structMotor.MSR.bMotorPowerOn = TRUE;
@@ -311,7 +315,9 @@ void BLDC_SensorLessManager(void) {
 				unPhaseChangeCNT_AtCurrentDuty = 0;
 				unPhaseChangeCNT_AtCurrentPeriod = 0;
 				tMotorState = MOTOR_RAMPUP_WO_ZXD;
+#ifdef WAIT_AFTER_LOCATE
 			}
+#endif
 		} else {
 			BLDC_stopMotor();
 		}

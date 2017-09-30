@@ -12242,19 +12242,19 @@ N#define MOSFET_DRV_3_PIN			BIT5
 N#define MOSFET_DRV_4_PIN			BIT6
 N#define MOSFET_DRV_5_PIN			BIT4
 N
-N#define MOSFET_AS_PIN_ADDR		P22
-N#define MOSFET_BS_PIN_ADDR		P24
-N#define MOSFET_CS_PIN_ADDR		P26
-N#define MOSFET_AD_PIN_ADDR		P23
-N#define MOSFET_BD_PIN_ADDR		P25
-N#define MOSFET_CD_PIN_ADDR		P04
+N#define MOSFET_AS_PIN_ADDR		(P22)
+N#define MOSFET_BS_PIN_ADDR		(P24)
+N#define MOSFET_CS_PIN_ADDR		(P26)
+N#define MOSFET_AD_PIN_ADDR		(P23)
+N#define MOSFET_BD_PIN_ADDR		(P25)
+N#define MOSFET_CD_PIN_ADDR		(P04)
 N
 N#define GPIO_OFFD_OFF_SET		16
 N#define ZERO_DETECT_PORT		P1
-N#define ZERO_DETECT_A_PIN		BIT0
-N#define ZERO_DETECT_B_PIN		BIT3
-N#define ZERO_DETECT_C_PIN		BIT5
-N#define ZERO_DETECT_M_PIN		BIT4
+N#define ZERO_DETECT_A_PIN		((uint32_t)BIT0)
+N#define ZERO_DETECT_B_PIN		((uint32_t)BIT3)
+N#define ZERO_DETECT_C_PIN		((uint32_t)BIT5)
+N#define ZERO_DETECT_M_PIN		((uint32_t)BIT4)
 N
 N#define PWM_PHCHG_PWM_MASK		(0x00003F00ul)
 N#define PWM_PHCHG_D0_7_MASK		(0x000000FFul)
@@ -12712,9 +12712,9 @@ S
 S#include "global.h"
 S
 S#define BATTERY_V_PORT				P3
-S#define BATTERY_V_PIN				BIT1
+S#define BATTERY_V_PIN				((uint32_t)BIT1)
 S#define CURRENT_PORT				P5
-S#define CURRENT_PIN					BIT3
+S#define CURRENT_PIN					((uint32_t)BIT3)
 S
 S#define ADC_CURRENT_CHN_IDX			0
 S#define ADC_BATTERY_CHN_IDX			7
@@ -12745,8 +12745,8 @@ S
 S#ifdef __USED_BY_PTC_C__
 S#define EXTERNAL_PTC
 S
-Suint32_t* unMosfetTestTable[] = {MOSFET_AS_PIN_ADDR, MOSFET_BS_PIN_ADDR, MOSFET_CS_PIN_ADDR,
-S	MOSFET_AD_PIN_ADDR, MOSFET_BD_PIN_ADDR, MOSFET_CD_PIN_ADDR};
+Svolatile uint32_t* unMosfetTestTable[] = {&MOSFET_AS_PIN_ADDR, &MOSFET_BS_PIN_ADDR, &MOSFET_CS_PIN_ADDR,
+S	&MOSFET_AD_PIN_ADDR, &MOSFET_BD_PIN_ADDR, &MOSFET_CD_PIN_ADDR};
 S#define SET_MOSFET_ON_MANUAL(pinAddr)		(*(pinAddr) = 0)
 S#define SET_MOSFET_OFF_MANUAL(pinAddr)		(*(pinAddr) = 1)
 S
@@ -12762,9 +12762,9 @@ N#endif
 L 5 "User\Protection.h" 2
 N
 N#define BATTERY_V_PORT				P3
-N#define BATTERY_V_PIN				BIT1
+N#define BATTERY_V_PIN				((uint32_t)BIT1)
 N#define CURRENT_PORT				P5
-N#define CURRENT_PIN					BIT3
+N#define CURRENT_PIN					((uint32_t)BIT3)
 N
 N#define ADC_CURRENT_CHN_IDX			0
 N#define ADC_BATTERY_CHN_IDX			7
@@ -12795,16 +12795,10 @@ N
 N#ifdef __USED_BY_PTC_C__
 N#define EXTERNAL_PTC
 N
-Nuint32_t* unMosfetTestTable[] = {MOSFET_AS_PIN_ADDR, MOSFET_BS_PIN_ADDR, MOSFET_CS_PIN_ADDR,
-Xuint32_t* unMosfetTestTable[] = {(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(2))) + ((2)<<2)))), (*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(2))) + ((4)<<2)))), (*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(2))) + ((6)<<2)))),
-E "User\Protection.h" 40 34 expression must have a constant value
-E "User\Protection.h" 40 54 expression must have a constant value
-E "User\Protection.h" 40 74 expression must have a constant value
-E "User\Protection.h" 41 2 expression must have a constant value
-E "User\Protection.h" 41 22 expression must have a constant value
-E "User\Protection.h" 41 42 expression must have a constant value
-N	MOSFET_AD_PIN_ADDR, MOSFET_BD_PIN_ADDR, MOSFET_CD_PIN_ADDR};
-X	(*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(2))) + ((3)<<2)))), (*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(2))) + ((5)<<2)))), (*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((4)<<2))))};
+Nvolatile uint32_t* unMosfetTestTable[] = {&MOSFET_AS_PIN_ADDR, &MOSFET_BS_PIN_ADDR, &MOSFET_CS_PIN_ADDR,
+Xvolatile uint32_t* unMosfetTestTable[] = {&((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(2))) + ((2)<<2))))), &((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(2))) + ((4)<<2))))), &((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(2))) + ((6)<<2))))),
+N	&MOSFET_AD_PIN_ADDR, &MOSFET_BD_PIN_ADDR, &MOSFET_CD_PIN_ADDR};
+X	&((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(2))) + ((3)<<2))))), &((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(2))) + ((5)<<2))))), &((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(0))) + ((4)<<2)))))};
 N#define SET_MOSFET_ON_MANUAL(pinAddr)		(*(pinAddr) = 0)
 N#define SET_MOSFET_OFF_MANUAL(pinAddr)		(*(pinAddr) = 1)
 N

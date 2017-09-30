@@ -4,9 +4,9 @@
 #include "global.h"
 
 #define BATTERY_V_PORT				P3
-#define BATTERY_V_PIN				BIT1
+#define BATTERY_V_PIN				((uint32_t)BIT1)
 #define CURRENT_PORT				P5
-#define CURRENT_PIN					BIT3
+#define CURRENT_PIN					((uint32_t)BIT3)
 
 #define ADC_CURRENT_CHN_IDX			0
 #define ADC_BATTERY_CHN_IDX			7
@@ -37,8 +37,8 @@
 #ifdef __USED_BY_PTC_C__
 #define EXTERNAL_PTC
 
-uint32_t* unMosfetTestTable[] = {MOSFET_AS_PIN_ADDR, MOSFET_BS_PIN_ADDR, MOSFET_CS_PIN_ADDR,
-	MOSFET_AD_PIN_ADDR, MOSFET_BD_PIN_ADDR, MOSFET_CD_PIN_ADDR};
+volatile uint32_t* unMosfetTestTable[] = {&MOSFET_AS_PIN_ADDR, &MOSFET_BS_PIN_ADDR, &MOSFET_CS_PIN_ADDR,
+	&MOSFET_AD_PIN_ADDR, &MOSFET_BD_PIN_ADDR, &MOSFET_CD_PIN_ADDR};
 #define SET_MOSFET_ON_MANUAL(pinAddr)		(*(pinAddr) = 0)
 #define SET_MOSFET_OFF_MANUAL(pinAddr)		(*(pinAddr) = 1)
 

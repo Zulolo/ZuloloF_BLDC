@@ -10880,55 +10880,12 @@ __inline void PhaseChangedRoutine(void) {
 
  
 uint16_t canMotorContinueRunning(void) {
-	uint16_t unPhaseDuration = 0;
-	static uint32_t unStateEnterTime;
+
 
 
 
 	return 0;
-
-	if ((uint32_t) (unSystemTick - unRotateDetectStartTime) > 200) {
-		return 0;
-	}
-	switch (tRotateDetectState) {
-	case DETECT_START:
-		unStateEnterTime = unSystemTick;
-		tRotateDetectState = DETECT_PHASE_1_P;
-		break;
-
-	case DETECT_PHASE_1_P:
-		if ((uint32_t) (unSystemTick - unStateEnterTime) > 30) {
-			return (uint16_t) 0;
-		} else {
-
-		}
-		break;
-
-	case DETECT_PHASE_1_A:
-
-		break;
-
-	case DETECT_PHASE_2_P:
-
-		break;
-
-	case DETECT_PHASE_2_A:
-
-		break;
-
-	case DETECT_PHASE_3_P:
-
-		break;
-
-	case DETECT_PHASE_3_A:
-
-		break;
-
-	default:
-		break;
-	}
-
-	return unPhaseDuration;
+#line 128 "User\\BLDCSensorLess.c"
 }
 
 
@@ -11091,7 +11048,9 @@ void BLDC_SensorLessManager(void) {
 
 	case MOTOR_WAIT_AFTER_LOCATE:
 		if (tMotor.structMotor.MCR.bMotorNeedToRun && (((unErrorMaster & 0xFFFFFFFEul) == 0) ? (1) : (0))) {
-			if ((uint32_t) (unSystemTick - iEnterTimeBeforeWait) >= 0) {
+
+
+
 				tMotor.structMotor.unActualDuty = tMotor.structMotor.unRampUpDuty;
 				tMotor.structMotor.unActualPeriod = tMotor.structMotor.unRampUpPeriod;
 				tMotor.structMotor.MSR.bMotorPowerOn = (1);
@@ -11117,7 +11076,9 @@ void BLDC_SensorLessManager(void) {
 				unPhaseChangeCNT_AtCurrentDuty = 0;
 				unPhaseChangeCNT_AtCurrentPeriod = 0;
 				tMotorState = MOTOR_RAMPUP_WO_ZXD;
-			}
+
+
+
 		} else {
 			BLDC_stopMotor();
 		}
