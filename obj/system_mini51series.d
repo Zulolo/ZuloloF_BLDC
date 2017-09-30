@@ -1,5 +1,5 @@
 .\obj\system_mini51series.o: CMSIS\system_Mini51Series.c
-.\obj\system_mini51series.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\obj\system_mini51series.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\obj\system_mini51series.o: CMSIS\Mini51Series.h
 .\obj\system_mini51series.o: CMSIS\core_cm0.h
 .\obj\system_mini51series.o: .\CMSIS\core_cmInstr.h

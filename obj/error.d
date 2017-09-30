@@ -3,7 +3,7 @@
 .\obj\error.o: User\global.h
 .\obj\error.o: .\CMSIS\Mini51Series.h
 .\obj\error.o: .\CMSIS\core_cm0.h
-.\obj\error.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\obj\error.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\obj\error.o: .\CMSIS\core_cmInstr.h
 .\obj\error.o: .\CMSIS\core_cmFunc.h
 .\obj\error.o: .\CMSIS\system_Mini51Series.h

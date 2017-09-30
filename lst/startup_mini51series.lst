@@ -275,10 +275,10 @@ ARM Macro Assembler    Page 5
               00000000 
 Command Line: --16 --debug --xref --diag_suppress=9931 --cpu=Cortex-M0 --apcs=i
 nterwork --depend=.\obj\startup_mini51series.d -o.\obj\startup_mini51series.o -
-IG:\Geek\Projects\Zulolo_F\Force\Code\ZuloloF_BLDC\RTE -ID:\Keil_v5\ARM\PACK\Nu
-voton\NuMicro_DFP\1.0.7\Device\Mini51\Include -ID:\Keil_v5\ARM\CMSIS\Include -I
-\ --predefine="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 518" --li
-st=.\lst\startup_mini51series.lst CMSIS\startup_Mini51Series.s
+I.\RTE\_Template -IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\
+Include -IC:\Keil_v5\ARM\CMSIS\Include --predefine="__MICROLIB SETA 1" --predef
+ine="__UVISION_VERSION SETA 524" --list=.\lst\startup_mini51series.lst CMSIS\st
+artup_Mini51Series.s
 
 
 

@@ -1,7 +1,7 @@
 .\obj\wdt.o: StdDriver\src\wdt.c
 .\obj\wdt.o: .\CMSIS\Mini51Series.h
 .\obj\wdt.o: .\CMSIS\core_cm0.h
-.\obj\wdt.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\obj\wdt.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\obj\wdt.o: .\CMSIS\core_cmInstr.h
 .\obj\wdt.o: .\CMSIS\core_cmFunc.h
 .\obj\wdt.o: .\CMSIS\system_Mini51Series.h

@@ -1,8 +1,8 @@
 .\obj\uart.o: StdDriver\src\uart.c
-.\obj\uart.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\obj\uart.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 .\obj\uart.o: .\CMSIS\Mini51Series.h
 .\obj\uart.o: .\CMSIS\core_cm0.h
-.\obj\uart.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\obj\uart.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\obj\uart.o: .\CMSIS\core_cmInstr.h
 .\obj\uart.o: .\CMSIS\core_cmFunc.h
 .\obj\uart.o: .\CMSIS\system_Mini51Series.h

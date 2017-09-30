@@ -1,7 +1,7 @@
 .\obj\timer.o: StdDriver\src\timer.c
 .\obj\timer.o: .\CMSIS\Mini51Series.h
 .\obj\timer.o: .\CMSIS\core_cm0.h
-.\obj\timer.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\obj\timer.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\obj\timer.o: .\CMSIS\core_cmInstr.h
 .\obj\timer.o: .\CMSIS\core_cmFunc.h
 .\obj\timer.o: .\CMSIS\system_Mini51Series.h

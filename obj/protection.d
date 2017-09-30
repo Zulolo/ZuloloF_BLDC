@@ -3,7 +3,7 @@
 .\obj\protection.o: User\global.h
 .\obj\protection.o: .\CMSIS\Mini51Series.h
 .\obj\protection.o: .\CMSIS\core_cm0.h
-.\obj\protection.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\obj\protection.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\obj\protection.o: .\CMSIS\core_cmInstr.h
 .\obj\protection.o: .\CMSIS\core_cmFunc.h
 .\obj\protection.o: .\CMSIS\system_Mini51Series.h

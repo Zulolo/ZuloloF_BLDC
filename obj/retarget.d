@@ -1,8 +1,8 @@
 .\obj\retarget.o: StdDriver\src\retarget.c
-.\obj\retarget.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\obj\retarget.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 .\obj\retarget.o: .\CMSIS\Mini51Series.h
 .\obj\retarget.o: .\CMSIS\core_cm0.h
-.\obj\retarget.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\obj\retarget.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\obj\retarget.o: .\CMSIS\core_cmInstr.h
 .\obj\retarget.o: .\CMSIS\core_cmFunc.h
 .\obj\retarget.o: .\CMSIS\system_Mini51Series.h

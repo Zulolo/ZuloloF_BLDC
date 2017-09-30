@@ -1,4 +1,4 @@
-Component: ARM Compiler 5.06 update 1 (build 61) Tool: armlink [4d35a8]
+Component: ARM Compiler 5.06 update 5 (build 528) Tool: armlink [4d35e2]
 
 ==============================================================================
 
@@ -378,67 +378,67 @@ Memory Map of the image
 
   Load Region LR_1 (Base: 0x00000000, Size: 0x000018b4, Max: 0xffffffff, ABSOLUTE)
 
-    Execution Region ER_RO (Base: 0x00000000, Size: 0x0000162c, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_RO (Exec base: 0x00000000, Load base: 0x00000000, Size: 0x0000162c, Max: 0xffffffff, ABSOLUTE)
 
-    Base Addr    Size         Type   Attr      Idx    E Section Name        Object
+    Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x00000000   0x000000c0   Data   RO          651    RESET               startup_mini51series.o
-    0x000000c0   0x00000000   Code   RO          656  * .ARM.Collect$$$$00000000  mc_p.l(entry.o)
-    0x000000c0   0x00000004   Code   RO          674    .ARM.Collect$$$$00000001  mc_p.l(entry2.o)
-    0x000000c4   0x00000004   Code   RO          677    .ARM.Collect$$$$00000004  mc_p.l(entry5.o)
-    0x000000c8   0x00000000   Code   RO          679    .ARM.Collect$$$$00000008  mc_p.l(entry7b.o)
-    0x000000c8   0x00000000   Code   RO          681    .ARM.Collect$$$$0000000A  mc_p.l(entry8b.o)
-    0x000000c8   0x00000008   Code   RO          682    .ARM.Collect$$$$0000000B  mc_p.l(entry9a.o)
-    0x000000d0   0x00000000   Code   RO          684    .ARM.Collect$$$$0000000D  mc_p.l(entry10a.o)
-    0x000000d0   0x00000000   Code   RO          686    .ARM.Collect$$$$0000000F  mc_p.l(entry11a.o)
-    0x000000d0   0x00000004   Code   RO          675    .ARM.Collect$$$$00002712  mc_p.l(entry2.o)
-    0x000000d4   0x000000c8   Code   RO            3    .text               adc.o
-    0x0000019c   0x0000018c   Code   RO           79    .text               clk.o
-    0x00000328   0x0000005c   Code   RO          143    .text               gpio.o
-    0x00000384   0x00000308   Code   RO          202    .text               pwm.o
-    0x0000068c   0x00000200   Code   RO          251    .text               spi.o
-    0x0000088c   0x000000cc   Code   RO          271    .text               sys.o
-    0x00000958   0x00000570   Code   RO          355    .text               main.o
-    0x00000ec8   0x000001e0   Code   RO          484    .text               communication.o
-    0x000010a8   0x000002b8   Code   RO          522    .text               it.o
-    0x00001360   0x000000dc   Code   RO          552    .text               error.o
-    0x0000143c   0x00000064   Code   RO          580    .text               protection.o
-    0x000014a0   0x00000050   Code   RO          606    .text               system_mini51series.o
-    0x000014f0   0x00000014   Code   RO          652  * .text               startup_mini51series.o
-    0x00001504   0x0000002c   Code   RO          657    .text               mc_p.l(uidiv.o)
-    0x00001530   0x00000024   Code   RO          697    .text               mc_p.l(init.o)
-    0x00001554   0x00000060   Code   RO          441    i.BLDC_stopMotor    bldcsensorless.o
-    0x000015b4   0x0000001a   Code   RO          460    i.__ARM_common_switch8  bldcsensorless.o
-    0x000015ce   0x0000000e   Code   RO          703    i.__scatterload_copy  mc_p.l(handlers.o)
-    0x000015dc   0x00000002   Code   RO          704    i.__scatterload_null  mc_p.l(handlers.o)
-    0x000015de   0x0000000e   Code   RO          705    i.__scatterload_zeroinit  mc_p.l(handlers.o)
-    0x000015ec   0x00000020   Data   RO          553    .constdata          error.o
-    0x0000160c   0x00000020   Data   RO          701    Region$$Table       anon$$obj.o
-
-
-    Execution Region ER_RW (Base: 0x20000000, Size: 0x00000288, Max: 0xffffffff, ABSOLUTE)
-
-    Base Addr    Size         Type   Attr      Idx    E Section Name        Object
-
-    0x20000000   0x00000004   Data   RW          359    .data               main.o
-    0x20000004   0x00000020   Data   RW          416    .data               bldcsensorless.o
-    0x20000024   0x00000001   Data   RW          417    .data               bldcsensorless.o
-    0x20000025   0x00000003   PAD
-    0x20000028   0x00000004   Data   RW          418    .data               bldcsensorless.o
-    0x2000002c   0x00000218   Data   RW          485    .data               communication.o
-    0x20000244   0x00000018   Data   RW          523    .data               it.o
-    0x2000025c   0x0000000c   Data   RW          554    .data               error.o
-    0x20000268   0x00000018   Data   RW          581    .data               protection.o
-    0x20000280   0x00000008   Data   RW          607    .data               system_mini51series.o
+    0x00000000   0x00000000   0x000000c0   Data   RO          651    RESET               startup_mini51series.o
+    0x000000c0   0x000000c0   0x00000000   Code   RO          656  * .ARM.Collect$$$$00000000  mc_p.l(entry.o)
+    0x000000c0   0x000000c0   0x00000004   Code   RO          674    .ARM.Collect$$$$00000001  mc_p.l(entry2.o)
+    0x000000c4   0x000000c4   0x00000004   Code   RO          677    .ARM.Collect$$$$00000004  mc_p.l(entry5.o)
+    0x000000c8   0x000000c8   0x00000000   Code   RO          679    .ARM.Collect$$$$00000008  mc_p.l(entry7b.o)
+    0x000000c8   0x000000c8   0x00000000   Code   RO          681    .ARM.Collect$$$$0000000A  mc_p.l(entry8b.o)
+    0x000000c8   0x000000c8   0x00000008   Code   RO          682    .ARM.Collect$$$$0000000B  mc_p.l(entry9a.o)
+    0x000000d0   0x000000d0   0x00000000   Code   RO          684    .ARM.Collect$$$$0000000D  mc_p.l(entry10a.o)
+    0x000000d0   0x000000d0   0x00000000   Code   RO          686    .ARM.Collect$$$$0000000F  mc_p.l(entry11a.o)
+    0x000000d0   0x000000d0   0x00000004   Code   RO          675    .ARM.Collect$$$$00002712  mc_p.l(entry2.o)
+    0x000000d4   0x000000d4   0x000000c8   Code   RO            3    .text               adc.o
+    0x0000019c   0x0000019c   0x0000018c   Code   RO           79    .text               clk.o
+    0x00000328   0x00000328   0x0000005c   Code   RO          143    .text               gpio.o
+    0x00000384   0x00000384   0x00000308   Code   RO          202    .text               pwm.o
+    0x0000068c   0x0000068c   0x00000200   Code   RO          251    .text               spi.o
+    0x0000088c   0x0000088c   0x000000cc   Code   RO          271    .text               sys.o
+    0x00000958   0x00000958   0x00000570   Code   RO          355    .text               main.o
+    0x00000ec8   0x00000ec8   0x000001e0   Code   RO          484    .text               communication.o
+    0x000010a8   0x000010a8   0x000002b8   Code   RO          522    .text               it.o
+    0x00001360   0x00001360   0x000000dc   Code   RO          552    .text               error.o
+    0x0000143c   0x0000143c   0x00000064   Code   RO          580    .text               protection.o
+    0x000014a0   0x000014a0   0x00000050   Code   RO          606    .text               system_mini51series.o
+    0x000014f0   0x000014f0   0x00000014   Code   RO          652  * .text               startup_mini51series.o
+    0x00001504   0x00001504   0x0000002c   Code   RO          657    .text               mc_p.l(uidiv.o)
+    0x00001530   0x00001530   0x00000024   Code   RO          697    .text               mc_p.l(init.o)
+    0x00001554   0x00001554   0x00000060   Code   RO          441    i.BLDC_stopMotor    bldcsensorless.o
+    0x000015b4   0x000015b4   0x0000001a   Code   RO          460    i.__ARM_common_switch8  bldcsensorless.o
+    0x000015ce   0x000015ce   0x0000000e   Code   RO          703    i.__scatterload_copy  mc_p.l(handlers.o)
+    0x000015dc   0x000015dc   0x00000002   Code   RO          704    i.__scatterload_null  mc_p.l(handlers.o)
+    0x000015de   0x000015de   0x0000000e   Code   RO          705    i.__scatterload_zeroinit  mc_p.l(handlers.o)
+    0x000015ec   0x000015ec   0x00000020   Data   RO          553    .constdata          error.o
+    0x0000160c   0x0000160c   0x00000020   Data   RO          701    Region$$Table       anon$$obj.o
 
 
-    Execution Region ER_ZI (Base: 0x20000288, Size: 0x00000238, Max: 0xffffffff, ABSOLUTE)
+    Execution Region ER_RW (Exec base: 0x20000000, Load base: 0x0000162c, Size: 0x00000288, Max: 0xffffffff, ABSOLUTE)
 
-    Base Addr    Size         Type   Attr      Idx    E Section Name        Object
+    Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x20000288   0x00000034   Zero   RW          414    .bss                bldcsensorless.o
-    0x200002bc   0x00000004   PAD
-    0x200002c0   0x00000200   Zero   RW          649    STACK               startup_mini51series.o
+    0x20000000   0x0000162c   0x00000004   Data   RW          359    .data               main.o
+    0x20000004   0x00001630   0x00000020   Data   RW          416    .data               bldcsensorless.o
+    0x20000024   0x00001650   0x00000001   Data   RW          417    .data               bldcsensorless.o
+    0x20000025   0x00001651   0x00000003   PAD
+    0x20000028   0x00001654   0x00000004   Data   RW          418    .data               bldcsensorless.o
+    0x2000002c   0x00001658   0x00000218   Data   RW          485    .data               communication.o
+    0x20000244   0x00001870   0x00000018   Data   RW          523    .data               it.o
+    0x2000025c   0x00001888   0x0000000c   Data   RW          554    .data               error.o
+    0x20000268   0x00001894   0x00000018   Data   RW          581    .data               protection.o
+    0x20000280   0x000018ac   0x00000008   Data   RW          607    .data               system_mini51series.o
+
+
+    Execution Region ER_ZI (Exec base: 0x20000288, Load base: 0x000018b4, Size: 0x00000238, Max: 0xffffffff, ABSOLUTE)
+
+    Exec Addr    Load Addr    Size         Type   Attr      Idx    E Section Name        Object
+
+    0x20000288        -       0x00000034   Zero   RW          414    .bss                bldcsensorless.o
+    0x200002bc   0x000018b4   0x00000004   PAD
+    0x200002c0        -       0x00000200   Zero   RW          649    STACK               startup_mini51series.o
 
 
 ==============================================================================
@@ -448,24 +448,24 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
-       200          6          0          0          0      59802   adc.o
-       122         20          0         37         52      12417   bldcsensorless.o
-       396         26          0          0          0       3385   clk.o
-       480         46          0        536          0       6820   communication.o
-       220         16         32         12          0       3410   error.o
-         0          0          0          0          0      53172   fmc.o
-        92          4          0          0          0      54458   gpio.o
-       696         60          0         24          0       6338   it.o
-      1392        164          0          4          0      13787   main.o
-       100         30          0         24          0       1653   protection.o
-       776         14          0          0          0       7246   pwm.o
-       512         14          0          0          0       3572   spi.o
-        20          4        192          0        512        600   startup_mini51series.o
-       204          6          0          0          0       1996   sys.o
-        80         24          0          8          0        838   system_mini51series.o
+       200          6          0          0          0      59730   adc.o
+       122         20          0         37         52      12189   bldcsensorless.o
+       396         26          0          0          0       3357   clk.o
+       480         46          0        536          0       6684   communication.o
+       220         16         32         12          0       3306   error.o
+         0          0          0          0          0      53148   fmc.o
+        92          4          0          0          0      54382   gpio.o
+       696         60          0         24          0       6258   it.o
+      1392        164          0          4          0      13603   main.o
+       100         30          0         24          0       1573   protection.o
+       776         14          0          0          0       7194   pwm.o
+       512         14          0          0          0       3520   spi.o
+        20          4        192          0        512        572   startup_mini51series.o
+       204          6          0          0          0       1972   sys.o
+        80         24          0          8          0        782   system_mini51series.o
 
     ----------------------------------------------------------------------
-      5290        434        256        648        568     229494   Object Totals
+      5290        434        256        648        568     228270   Object Totals
          0          0         32          0          0          0   (incl. Generated)
          0          0          0          3          4          0   (incl. Padding)
 
@@ -505,8 +505,8 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-      5420        450        256        648        568     228378   Grand Totals
-      5420        450        256        648        568     228378   ELF Image Totals
+      5420        450        256        648        568     227154   Grand Totals
+      5420        450        256        648        568     227154   ELF Image Totals
       5420        450        256        648          0          0   ROM Totals
 
 ==============================================================================

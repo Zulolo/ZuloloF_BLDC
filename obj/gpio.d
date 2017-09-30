@@ -1,7 +1,7 @@
 .\obj\gpio.o: StdDriver\src\gpio.c
 .\obj\gpio.o: .\CMSIS\mini51series.h
 .\obj\gpio.o: .\CMSIS\core_cm0.h
-.\obj\gpio.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\obj\gpio.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\obj\gpio.o: .\CMSIS\core_cmInstr.h
 .\obj\gpio.o: .\CMSIS\core_cmFunc.h
 .\obj\gpio.o: .\CMSIS\system_Mini51Series.h

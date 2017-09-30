@@ -10,14 +10,14 @@ N * @note
 N * Copyright (C) 2013 Nuvoton Technology Corp. All rights reserved.
 N*****************************************************************************/ 
 N#include <stdio.h>
-L 1 "D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h" 1
+L 1 "C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h" 1
 N/* stdio.h: ANSI 'C' (X3J11 Oct 88) library header, section 4.9 */
 N/* Copyright (C) Codemist Ltd., 1988-1993                       */
 N/* Copyright 1991-1998 ARM Limited. All rights reserved.        */
 N
 N/*
-N * RCS $Revision: 192842 $
-N * Checkin $Date: 2015-04-28 10:58:32 +0100 (Tue, 28 Apr 2015) $
+N * RCS $Revision$
+N * Checkin $Date$
 N * Revising $Author: sdouglas $
 N */
 N
@@ -30,7 +30,7 @@ N */
 N
 N#ifndef __stdio_h
 N#define __stdio_h
-N#define __ARMCLIB_VERSION 5060002
+N#define __ARMCLIB_VERSION 5060034
 N
 N/*
 N * Depending on compiler version __int64 or __INT64_TYPE__ should be defined.
@@ -1356,19 +1356,19 @@ S  #endif
 N#endif
 N
 N#include <stdint.h>                      /* standard types definitions                      */
-L 1 "D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h" 1
+L 1 "C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h" 1
 N/* Copyright (C) ARM Ltd., 1999,2014 */
 N/* All rights reserved */
 N
 N/*
-N * RCS $Revision: 185525 $
-N * Checkin $Date: 2014-05-29 12:44:48 +0100 (Thu, 29 May 2014) $
+N * RCS $Revision$
+N * Checkin $Date$
 N * Revising $Author: agrant $
 N */
 N
 N#ifndef __stdint_h
 N#define __stdint_h
-N#define __ARMCLIB_VERSION 5060002
+N#define __ARMCLIB_VERSION 5060034
 N
 N  #ifdef __INT64_TYPE__
 S    /* armclang predefines '__INT64_TYPE__' and '__INT64_C_SUFFIX__' */
@@ -1560,9 +1560,9 @@ N
 N    /* maximum value of pointer-holding unsigned integer type */
 N#if __sizeof_ptr == 8
 X#if 4 == 8
-S#define UINTPTR_MAX INT64_MAX
+S#define UINTPTR_MAX UINT64_MAX
 N#else
-N#define UINTPTR_MAX INT32_MAX
+N#define UINTPTR_MAX UINT32_MAX
 N#endif
 N
 N    /* 7.18.2.5 */
@@ -1731,7 +1731,7 @@ X#if   1L
 N/* ARM armcc specific functions */
 N
 N#if (__ARMCC_VERSION < 400677)
-X#if (5060061 < 400677)
+X#if (5060528 < 400677)
 S  #error "Please use ARM Compiler Toolchain V4.0.677 or later!"
 N#endif
 N
@@ -2364,7 +2364,7 @@ X#if   1L
 N/* ARM armcc specific functions */
 N
 N#if (__ARMCC_VERSION < 400677)
-X#if (5060061 < 400677)
+X#if (5060528 < 400677)
 S  #error "Please use ARM Compiler Toolchain V4.0.677 or later!"
 N#endif
 N
@@ -10019,7 +10019,7 @@ N
 N#if defined ( __CC_ARM   )
 X#if 1L
 N#if (__ARMCC_VERSION < 400000)
-X#if (5060061 < 400000)
+X#if (5060528 < 400000)
 N#else
 N/* Insist on keeping widthprec, to avoid X propagation by benign code in C-lib */
 N#pragma import _printf_widthprec

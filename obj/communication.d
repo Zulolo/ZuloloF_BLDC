@@ -3,7 +3,7 @@
 .\obj\communication.o: User\global.h
 .\obj\communication.o: .\CMSIS\Mini51Series.h
 .\obj\communication.o: .\CMSIS\core_cm0.h
-.\obj\communication.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\obj\communication.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\obj\communication.o: .\CMSIS\core_cmInstr.h
 .\obj\communication.o: .\CMSIS\core_cmFunc.h
 .\obj\communication.o: .\CMSIS\system_Mini51Series.h
@@ -23,4 +23,4 @@
 .\obj\communication.o: User\Communication.h
 .\obj\communication.o: User\Error.h
 .\obj\communication.o: User\Protection.h
-.\obj\communication.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\obj\communication.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
