@@ -4,13 +4,12 @@
 #include "global.h"
 
 #define ADC_CLK_DIVIDER				221	// 100KHz
-									//sample clock 16, total ADC time is (16+14)/100=300us, 
-									//
-									//11 //22.1184/11=2MHz, 
-								  //sample clock 16, total ADC time is (16+14)/2=15us, 
-								  //trigger ADC after every ADC finished
+//sample clock 16, total ADC time is (16+14)/100=300us,
+//
+//11 //22.1184/11=2MHz,
+//sample clock 16, total ADC time is (16+14)/2=15us,
+//trigger ADC after every ADC finished
 
-									
 #define TIMER0_PRESCALE				10	//22.1184M/(10+1)=2M
 #define TIMER1_PRESCALE				10	//22.1184M/(10+1)=2M
 
@@ -35,10 +34,10 @@
 
 #define UART_CLK_DIVIDER			1
 #define SYS_TICK_RELOAD_VALUE		(110592 - 1) // system tick's frequency is 22.1184M
-												// 110592 means every 5ms the CNT return to 0 and cause interrupt 
+// 110592 means every 5ms the CNT return to 0 and cause interrupt
 uint8_t iTestSpeedSequenIndex = 0;
 uint32_t iTestSpeedLastTime = 0;
-const uint16_t iTestSpeedSequence[] = {250, 300, 350, 400, 450, 300, 400, 250, 200, 450, 200};
+const uint16_t iTestSpeedSequence[] = { 250, 300, 350, 400, 450, 300, 400, 250, 200, 450, 200 };
 #define TEST_SPEED_SEQUENCE_NUM		(sizeof(iTestSpeedSequence)/sizeof(uint16_t))
 __IO uint32_t unSystemTick = 0;
 

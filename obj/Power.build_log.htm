@@ -22,79 +22,180 @@ Dialog DLL:      TARMCM1.DLL V1.13.0.0
  
 <h2>Project:</h2>
 F:\code\c\ZuloloF_BLDC\Zulolo_F_Force.uvprojx
-Project File Date:  09/25/2017
+Project File Date:  09/30/2017
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 5 (build 528)', folder: 'C:\Keil_v5\ARM\ARMCC\Bin'
-Rebuild target 'Template'
-creating preprocessor file for adc.c...
-creating preprocessor file for clk.c...
-creating preprocessor file for fmc.c...
-compiling adc.c...
-creating preprocessor file for gpio.c...
-compiling clk.c...
-creating preprocessor file for i2c.c...
-compiling fmc.c...
-compiling gpio.c...
-creating preprocessor file for pwm.c...
-creating preprocessor file for retarget.c...
-compiling i2c.c...
-creating preprocessor file for spi.c...
-compiling pwm.c...
-creating preprocessor file for sys.c...
-compiling retarget.c...
-creating preprocessor file for timer.c...
-compiling spi.c...
-creating preprocessor file for uart.c...
-compiling sys.c...
-creating preprocessor file for wdt.c...
-compiling timer.c...
+Build target 'BLDC_driver'
 creating preprocessor file for main.c...
-compiling uart.c...
 creating preprocessor file for BLDCSensorLess.c...
-compiling wdt.c...
 creating preprocessor file for Communication.c...
 compiling main.c...
+User\main.c(111): warning:  #61-D: integer operation result is out of range
+  	
+PIO_DISABLE_DIGITAL_PATH(CURRENT_PORT, CURRENT_PIN << GPIO_OFFD_OFF_SET);
+User\main.c(114): warning:  #61-D: integer operation result is out of range
+  	
+PIO_DISABLE_DIGITAL_PATH(BATTERY_V_PORT, BATTERY_V_PIN << GPIO_OFFD_OFF_SET);
+User\main.c(118): warning:  #61-D: integer operation result is out of range
+  	GPIO_DISABLE_DIGITAL_PATH(ZERO_DETECT_PORT,
+User\main.c: 3 warnings, 0 errors
 creating preprocessor file for it.c...
 compiling BLDCSensorLess.c...
-User\BLDCSensorLess.c(97): warning:  #111-D: statement is unreachable
-  	if ((uint32_t)(unSystemTick - unRotateDetectStartTime) > MAX_ALREADY_ROTATING_DETECT_TIME)
-User\BLDCSensorLess.c(347): warning:  #186-D: pointless comparison of unsigned integer with zero
-  			if ((uint32_t)(unSystemTick - iEnterTimeBeforeWait) >= 
-AIT_AFTER_LOCATE_TIME)
+User\BLDCSensorLess.c(84): warning:  #111-D: statement is unreachable
+  	if ((uint32_t) (unSystemTick - unRotateDetectStartTime) > MAX_ALREADY_ROTATING_DETECT_TIME) {
+User\BLDCSensorLess.c(288): warning:  #186-D: pointless comparison of unsigned integer with zero
+  			if ((uint32_t) (unSystemTick - iEnterTimeBeforeWait) >= 
+AIT_AFTER_LOCATE_TIME) {
 User\BLDCSensorLess.c: 2 warnings, 0 errors
-compiling Communication.c...
 creating preprocessor file for Error.c...
-compiling it.c...
+compiling Communication.c...
 creating preprocessor file for Protection.c...
-creating preprocessor file for system_Mini51Series.c...
+compiling it.c...
+creating preprocessor file for acmp.c...
 compiling Error.c...
 User\Error.c(57): warning:  #188-D: enumerated type mixed with another type
   			return (iVernier + 1);
 User\Error.c: 1 warning, 0 errors
-assembling startup_Mini51Series.s...
 compiling Protection.c...
-compiling system_Mini51Series.c...
-linking...
-Program Size: Code=5420 RO-data=256 RW-data=648 ZI-data=568  
-FromELF: creating hex file...
-After Build - User command #1: fromelf --bin ".\obj\Power.axf" --output ".\obj\Power.bin"
-After Build - User command #2: fromelf --text -c ".\obj\Power.axf" --output ".\obj\Power.txt"
-".\obj\Power.axf" - 0 Error(s), 3 Warning(s).
+User\Protection.h(40): error:  #28: expression must have a constant value
+  uint32_t* unMosfetTestTable[] = {MOSFET_AS_PIN_ADDR, MOSFET_BS_PIN_ADDR, MOSFET_CS_PIN_ADDR,
+User\Protection.h(40): error:  #28: expression must have a constant value
+  uint32_t* unMosfetTestTable[] = {MOSFET_AS_PIN_ADDR, MOSFET_BS_PIN_ADDR, MOSFET_CS_PIN_ADDR,
+User\Protection.h(40): error:  #28: expression must have a constant value
+  uint32_t* unMosfetTestTable[] = {MOSFET_AS_PIN_ADDR, MOSFET_BS_PIN_ADDR, MOSFET_CS_PIN_ADDR,
+User\Protection.h(41): error:  #28: expression must have a constant value
+  	
+OSFET_AD_PIN_ADDR, 
+OSFET_BD_PIN_ADDR, 
+OSFET_CD_PIN_ADDR};
+User\Protection.h(41): error:  #28: expression must have a constant value
+  	
+OSFET_AD_PIN_ADDR, 
+OSFET_BD_PIN_ADDR, 
+OSFET_CD_PIN_ADDR};
+User\Protection.h(41): error:  #28: expression must have a constant value
+  	
+OSFET_AD_PIN_ADDR, 
+OSFET_BD_PIN_ADDR, 
+OSFET_CD_PIN_ADDR};
+User\Protection.c: 0 warnings, 6 errors
+creating preprocessor file for adc.c...
+creating preprocessor file for clk.c...
+creating preprocessor file for fmc.c...
+creating preprocessor file for gpio.c...
+creating preprocessor file for i2c.c...
+creating preprocessor file for pwm.c...
+creating preprocessor file for spi.c...
+creating preprocessor file for sys.c...
+creating preprocessor file for timer.c...
+creating preprocessor file for uart.c...
+creating preprocessor file for wdt.c...
+creating preprocessor file for retarget.c...
+creating preprocessor file for system_Mini51Series.c...
+".\obj\Power.axf" - 6 Error(s), 6 Warning(s).
 
 <h2>Software Packages used:</h2>
+
+Package Vendor: ARM
+                http://www.keil.com/pack/ARM.CMSIS.5.1.1.pack
+                ARM.CMSIS.5.1.1
+                CMSIS (Cortex Microcontroller Software Interface Standard)
+   * Component: CORE Version: 5.0.2
+
+Package Vendor: NordicSemiconductor
+                http://developer.nordicsemi.com/nRF5_SDK/pieces/nRF_DeviceFamilyPack/NordicSemiconductor.nRF_DeviceFamilyPack.8.14.1.pack
+                NordicSemiconductor.nRF_DeviceFamilyPack.8.14.1
+                Nordic Semiconductor nRF ARM devices Device Family Pack.
+   * Component: StartupConfig Version: 8.14.1
 
 Package Vendor: Nuvoton
                 http://www.nuvoton.com/hq/enu/Documents/KEILSoftwarePack/Nuvoton.NuMicro_DFP.1.1.0.pack
                 Nuvoton.NuMicro_DFP.1.1.0
                 Nuvoton ARM Cortex-M NuMicro Family Device Support
+   * Component: Startup Version: 3.01.002
+   * Component: WDT Version: 3.01.002
+   * Component: UART Version: 3.01.002
+   * Component: Timer Version: 3.01.002
+   * Component: SYS Version: 3.01.002
+   * Component: SPI Version: 3.01.002
+   * Component: PWM Version: 3.01.002
+   * Component: I2C Version: 3.01.002
+   * Component: GPIO Version: 3.01.002
+   * Component: FMC Version: 3.01.002
+   * Component: CLK Version: 3.01.002
+   * Component: ADC Version: 3.01.002
+   * Component: ACMP Version: 3.01.002
 
 <h2>Collection of Component include folders:</h2>
-  .\RTE\_Template
+  .\RTE\Device\Mini54ZDE
+  .\RTE\_BLDC_driver
+  C:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.1\CMSIS\Include
+  C:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver
   C:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include
 
 <h2>Collection of Component Files used:</h2>
-Build Time Elapsed:  00:00:04
+
+   * Component: Nuvoton::Device:Startup:3.01.002
+      Include file:  Device\Mini51\Include\Mini51Series.h
+      Source file:   Device\Mini51\Source\ARM\startup_Mini51Series.s
+      Source file:   Device\Mini51\Source\system_Mini51Series.c
+      Source file:   Device\Mini51\Driver\retarget.c
+
+   * Component: Nuvoton::Device:Driver:WDT:3.01.002
+      Include file:  Device\Mini51\Driver\wdt.h
+      Source file:   Device\Mini51\Driver\wdt.c
+
+   * Component: Nuvoton::Device:Driver:UART:3.01.002
+      Include file:  Device\Mini51\Driver\uart.h
+      Source file:   Device\Mini51\Driver\uart.c
+
+   * Component: Nuvoton::Device:Driver:Timer:3.01.002
+      Include file:  Device\Mini51\Driver\timer.h
+      Source file:   Device\Mini51\Driver\timer.c
+
+   * Component: Nuvoton::Device:Driver:SYS:3.01.002
+      Include file:  Device\Mini51\Driver\sys.h
+      Source file:   Device\Mini51\Driver\sys.c
+
+   * Component: Nuvoton::Device:Driver:SPI:3.01.002
+      Include file:  Device\Mini51\Driver\spi.h
+      Source file:   Device\Mini51\Driver\spi.c
+
+   * Component: Nuvoton::Device:Driver:PWM:3.01.002
+      Include file:  Device\Mini51\Driver\pwm.h
+      Source file:   Device\Mini51\Driver\pwm.c
+
+   * Component: Nuvoton::Device:Driver:I2C:3.01.002
+      Include file:  Device\Mini51\Driver\i2c.h
+      Source file:   Device\Mini51\Driver\i2c.c
+
+   * Component: Nuvoton::Device:Driver:GPIO:3.01.002
+      Include file:  Device\Mini51\Driver\gpio.h
+      Source file:   Device\Mini51\Driver\gpio.c
+
+   * Component: Nuvoton::Device:Driver:FMC:3.01.002
+      Include file:  Device\Mini51\Driver\fmc.h
+      Source file:   Device\Mini51\Driver\fmc.c
+
+   * Component: Nuvoton::Device:Driver:CLK:3.01.002
+      Include file:  Device\Mini51\Driver\clk.h
+      Source file:   Device\Mini51\Driver\clk.c
+
+   * Component: Nuvoton::Device:Driver:ADC:3.01.002
+      Include file:  Device\Mini51\Driver\adc.h
+      Source file:   Device\Mini51\Driver\adc.c
+
+   * Component: Nuvoton::Device:Driver:ACMP:3.01.002
+      Include file:  Device\Mini51\Driver\acmp.h
+      Source file:   Device\Mini51\Driver\acmp.c
+
+   * Component: NordicSemiconductor::Device:StartupConfig:8.14.1
+      Include file:  Device\Source\startup_config.h
+
+   * Component: ARM::CMSIS:CORE:5.0.2
+Target not created.
+Build Time Elapsed:  00:00:03
 </pre>
 </body>
 </html>

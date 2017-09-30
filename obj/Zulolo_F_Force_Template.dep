@@ -218,7 +218,7 @@ I (.\StdDriver\inc\spi.h)(0x59C895FB)
 I (.\StdDriver\inc\timer.h)(0x59C895FB)
 I (.\StdDriver\inc\uart.h)(0x59C895FB)
 I (.\StdDriver\inc\wdt.h)(0x59C895FB)
-F (.\User\main.c)(0x59C895FB)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524"-o .\obj\main.o --list_dir ".\\lst\\" --list --omf_browse .\obj\main.crf --depend .\obj\main.d)
+F (.\User\main.c)(0x59CF51F4)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I.\RTE\Device\Mini54ZDE-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.1\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include-D__UVISION_VERSION="524" -D_RTE_-o .\obj\main.o --list_dir ".\\lst\\" --list --omf_browse .\obj\main.crf --depend .\obj\main.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x588B8344)
 I (User\main.h)(0x59C895FB)
 I (User\global.h)(0x59C895FB)
@@ -243,7 +243,7 @@ I (User\BLDCSensorLess.h)(0x59C895FB)
 I (User\Communication.h)(0x59C895FB)
 I (User\Error.h)(0x59C895FB)
 I (User\Protection.h)(0x59C895FB)
-F (.\User\BLDCSensorLess.c)(0x59C895FB)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524"-o .\obj\bldcsensorless.o --list_dir ".\\lst\\" --list --omf_browse .\obj\bldcsensorless.crf --depend .\obj\bldcsensorless.d)
+F (.\User\BLDCSensorLess.c)(0x59CF532C)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I.\RTE\Device\Mini54ZDE-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.1\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include-D__UVISION_VERSION="524" -D_RTE_-o .\obj\bldcsensorless.o --list_dir ".\\lst\\" --list --omf_browse .\obj\bldcsensorless.crf --depend .\obj\bldcsensorless.d)
 I (User\BLDCSensorLess.h)(0x59C895FB)
 I (User\global.h)(0x59C895FB)
 I (.\CMSIS\Mini51Series.h)(0x59C895FB)
@@ -266,7 +266,7 @@ I (.\StdDriver\inc\wdt.h)(0x59C895FB)
 I (User\Communication.h)(0x59C895FB)
 I (User\Error.h)(0x59C895FB)
 I (User\Protection.h)(0x59C895FB)
-F (.\User\Communication.c)(0x59C895FB)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524"-o .\obj\communication.o --list_dir ".\\lst\\" --list --omf_browse .\obj\communication.crf --depend .\obj\communication.d)
+F (.\User\Communication.c)(0x59CF51D0)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I.\RTE\Device\Mini54ZDE-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.1\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include-D__UVISION_VERSION="524" -D_RTE_-o .\obj\communication.o --list_dir ".\\lst\\" --list --omf_browse .\obj\communication.crf --depend .\obj\communication.d)
 I (User\Communication.h)(0x59C895FB)
 I (User\global.h)(0x59C895FB)
 I (.\CMSIS\Mini51Series.h)(0x59C895FB)
@@ -290,7 +290,7 @@ I (User\BLDCSensorLess.h)(0x59C895FB)
 I (User\Error.h)(0x59C895FB)
 I (User\Protection.h)(0x59C895FB)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x588B8344)
-F (.\User\it.c)(0x59C895FB)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524"-o .\obj\it.o --list_dir ".\\lst\\" --list --omf_browse .\obj\it.crf --depend .\obj\it.d)
+F (.\User\it.c)(0x59C895FB)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I.\RTE\Device\Mini54ZDE-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.1\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include-D__UVISION_VERSION="524" -D_RTE_-o .\obj\it.o --list_dir ".\\lst\\" --list --omf_browse .\obj\it.crf --depend .\obj\it.d)
 I (User\it.h)(0x59C895FB)
 I (User\global.h)(0x59C895FB)
 I (.\CMSIS\Mini51Series.h)(0x59C895FB)
@@ -314,7 +314,7 @@ I (User\BLDCSensorLess.h)(0x59C895FB)
 I (User\Communication.h)(0x59C895FB)
 I (User\Error.h)(0x59C895FB)
 I (User\Protection.h)(0x59C895FB)
-F (.\User\Error.c)(0x59C895FB)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524"-o .\obj\error.o --list_dir ".\\lst\\" --list --omf_browse .\obj\error.crf --depend .\obj\error.d)
+F (.\User\Error.c)(0x59C895FB)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I.\RTE\Device\Mini54ZDE-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.1\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include-D__UVISION_VERSION="524" -D_RTE_-o .\obj\error.o --list_dir ".\\lst\\" --list --omf_browse .\obj\error.crf --depend .\obj\error.d)
 I (User\Error.h)(0x59C895FB)
 I (User\global.h)(0x59C895FB)
 I (.\CMSIS\Mini51Series.h)(0x59C895FB)
@@ -337,7 +337,7 @@ I (.\StdDriver\inc\wdt.h)(0x59C895FB)
 I (User\BLDCSensorLess.h)(0x59C895FB)
 I (User\Communication.h)(0x59C895FB)
 I (User\Protection.h)(0x59C895FB)
-F (.\User\Protection.c)(0x59C895FB)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524"-o .\obj\protection.o --list_dir ".\\lst\\" --list --omf_browse .\obj\protection.crf --depend .\obj\protection.d)
+F (.\User\Protection.c)(0x59C895FB)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I.\RTE\Device\Mini54ZDE-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.1\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include-D__UVISION_VERSION="524" -D_RTE_-o .\obj\protection.o --list_dir ".\\lst\\" --list --omf_browse .\obj\protection.crf --depend .\obj\protection.d)
 I (User\Protection.h)(0x59C895FB)
 I (User\global.h)(0x59C895FB)
 I (.\CMSIS\Mini51Series.h)(0x59C895FB)
@@ -360,7 +360,7 @@ I (.\StdDriver\inc\wdt.h)(0x59C895FB)
 I (User\BLDCSensorLess.h)(0x59C895FB)
 I (User\Communication.h)(0x59C895FB)
 I (User\Error.h)(0x59C895FB)
-F (.\CMSIS\system_Mini51Series.c)(0x59C895FB)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524"-o .\obj\system_mini51series.o --list_dir ".\\lst\\" --list --omf_browse .\obj\system_mini51series.crf --depend .\obj\system_mini51series.d)
+F (.\CMSIS\system_Mini51Series.c)(0x59C895FB)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524" -D_RTE_-o .\obj\system_mini51series.o --list_dir ".\\lst\\" --list --omf_browse .\obj\system_mini51series.crf --depend .\obj\system_mini51series.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588B8344)
 I (CMSIS\Mini51Series.h)(0x59C895FB)
 I (CMSIS\core_cm0.h)(0x59C895FB)
@@ -378,4 +378,261 @@ I (.\StdDriver\inc\spi.h)(0x59C895FB)
 I (.\StdDriver\inc\timer.h)(0x59C895FB)
 I (.\StdDriver\inc\uart.h)(0x59C895FB)
 I (.\StdDriver\inc\wdt.h)(0x59C895FB)
-F (.\CMSIS\startup_Mini51Series.s)(0x59C895FB)(--cpu Cortex-M0 -g --16 --apcs=interwork --pd "__MICROLIB SETA 1"-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include-IC:\Keil_v5\ARM\CMSIS\Include--pd "__UVISION_VERSION SETA 524"--list .\lst\startup_mini51series.lst --xref -o .\obj\startup_mini51series.o --depend .\obj\startup_mini51series.d)
+F (.\CMSIS\startup_Mini51Series.s)(0x59C895FB)(--cpu Cortex-M0 -g --16 --apcs=interwork --pd "__MICROLIB SETA 1"-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include-IC:\Keil_v5\ARM\CMSIS\Include--pd "__UVISION_VERSION SETA 524" --pd "_RTE_ SETA 1"--list .\lst\startup_mini51series.lst --xref -o .\obj\startup_mini51series.o --depend .\obj\startup_mini51series.d)
+F (C:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\acmp.c)(0x58BCCABC)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I.\RTE\Device\Mini54ZDE-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.1\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include-D__UVISION_VERSION="524" -D_RTE_-o .\obj\acmp.o --list_dir ".\\lst\\" --list --omf_browse .\obj\acmp.crf --depend .\obj\acmp.d)
+I (.\CMSIS\Mini51Series.h)(0x59C895FB)
+I (.\CMSIS\core_cm0.h)(0x59C895FB)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588B8344)
+I (.\CMSIS\core_cmInstr.h)(0x59C895FB)
+I (.\CMSIS\core_cmFunc.h)(0x59C895FB)
+I (.\CMSIS\system_Mini51Series.h)(0x59C895FB)
+I (.\StdDriver\inc\sys.h)(0x59C895FB)
+I (.\StdDriver\inc\clk.h)(0x59C895FB)
+I (.\StdDriver\inc\adc.h)(0x59C895FB)
+I (.\StdDriver\inc\fmc.h)(0x59C895FB)
+I (.\StdDriver\inc\gpio.h)(0x59C895FB)
+I (.\StdDriver\inc\i2c.h)(0x59C895FB)
+I (.\StdDriver\inc\pwm.h)(0x59C895FB)
+I (.\StdDriver\inc\spi.h)(0x59C895FB)
+I (.\StdDriver\inc\timer.h)(0x59C895FB)
+I (.\StdDriver\inc\uart.h)(0x59C895FB)
+I (.\StdDriver\inc\wdt.h)(0x59C895FB)
+F (C:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\adc.c)(0x58BCCABC)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I.\RTE\Device\Mini54ZDE-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.1\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include-D__UVISION_VERSION="524" -D_RTE_-o .\obj\adc_1.o --list_dir ".\\lst\\" --list --omf_browse .\obj\adc_1.crf --depend .\obj\adc_1.d)
+I (.\CMSIS\Mini51Series.h)(0x59C895FB)
+I (.\CMSIS\core_cm0.h)(0x59C895FB)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588B8344)
+I (.\CMSIS\core_cmInstr.h)(0x59C895FB)
+I (.\CMSIS\core_cmFunc.h)(0x59C895FB)
+I (.\CMSIS\system_Mini51Series.h)(0x59C895FB)
+I (.\StdDriver\inc\sys.h)(0x59C895FB)
+I (.\StdDriver\inc\clk.h)(0x59C895FB)
+I (.\StdDriver\inc\adc.h)(0x59C895FB)
+I (.\StdDriver\inc\fmc.h)(0x59C895FB)
+I (.\StdDriver\inc\gpio.h)(0x59C895FB)
+I (.\StdDriver\inc\i2c.h)(0x59C895FB)
+I (.\StdDriver\inc\pwm.h)(0x59C895FB)
+I (.\StdDriver\inc\spi.h)(0x59C895FB)
+I (.\StdDriver\inc\timer.h)(0x59C895FB)
+I (.\StdDriver\inc\uart.h)(0x59C895FB)
+I (.\StdDriver\inc\wdt.h)(0x59C895FB)
+F (C:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\clk.c)(0x58BCCABC)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I.\RTE\Device\Mini54ZDE-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.1\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include-D__UVISION_VERSION="524" -D_RTE_-o .\obj\clk_1.o --list_dir ".\\lst\\" --list --omf_browse .\obj\clk_1.crf --depend .\obj\clk_1.d)
+I (.\CMSIS\Mini51Series.h)(0x59C895FB)
+I (.\CMSIS\core_cm0.h)(0x59C895FB)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588B8344)
+I (.\CMSIS\core_cmInstr.h)(0x59C895FB)
+I (.\CMSIS\core_cmFunc.h)(0x59C895FB)
+I (.\CMSIS\system_Mini51Series.h)(0x59C895FB)
+I (.\StdDriver\inc\sys.h)(0x59C895FB)
+I (.\StdDriver\inc\clk.h)(0x59C895FB)
+I (.\StdDriver\inc\adc.h)(0x59C895FB)
+I (.\StdDriver\inc\fmc.h)(0x59C895FB)
+I (.\StdDriver\inc\gpio.h)(0x59C895FB)
+I (.\StdDriver\inc\i2c.h)(0x59C895FB)
+I (.\StdDriver\inc\pwm.h)(0x59C895FB)
+I (.\StdDriver\inc\spi.h)(0x59C895FB)
+I (.\StdDriver\inc\timer.h)(0x59C895FB)
+I (.\StdDriver\inc\uart.h)(0x59C895FB)
+I (.\StdDriver\inc\wdt.h)(0x59C895FB)
+F (C:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\fmc.c)(0x58BCCABC)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I.\RTE\Device\Mini54ZDE-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.1\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include-D__UVISION_VERSION="524" -D_RTE_-o .\obj\fmc_1.o --list_dir ".\\lst\\" --list --omf_browse .\obj\fmc_1.crf --depend .\obj\fmc_1.d)
+I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x588B8344)
+I (.\CMSIS\Mini51Series.h)(0x59C895FB)
+I (.\CMSIS\core_cm0.h)(0x59C895FB)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588B8344)
+I (.\CMSIS\core_cmInstr.h)(0x59C895FB)
+I (.\CMSIS\core_cmFunc.h)(0x59C895FB)
+I (.\CMSIS\system_Mini51Series.h)(0x59C895FB)
+I (.\StdDriver\inc\sys.h)(0x59C895FB)
+I (.\StdDriver\inc\clk.h)(0x59C895FB)
+I (.\StdDriver\inc\adc.h)(0x59C895FB)
+I (.\StdDriver\inc\fmc.h)(0x59C895FB)
+I (.\StdDriver\inc\gpio.h)(0x59C895FB)
+I (.\StdDriver\inc\i2c.h)(0x59C895FB)
+I (.\StdDriver\inc\pwm.h)(0x59C895FB)
+I (.\StdDriver\inc\spi.h)(0x59C895FB)
+I (.\StdDriver\inc\timer.h)(0x59C895FB)
+I (.\StdDriver\inc\uart.h)(0x59C895FB)
+I (.\StdDriver\inc\wdt.h)(0x59C895FB)
+F (C:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\gpio.c)(0x58BCCABC)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I.\RTE\Device\Mini54ZDE-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.1\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include-D__UVISION_VERSION="524" -D_RTE_-o .\obj\gpio_1.o --list_dir ".\\lst\\" --list --omf_browse .\obj\gpio_1.crf --depend .\obj\gpio_1.d)
+I (.\CMSIS\mini51series.h)(0x59C895FB)
+I (.\CMSIS\core_cm0.h)(0x59C895FB)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588B8344)
+I (.\CMSIS\core_cmInstr.h)(0x59C895FB)
+I (.\CMSIS\core_cmFunc.h)(0x59C895FB)
+I (.\CMSIS\system_Mini51Series.h)(0x59C895FB)
+I (.\StdDriver\inc\sys.h)(0x59C895FB)
+I (.\StdDriver\inc\clk.h)(0x59C895FB)
+I (.\StdDriver\inc\adc.h)(0x59C895FB)
+I (.\StdDriver\inc\fmc.h)(0x59C895FB)
+I (.\StdDriver\inc\gpio.h)(0x59C895FB)
+I (.\StdDriver\inc\i2c.h)(0x59C895FB)
+I (.\StdDriver\inc\pwm.h)(0x59C895FB)
+I (.\StdDriver\inc\spi.h)(0x59C895FB)
+I (.\StdDriver\inc\timer.h)(0x59C895FB)
+I (.\StdDriver\inc\uart.h)(0x59C895FB)
+I (.\StdDriver\inc\wdt.h)(0x59C895FB)
+F (C:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\i2c.c)(0x58BCCABC)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I.\RTE\Device\Mini54ZDE-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.1\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include-D__UVISION_VERSION="524" -D_RTE_-o .\obj\i2c_1.o --list_dir ".\\lst\\" --list --omf_browse .\obj\i2c_1.crf --depend .\obj\i2c_1.d)
+I (.\CMSIS\Mini51Series.h)(0x59C895FB)
+I (.\CMSIS\core_cm0.h)(0x59C895FB)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588B8344)
+I (.\CMSIS\core_cmInstr.h)(0x59C895FB)
+I (.\CMSIS\core_cmFunc.h)(0x59C895FB)
+I (.\CMSIS\system_Mini51Series.h)(0x59C895FB)
+I (.\StdDriver\inc\sys.h)(0x59C895FB)
+I (.\StdDriver\inc\clk.h)(0x59C895FB)
+I (.\StdDriver\inc\adc.h)(0x59C895FB)
+I (.\StdDriver\inc\fmc.h)(0x59C895FB)
+I (.\StdDriver\inc\gpio.h)(0x59C895FB)
+I (.\StdDriver\inc\i2c.h)(0x59C895FB)
+I (.\StdDriver\inc\pwm.h)(0x59C895FB)
+I (.\StdDriver\inc\spi.h)(0x59C895FB)
+I (.\StdDriver\inc\timer.h)(0x59C895FB)
+I (.\StdDriver\inc\uart.h)(0x59C895FB)
+I (.\StdDriver\inc\wdt.h)(0x59C895FB)
+F (C:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\pwm.c)(0x58BCCABC)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I.\RTE\Device\Mini54ZDE-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.1\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include-D__UVISION_VERSION="524" -D_RTE_-o .\obj\pwm_1.o --list_dir ".\\lst\\" --list --omf_browse .\obj\pwm_1.crf --depend .\obj\pwm_1.d)
+I (.\CMSIS\Mini51Series.h)(0x59C895FB)
+I (.\CMSIS\core_cm0.h)(0x59C895FB)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588B8344)
+I (.\CMSIS\core_cmInstr.h)(0x59C895FB)
+I (.\CMSIS\core_cmFunc.h)(0x59C895FB)
+I (.\CMSIS\system_Mini51Series.h)(0x59C895FB)
+I (.\StdDriver\inc\sys.h)(0x59C895FB)
+I (.\StdDriver\inc\clk.h)(0x59C895FB)
+I (.\StdDriver\inc\adc.h)(0x59C895FB)
+I (.\StdDriver\inc\fmc.h)(0x59C895FB)
+I (.\StdDriver\inc\gpio.h)(0x59C895FB)
+I (.\StdDriver\inc\i2c.h)(0x59C895FB)
+I (.\StdDriver\inc\pwm.h)(0x59C895FB)
+I (.\StdDriver\inc\spi.h)(0x59C895FB)
+I (.\StdDriver\inc\timer.h)(0x59C895FB)
+I (.\StdDriver\inc\uart.h)(0x59C895FB)
+I (.\StdDriver\inc\wdt.h)(0x59C895FB)
+F (C:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\spi.c)(0x58BCCABC)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I.\RTE\Device\Mini54ZDE-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.1\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include-D__UVISION_VERSION="524" -D_RTE_-o .\obj\spi_1.o --list_dir ".\\lst\\" --list --omf_browse .\obj\spi_1.crf --depend .\obj\spi_1.d)
+I (.\CMSIS\Mini51Series.h)(0x59C895FB)
+I (.\CMSIS\core_cm0.h)(0x59C895FB)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588B8344)
+I (.\CMSIS\core_cmInstr.h)(0x59C895FB)
+I (.\CMSIS\core_cmFunc.h)(0x59C895FB)
+I (.\CMSIS\system_Mini51Series.h)(0x59C895FB)
+I (.\StdDriver\inc\sys.h)(0x59C895FB)
+I (.\StdDriver\inc\clk.h)(0x59C895FB)
+I (.\StdDriver\inc\adc.h)(0x59C895FB)
+I (.\StdDriver\inc\fmc.h)(0x59C895FB)
+I (.\StdDriver\inc\gpio.h)(0x59C895FB)
+I (.\StdDriver\inc\i2c.h)(0x59C895FB)
+I (.\StdDriver\inc\pwm.h)(0x59C895FB)
+I (.\StdDriver\inc\spi.h)(0x59C895FB)
+I (.\StdDriver\inc\timer.h)(0x59C895FB)
+I (.\StdDriver\inc\uart.h)(0x59C895FB)
+I (.\StdDriver\inc\wdt.h)(0x59C895FB)
+F (C:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\sys.c)(0x58BCCABC)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I.\RTE\Device\Mini54ZDE-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.1\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include-D__UVISION_VERSION="524" -D_RTE_-o .\obj\sys_1.o --list_dir ".\\lst\\" --list --omf_browse .\obj\sys_1.crf --depend .\obj\sys_1.d)
+I (.\CMSIS\Mini51Series.h)(0x59C895FB)
+I (.\CMSIS\core_cm0.h)(0x59C895FB)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588B8344)
+I (.\CMSIS\core_cmInstr.h)(0x59C895FB)
+I (.\CMSIS\core_cmFunc.h)(0x59C895FB)
+I (.\CMSIS\system_Mini51Series.h)(0x59C895FB)
+I (.\StdDriver\inc\sys.h)(0x59C895FB)
+I (.\StdDriver\inc\clk.h)(0x59C895FB)
+I (.\StdDriver\inc\adc.h)(0x59C895FB)
+I (.\StdDriver\inc\fmc.h)(0x59C895FB)
+I (.\StdDriver\inc\gpio.h)(0x59C895FB)
+I (.\StdDriver\inc\i2c.h)(0x59C895FB)
+I (.\StdDriver\inc\pwm.h)(0x59C895FB)
+I (.\StdDriver\inc\spi.h)(0x59C895FB)
+I (.\StdDriver\inc\timer.h)(0x59C895FB)
+I (.\StdDriver\inc\uart.h)(0x59C895FB)
+I (.\StdDriver\inc\wdt.h)(0x59C895FB)
+F (C:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\timer.c)(0x58BCCABC)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I.\RTE\Device\Mini54ZDE-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.1\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include-D__UVISION_VERSION="524" -D_RTE_-o .\obj\timer_1.o --list_dir ".\\lst\\" --list --omf_browse .\obj\timer_1.crf --depend .\obj\timer_1.d)
+I (.\CMSIS\Mini51Series.h)(0x59C895FB)
+I (.\CMSIS\core_cm0.h)(0x59C895FB)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588B8344)
+I (.\CMSIS\core_cmInstr.h)(0x59C895FB)
+I (.\CMSIS\core_cmFunc.h)(0x59C895FB)
+I (.\CMSIS\system_Mini51Series.h)(0x59C895FB)
+I (.\StdDriver\inc\sys.h)(0x59C895FB)
+I (.\StdDriver\inc\clk.h)(0x59C895FB)
+I (.\StdDriver\inc\adc.h)(0x59C895FB)
+I (.\StdDriver\inc\fmc.h)(0x59C895FB)
+I (.\StdDriver\inc\gpio.h)(0x59C895FB)
+I (.\StdDriver\inc\i2c.h)(0x59C895FB)
+I (.\StdDriver\inc\pwm.h)(0x59C895FB)
+I (.\StdDriver\inc\spi.h)(0x59C895FB)
+I (.\StdDriver\inc\timer.h)(0x59C895FB)
+I (.\StdDriver\inc\uart.h)(0x59C895FB)
+I (.\StdDriver\inc\wdt.h)(0x59C895FB)
+F (C:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\uart.c)(0x58BCCABC)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I.\RTE\Device\Mini54ZDE-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.1\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include-D__UVISION_VERSION="524" -D_RTE_-o .\obj\uart_1.o --list_dir ".\\lst\\" --list --omf_browse .\obj\uart_1.crf --depend .\obj\uart_1.d)
+I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x588B8344)
+I (.\CMSIS\Mini51Series.h)(0x59C895FB)
+I (.\CMSIS\core_cm0.h)(0x59C895FB)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588B8344)
+I (.\CMSIS\core_cmInstr.h)(0x59C895FB)
+I (.\CMSIS\core_cmFunc.h)(0x59C895FB)
+I (.\CMSIS\system_Mini51Series.h)(0x59C895FB)
+I (.\StdDriver\inc\sys.h)(0x59C895FB)
+I (.\StdDriver\inc\clk.h)(0x59C895FB)
+I (.\StdDriver\inc\adc.h)(0x59C895FB)
+I (.\StdDriver\inc\fmc.h)(0x59C895FB)
+I (.\StdDriver\inc\gpio.h)(0x59C895FB)
+I (.\StdDriver\inc\i2c.h)(0x59C895FB)
+I (.\StdDriver\inc\pwm.h)(0x59C895FB)
+I (.\StdDriver\inc\spi.h)(0x59C895FB)
+I (.\StdDriver\inc\timer.h)(0x59C895FB)
+I (.\StdDriver\inc\uart.h)(0x59C895FB)
+I (.\StdDriver\inc\wdt.h)(0x59C895FB)
+F (C:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\wdt.c)(0x58BCCABC)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I.\RTE\Device\Mini54ZDE-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.1\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include-D__UVISION_VERSION="524" -D_RTE_-o .\obj\wdt_1.o --list_dir ".\\lst\\" --list --omf_browse .\obj\wdt_1.crf --depend .\obj\wdt_1.d)
+I (.\CMSIS\Mini51Series.h)(0x59C895FB)
+I (.\CMSIS\core_cm0.h)(0x59C895FB)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588B8344)
+I (.\CMSIS\core_cmInstr.h)(0x59C895FB)
+I (.\CMSIS\core_cmFunc.h)(0x59C895FB)
+I (.\CMSIS\system_Mini51Series.h)(0x59C895FB)
+I (.\StdDriver\inc\sys.h)(0x59C895FB)
+I (.\StdDriver\inc\clk.h)(0x59C895FB)
+I (.\StdDriver\inc\adc.h)(0x59C895FB)
+I (.\StdDriver\inc\fmc.h)(0x59C895FB)
+I (.\StdDriver\inc\gpio.h)(0x59C895FB)
+I (.\StdDriver\inc\i2c.h)(0x59C895FB)
+I (.\StdDriver\inc\pwm.h)(0x59C895FB)
+I (.\StdDriver\inc\spi.h)(0x59C895FB)
+I (.\StdDriver\inc\timer.h)(0x59C895FB)
+I (.\StdDriver\inc\uart.h)(0x59C895FB)
+I (.\StdDriver\inc\wdt.h)(0x59C895FB)
+F (RTE\Device\Mini54ZDE\retarget.c)(0x58BCCABC)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I.\RTE\Device\Mini54ZDE-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.1\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include-D__UVISION_VERSION="524" -D_RTE_-o .\obj\retarget.o --list_dir ".\\lst\\" --list --omf_browse .\obj\retarget.crf --depend .\obj\retarget.d)
+I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x588B8344)
+I (.\CMSIS\Mini51Series.h)(0x59C895FB)
+I (.\CMSIS\core_cm0.h)(0x59C895FB)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588B8344)
+I (.\CMSIS\core_cmInstr.h)(0x59C895FB)
+I (.\CMSIS\core_cmFunc.h)(0x59C895FB)
+I (.\CMSIS\system_Mini51Series.h)(0x59C895FB)
+I (.\StdDriver\inc\sys.h)(0x59C895FB)
+I (.\StdDriver\inc\clk.h)(0x59C895FB)
+I (.\StdDriver\inc\adc.h)(0x59C895FB)
+I (.\StdDriver\inc\fmc.h)(0x59C895FB)
+I (.\StdDriver\inc\gpio.h)(0x59C895FB)
+I (.\StdDriver\inc\i2c.h)(0x59C895FB)
+I (.\StdDriver\inc\pwm.h)(0x59C895FB)
+I (.\StdDriver\inc\spi.h)(0x59C895FB)
+I (.\StdDriver\inc\timer.h)(0x59C895FB)
+I (.\StdDriver\inc\uart.h)(0x59C895FB)
+I (.\StdDriver\inc\wdt.h)(0x59C895FB)
+F (RTE\Device\Mini54ZDE\startup_Mini51Series.s)(0x58BCCABC)(--cpu Cortex-M0 -g --16 --apcs=interwork --pd "__MICROLIB SETA 1"-I.\RTE\Device\Mini54ZDE-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.1\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include--pd "__UVISION_VERSION SETA 524" --pd "_RTE_ SETA 1"--list .\lst\startup_mini51series.lst --xref -o .\obj\startup_mini51series.o --depend .\obj\startup_mini51series.d)
+F (RTE\Device\Mini54ZDE\startup_config.h)(0x59366166)()
+F (RTE\Device\Mini54ZDE\system_Mini51Series.c)(0x58BCCABC)(-c --cpu Cortex-M0 -D__MICROLIB -g -O2 --apcs=interwork --asm --interleave --asm_dir ".\\lst\\" -I ..\..\..\Library\CMSIS\Include -I ..\..\..\Library\Device\Nuvoton\Mini51Series\Include -I ..\..\..\Library\StdDriver\inc -I .\StdDriver\inc -I .\CMSIS-I.\RTE\Device\Mini54ZDE-I.\RTE\_Template-IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.1.1\CMSIS\Include-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include-D__UVISION_VERSION="524" -D_RTE_-o .\obj\system_mini51series.o --list_dir ".\\lst\\" --list --omf_browse .\obj\system_mini51series.crf --depend .\obj\system_mini51series.d)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588B8344)
+I (.\CMSIS\Mini51Series.h)(0x59C895FB)
+I (.\CMSIS\core_cm0.h)(0x59C895FB)
+I (.\CMSIS\core_cmInstr.h)(0x59C895FB)
+I (.\CMSIS\core_cmFunc.h)(0x59C895FB)
+I (.\CMSIS\system_Mini51Series.h)(0x59C895FB)
+I (.\StdDriver\inc\sys.h)(0x59C895FB)
+I (.\StdDriver\inc\clk.h)(0x59C895FB)
+I (.\StdDriver\inc\adc.h)(0x59C895FB)
+I (.\StdDriver\inc\fmc.h)(0x59C895FB)
+I (.\StdDriver\inc\gpio.h)(0x59C895FB)
+I (.\StdDriver\inc\i2c.h)(0x59C895FB)
+I (.\StdDriver\inc\pwm.h)(0x59C895FB)
+I (.\StdDriver\inc\spi.h)(0x59C895FB)
+I (.\StdDriver\inc\timer.h)(0x59C895FB)
+I (.\StdDriver\inc\uart.h)(0x59C895FB)
+I (.\StdDriver\inc\wdt.h)(0x59C895FB)

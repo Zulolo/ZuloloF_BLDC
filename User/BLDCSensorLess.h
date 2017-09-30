@@ -4,10 +4,9 @@
 #include "global.h"
 
 typedef enum {
-	ENUM_TIM1_AVOID_ZXD = 0,
-	ENUM_TIM1_ZXD_FILTER//,
+	ENUM_TIM1_AVOID_ZXD = 0, ENUM_TIM1_ZXD_FILTER //,
 //		ENUM_TIM1_START_ZXD
-}ENUM_TIM1_USAGE;
+} ENUM_TIM1_USAGE;
 
 // GPIOs
 #define BRG_FAULT_PORT				P3
@@ -36,13 +35,13 @@ typedef enum {
 #define MIN_PHASE_TIME				500	//(AVOID_ZXD_AFTER_PHCHG + ZXD_FILTER_TIME + 100)	// 1200/2M=0.6ms, 8333RPM if 42PC=1MC==7EC
 #define MAX_PHASE_TIME				(10000)	// Unit 2MH, 5ms, 286rpm if 42PC=1MC==7EC
 
-#define MINI51_TIM_CNT_MAX						0xFFFFFF
-#define GET_TIM1_CMP_VALUE(x)					(((x) >= MINI51_TIM_CNT_MAX) ? ((x) - MINI51_TIM_CNT_MAX) : (x))
+#define MINI51_TIM_CNT_MAX				0xFFFFFF
+#define GET_TIM1_CMP_VALUE(x)			(((x) >= MINI51_TIM_CNT_MAX) ? ((x) - MINI51_TIM_CNT_MAX) : (x))
 #define GET_TIMER_DIFF(iLast, iThis)	(((iThis) > (iLast)) ? ((iThis) - (iLast)) : ((iThis) + (MINI51_TIM_CNT_MAX - (iLast))))
-#define MAX_MISS_ZXD_THRESHOLD				12
-#define MIN_SUCC_ZXD_THRESHOLD				4
+#define MAX_MISS_ZXD_THRESHOLD			12
+#define MIN_SUCC_ZXD_THRESHOLD			4
 
-#define MOSFET_DRV_0_4_PORT		P2
+#define MOSFET_DRV_0_4_PORT			P2
 #define MOSFET_DRV_5_PORT			P0
 #define MOSFET_DRV_0_PIN			BIT2
 #define MOSFET_DRV_1_PIN			BIT3
@@ -51,32 +50,32 @@ typedef enum {
 #define MOSFET_DRV_4_PIN			BIT6
 #define MOSFET_DRV_5_PIN			BIT4
 
-#define MOSFET_AS_PIN_ADDR		GPIO_PIN_ADDR(2, 2)
-#define MOSFET_BS_PIN_ADDR		GPIO_PIN_ADDR(2, 4)
-#define MOSFET_CS_PIN_ADDR    GPIO_PIN_ADDR(2, 6)
-#define MOSFET_AD_PIN_ADDR		GPIO_PIN_ADDR(2, 3)
-#define MOSFET_BD_PIN_ADDR		GPIO_PIN_ADDR(2, 5)
-#define MOSFET_CD_PIN_ADDR		GPIO_PIN_ADDR(0, 4)
+#define MOSFET_AS_PIN_ADDR		P22
+#define MOSFET_BS_PIN_ADDR		P24
+#define MOSFET_CS_PIN_ADDR		P26
+#define MOSFET_AD_PIN_ADDR		P23
+#define MOSFET_BD_PIN_ADDR		P25
+#define MOSFET_CD_PIN_ADDR		P04
 
-#define GPIO_OFFD_OFF_SET			16
-#define ZERO_DETECT_PORT			P1
-#define ZERO_DETECT_A_PIN			BIT0
-#define ZERO_DETECT_B_PIN			BIT3
-#define ZERO_DETECT_C_PIN			BIT5
-#define ZERO_DETECT_M_PIN			BIT4
+#define GPIO_OFFD_OFF_SET		16
+#define ZERO_DETECT_PORT		P1
+#define ZERO_DETECT_A_PIN		BIT0
+#define ZERO_DETECT_B_PIN		BIT3
+#define ZERO_DETECT_C_PIN		BIT5
+#define ZERO_DETECT_M_PIN		BIT4
 
 #define PWM_PHCHG_PWM_MASK		(0x00003F00ul)
 #define PWM_PHCHG_D0_7_MASK		(0x000000FFul)
-#define PWM_PERIOD 						(884-1)	// PWM T=0.08ms, if target is 3K PRM, 42 E-Circle per M-Circle,
-											// each PC should less than 0.5 ms.
-											// So each E-Circle at least has 6 PWM circle
+#define PWM_PERIOD 				(884-1)	// PWM T=0.08ms, if target is 3K PRM, 42 E-Circle per M-Circle,
+// each PC should less than 0.5 ms.
+// So each E-Circle at least has 6 PWM circle
 
-#define ROTATE_CLOCKWISE			0
+#define ROTATE_CLOCKWISE		0
 #define ROTATE_ANTICLOCKWISE	1
 
-#define PWM_INT_ENABLE				(PWM_EnableDutyInt(PWM, 1, WHAT_EVER_DO_NOT_CARE))
+#define PWM_INT_ENABLE			(PWM_EnableDutyInt(PWM, 1, WHAT_EVER_DO_NOT_CARE))
 
-#define PWM_INT_DISABLE				(PWM->PIER = 0)
+#define PWM_INT_DISABLE			(PWM->PIER = 0)
 
 #define IS_PWM_IRQ_ENABLED		(PWM->PIER)
 
@@ -97,8 +96,7 @@ typedef enum {
 									(PWM->PHCHGNXT = MOSFET_SHUT_DOWN_VAL); \
 									(PWM->PHCHG = MOSFET_SHUT_DOWN_VAL)
 
-//(ACMP->CMPCR[0] &= ~(ACMP_CMPCR_ACMPIE_Msk | ACMP_CMPCR_ACMPEN_Msk)); \
-
+//(ACMP->CMPCR[0] &= ~(ACMP_CMPCR_ACMPIE_Msk | ACMP_CMPCR_ACMPEN_Msk));
 #define MOTOR_SET_DUTY(x)			(PWM->CMR[1] = (x)); \
 									(PWM->CMR[3] = (x)); \
 									(PWM->CMR[5] = (x))
@@ -112,18 +110,18 @@ typedef enum {
 //									(PWM->CMR[4] = (x)); \
 //									(PWM->CMR[5] = (x))
 
-	#ifdef __USED_BY_BLDC_SENSOR_LESS_C__
-		#define EXTERNAL_BLDC  
+#ifdef __USED_BY_BLDC_SENSOR_LESS_C__
+#define EXTERNAL_BLDC
 
-	// UP side PWM
-		#define PHASE_AB_PIN      		(0x0239ul)	// 0000 0010 0011 1001
-		#define PHASE_AC_PIN     		(0x022Dul)	// 0000 0010 0010 1101
-		#define PHASE_BC_PIN     		(0x0827ul)	// 0000 1000 0010 0111
-		#define PHASE_BA_PIN      		(0x0836ul)  // 0000 1000 0011 0110
-		#define PHASE_CA_PIN           	(0x201Eul)  // 0010 0000 0001 1110
-		#define PHASE_CB_PIN			(0x201Bul)	// 0010 0000 0001 1011
+// UP side PWM
+#define PHASE_AB_PIN      		(0x0239ul)	// 0000 0010 0011 1001
+#define PHASE_AC_PIN     		(0x022Dul)	// 0000 0010 0010 1101
+#define PHASE_BC_PIN     		(0x0827ul)	// 0000 1000 0010 0111
+#define PHASE_BA_PIN      		(0x0836ul)  // 0000 1000 0011 0110
+#define PHASE_CA_PIN           	(0x201Eul)  // 0010 0000 0001 1110
+#define PHASE_CB_PIN			(0x201Bul)	// 0010 0000 0001 1011
 
-	// Down side PWM
+// Down side PWM
 //		#define PHASE_AB_PIN      		(0x0439ul)	// 0000 0100 0011 1001
 //		#define PHASE_AC_PIN     		(0x102Dul)	// 0001 0000 0010 1101
 //		#define PHASE_BC_PIN     		(0x1027ul)	// 0001 0000 0010 0111
@@ -131,62 +129,62 @@ typedef enum {
 //		#define PHASE_CA_PIN           	(0x011Eul)  // 0000 0001 0001 1110
 //		#define PHASE_CB_PIN			(0x041Bul)	// 0000 0100 0001 1011
 
-	// Both sides PWM
+// Both sides PWM
 //		#define PHASE_AB_PIN      		(0x0339ul)	// 0000 0110 0011 1001
 //		#define PHASE_AC_PIN     		(0x122Dul)	// 0001 0010 0010 1101
 //		#define PHASE_BC_PIN     		(0x1827ul)	// 0001 1000 0010 0111
 //		#define PHASE_BA_PIN      		(0x0936ul)  // 0000 1001 0011 0110
 //		#define PHASE_CA_PIN           	(0x211Eul)  // 0010 0001 0001 1110
 //		#define PHASE_CB_PIN			(0x241Bul)	// 0010 0100 0001 1011
-													//													//
-		#define CMP0_PIN_P13			0x30000000  // P13 is selected as CMPP0 pin. 
-		#define CMP0_PIN_P12			0x20000000  // P12 is selected as CMPP0 pin. 
-		#define CMP0_PIN_P10			0x10000000  // P10 is selected as CMPP0 pin. 
-		#define CMP0_PIN_P15			0x00000000  // P15 is selected as CMPP0 pin.
+//													//
+#define CMP0_PIN_P13			0x30000000  // P13 is selected as CMPP0 pin.
+#define CMP0_PIN_P12			0x20000000  // P12 is selected as CMPP0 pin.
+#define CMP0_PIN_P10			0x10000000  // P10 is selected as CMPP0 pin.
+#define CMP0_PIN_P15			0x00000000  // P15 is selected as CMPP0 pin.
 
-		const uint32_t PHASE_TAB_CLOCKWISE[] = { 
-			PWM_PHCHG_T0_Msk | CMP0_PIN_P15 | PHASE_AB_PIN,
-			PWM_PHCHG_T0_Msk | CMP0_PIN_P13 | PHASE_AC_PIN | DETEC_UP,
-			PWM_PHCHG_T0_Msk | CMP0_PIN_P10 | PHASE_BC_PIN,
-			PWM_PHCHG_T0_Msk | CMP0_PIN_P15 | PHASE_BA_PIN | DETEC_UP,
-			PWM_PHCHG_T0_Msk | CMP0_PIN_P13 | PHASE_CA_PIN,
-			PWM_PHCHG_T0_Msk | CMP0_PIN_P10 | PHASE_CB_PIN | DETEC_UP
+const uint32_t PHASE_TAB_CLOCKWISE[] = {
+	PWM_PHCHG_T0_Msk | CMP0_PIN_P15 | PHASE_AB_PIN,
+	PWM_PHCHG_T0_Msk | CMP0_PIN_P13 | PHASE_AC_PIN | DETEC_UP,
+	PWM_PHCHG_T0_Msk | CMP0_PIN_P10 | PHASE_BC_PIN,
+	PWM_PHCHG_T0_Msk | CMP0_PIN_P15 | PHASE_BA_PIN | DETEC_UP,
+	PWM_PHCHG_T0_Msk | CMP0_PIN_P13 | PHASE_CA_PIN,
+	PWM_PHCHG_T0_Msk | CMP0_PIN_P10 | PHASE_CB_PIN | DETEC_UP
 //			PWM_PHCHG_T0_Msk | CMP0_PIN_P15 | PHASE_AB_PIN | DETEC_UP,
 //			PWM_PHCHG_T0_Msk | CMP0_PIN_P13 | PHASE_AC_PIN,
 //			PWM_PHCHG_T0_Msk | CMP0_PIN_P10 | PHASE_BC_PIN | DETEC_UP,
 //			PWM_PHCHG_T0_Msk | CMP0_PIN_P15 | PHASE_BA_PIN,
 //			PWM_PHCHG_T0_Msk | CMP0_PIN_P13 | PHASE_CA_PIN | DETEC_UP,
 //			PWM_PHCHG_T0_Msk | CMP0_PIN_P10 | PHASE_CB_PIN
-		};
-		const uint32_t PHASE_TAB_ANTICLOCKWISE[] = {                        
-			PWM_PHCHG_T0_Msk | CMP0_PIN_P15 | PHASE_AB_PIN | DETEC_UP,  
-			PWM_PHCHG_T0_Msk | CMP0_PIN_P10 | PHASE_CB_PIN ,      
-			PWM_PHCHG_T0_Msk | CMP0_PIN_P13 | PHASE_CA_PIN | DETEC_UP,             
-			PWM_PHCHG_T0_Msk | CMP0_PIN_P15 | PHASE_BA_PIN , 
-			PWM_PHCHG_T0_Msk | CMP0_PIN_P10 | PHASE_BC_PIN | DETEC_UP,            
-			PWM_PHCHG_T0_Msk | CMP0_PIN_P13 | PHASE_AC_PIN 
-		};
+};
+const uint32_t PHASE_TAB_ANTICLOCKWISE[] = {
+	PWM_PHCHG_T0_Msk | CMP0_PIN_P15 | PHASE_AB_PIN | DETEC_UP,
+	PWM_PHCHG_T0_Msk | CMP0_PIN_P10 | PHASE_CB_PIN ,
+	PWM_PHCHG_T0_Msk | CMP0_PIN_P13 | PHASE_CA_PIN | DETEC_UP,
+	PWM_PHCHG_T0_Msk | CMP0_PIN_P15 | PHASE_BA_PIN ,
+	PWM_PHCHG_T0_Msk | CMP0_PIN_P10 | PHASE_BC_PIN | DETEC_UP,
+	PWM_PHCHG_T0_Msk | CMP0_PIN_P13 | PHASE_AC_PIN
+};
 
-		typedef enum {	
-			MOTOR_IDLE = 0,
+typedef enum {
+	MOTOR_IDLE = 0,
 //			MOTOR_STOP, 
-			MOTOR_START,	// if not already rotating then just jumo to MOTOR_LOCATE
-			MOTOR_LOCATE,
-			MOTOR_WAIT_AFTER_LOCATE,
-			MOTOR_RAMPUP_WO_ZXD,
-			MOTOR_RAMPUP_W_ZXD,
-			MOTOR_LOCKED
-		} ENUM_MOTOR_STATE;
+	MOTOR_START,// if not already rotating then just jumo to MOTOR_LOCATE
+	MOTOR_LOCATE,
+	MOTOR_WAIT_AFTER_LOCATE,
+	MOTOR_RAMPUP_WO_ZXD,
+	MOTOR_RAMPUP_W_ZXD,
+	MOTOR_LOCKED
+}ENUM_MOTOR_STATE;
 
-		typedef enum {	
-			DETECT_START = 0,
-			DETECT_PHASE_1_P,
-			DETECT_PHASE_1_A,
-			DETECT_PHASE_2_P,
-			DETECT_PHASE_2_A,
-			DETECT_PHASE_3_P,
-			DETECT_PHASE_3_A
-		} ENUM_ROTATE_DETECT_STATE;
+typedef enum {
+	DETECT_START = 0,
+	DETECT_PHASE_1_P,
+	DETECT_PHASE_1_A,
+	DETECT_PHASE_2_P,
+	DETECT_PHASE_2_A,
+	DETECT_PHASE_3_P,
+	DETECT_PHASE_3_A
+}ENUM_ROTATE_DETECT_STATE;
 
 //		typedef enum {
 //			ENUM_MOTOR_POWER_ON = 0,
@@ -194,50 +192,50 @@ typedef enum {
 //			ENUM_MOTOR_LOCKED
 //		}ENUM_MOTOR_SR_BIT;
 
-		typedef enum {	
-			STATUS_ERROR = 0,
-			STATUS_FINISHED,
-			STATUS_WORKING = 0xFFFF
-		} ENUM_STATUS;
+typedef enum {
+	STATUS_ERROR = 0,
+	STATUS_FINISHED,
+	STATUS_WORKING = 0xFFFF
+}ENUM_STATUS;
 
-		const uint8_t unLocatePhaseSequencyTable[] = {0, 1, 2, 1};
+const uint8_t unLocatePhaseSequencyTable[] = {0, 1, 2, 1};
 
-		#define IS_ROTATING_DETECTING											0xFFFF
-		#define MAX_ROTATING_DETECT_PHASE_TIME						30	// half phase max 30ms
-		#define MAX_ALREADY_ROTATING_DETECT_TIME					200	// 200ms used to detect is motor is already rotating
-		#define RAMP_UP_MIN_PERIOD_NUM_THRS								300	// After ramp up to minimum period, force continue rotate these phases
-		#define CHANGE_DT_PR_AFTER_PHASE_CHANGED_NUM			9		// Used in ramp up
-		#define CHANGE_DUTY_AFTER_PHASE_CHANGED_NUM				5		// Used after locked
+#define IS_ROTATING_DETECTING							0xFFFF
+#define MAX_ROTATING_DETECT_PHASE_TIME					30	// half phase max 30ms
+#define MAX_ALREADY_ROTATING_DETECT_TIME				200	// 200ms used to detect is motor is already rotating
+#define RAMP_UP_MIN_PERIOD_NUM_THRS						300	// After ramp up to minimum period, force continue rotate these phases
+#define CHANGE_DT_PR_AFTER_PHASE_CHANGED_NUM			9		// Used in ramp up
+#define CHANGE_DUTY_AFTER_PHASE_CHANGED_NUM				5		// Used after locked
 
 //		#define MOTOR_RUNNING_MSK					(0x01ul)
 //		#define MOTOR_R_DIRECTION_MSK				(0x02ul)
 //		#define IS_MOTOR_NEED_TO_RUN(x)				((x) & MOTOR_RUNNING_MSK)
 
 //		#define IS_MOTOR_R_CLOCKWISE				(((tMotor.structMotor.MCR & MOTOR_R_DIRECTION_MSK) == 0) ? TRUE : FALSE)
-		#define GET_PHASE_VALUE(x)					((tMotor.structMotor.MCR.bRotateDirection == ROTATE_CLOCKWISE) ? PHASE_TAB_CLOCKWISE[(x)] : PHASE_TAB_ANTICLOCKWISE[(x)])
-		#define PHASE_NUMBER								(sizeof(PHASE_TAB_CLOCKWISE)/sizeof(uint32_t))
-		#define PHASE_INCREASE(x) 					INDEX_INCREASE((x), PHASE_NUMBER) //((x) = (((x) == (PHASE_NUMBER - 1)) ? 0 : ((x) + 1)))
+#define GET_PHASE_VALUE(x)					((tMotor.structMotor.MCR.bRotateDirection == ROTATE_CLOCKWISE) ? PHASE_TAB_CLOCKWISE[(x)] : PHASE_TAB_ANTICLOCKWISE[(x)])
+#define PHASE_NUMBER						(sizeof(PHASE_TAB_CLOCKWISE)/sizeof(uint32_t))
+#define PHASE_INCREASE(x) 					INDEX_INCREASE((x), PHASE_NUMBER) //((x) = (((x) == (PHASE_NUMBER - 1)) ? 0 : ((x) + 1)))
 
 //		#define RESET_MOTOR_SR_BIT(x)				(tMotor.structMotor.MSR &= (~(1ul << (x))))
 //		#define SET_MOTOR_SR_BIT(x)					(tMotor.structMotor.MSR |= (1ul << (x)))
 //		#define IS_MOTOR_STATUS_SET(x)				(tMotor.structMotor.MSR & (1ul << (x)))
 
-		#define WAIT_AFTER_LOCATE_TIME				0	// ms
+#define WAIT_AFTER_LOCATE_TIME				0	// ms
 
-		#define MOTOR_RAMPUP_DT_MAX						(PWM_PERIOD - 200)
-		#define MOTOR_RAMPUP_DT_FACTOR				(1.02)
+#define MOTOR_RAMPUP_DT_MAX					(PWM_PERIOD - 200)
+#define MOTOR_RAMPUP_DT_FACTOR				(1.02)
 //		#define MOTOR_RAMPUP_DT_INCR(x)			((x) = (((x) > MOTOR_RAMPUP_DT_MAX) ? (x) : (uint16_t)((x) * MOTOR_RAMPUP_DT_FACTOR)))
-		#define MOTOR_RAMPUP_DT_INCR(x)				((x) = (((x) > MOTOR_RAMPUP_DT_MAX) ? (x) : ((x) + 1)))
+#define MOTOR_RAMPUP_DT_INCR(x)				((x) = (((x) > MOTOR_RAMPUP_DT_MAX) ? (x) : ((x) + 1)))
 
-		#define MOTOR_RAMPUP_PR_MIN						(1000 - 1)	// frequency 2M, 2857RPM if 1MC==7EC==42PC
-		#define MOTOR_RAMPUP_PR_FACTOR				(0.98)
-		#define MOTOR_RAMPUP_PR_DCR(x)				((x) = (((x) < MOTOR_RAMPUP_PR_MIN) ? (x) : (uint16_t)((x) * MOTOR_RAMPUP_PR_FACTOR)))
+#define MOTOR_RAMPUP_PR_MIN					(1000 - 1)	// frequency 2M, 2857RPM if 1MC==7EC==42PC
+#define MOTOR_RAMPUP_PR_FACTOR				(0.98)
+#define MOTOR_RAMPUP_PR_DCR(x)				((x) = (((x) < MOTOR_RAMPUP_PR_MIN) ? (x) : (uint16_t)((x) * MOTOR_RAMPUP_PR_FACTOR)))
 //		#define MOTOR_RAMPUP_PR_DCR(x)			((x) = (((x) < MOTOR_RAMPUP_PR_MIN) ? (x) : ((x) - 100)))
-		#define MOTOR_START_ZXD_SPEED					(1600 - 1)	// frequency 2M,
+#define MOTOR_START_ZXD_SPEED				(1600 - 1)	// frequency 2M,
 //		#define MOTOR_START_ZXD_MINROT_CNT			200	// After phase change xxx times at max speed of rampup, start to detect ZX
 
-		#define MAX_MOTOR_PWR_DUTY 						(PWM_PERIOD - 150)
-		#define MAX_SINGLE_PHASE_DURATION			80  // 80ms,
+#define MAX_MOTOR_PWR_DUTY 					(PWM_PERIOD - 150)
+#define MAX_SINGLE_PHASE_DURATION			80  // 80ms,
 //		typedef enum {
 //			PHASE_AB = 0,
 //			PHASE_AC,
@@ -256,31 +254,30 @@ typedef enum {
 //			PHASE_AC
 //		} ENUM_MOTOR_ANTICLOCKWISE_PHASE;
 
-
-		static ENUM_MOTOR_STATE tMotorState = MOTOR_IDLE;
-		static ENUM_ROTATE_DETECT_STATE tRotateDetectState = DETECT_START;
-		static uint8_t unLocateIndex;
-		static uint8_t unPhaseChangeCNT_AtCurrentPeriod;	/* This variable is only used at start up ramp up stage.
-															Only after phase has changed for a certain number at current period,
-															the actual period will increase or decrease to target period. */
-		static uint8_t unPhaseChangeCNT_AtCurrentDuty;	/* Only after phase has changed for a certain number at current duty,
-														the actual duty will increase or decrease to target duty */
-		static uint16_t unPeriodChangeCNT_AfterPR_ReachMini;	/* This variable is only used at start up ramp up stage.
-																Phase period changed counter after phase period has been lower to
-																ramp up min period*/
-		static uint32_t unLastPhaseChangeTime;
-		static uint32_t unRotateDetectStartTime;	// Used to record when enter motor start, 
-												// ALready rotating detect end time will be compared with this time
-	#else 
-		#define EXTERNAL_BLDC extern
-	#endif
+static ENUM_MOTOR_STATE tMotorState = MOTOR_IDLE;
+static ENUM_ROTATE_DETECT_STATE tRotateDetectState = DETECT_START;
+static uint8_t unLocateIndex;
+static uint8_t unPhaseChangeCNT_AtCurrentPeriod; /* This variable is only used at start up ramp up stage.
+ Only after phase has changed for a certain number at current period,
+ the actual period will increase or decrease to target period. */
+static uint8_t unPhaseChangeCNT_AtCurrentDuty; /* Only after phase has changed for a certain number at current duty,
+ the actual duty will increase or decrease to target duty */
+static uint16_t unPeriodChangeCNT_AfterPR_ReachMini; /* This variable is only used at start up ramp up stage.
+ Phase period changed counter after phase period has been lower to
+ ramp up min period*/
+static uint32_t unLastPhaseChangeTime;
+static uint32_t unRotateDetectStartTime;	// Used to record when enter motor start,
+// ALready rotating detect end time will be compared with this time
+#else
+#define EXTERNAL_BLDC extern
+#endif
 EXTERNAL_BLDC __IO MOTOR_UNION_T tMotor;	// Motor control register
 EXTERNAL_BLDC __IO ENUM_TIM1_USAGE FLAG_TIM1_USEAGE;
 EXTERNAL_BLDC __IO uint32_t unLastZXDetectedTime;
 EXTERNAL_BLDC __IO uint32_t unZXMatchCNT;
 //EXTERNAL_BLDC uint32_t iPhaseChangeCNT4Period;	// Used to check if phase has been changed after every 60ms.
-											// If not, force MOSFET OFF. 
-											// 60ms=1.39rps=83.33rpm, we should make sure 1st startup ramp phase < 60ms
+// If not, force MOSFET OFF.
+// 60ms=1.39rps=83.33rpm, we should make sure 1st startup ramp phase < 60ms
 
 EXTERNAL_BLDC uint8_t unCurrentPhase;
 EXTERNAL_BLDC uint8_t FLAG_PHASE_CHANGED;

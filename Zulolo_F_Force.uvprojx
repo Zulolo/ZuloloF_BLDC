@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>Template</TargetName>
+      <TargetName>BLDC_driver</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <pCCUsed>5060528::V5.06 update 5 (build 528)::ARMCC</pCCUsed>
@@ -334,7 +334,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define></Define>
+              <Define>CLK_APBCLK_ACMP_EN_Pos=CLK_APBCLK_CMP_EN_Pos</Define>
               <Undefine></Undefine>
               <IncludePath>..\..\..\Library\CMSIS\Include;..\..\..\Library\Device\Nuvoton\Mini51Series\Include;..\..\..\Library\StdDriver\inc;.\StdDriver\inc;.\CMSIS</IncludePath>
             </VariousControls>
@@ -378,71 +378,6 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>StdDriver</GroupName>
-          <Files>
-            <File>
-              <FileName>adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\StdDriver\src\adc.c</FilePath>
-            </File>
-            <File>
-              <FileName>clk.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\StdDriver\src\clk.c</FilePath>
-            </File>
-            <File>
-              <FileName>fmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\StdDriver\src\fmc.c</FilePath>
-            </File>
-            <File>
-              <FileName>gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\StdDriver\src\gpio.c</FilePath>
-            </File>
-            <File>
-              <FileName>i2c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\StdDriver\src\i2c.c</FilePath>
-            </File>
-            <File>
-              <FileName>pwm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\StdDriver\src\pwm.c</FilePath>
-            </File>
-            <File>
-              <FileName>retarget.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\StdDriver\src\retarget.c</FilePath>
-            </File>
-            <File>
-              <FileName>spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\StdDriver\src\spi.c</FilePath>
-            </File>
-            <File>
-              <FileName>sys.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\StdDriver\src\sys.c</FilePath>
-            </File>
-            <File>
-              <FileName>timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\StdDriver\src\timer.c</FilePath>
-            </File>
-            <File>
-              <FileName>uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\StdDriver\src\uart.c</FilePath>
-            </File>
-            <File>
-              <FileName>wdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\StdDriver\src\wdt.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>User</GroupName>
           <Files>
             <File>
@@ -478,19 +413,10 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>CMSIS</GroupName>
-          <Files>
-            <File>
-              <FileName>system_Mini51Series.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\CMSIS\system_Mini51Series.c</FilePath>
-            </File>
-            <File>
-              <FileName>startup_Mini51Series.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>.\CMSIS\startup_Mini51Series.s</FilePath>
-            </File>
-          </Files>
+          <GroupName>::CMSIS</GroupName>
+        </Group>
+        <Group>
+          <GroupName>::Device</GroupName>
         </Group>
       </Groups>
     </Target>
@@ -498,8 +424,132 @@
 
   <RTE>
     <apis/>
-    <components/>
-    <files/>
+    <components>
+      <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="5.0.2" condition="ARMv6_7_8-M Device">
+        <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="5.1.1"/>
+        <targetInfos>
+          <targetInfo name="BLDC_driver"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="StartupConfig" Cvendor="NordicSemiconductor" Cversion="8.14.1" condition="Startup">
+        <package license="License\license.txt" name="nRF_DeviceFamilyPack" schemaVersion="1.3" url="http://developer.nordicsemi.com/nRF5_SDK/pieces/nRF_DeviceFamilyPack/" vendor="NordicSemiconductor" version="8.14.1"/>
+        <targetInfos>
+          <targetInfo name="BLDC_driver"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="Driver" Csub="ACMP" Cvendor="Nuvoton" Cversion="3.01.002" condition="M0NuMicro Mini51 Device">
+        <package name="NuMicro_DFP" schemaVersion="1.2" url="http://www.nuvoton.com/hq/enu/Documents/KEILSoftwarePack" vendor="Nuvoton" version="1.1.0"/>
+        <targetInfos>
+          <targetInfo name="BLDC_driver"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="Driver" Csub="ADC" Cvendor="Nuvoton" Cversion="3.01.002" condition="M0NuMicro Mini51 Device">
+        <package name="NuMicro_DFP" schemaVersion="1.2" url="http://www.nuvoton.com/hq/enu/Documents/KEILSoftwarePack" vendor="Nuvoton" version="1.1.0"/>
+        <targetInfos>
+          <targetInfo name="BLDC_driver"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="Driver" Csub="CLK" Cvendor="Nuvoton" Cversion="3.01.002" condition="M0NuMicro Mini51 Device">
+        <package name="NuMicro_DFP" schemaVersion="1.2" url="http://www.nuvoton.com/hq/enu/Documents/KEILSoftwarePack" vendor="Nuvoton" version="1.1.0"/>
+        <targetInfos>
+          <targetInfo name="BLDC_driver"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="Driver" Csub="FMC" Cvendor="Nuvoton" Cversion="3.01.002" condition="M0NuMicro Mini51 Device">
+        <package name="NuMicro_DFP" schemaVersion="1.2" url="http://www.nuvoton.com/hq/enu/Documents/KEILSoftwarePack" vendor="Nuvoton" version="1.1.0"/>
+        <targetInfos>
+          <targetInfo name="BLDC_driver"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="Driver" Csub="GPIO" Cvendor="Nuvoton" Cversion="3.01.002" condition="M0NuMicro Mini51 Device">
+        <package name="NuMicro_DFP" schemaVersion="1.2" url="http://www.nuvoton.com/hq/enu/Documents/KEILSoftwarePack" vendor="Nuvoton" version="1.1.0"/>
+        <targetInfos>
+          <targetInfo name="BLDC_driver"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="Driver" Csub="I2C" Cvendor="Nuvoton" Cversion="3.01.002" condition="M0NuMicro Mini51 Device">
+        <package name="NuMicro_DFP" schemaVersion="1.2" url="http://www.nuvoton.com/hq/enu/Documents/KEILSoftwarePack" vendor="Nuvoton" version="1.1.0"/>
+        <targetInfos>
+          <targetInfo name="BLDC_driver"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="Driver" Csub="PWM" Cvendor="Nuvoton" Cversion="3.01.002" condition="M0NuMicro Mini51 Device">
+        <package name="NuMicro_DFP" schemaVersion="1.2" url="http://www.nuvoton.com/hq/enu/Documents/KEILSoftwarePack" vendor="Nuvoton" version="1.1.0"/>
+        <targetInfos>
+          <targetInfo name="BLDC_driver"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="Driver" Csub="SPI" Cvendor="Nuvoton" Cversion="3.01.002" condition="M0NuMicro Mini51 Device">
+        <package name="NuMicro_DFP" schemaVersion="1.2" url="http://www.nuvoton.com/hq/enu/Documents/KEILSoftwarePack" vendor="Nuvoton" version="1.1.0"/>
+        <targetInfos>
+          <targetInfo name="BLDC_driver"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="Driver" Csub="SYS" Cvendor="Nuvoton" Cversion="3.01.002" condition="M0NuMicro Mini51 Device">
+        <package name="NuMicro_DFP" schemaVersion="1.2" url="http://www.nuvoton.com/hq/enu/Documents/KEILSoftwarePack" vendor="Nuvoton" version="1.1.0"/>
+        <targetInfos>
+          <targetInfo name="BLDC_driver"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="Driver" Csub="Timer" Cvendor="Nuvoton" Cversion="3.01.002" condition="M0NuMicro Mini51 Device">
+        <package name="NuMicro_DFP" schemaVersion="1.2" url="http://www.nuvoton.com/hq/enu/Documents/KEILSoftwarePack" vendor="Nuvoton" version="1.1.0"/>
+        <targetInfos>
+          <targetInfo name="BLDC_driver"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="Driver" Csub="UART" Cvendor="Nuvoton" Cversion="3.01.002" condition="M0NuMicro Mini51 Device">
+        <package name="NuMicro_DFP" schemaVersion="1.2" url="http://www.nuvoton.com/hq/enu/Documents/KEILSoftwarePack" vendor="Nuvoton" version="1.1.0"/>
+        <targetInfos>
+          <targetInfo name="BLDC_driver"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="Driver" Csub="WDT" Cvendor="Nuvoton" Cversion="3.01.002" condition="M0NuMicro Mini51 Device">
+        <package name="NuMicro_DFP" schemaVersion="1.2" url="http://www.nuvoton.com/hq/enu/Documents/KEILSoftwarePack" vendor="Nuvoton" version="1.1.0"/>
+        <targetInfos>
+          <targetInfo name="BLDC_driver"/>
+        </targetInfos>
+      </component>
+      <component Cclass="Device" Cgroup="Startup" Cvendor="Nuvoton" Cversion="3.01.002" condition="M0NuMicro Mini51 Device">
+        <package name="NuMicro_DFP" schemaVersion="1.2" url="http://www.nuvoton.com/hq/enu/Documents/KEILSoftwarePack" vendor="Nuvoton" version="1.1.0"/>
+        <targetInfos>
+          <targetInfo name="BLDC_driver"/>
+        </targetInfos>
+      </component>
+    </components>
+    <files>
+      <file attr="config" category="sourceC" name="Device\Mini51\Driver\retarget.c" version="3.01.002">
+        <instance index="0">RTE\Device\Mini54ZDE\retarget.c</instance>
+        <component Cclass="Device" Cgroup="Startup" Cvendor="Nuvoton" Cversion="3.01.002" condition="M0NuMicro Mini51 Device"/>
+        <package name="NuMicro_DFP" schemaVersion="1.2" url="http://www.nuvoton.com/hq/enu/Documents/KEILSoftwarePack" vendor="Nuvoton" version="1.1.0"/>
+        <targetInfos>
+          <targetInfo name="BLDC_driver"/>
+        </targetInfos>
+      </file>
+      <file attr="config" category="sourceAsm" condition="Compiler ARM" name="Device\Mini51\Source\ARM\startup_Mini51Series.s" version="3.01.002">
+        <instance index="0">RTE\Device\Mini54ZDE\startup_Mini51Series.s</instance>
+        <component Cclass="Device" Cgroup="Startup" Cvendor="Nuvoton" Cversion="3.01.002" condition="M0NuMicro Mini51 Device"/>
+        <package name="NuMicro_DFP" schemaVersion="1.2" url="http://www.nuvoton.com/hq/enu/Documents/KEILSoftwarePack" vendor="Nuvoton" version="1.1.0"/>
+        <targetInfos>
+          <targetInfo name="BLDC_driver"/>
+        </targetInfos>
+      </file>
+      <file attr="config" category="header" name="Device\Source\startup_config.h" version="8.14.1">
+        <instance index="0">RTE\Device\Mini54ZDE\startup_config.h</instance>
+        <component Cclass="Device" Cgroup="StartupConfig" Cvendor="NordicSemiconductor" Cversion="8.14.1" condition="Startup"/>
+        <package license="License\license.txt" name="nRF_DeviceFamilyPack" schemaVersion="1.3" url="http://developer.nordicsemi.com/nRF5_SDK/pieces/nRF_DeviceFamilyPack/" vendor="NordicSemiconductor" version="8.14.1"/>
+        <targetInfos>
+          <targetInfo name="BLDC_driver"/>
+        </targetInfos>
+      </file>
+      <file attr="config" category="source" name="Device\Mini51\Source\system_Mini51Series.c" version="3.01.002">
+        <instance index="0">RTE\Device\Mini54ZDE\system_Mini51Series.c</instance>
+        <component Cclass="Device" Cgroup="Startup" Cvendor="Nuvoton" Cversion="3.01.002" condition="M0NuMicro Mini51 Device"/>
+        <package name="NuMicro_DFP" schemaVersion="1.2" url="http://www.nuvoton.com/hq/enu/Documents/KEILSoftwarePack" vendor="Nuvoton" version="1.1.0"/>
+        <targetInfos>
+          <targetInfo name="BLDC_driver"/>
+        </targetInfos>
+      </file>
+    </files>
   </RTE>
 
 </Project>
