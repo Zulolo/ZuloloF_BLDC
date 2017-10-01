@@ -69,7 +69,7 @@
 ;;;131    void BLDCSpeedManager(void) {
 000004  b510              PUSH     {r4,lr}
 ;;;132    	if (SET == FLAG_PHASE_CHANGED) {
-000006  4cb2              LDR      r4,|L1.720|
+000006  4cb1              LDR      r4,|L1.716|
 000008  79a0              LDRB     r0,[r4,#6]  ; FLAG_PHASE_CHANGED
 00000a  2801              CMP      r0,#1
 00000c  d133              BNE      |L1.118|
@@ -77,7 +77,7 @@
 00000e  f7fffffe          BL       PhaseChangedRoutine
 ;;;134    
 ;;;135    		if (tMotor.structMotor.unActualDuty != tMotor.structMotor.unTargetDuty) {
-000012  49b0              LDR      r1,|L1.724|
+000012  49af              LDR      r1,|L1.720|
 000014  8a08              LDRH     r0,[r1,#0x10]  ; tMotor
 000016  89ca              LDRH     r2,[r1,#0xe]  ; tMotor
 000018  4290              CMP      r0,r2
@@ -109,7 +109,7 @@
 ;;;144    				}
 ;;;145    				MOTOR_SET_DUTY(tMotor.structMotor.unActualDuty);
 000038  8a0a              LDRH     r2,[r1,#0x10]  ; tMotor
-00003a  48a7              LDR      r0,|L1.728|
+00003a  48a6              LDR      r0,|L1.724|
 00003c  6282              STR      r2,[r0,#0x28]
 00003e  8a0a              LDRH     r2,[r1,#0x10]  ; tMotor
 000040  6302              STR      r2,[r0,#0x30]
@@ -141,15 +141,15 @@
 00005e  0789              LSLS     r1,r1,#30
 000060  d402              BMI      |L1.104|
 000062  0080              LSLS     r0,r0,#2
-000064  499d              LDR      r1,|L1.732|
+000064  499c              LDR      r1,|L1.728|
 000066  e002              B        |L1.110|
                   |L1.104|
-000068  499c              LDR      r1,|L1.732|
+000068  499b              LDR      r1,|L1.728|
 00006a  0080              LSLS     r0,r0,#2
 00006c  3118              ADDS     r1,r1,#0x18
                   |L1.110|
 00006e  5808              LDR      r0,[r1,r0]
-000070  4999              LDR      r1,|L1.728|
+000070  4998              LDR      r1,|L1.724|
 000072  3140              ADDS     r1,r1,#0x40
 000074  63c8              STR      r0,[r1,#0x3c]
                   |L1.118|
@@ -164,11 +164,11 @@
 ;;;168    ENUM_STATUS BLDC_LocatingManager(void) {
 000078  b5f8              PUSH     {r3-r7,lr}
 ;;;169    	if ((uint32_t) (unSystemTick - unLastPhaseChangeTime) > tMotor.structMotor.unLocatingPeriod) {
-00007a  4899              LDR      r0,|L1.736|
+00007a  4898              LDR      r0,|L1.732|
 00007c  6800              LDR      r0,[r0,#0]  ; unSystemTick
-00007e  4c94              LDR      r4,|L1.720|
-000080  4b94              LDR      r3,|L1.724|
-000082  6921              LDR      r1,[r4,#0x10]  ; unLastPhaseChangeTime
+00007e  4c93              LDR      r4,|L1.716|
+000080  4b93              LDR      r3,|L1.720|
+000082  68e1              LDR      r1,[r4,#0xc]  ; unLastPhaseChangeTime
 000084  1a40              SUBS     r0,r0,r1
 000086  8a59              LDRH     r1,[r3,#0x12]  ; tMotor
 000088  4288              CMP      r0,r1
@@ -179,7 +179,7 @@
 000090  d20a              BCS      |L1.168|
 ;;;171    			//iLastPhaseChangeTime = unSystemTick; 
 ;;;172    			setPhaseManually(tMotor.structMotor.unLocatingDuty, unLocatePhaseSequencyTable[unLocateIndex]);
-000092  4992              LDR      r1,|L1.732|
+000092  4991              LDR      r1,|L1.728|
 000094  1f09              SUBS     r1,r1,#4
 000096  5c09              LDRB     r1,[r1,r0]
 000098  8958              LDRH     r0,[r3,#0xa]  ; tMotor
@@ -197,22 +197,22 @@
 ;;;179    		}
 ;;;180    	}
 ;;;181    	return STATUS_WORKING;
-0000a4  488f              LDR      r0,|L1.740|
+0000a4  488e              LDR      r0,|L1.736|
 ;;;182    }
 0000a6  bdf8              POP      {r3-r7,pc}
                   |L1.168|
-0000a8  4a8f              LDR      r2,|L1.744|
+0000a8  4a8e              LDR      r2,|L1.740|
 0000aa  2100              MOVS     r1,#0                 ;175
 0000ac  6211              STR      r1,[r2,#0x20]         ;175
-0000ae  4d8a              LDR      r5,|L1.728|
+0000ae  4d89              LDR      r5,|L1.724|
 0000b0  3540              ADDS     r5,r5,#0x40           ;175
 0000b2  6169              STR      r1,[r5,#0x14]         ;175
-0000b4  498d              LDR      r1,|L1.748|
+0000b4  498c              LDR      r1,|L1.744|
 0000b6  680a              LDR      r2,[r1,#0]            ;175
 0000b8  038e              LSLS     r6,r1,#14             ;175
 0000ba  43b2              BICS     r2,r2,r6              ;175
 0000bc  600a              STR      r2,[r1,#0]            ;175
-0000be  4a8b              LDR      r2,|L1.748|
+0000be  4a8a              LDR      r2,|L1.744|
 0000c0  3220              ADDS     r2,r2,#0x20           ;175
 0000c2  6817              LDR      r7,[r2,#0]            ;175
 0000c4  43b7              BICS     r7,r7,r6              ;175
@@ -231,7 +231,7 @@
 0000de  0849              LSRS     r1,r1,#1              ;176
 0000e0  0049              LSLS     r1,r1,#1              ;176
 0000e2  8099              STRH     r1,[r3,#4]            ;176
-0000e4  497d              LDR      r1,|L1.732|
+0000e4  497c              LDR      r1,|L1.728|
 0000e6  1f09              SUBS     r1,r1,#4              ;177
 0000e8  1808              ADDS     r0,r1,r0              ;177
 0000ea  3820              SUBS     r0,r0,#0x20           ;177
@@ -246,12 +246,12 @@
 ;;;229    // Take charge of all Motot control
 ;;;230    void BLDC_SensorLessManager(void) {
 0000f4  b5f8              PUSH     {r3-r7,lr}
-0000f6  4c77              LDR      r4,|L1.724|
+0000f6  4c76              LDR      r4,|L1.720|
 0000f8  8a21              LDRH     r1,[r4,#0x10]  ; tMotor
-0000fa  487d              LDR      r0,|L1.752|
+0000fa  487c              LDR      r0,|L1.748|
 0000fc  4281              CMP      r1,r0
 0000fe  d803              BHI      |L1.264|
-000100  4975              LDR      r1,|L1.728|
+000100  4974              LDR      r1,|L1.724|
 000102  6a89              LDR      r1,[r1,#0x28]
 000104  4281              CMP      r1,r0
 000106  d904              BLS      |L1.274|
@@ -261,20 +261,21 @@
 00010e  f7fffffe          BL       setError
                   |L1.274|
 ;;;231    	uint16_t unMotorAlreadyRotatingPhaseTime;
-;;;232    	static uint32_t iEnterTimeBeforeWait;
-;;;233    
-;;;234    	dutyProtection();
-;;;235    	phaseDurationProtection(unLastPhaseChangeTime);
-000112  4d6f              LDR      r5,|L1.720|
+;;;232    #ifdef WAIT_AFTER_LOCATE
+;;;233    	static uint32_t iEnterTimeBeforeWait;
+;;;234    #endif
+;;;235    	dutyProtection();
+;;;236    	phaseDurationProtection(unLastPhaseChangeTime);
+000112  4d6e              LDR      r5,|L1.716|
 000114  88a1              LDRH     r1,[r4,#4]  ; tMotor
-000116  6928              LDR      r0,[r5,#0x10]  ; unLastPhaseChangeTime
-000118  4e71              LDR      r6,|L1.736|
+000116  68e8              LDR      r0,[r5,#0xc]  ; unLastPhaseChangeTime
+000118  4e70              LDR      r6,|L1.732|
 00011a  07c9              LSLS     r1,r1,#31
 00011c  d013              BEQ      |L1.326|
-00011e  496e              LDR      r1,|L1.728|
+00011e  496d              LDR      r1,|L1.724|
 000120  3140              ADDS     r1,r1,#0x40
 000122  6b8b              LDR      r3,[r1,#0x38]
-000124  4a73              LDR      r2,|L1.756|
+000124  4a72              LDR      r2,|L1.752|
 000126  6817              LDR      r7,[r2,#0]  ; _ZZ23phaseDurationProtectionE14unCurrentPHCHG
 000128  42bb              CMP      r3,r7
 00012a  d003              BEQ      |L1.308|
@@ -291,18 +292,18 @@
 000140  2006              MOVS     r0,#6
 000142  f7fffffe          BL       setError
                   |L1.326|
-;;;236    
-;;;237    	switch (tMotorState) {
+;;;237    
+;;;238    	switch (tMotorState) {
 000146  782a              LDRB     r2,[r5,#0]  ; tMotorState
 000148  2700              MOVS     r7,#0
-;;;238    	case MOTOR_IDLE:
-;;;239    		if (tMotor.structMotor.MCR.bMotorNeedToRun && NO_MOTOR_EEROR) {
-00014a  486b              LDR      r0,|L1.760|
-00014c  2101              MOVS     r1,#1                 ;237
-00014e  0013              MOVS     r3,r2                 ;237
+;;;239    	case MOTOR_IDLE:
+;;;240    		if (tMotor.structMotor.MCR.bMotorNeedToRun && NO_MOTOR_EEROR) {
+00014a  486a              LDR      r0,|L1.756|
+00014c  2101              MOVS     r1,#1                 ;238
+00014e  0013              MOVS     r3,r2                 ;238
 000150  f7fffffe          BL       __ARM_common_switch8
 000154  0705102c          DCB      0x07,0x05,0x10,0x2c
-000158  3a7c9db4          DCB      0x3a,0x7c,0x9d,0xb4
+000158  387a9bb2          DCB      0x38,0x7a,0x9b,0xb2
 00015c  0f00              DCB      0x0f,0x00
 00015e  8862              LDRH     r2,[r4,#2]  ; tMotor
 000160  07d2              LSLS     r2,r2,#31
@@ -310,364 +311,364 @@
 000164  6800              LDR      r0,[r0,#0]  ; unErrorMaster
 000166  0840              LSRS     r0,r0,#1
 000168  d103              BNE      |L1.370|
-;;;240    			unRotateDetectStartTime = unSystemTick;
+;;;241    			unRotateDetectStartTime = unSystemTick;
 00016a  6830              LDR      r0,[r6,#0]  ; unSystemTick
-;;;241    			tRotateDetectState = DETECT_START;
-00016c  6168              STR      r0,[r5,#0x14]  ; unRotateDetectStartTime
+;;;242    			tRotateDetectState = DETECT_START;
+00016c  6128              STR      r0,[r5,#0x10]  ; unRotateDetectStartTime
 00016e  706f              STRB     r7,[r5,#1]
-;;;242    			tMotorState = MOTOR_START;
+;;;243    			tMotorState = MOTOR_START;
 000170  7029              STRB     r1,[r5,#0]
                   |L1.370|
-;;;243    		}
-;;;244    		break;
-;;;245    
-;;;246    	case MOTOR_START:
-;;;247    		if (tMotor.structMotor.MCR.bMotorNeedToRun && NO_MOTOR_EEROR) {
-;;;248    			// Later implement this when motor can rotate
-;;;249    			// Then stop it while rotating to measure the waveform
-;;;250    			// Manually rotate it is too slow 
-;;;251    			unMotorAlreadyRotatingPhaseTime = canMotorContinueRunning();
-;;;252    			if (unMotorAlreadyRotatingPhaseTime != IS_ROTATING_DETECTING) {
-;;;253    				if (unMotorAlreadyRotatingPhaseTime > 0) {
-;;;254    					// 1 to 65534
-;;;255    					tMotorState = MOTOR_LOCKED;
-;;;256    				} else {
-;;;257    					// When back to Idle state the motor was already shut down
-;;;258    					// MOTOR_SHUT_DOWN;
-;;;259    					unCurrentPhase = 0;
-;;;260    					unLocateIndex = 0;
-;;;261    					tMotor.structMotor.unMissedZXD_CNT = 0;
-;;;262    					unLastPhaseChangeTime = unSystemTick;
-;;;263    					tMotor.structMotor.MSR.bMotorPowerOn = TRUE;
-;;;264    					// Clear start detect zero cross flag
-;;;265    					tMotor.structMotor.MSR.bZeroCrossDetecting = FALSE;
-;;;266    					tMotor.structMotor.MSR.bLocked = FALSE;
-;;;267    					//setPhaseManually(tMotor.structMotor.LCT_DUTY, unCurrentPhase);
-;;;268    					BRG_ENABLE;
-;;;269    					tMotorState = MOTOR_LOCATE;
-;;;270    				}
-;;;271    			}
-;;;272    		} else {
-;;;273    			BLDC_stopMotor();
-;;;274    		}
-;;;275    		break;
-;;;276    
-;;;277    	case MOTOR_LOCATE:
-;;;278    		if (tMotor.structMotor.MCR.bMotorNeedToRun && NO_MOTOR_EEROR) {
-;;;279    			if (BLDC_LocatingManager() == STATUS_FINISHED) {
-;;;280    				iEnterTimeBeforeWait = unSystemTick;
-;;;281    				tMotorState = MOTOR_WAIT_AFTER_LOCATE;
-;;;282    			}
-;;;283    		} else {
-;;;284    			BLDC_stopMotor();
-;;;285    		}
-;;;286    		break;
-;;;287    
-;;;288    	case MOTOR_WAIT_AFTER_LOCATE:
-;;;289    		if (tMotor.structMotor.MCR.bMotorNeedToRun && NO_MOTOR_EEROR) {
-;;;290    #ifdef WAIT_AFTER_LOCATE
-;;;291    			if ((uint32_t) (unSystemTick - iEnterTimeBeforeWait) >= WAIT_AFTER_LOCATE_TIME) {
-;;;292    #endif					
-;;;293    				tMotor.structMotor.unActualDuty = tMotor.structMotor.unRampUpDuty;
-;;;294    				tMotor.structMotor.unActualPeriod = tMotor.structMotor.unRampUpPeriod;
-;;;295    				tMotor.structMotor.MSR.bMotorPowerOn = TRUE;
-;;;296    				PHASE_INCREASE(unCurrentPhase);
-;;;297    				setPhaseManually(tMotor.structMotor.unActualDuty, unCurrentPhase);
-;;;298    				BRG_ENABLE;
-;;;299    				// Set timer 0 valure, use timer 0 to change phase automatically
-;;;300    				// ************************************************************************
-;;;301    				// ----==== From here current unCurrentPhase is actually next phase ====----
-;;;302    				// ----==== Because we want to use the HW auto phase changer (PWM->PHCHGNXT) ====----
-;;;303    				// So increase unCurrentPhase again. Want to get real current phase value? Read PWM->PHCHG.
-;;;304    				// ************************************************************************
-;;;305    				PHASE_INCREASE(unCurrentPhase);
-;;;306    				PWM->PHCHGNXT = GET_PHASE_VALUE(unCurrentPhase);
-;;;307    				// !!!! Need to make sure CPU runs to here every min tMotor.structMotor.ACT_PERIOD time !!!
-;;;308    				// !!!! If not , timer counter may already passed tMotor.structMotor.ACT_PERIOD, !!!!
-;;;309    				// !!!! then need to count to max timer counter number (which is 2^24), !!!!
-;;;310    				// !!!! go back to 0 and triger interrupt when reach ACT_PERIOD again !!!!
-;;;311    				TIMER_SET_CMP_VALUE(TIMER0, tMotor.structMotor.unActualPeriod);
-;;;312    				TIMER_Start(TIMER0);				// Once started, running and interrupting until Motor stop
-;;;313    				TIMER_EnableInt(TIMER0);
-;;;314    				unPeriodChangeCNT_AfterPR_ReachMini = 0;
-;;;315    				unPhaseChangeCNT_AtCurrentDuty = 0;
-;;;316    				unPhaseChangeCNT_AtCurrentPeriod = 0;
-;;;317    				tMotorState = MOTOR_RAMPUP_WO_ZXD;
-;;;318    #ifdef WAIT_AFTER_LOCATE
-;;;319    			}
-;;;320    #endif
-;;;321    		} else {
-;;;322    			BLDC_stopMotor();
-;;;323    		}
-;;;324    		break;
-;;;325    
-;;;326    	case MOTOR_RAMPUP_WO_ZXD:	// without zero cross detection
-;;;327    		if (tMotor.structMotor.MCR.bMotorNeedToRun && NO_MOTOR_EEROR) {
-;;;328    			BLDCRampUp_Manager();
-;;;329    			if (tMotor.structMotor.unActualPeriod <= MOTOR_START_ZXD_SPEED)	//(iRampUpPeriodMiniCNT > MOTOR_START_ZXD_MINROT_CNT)  //
-;;;330    			{
-;;;331    				tMotor.structMotor.MSR.bThisPhaseDetectedZX = FALSE;
-;;;332    				tMotor.structMotor.MSR.bZeroCrossDetecting = TRUE;
-;;;333    				// Speed is enough for zero cross detecting
-;;;334    				// Prepare everything
-;;;335    				// T0 used to change phase automatically -- already configured
-;;;336    				// T1 used to filter ZX
-;;;337    
-;;;338    //				TIMER_SET_CMP_VALUE(TIMER1, GET_TIM1_CMP_VALUE(TIMER1->TDR + AVOID_ZXD_AFTER_PHCHG));
-;;;339    //				FLAG_TIM1_USEAGE = ENUM_TIM1_AVOID_ZXD;
-;;;340    				ACMP0_ENABLE;
-;;;341    				TIMER_Start(TIMER1);				// Once started, running until Motor stop
-;;;342    //				TIMER_EnableInt(TIMER1);
-;;;343    						// Suppose last ZX detected time
-;;;344    //				unLastZXDetectedTime = MINI51_TIM_CNT_MAX - tMotor.structMotor.ACT_PERIOD / 2;
-;;;345    				tMotorState = MOTOR_RAMPUP_W_ZXD;
-;;;346    			}
-;;;347    		} else {
-;;;348    			BLDC_stopMotor();
-;;;349    		}
-;;;350    		break;
-;;;351    
-;;;352    	case MOTOR_RAMPUP_W_ZXD:	// with zero cross detection
-;;;353    		if (tMotor.structMotor.MCR.bMotorNeedToRun && NO_MOTOR_EEROR) {
-;;;354    			if (TRUE == tMotor.structMotor.MSR.bLocked) {
-;;;355    				// Finally, everything was prepared:
-;;;356    				// T0 used to change phase automatically
-;;;357    				// T1 used to filter ZX
-;;;358    				tMotorState = MOTOR_LOCKED;
-;;;359    			} else {
-;;;360    				if (unPeriodChangeCNT_AfterPR_ReachMini < RAMP_UP_MIN_PERIOD_NUM_THRS) {
-;;;361    					BLDCRampUp_Manager();
-;;;362    				} else {
-;;;363    					setError(ERR_RAMPUP_FAIL);
-;;;364    				}
-;;;365    			}
-;;;366    		} else {
-;;;367    			BLDC_stopMotor();
-;;;368    		}
-;;;369    		break;
-;;;370    
-;;;371    	case MOTOR_LOCKED:
-;;;372    		if (tMotor.structMotor.MCR.bMotorNeedToRun && NO_MOTOR_EEROR) {
-;;;373    			BLDCSpeedManager();	// Mainly PWM duty increase/decrease
-;;;374    		} else {
-;;;375    			BLDC_stopMotor();
-;;;376    		}
-;;;377    		break;
-;;;378    
-;;;379    	default:
+;;;244    		}
+;;;245    		break;
+;;;246    
+;;;247    	case MOTOR_START:
+;;;248    		if (tMotor.structMotor.MCR.bMotorNeedToRun && NO_MOTOR_EEROR) {
+;;;249    			// Later implement this when motor can rotate
+;;;250    			// Then stop it while rotating to measure the waveform
+;;;251    			// Manually rotate it is too slow 
+;;;252    			unMotorAlreadyRotatingPhaseTime = canMotorContinueRunning();
+;;;253    			if (unMotorAlreadyRotatingPhaseTime != IS_ROTATING_DETECTING) {
+;;;254    				if (unMotorAlreadyRotatingPhaseTime > 0) {
+;;;255    					// 1 to 65534
+;;;256    					tMotorState = MOTOR_LOCKED;
+;;;257    				} else {
+;;;258    					// When back to Idle state the motor was already shut down
+;;;259    					// MOTOR_SHUT_DOWN;
+;;;260    					unCurrentPhase = 0;
+;;;261    					unLocateIndex = 0;
+;;;262    					tMotor.structMotor.unMissedZXD_CNT = 0;
+;;;263    					unLastPhaseChangeTime = unSystemTick;
+;;;264    					tMotor.structMotor.MSR.bMotorPowerOn = TRUE;
+;;;265    					// Clear start detect zero cross flag
+;;;266    					tMotor.structMotor.MSR.bZeroCrossDetecting = FALSE;
+;;;267    					tMotor.structMotor.MSR.bLocked = FALSE;
+;;;268    					//setPhaseManually(tMotor.structMotor.LCT_DUTY, unCurrentPhase);
+;;;269    					BRG_ENABLE;
+;;;270    					tMotorState = MOTOR_LOCATE;
+;;;271    				}
+;;;272    			}
+;;;273    		} else {
+;;;274    			BLDC_stopMotor();
+;;;275    		}
+;;;276    		break;
+;;;277    
+;;;278    	case MOTOR_LOCATE:
+;;;279    		if (tMotor.structMotor.MCR.bMotorNeedToRun && NO_MOTOR_EEROR) {
+;;;280    			if (BLDC_LocatingManager() == STATUS_FINISHED) {
+;;;281    #ifdef WAIT_AFTER_LOCATE
+;;;282    				iEnterTimeBeforeWait = unSystemTick;
+;;;283    #endif
+;;;284    				tMotorState = MOTOR_WAIT_AFTER_LOCATE;
+;;;285    			}
+;;;286    		} else {
+;;;287    			BLDC_stopMotor();
+;;;288    		}
+;;;289    		break;
+;;;290    
+;;;291    	case MOTOR_WAIT_AFTER_LOCATE:
+;;;292    		if (tMotor.structMotor.MCR.bMotorNeedToRun && NO_MOTOR_EEROR) {
+;;;293    #ifdef WAIT_AFTER_LOCATE
+;;;294    			if ((uint32_t) (unSystemTick - iEnterTimeBeforeWait) >= WAIT_AFTER_LOCATE_TIME) {
+;;;295    #endif					
+;;;296    				tMotor.structMotor.unActualDuty = tMotor.structMotor.unRampUpDuty;
+;;;297    				tMotor.structMotor.unActualPeriod = tMotor.structMotor.unRampUpPeriod;
+;;;298    				tMotor.structMotor.MSR.bMotorPowerOn = TRUE;
+;;;299    				PHASE_INCREASE(unCurrentPhase);
+;;;300    				setPhaseManually(tMotor.structMotor.unActualDuty, unCurrentPhase);
+;;;301    				BRG_ENABLE;
+;;;302    				// Set timer 0 valure, use timer 0 to change phase automatically
+;;;303    				// ************************************************************************
+;;;304    				// ----==== From here current unCurrentPhase is actually next phase ====----
+;;;305    				// ----==== Because we want to use the HW auto phase changer (PWM->PHCHGNXT) ====----
+;;;306    				// So increase unCurrentPhase again. Want to get real current phase value? Read PWM->PHCHG.
+;;;307    				// ************************************************************************
+;;;308    				PHASE_INCREASE(unCurrentPhase);
+;;;309    				PWM->PHCHGNXT = GET_PHASE_VALUE(unCurrentPhase);
+;;;310    				// !!!! Need to make sure CPU runs to here every min tMotor.structMotor.ACT_PERIOD time !!!
+;;;311    				// !!!! If not , timer counter may already passed tMotor.structMotor.ACT_PERIOD, !!!!
+;;;312    				// !!!! then need to count to max timer counter number (which is 2^24), !!!!
+;;;313    				// !!!! go back to 0 and triger interrupt when reach ACT_PERIOD again !!!!
+;;;314    				TIMER_SET_CMP_VALUE(TIMER0, tMotor.structMotor.unActualPeriod);
+;;;315    				TIMER_Start(TIMER0);				// Once started, running and interrupting until Motor stop
+;;;316    				TIMER_EnableInt(TIMER0);
+;;;317    				unPeriodChangeCNT_AfterPR_ReachMini = 0;
+;;;318    				unPhaseChangeCNT_AtCurrentDuty = 0;
+;;;319    				unPhaseChangeCNT_AtCurrentPeriod = 0;
+;;;320    				tMotorState = MOTOR_RAMPUP_WO_ZXD;
+;;;321    #ifdef WAIT_AFTER_LOCATE
+;;;322    			}
+;;;323    #endif
+;;;324    		} else {
+;;;325    			BLDC_stopMotor();
+;;;326    		}
+;;;327    		break;
+;;;328    
+;;;329    	case MOTOR_RAMPUP_WO_ZXD:	// without zero cross detection
+;;;330    		if (tMotor.structMotor.MCR.bMotorNeedToRun && NO_MOTOR_EEROR) {
+;;;331    			BLDCRampUp_Manager();
+;;;332    			if (tMotor.structMotor.unActualPeriod <= MOTOR_START_ZXD_SPEED)	//(iRampUpPeriodMiniCNT > MOTOR_START_ZXD_MINROT_CNT)  //
+;;;333    			{
+;;;334    				tMotor.structMotor.MSR.bThisPhaseDetectedZX = FALSE;
+;;;335    				tMotor.structMotor.MSR.bZeroCrossDetecting = TRUE;
+;;;336    				// Speed is enough for zero cross detecting
+;;;337    				// Prepare everything
+;;;338    				// T0 used to change phase automatically -- already configured
+;;;339    				// T1 used to filter ZX
+;;;340    
+;;;341    //				TIMER_SET_CMP_VALUE(TIMER1, GET_TIM1_CMP_VALUE(TIMER1->TDR + AVOID_ZXD_AFTER_PHCHG));
+;;;342    //				FLAG_TIM1_USEAGE = ENUM_TIM1_AVOID_ZXD;
+;;;343    				ACMP0_ENABLE;
+;;;344    				TIMER_Start(TIMER1);				// Once started, running until Motor stop
+;;;345    //				TIMER_EnableInt(TIMER1);
+;;;346    						// Suppose last ZX detected time
+;;;347    //				unLastZXDetectedTime = MINI51_TIM_CNT_MAX - tMotor.structMotor.ACT_PERIOD / 2;
+;;;348    				tMotorState = MOTOR_RAMPUP_W_ZXD;
+;;;349    			}
+;;;350    		} else {
+;;;351    			BLDC_stopMotor();
+;;;352    		}
+;;;353    		break;
+;;;354    
+;;;355    	case MOTOR_RAMPUP_W_ZXD:	// with zero cross detection
+;;;356    		if (tMotor.structMotor.MCR.bMotorNeedToRun && NO_MOTOR_EEROR) {
+;;;357    			if (TRUE == tMotor.structMotor.MSR.bLocked) {
+;;;358    				// Finally, everything was prepared:
+;;;359    				// T0 used to change phase automatically
+;;;360    				// T1 used to filter ZX
+;;;361    				tMotorState = MOTOR_LOCKED;
+;;;362    			} else {
+;;;363    				if (unPeriodChangeCNT_AfterPR_ReachMini < RAMP_UP_MIN_PERIOD_NUM_THRS) {
+;;;364    					BLDCRampUp_Manager();
+;;;365    				} else {
+;;;366    					setError(ERR_RAMPUP_FAIL);
+;;;367    				}
+;;;368    			}
+;;;369    		} else {
+;;;370    			BLDC_stopMotor();
+;;;371    		}
+;;;372    		break;
+;;;373    
+;;;374    	case MOTOR_LOCKED:
+;;;375    		if (tMotor.structMotor.MCR.bMotorNeedToRun && NO_MOTOR_EEROR) {
+;;;376    			BLDCSpeedManager();	// Mainly PWM duty increase/decrease
+;;;377    		} else {
+;;;378    			BLDC_stopMotor();
+;;;379    		}
 ;;;380    		break;
-;;;381    	}
-;;;382    }
+;;;381    
+;;;382    	default:
+;;;383    		break;
+;;;384    	}
+;;;385    }
 000172  bdf8              POP      {r3-r7,pc}
-000174  8862              LDRH     r2,[r4,#2]            ;247  ; tMotor
-000176  07d2              LSLS     r2,r2,#31             ;247
+000174  8862              LDRH     r2,[r4,#2]            ;248  ; tMotor
+000176  07d2              LSLS     r2,r2,#31             ;248
 000178  d015              BEQ      |L1.422|
-00017a  6800              LDR      r0,[r0,#0]            ;247  ; unErrorMaster
-00017c  0840              LSRS     r0,r0,#1              ;247
+00017a  6800              LDR      r0,[r0,#0]            ;248  ; unErrorMaster
+00017c  0840              LSRS     r0,r0,#1              ;248
 00017e  d112              BNE      |L1.422|
-000180  716f              STRB     r7,[r5,#5]            ;259
-000182  70af              STRB     r7,[r5,#2]            ;260
-000184  80e7              STRH     r7,[r4,#6]            ;261
-000186  6830              LDR      r0,[r6,#0]            ;262  ; unSystemTick
-000188  6128              STR      r0,[r5,#0x10]         ;263  ; unLastPhaseChangeTime
-00018a  88a0              LDRH     r0,[r4,#4]            ;263  ; tMotor
-00018c  4308              ORRS     r0,r0,r1              ;263
-00018e  80a0              STRH     r0,[r4,#4]            ;263
-000190  88a2              LDRH     r2,[r4,#4]            ;265  ; tMotor
-000192  2002              MOVS     r0,#2                 ;265
-000194  4382              BICS     r2,r2,r0              ;265
-000196  80a2              STRH     r2,[r4,#4]            ;265
-000198  88a3              LDRH     r3,[r4,#4]            ;266  ; tMotor
-00019a  2204              MOVS     r2,#4                 ;266
-00019c  4393              BICS     r3,r3,r2              ;266
-00019e  80a3              STRH     r3,[r4,#4]            ;266
-0001a0  4a51              LDR      r2,|L1.744|
-0001a2  6211              STR      r1,[r2,#0x20]         ;268
-0001a4  e050              B        |L1.584|
+000180  716f              STRB     r7,[r5,#5]            ;260
+000182  70af              STRB     r7,[r5,#2]            ;261
+000184  80e7              STRH     r7,[r4,#6]            ;262
+000186  6830              LDR      r0,[r6,#0]            ;263  ; unSystemTick
+000188  60e8              STR      r0,[r5,#0xc]          ;264  ; unLastPhaseChangeTime
+00018a  88a0              LDRH     r0,[r4,#4]            ;264  ; tMotor
+00018c  4308              ORRS     r0,r0,r1              ;264
+00018e  80a0              STRH     r0,[r4,#4]            ;264
+000190  88a2              LDRH     r2,[r4,#4]            ;266  ; tMotor
+000192  2002              MOVS     r0,#2                 ;266
+000194  4382              BICS     r2,r2,r0              ;266
+000196  80a2              STRH     r2,[r4,#4]            ;266
+000198  88a3              LDRH     r3,[r4,#4]            ;267  ; tMotor
+00019a  2204              MOVS     r2,#4                 ;267
+00019c  4393              BICS     r3,r3,r2              ;267
+00019e  80a3              STRH     r3,[r4,#4]            ;267
+0001a0  4a50              LDR      r2,|L1.740|
+0001a2  6211              STR      r1,[r2,#0x20]         ;269
+0001a4  e04e              B        |L1.580|
                   |L1.422|
 0001a6  f7fffffe          BL       BLDC_stopMotor
                   |L1.426|
 0001aa  bdf8              POP      {r3-r7,pc}
-0001ac  8861              LDRH     r1,[r4,#2]            ;278  ; tMotor
-0001ae  07c9              LSLS     r1,r1,#31             ;278
+0001ac  8861              LDRH     r1,[r4,#2]            ;279  ; tMotor
+0001ae  07c9              LSLS     r1,r1,#31             ;279
 0001b0  d0f9              BEQ      |L1.422|
-0001b2  6800              LDR      r0,[r0,#0]            ;278  ; unErrorMaster
-0001b4  0840              LSRS     r0,r0,#1              ;278
+0001b2  6800              LDR      r0,[r0,#0]            ;279  ; unErrorMaster
+0001b4  0840              LSRS     r0,r0,#1              ;279
 0001b6  d1f6              BNE      |L1.422|
 0001b8  f7fffffe          BL       BLDC_LocatingManager
-0001bc  2801              CMP      r0,#1                 ;279
+0001bc  2801              CMP      r0,#1                 ;280
 0001be  d1f4              BNE      |L1.426|
-0001c0  6830              LDR      r0,[r6,#0]            ;280  ; unSystemTick
-0001c2  60e8              STR      r0,[r5,#0xc]          ;281  ; iEnterTimeBeforeWait
-0001c4  2003              MOVS     r0,#3                 ;281
-0001c6  e03f              B        |L1.584|
-0001c8  8862              LDRH     r2,[r4,#2]            ;289  ; tMotor
-0001ca  07d2              LSLS     r2,r2,#31             ;289
-                  |L1.460|
-0001cc  d0eb              BEQ      |L1.422|
-0001ce  6800              LDR      r0,[r0,#0]            ;289  ; unErrorMaster
-0001d0  0840              LSRS     r0,r0,#1              ;289
-                  |L1.466|
-0001d2  d1e8              BNE      |L1.422|
-0001d4  89a0              LDRH     r0,[r4,#0xc]          ;293  ; tMotor
-0001d6  4626              MOV      r6,r4                 ;293
-0001d8  8220              STRH     r0,[r4,#0x10]         ;293
-0001da  69a0              LDR      r0,[r4,#0x18]         ;294  ; tMotor
-0001dc  61e0              STR      r0,[r4,#0x1c]         ;294  ; tMotor
-0001de  88a0              LDRH     r0,[r4,#4]            ;295  ; tMotor
-0001e0  460c              MOV      r4,r1                 ;295
-0001e2  4320              ORRS     r0,r0,r4              ;295
-0001e4  80b0              STRH     r0,[r6,#4]            ;295
-0001e6  7968              LDRB     r0,[r5,#5]            ;296  ; unCurrentPhase
-0001e8  2805              CMP      r0,#5                 ;296
-0001ea  d201              BCS      |L1.496|
-0001ec  1c40              ADDS     r0,r0,#1              ;296
-0001ee  e000              B        |L1.498|
-                  |L1.496|
-0001f0  2000              MOVS     r0,#0                 ;296
-                  |L1.498|
-0001f2  b2c1              UXTB     r1,r0                 ;296
-0001f4  7169              STRB     r1,[r5,#5]            ;296
-0001f6  8a30              LDRH     r0,[r6,#0x10]         ;297  ; tMotor
-0001f8  f7fffffe          BL       setPhaseManually
-0001fc  483a              LDR      r0,|L1.744|
-0001fe  6204              STR      r4,[r0,#0x20]         ;298
-000200  7968              LDRB     r0,[r5,#5]            ;305  ; unCurrentPhase
-000202  2805              CMP      r0,#5                 ;305
-000204  d201              BCS      |L1.522|
-000206  1c40              ADDS     r0,r0,#1              ;305
-000208  e000              B        |L1.524|
-                  |L1.522|
-00020a  2000              MOVS     r0,#0                 ;305
-                  |L1.524|
-00020c  b2c0              UXTB     r0,r0                 ;305
-00020e  7168              STRB     r0,[r5,#5]            ;305
-000210  8871              LDRH     r1,[r6,#2]            ;306  ; tMotor
-000212  0789              LSLS     r1,r1,#30             ;306
-000214  d402              BMI      |L1.540|
-000216  0080              LSLS     r0,r0,#2              ;306
-000218  4930              LDR      r1,|L1.732|
-00021a  e002              B        |L1.546|
-                  |L1.540|
-00021c  492f              LDR      r1,|L1.732|
-00021e  0080              LSLS     r0,r0,#2              ;306
-000220  3118              ADDS     r1,r1,#0x18           ;306
-                  |L1.546|
-000222  5808              LDR      r0,[r1,r0]            ;306
-000224  492c              LDR      r1,|L1.728|
-000226  3140              ADDS     r1,r1,#0x40           ;306
-000228  63c8              STR      r0,[r1,#0x3c]         ;306
-00022a  69f1              LDR      r1,[r6,#0x1c]         ;311  ; tMotor
-00022c  482f              LDR      r0,|L1.748|
-00022e  6041              STR      r1,[r0,#4]            ;311
-000230  6801              LDR      r1,[r0,#0]            ;311
-000232  0382              LSLS     r2,r0,#14             ;311
-000234  4311              ORRS     r1,r1,r2              ;311
-000236  6001              STR      r1,[r0,#0]            ;311
-000238  6801              LDR      r1,[r0,#0]            ;311
-00023a  0342              LSLS     r2,r0,#13             ;311
-00023c  4311              ORRS     r1,r1,r2              ;311
-00023e  6001              STR      r1,[r0,#0]            ;311
-000240  812f              STRH     r7,[r5,#8]            ;314
-000242  712f              STRB     r7,[r5,#4]            ;315
-000244  70ef              STRB     r7,[r5,#3]            ;316
-000246  2004              MOVS     r0,#4                 ;317
-                  |L1.584|
-000248  7028              STRB     r0,[r5,#0]            ;281
-                  |L1.586|
-00024a  bdf8              POP      {r3-r7,pc}
-00024c  8861              LDRH     r1,[r4,#2]            ;327  ; tMotor
-00024e  07c9              LSLS     r1,r1,#31             ;327
-000250  d0a9              BEQ      |L1.422|
-000252  6800              LDR      r0,[r0,#0]            ;327  ; unErrorMaster
-000254  0840              LSRS     r0,r0,#1              ;327
-000256  d1a6              BNE      |L1.422|
-000258  f7fffffe          BL       BLDCRampUp_Manager
-00025c  69e0              LDR      r0,[r4,#0x1c]         ;329  ; tMotor
-00025e  4927              LDR      r1,|L1.764|
-000260  4288              CMP      r0,r1                 ;329
-000262  d8f2              BHI      |L1.586|
-000264  88a0              LDRH     r0,[r4,#4]            ;331  ; tMotor
-000266  2108              MOVS     r1,#8                 ;331
-000268  4388              BICS     r0,r0,r1              ;331
-00026a  80a0              STRH     r0,[r4,#4]            ;331
-00026c  88a0              LDRH     r0,[r4,#4]            ;332  ; tMotor
-00026e  2102              MOVS     r1,#2                 ;332
-000270  4308              ORRS     r0,r0,r1              ;332
-000272  80a0              STRH     r0,[r4,#4]            ;332
-000274  4822              LDR      r0,|L1.768|
-000276  6801              LDR      r1,[r0,#0]            ;340
-000278  2305              MOVS     r3,#5                 ;340
-00027a  4319              ORRS     r1,r1,r3              ;340
-00027c  6001              STR      r1,[r0,#0]            ;340
-00027e  491b              LDR      r1,|L1.748|
-000280  3120              ADDS     r1,r1,#0x20           ;340
-000282  680a              LDR      r2,[r1,#0]            ;340
-000284  0380              LSLS     r0,r0,#14             ;340
-000286  4302              ORRS     r2,r2,r0              ;340
-000288  600a              STR      r2,[r1,#0]            ;340
-00028a  702b              STRB     r3,[r5,#0]            ;345
-00028c  bdf8              POP      {r3-r7,pc}
-00028e  8861              LDRH     r1,[r4,#2]            ;353  ; tMotor
-000290  07c9              LSLS     r1,r1,#31             ;353
-000292  d088              BEQ      |L1.422|
-000294  6800              LDR      r0,[r0,#0]            ;353  ; unErrorMaster
-000296  0840              LSRS     r0,r0,#1              ;353
-000298  d185              BNE      |L1.422|
-00029a  88a0              LDRH     r0,[r4,#4]            ;354  ; tMotor
-00029c  0740              LSLS     r0,r0,#29             ;354
-00029e  d501              BPL      |L1.676|
-0002a0  2006              MOVS     r0,#6                 ;358
-0002a2  e7d1              B        |L1.584|
-                  |L1.676|
-0002a4  8928              LDRH     r0,[r5,#8]            ;360  ; unPeriodChangeCNT_AfterPR_ReachMini
-0002a6  21ff              MOVS     r1,#0xff              ;360
-0002a8  312d              ADDS     r1,r1,#0x2d           ;360
-0002aa  4288              CMP      r0,r1                 ;360
-0002ac  d202              BCS      |L1.692|
-0002ae  f7fffffe          BL       BLDCRampUp_Manager
-0002b2  bdf8              POP      {r3-r7,pc}
-                  |L1.692|
-0002b4  2004              MOVS     r0,#4                 ;363
-0002b6  f7fffffe          BL       setError
-0002ba  bdf8              POP      {r3-r7,pc}
-0002bc  8861              LDRH     r1,[r4,#2]            ;372  ; tMotor
-0002be  07c9              LSLS     r1,r1,#31             ;372
-0002c0  d084              BEQ      |L1.460|
-0002c2  6800              LDR      r0,[r0,#0]            ;372  ; unErrorMaster
-0002c4  0840              LSRS     r0,r0,#1              ;372
-0002c6  d184              BNE      |L1.466|
-0002c8  f7fffffe          BL       BLDCSpeedManager
-0002cc  bdf8              POP      {r3-r7,pc}
-;;;383    
+0001c0  2003              MOVS     r0,#3                 ;284
+0001c2  e03f              B        |L1.580|
+0001c4  8862              LDRH     r2,[r4,#2]            ;292  ; tMotor
+0001c6  07d2              LSLS     r2,r2,#31             ;292
+                  |L1.456|
+0001c8  d0ed              BEQ      |L1.422|
+0001ca  6800              LDR      r0,[r0,#0]            ;292  ; unErrorMaster
+0001cc  0840              LSRS     r0,r0,#1              ;292
+                  |L1.462|
+0001ce  d1ea              BNE      |L1.422|
+0001d0  89a0              LDRH     r0,[r4,#0xc]          ;296  ; tMotor
+0001d2  4626              MOV      r6,r4                 ;296
+0001d4  8220              STRH     r0,[r4,#0x10]         ;296
+0001d6  69a0              LDR      r0,[r4,#0x18]         ;297  ; tMotor
+0001d8  61e0              STR      r0,[r4,#0x1c]         ;297  ; tMotor
+0001da  88a0              LDRH     r0,[r4,#4]            ;298  ; tMotor
+0001dc  460c              MOV      r4,r1                 ;298
+0001de  4320              ORRS     r0,r0,r4              ;298
+0001e0  80b0              STRH     r0,[r6,#4]            ;298
+0001e2  7968              LDRB     r0,[r5,#5]            ;299  ; unCurrentPhase
+0001e4  2805              CMP      r0,#5                 ;299
+0001e6  d201              BCS      |L1.492|
+0001e8  1c40              ADDS     r0,r0,#1              ;299
+0001ea  e000              B        |L1.494|
+                  |L1.492|
+0001ec  2000              MOVS     r0,#0                 ;299
+                  |L1.494|
+0001ee  b2c1              UXTB     r1,r0                 ;299
+0001f0  7169              STRB     r1,[r5,#5]            ;299
+0001f2  8a30              LDRH     r0,[r6,#0x10]         ;300  ; tMotor
+0001f4  f7fffffe          BL       setPhaseManually
+0001f8  483a              LDR      r0,|L1.740|
+0001fa  6204              STR      r4,[r0,#0x20]         ;301
+0001fc  7968              LDRB     r0,[r5,#5]            ;308  ; unCurrentPhase
+0001fe  2805              CMP      r0,#5                 ;308
+000200  d201              BCS      |L1.518|
+000202  1c40              ADDS     r0,r0,#1              ;308
+000204  e000              B        |L1.520|
+                  |L1.518|
+000206  2000              MOVS     r0,#0                 ;308
+                  |L1.520|
+000208  b2c0              UXTB     r0,r0                 ;308
+00020a  7168              STRB     r0,[r5,#5]            ;308
+00020c  8871              LDRH     r1,[r6,#2]            ;309  ; tMotor
+00020e  0789              LSLS     r1,r1,#30             ;309
+000210  d402              BMI      |L1.536|
+000212  0080              LSLS     r0,r0,#2              ;309
+000214  4930              LDR      r1,|L1.728|
+000216  e002              B        |L1.542|
+                  |L1.536|
+000218  492f              LDR      r1,|L1.728|
+00021a  0080              LSLS     r0,r0,#2              ;309
+00021c  3118              ADDS     r1,r1,#0x18           ;309
+                  |L1.542|
+00021e  5808              LDR      r0,[r1,r0]            ;309
+000220  492c              LDR      r1,|L1.724|
+000222  3140              ADDS     r1,r1,#0x40           ;309
+000224  63c8              STR      r0,[r1,#0x3c]         ;309
+000226  69f1              LDR      r1,[r6,#0x1c]         ;314  ; tMotor
+000228  482f              LDR      r0,|L1.744|
+00022a  6041              STR      r1,[r0,#4]            ;314
+00022c  6801              LDR      r1,[r0,#0]            ;314
+00022e  0382              LSLS     r2,r0,#14             ;314
+000230  4311              ORRS     r1,r1,r2              ;314
+000232  6001              STR      r1,[r0,#0]            ;314
+000234  6801              LDR      r1,[r0,#0]            ;314
+000236  0342              LSLS     r2,r0,#13             ;314
+000238  4311              ORRS     r1,r1,r2              ;314
+00023a  6001              STR      r1,[r0,#0]            ;314
+00023c  812f              STRH     r7,[r5,#8]            ;317
+00023e  712f              STRB     r7,[r5,#4]            ;318
+000240  70ef              STRB     r7,[r5,#3]            ;319
+000242  2004              MOVS     r0,#4                 ;320
+                  |L1.580|
+000244  7028              STRB     r0,[r5,#0]            ;284
+                  |L1.582|
+000246  bdf8              POP      {r3-r7,pc}
+000248  8861              LDRH     r1,[r4,#2]            ;330  ; tMotor
+00024a  07c9              LSLS     r1,r1,#31             ;330
+00024c  d0ab              BEQ      |L1.422|
+00024e  6800              LDR      r0,[r0,#0]            ;330  ; unErrorMaster
+000250  0840              LSRS     r0,r0,#1              ;330
+000252  d1a8              BNE      |L1.422|
+000254  f7fffffe          BL       BLDCRampUp_Manager
+000258  69e0              LDR      r0,[r4,#0x1c]         ;332  ; tMotor
+00025a  4927              LDR      r1,|L1.760|
+00025c  4288              CMP      r0,r1                 ;332
+00025e  d8f2              BHI      |L1.582|
+000260  88a0              LDRH     r0,[r4,#4]            ;334  ; tMotor
+000262  2108              MOVS     r1,#8                 ;334
+000264  4388              BICS     r0,r0,r1              ;334
+000266  80a0              STRH     r0,[r4,#4]            ;334
+000268  88a0              LDRH     r0,[r4,#4]            ;335  ; tMotor
+00026a  2102              MOVS     r1,#2                 ;335
+00026c  4308              ORRS     r0,r0,r1              ;335
+00026e  80a0              STRH     r0,[r4,#4]            ;335
+000270  4822              LDR      r0,|L1.764|
+000272  6801              LDR      r1,[r0,#0]            ;343
+000274  2205              MOVS     r2,#5                 ;343
+000276  4311              ORRS     r1,r1,r2              ;343
+000278  6001              STR      r1,[r0,#0]            ;343
+00027a  481b              LDR      r0,|L1.744|
+00027c  3020              ADDS     r0,r0,#0x20           ;343
+00027e  6801              LDR      r1,[r0,#0]            ;343
+000280  0643              LSLS     r3,r0,#25             ;343
+000282  4319              ORRS     r1,r1,r3              ;343
+000284  6001              STR      r1,[r0,#0]            ;343
+000286  702a              STRB     r2,[r5,#0]            ;348
+000288  bdf8              POP      {r3-r7,pc}
+00028a  8861              LDRH     r1,[r4,#2]            ;356  ; tMotor
+00028c  07c9              LSLS     r1,r1,#31             ;356
+00028e  d08a              BEQ      |L1.422|
+000290  6800              LDR      r0,[r0,#0]            ;356  ; unErrorMaster
+000292  0840              LSRS     r0,r0,#1              ;356
+000294  d187              BNE      |L1.422|
+000296  88a0              LDRH     r0,[r4,#4]            ;357  ; tMotor
+000298  0740              LSLS     r0,r0,#29             ;357
+00029a  d501              BPL      |L1.672|
+00029c  2006              MOVS     r0,#6                 ;361
+00029e  e7d1              B        |L1.580|
+                  |L1.672|
+0002a0  8928              LDRH     r0,[r5,#8]            ;363  ; unPeriodChangeCNT_AfterPR_ReachMini
+0002a2  21ff              MOVS     r1,#0xff              ;363
+0002a4  312d              ADDS     r1,r1,#0x2d           ;363
+0002a6  4288              CMP      r0,r1                 ;363
+0002a8  d202              BCS      |L1.688|
+0002aa  f7fffffe          BL       BLDCRampUp_Manager
+0002ae  bdf8              POP      {r3-r7,pc}
+                  |L1.688|
+0002b0  2004              MOVS     r0,#4                 ;366
+0002b2  f7fffffe          BL       setError
+0002b6  bdf8              POP      {r3-r7,pc}
+0002b8  8861              LDRH     r1,[r4,#2]            ;375  ; tMotor
+0002ba  07c9              LSLS     r1,r1,#31             ;375
+0002bc  d084              BEQ      |L1.456|
+0002be  6800              LDR      r0,[r0,#0]            ;375  ; unErrorMaster
+0002c0  0840              LSRS     r0,r0,#1              ;375
+0002c2  d184              BNE      |L1.462|
+0002c4  f7fffffe          BL       BLDCSpeedManager
+0002c8  bdf8              POP      {r3-r7,pc}
+;;;386    
                           ENDP
 
-0002ce  0000              DCW      0x0000
-                  |L1.720|
+0002ca  0000              DCW      0x0000
+                  |L1.716|
                           DCD      ||.data||
-                  |L1.724|
+                  |L1.720|
                           DCD      ||.bss||
-                  |L1.728|
+                  |L1.724|
                           DCD      0x40040000
-                  |L1.732|
+                  |L1.728|
                           DCD      ||.constdata||+0x4
-                  |L1.736|
+                  |L1.732|
                           DCD      unSystemTick
-                  |L1.740|
+                  |L1.736|
                           DCD      0x0000ffff
-                  |L1.744|
+                  |L1.740|
                           DCD      0x50004240
-                  |L1.748|
+                  |L1.744|
                           DCD      0x40010000
-                  |L1.752|
+                  |L1.748|
                           DCD      0x000002dd
-                  |L1.756|
+                  |L1.752|
                           DCD      _ZZ23phaseDurationProtectionE14unCurrentPHCHG
-                  |L1.760|
+                  |L1.756|
                           DCD      unErrorMaster
-                  |L1.764|
+                  |L1.760|
                           DCD      0x0000063f
-                  |L1.768|
+                  |L1.764|
                           DCD      0x400d0000
 
                           AREA ||.bss||, DATA, NOINIT, ALIGN=2
@@ -712,8 +713,6 @@
 000006  0000              DCB      0x00,0x00
                   unPeriodChangeCNT_AfterPR_ReachMini
 000008  00000000          DCB      0x00,0x00,0x00,0x00
-                  iEnterTimeBeforeWait
-                          DCD      0x00000000
                   unLastPhaseChangeTime
                           DCD      0x00000000
                   unRotateDetectStartTime
@@ -807,7 +806,7 @@
 000054  1a9a              SUBS     r2,r3,r2
 000056  1889              ADDS     r1,r1,r2
                   |L20.88|
-000058  61b1              STR      r1,[r6,#0x18]  ; unLastZXDetectedTime
+000058  6171              STR      r1,[r6,#0x14]  ; unLastZXDetectedTime
 ;;;49     			if (tMotor.structMotor.unMissedZXD_CNT > MAX_MISS_ZXD_THRESHOLD) {
 00005a  88e1              LDRH     r1,[r4,#6]  ; tMotor
 00005c  290c              CMP      r1,#0xc

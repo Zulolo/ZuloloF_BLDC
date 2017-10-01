@@ -10990,7 +10990,8 @@ __inline void phaseDurationProtection(uint32_t unLastPhaseChangeTime) {
 
 void BLDC_SensorLessManager(void) {
 	uint16_t unMotorAlreadyRotatingPhaseTime;
-	static uint32_t iEnterTimeBeforeWait;
+
+
 
 	dutyProtection();
 	phaseDurationProtection(unLastPhaseChangeTime);
@@ -11038,7 +11039,9 @@ void BLDC_SensorLessManager(void) {
 	case MOTOR_LOCATE:
 		if (tMotor.structMotor.MCR.bMotorNeedToRun && (((unErrorMaster & 0xFFFFFFFEul) == 0) ? (1) : (0))) {
 			if (BLDC_LocatingManager() == STATUS_FINISHED) {
-				iEnterTimeBeforeWait = unSystemTick;
+
+
+
 				tMotorState = MOTOR_WAIT_AFTER_LOCATE;
 			}
 		} else {

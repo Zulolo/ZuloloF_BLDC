@@ -12627,7 +12627,7 @@ N#include "global.h"
 N
 N#define LED_PORT					P5
 N#define LED_PIN						BIT4
-N#define LED_OUTPUT				P54
+N#define LED_OUTPUT					P54
 N
 N#define GET_SPECIFIED_EEROR(x)		((unErrorMaster & (1L << (x)) == 0) ? FALSE : TRUE)
 N#define IS_ANY_EEROR				((unErrorMaster == 0) ? FALSE : TRUE)
@@ -12658,7 +12658,7 @@ N} ENUM_ERROR_LEVEL;
 N
 N#define LED_ON					(LED_OUTPUT = 0)
 N#define LED_OFF 				(LED_OUTPUT = 1)
-N#define LED_TOGGLE 			(GPIO_TOGGLE(LED_OUTPUT))
+N#define LED_TOGGLE 				(GPIO_TOGGLE(LED_OUTPUT))
 N
 N#ifdef __USED_BY_ERROR_C__
 S#define EXTERNAL_ERROR
@@ -13322,8 +13322,9 @@ N
 N// Take charge of all Motot control
 Nvoid BLDC_SensorLessManager(void) {
 N	uint16_t unMotorAlreadyRotatingPhaseTime;
-N	static uint32_t iEnterTimeBeforeWait;
-N
+N#ifdef WAIT_AFTER_LOCATE
+S	static uint32_t iEnterTimeBeforeWait;
+N#endif
 N	dutyProtection();
 N	phaseDurationProtection(unLastPhaseChangeTime);
 N
@@ -13378,7 +13379,9 @@ N	case MOTOR_LOCATE:
 N		if (tMotor.structMotor.MCR.bMotorNeedToRun && NO_MOTOR_EEROR) {
 X		if (tMotor.structMotor.MCR.bMotorNeedToRun && (((unErrorMaster & 0xFFFFFFFEul) == 0) ? (1) : (0))) {
 N			if (BLDC_LocatingManager() == STATUS_FINISHED) {
-N				iEnterTimeBeforeWait = unSystemTick;
+N#ifdef WAIT_AFTER_LOCATE
+S				iEnterTimeBeforeWait = unSystemTick;
+N#endif
 N				tMotorState = MOTOR_WAIT_AFTER_LOCATE;
 N			}
 N		} else {
@@ -13499,6 +13502,5 @@ N
 N	default:
 N		break;
 N	}
-W "User\BLDCSensorLess.c" 232 18 variable "iEnterTimeBeforeWait"  was set but never used
 N}
 N

@@ -8,7 +8,7 @@ N * @brief    BLDC Sensor Less controller for Mini51 series MCU
 N *
 N * @note
 N * Copyright (C) 2014 Zulolo Technology Corp. All rights reserved.
-N*****************************************************************************/
+N *****************************************************************************/
 N
 N#define __USED_BY_ERROR_C__
 N#include "Error.h"
@@ -12636,7 +12636,7 @@ S#include "global.h"
 S
 S#define LED_PORT					P5
 S#define LED_PIN						BIT4
-S#define LED_OUTPUT				P54
+S#define LED_OUTPUT					P54
 S
 S#define GET_SPECIFIED_EEROR(x)		((unErrorMaster & (1L << (x)) == 0) ? FALSE : TRUE)
 S#define IS_ANY_EEROR				((unErrorMaster == 0) ? FALSE : TRUE)
@@ -12667,7 +12667,7 @@ S} ENUM_ERROR_LEVEL;
 S
 S#define LED_ON					(LED_OUTPUT = 0)
 S#define LED_OFF 				(LED_OUTPUT = 1)
-S#define LED_TOGGLE 			(GPIO_TOGGLE(LED_OUTPUT))
+S#define LED_TOGGLE 				(GPIO_TOGGLE(LED_OUTPUT))
 S
 S#ifdef __USED_BY_ERROR_C__
 S#define EXTERNAL_ERROR
@@ -12758,7 +12758,7 @@ L 5 "User\Error.h" 2
 N
 N#define LED_PORT					P5
 N#define LED_PIN						BIT4
-N#define LED_OUTPUT				P54
+N#define LED_OUTPUT					P54
 N
 N#define GET_SPECIFIED_EEROR(x)		((unErrorMaster & (1L << (x)) == 0) ? FALSE : TRUE)
 N#define IS_ANY_EEROR				((unErrorMaster == 0) ? FALSE : TRUE)
@@ -12789,7 +12789,7 @@ N} ENUM_ERROR_LEVEL;
 N
 N#define LED_ON					(LED_OUTPUT = 0)
 N#define LED_OFF 				(LED_OUTPUT = 1)
-N#define LED_TOGGLE 			(GPIO_TOGGLE(LED_OUTPUT))
+N#define LED_TOGGLE 				(GPIO_TOGGLE(LED_OUTPUT))
 N
 N#ifdef __USED_BY_ERROR_C__
 N#define EXTERNAL_ERROR
@@ -12834,91 +12834,68 @@ N
 N#endif
 L 14 "User\Error.c" 2
 N
-Nvoid delay(uint32_t unDelayMs)
-N{
+Nvoid delay(uint32_t unDelayMs) {
 N	uint32_t unEntryTime = unSystemTick;
-N	while (((uint32_t)(unSystemTick - unEntryTime)) < unDelayMs)
-N	{
+N	while (((uint32_t) (unSystemTick - unEntryTime)) < unDelayMs) {
 N		__NOP();
 X		__nop();
 N	}
 N}
 N
-Nvoid clearError(void)
-N{
+Nvoid clearError(void) {
 N	unErrorMaster = 0;
 N}
 N
-Nvoid resetError(ENUM_ERROR_LEVEL enumErrorType)
-N{
-N	if (ERR_NULL != enumErrorType)
-N	{	
+Nvoid resetError(ENUM_ERROR_LEVEL enumErrorType) {
+N	if (ERR_NULL != enumErrorType) {
 N		unErrorMaster &= ~(1UL << (enumErrorType - 1));
 N	}
 N}
 N
-Nvoid setError(ENUM_ERROR_LEVEL enumErrorType)
-N{
-N	if (ERR_NULL == enumErrorType)
-N	{
+Nvoid setError(ENUM_ERROR_LEVEL enumErrorType) {
+N	if (ERR_NULL == enumErrorType) {
 N		unErrorMaster = 0;
-N	}
-N	else
-N	{
-N		unErrorMaster |= 1UL << (enumErrorType - 1); 
+N	} else {
+N		unErrorMaster |= 1UL << (enumErrorType - 1);
 N	}
 N}
 N
-NENUM_ERROR_LEVEL getPrecedenceError(void)
-N{
+NENUM_ERROR_LEVEL getPrecedenceError(void) {
 N	register ENUM_ERROR_LEVEL iVernier = ERR_BRD_FAULT;
-N	while (iVernier)
-N	{
-N		iVernier--; 
-N		if (unErrorMaster >> iVernier)
-N		{
+N	while (iVernier) {
+N		iVernier--;
+N		if (unErrorMaster >> iVernier) {
+W "User\Error.c" 45 11 enumerated type mixed with another type
 N			return (iVernier + 1);
-N		}		
+N		}
 N	}
 N	return iVernier;
 N}
 N
-Nvoid LEDBlinkHandler(ENUM_ERROR_LEVEL tErrorType, uint32_t unErrorStartTime)
-N{
+Nvoid LEDBlinkHandler(ENUM_ERROR_LEVEL tErrorType, uint32_t unErrorStartTime) {
 N	uint16_t iLEDTime;
-N	if (ERR_BRD_FAULT == tErrorType)
-N	{
+N	if (ERR_BRD_FAULT == tErrorType) {
 N		// Always ON
 N		LED_ON;
 X		((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(5))) + ((4)<<2)))) = 0);
-N	}
-N	else if (ERR_NULL == tErrorType)
-N	{
+N	} else if (ERR_NULL == tErrorType) {
 N		// Always off
 N		LED_OFF;
 X		((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(5))) + ((4)<<2)))) = 1);
-N	}
-N	else
-N	{
-N		iLEDTime = (uint16_t)(((uint32_t)(unSystemTick - unErrorStartTime)) % LED_PATTERN_INTERVAL);
-X		iLEDTime = (uint16_t)(((uint32_t)(unSystemTick - unErrorStartTime)) % 2000);
-N		if (iLEDTime >= unLED_BLINK_PATTERN_TABLE[tErrorType])
-N		{
+N	} else {
+N		iLEDTime = (uint16_t) (((uint32_t) (unSystemTick - unErrorStartTime)) % LED_PATTERN_INTERVAL);
+X		iLEDTime = (uint16_t) (((uint32_t) (unSystemTick - unErrorStartTime)) % 2000);
+N		if (iLEDTime >= unLED_BLINK_PATTERN_TABLE[tErrorType]) {
 N			LED_OFF;
 X			((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(5))) + ((4)<<2)))) = 1);
-N		}
-N		else
-N		{
+N		} else {
 N			iLEDTime %= LED_BLINK_INTERVAL;
 X			iLEDTime %= (200 + 200);
-N			if (iLEDTime < LED_BLINK_ON_TIME)
-X			if (iLEDTime < 200)
-N			{
+N			if (iLEDTime < LED_BLINK_ON_TIME) {
+X			if (iLEDTime < 200) {
 N				LED_ON;
 X				((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(5))) + ((4)<<2)))) = 0);
-N			}
-N			else
-N			{
+N			} else {
 N				LED_OFF;
 X				((*((volatile uint32_t *)(((((uint32_t)0x50000000) + 0x04200)+(0x20*(5))) + ((4)<<2)))) = 1);
 N			}
@@ -12929,30 +12906,25 @@ N
 N// Take charge of all error reporting via LED/UART
 N// Shut down all MOSFET was handled as soon as the critical error was found
 N// to make sure then responding time will not burn the board
-Nvoid ERR_Manager(void)
-N{
+Nvoid ERR_Manager(void) {
 N	static uint32_t unLastErrorChangeTime;
 N	static ENUM_ERROR_LEVEL tLastErrorType = ERR_NULL;
 N	ENUM_ERROR_LEVEL tErrorFetched;
 N	tErrorFetched = getPrecedenceError();
 N
-N	if (tLastErrorType != tErrorFetched)
-N	{
+N	if (tLastErrorType != tErrorFetched) {
 N		tLastErrorType = tErrorFetched;
 N		// error type changed (maybe changed to no error)
 N		unLastErrorChangeTime = unSystemTick;
 N		// No matter there is error or not, process!!
 N		LEDBlinkHandler(tErrorFetched, unLastErrorChangeTime);
-N	}
-N	else
-N	{
+N	} else {
 N		// Still same error (maybe no error)
 N		// Only process when there is some error
-N		if (ERR_NULL != tErrorFetched)
-N		{
+N		if (ERR_NULL != tErrorFetched) {
 N			LEDBlinkHandler(tErrorFetched, unLastErrorChangeTime);
-N		}	
+N		}
 N	}
-N	
+N
 N}
 N
