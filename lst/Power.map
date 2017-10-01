@@ -58,30 +58,30 @@ Image Symbol Table
     ../fplib/microlib/fpflt.c                0x00000000   Number         0  ffltui.o ABSOLUTE
     ../fplib/microlib/fpmul.c                0x00000000   Number         0  fmul.o ABSOLUTE
     ../fplib/microlib/fpmul.c                0x00000000   Number         0  dmul.o ABSOLUTE
-    C:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\acmp.c 0x00000000   Number         0  acmp.o ABSOLUTE
-    C:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\adc.c 0x00000000   Number         0  adc.o ABSOLUTE
-    C:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\clk.c 0x00000000   Number         0  clk.o ABSOLUTE
-    C:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\fmc.c 0x00000000   Number         0  fmc.o ABSOLUTE
-    C:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\gpio.c 0x00000000   Number         0  gpio.o ABSOLUTE
-    C:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\i2c.c 0x00000000   Number         0  i2c.o ABSOLUTE
-    C:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\pwm.c 0x00000000   Number         0  pwm.o ABSOLUTE
-    C:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\spi.c 0x00000000   Number         0  spi.o ABSOLUTE
-    C:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\sys.c 0x00000000   Number         0  sys.o ABSOLUTE
-    C:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\timer.c 0x00000000   Number         0  timer.o ABSOLUTE
-    C:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\uart.c 0x00000000   Number         0  uart.o ABSOLUTE
-    C:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\wdt.c 0x00000000   Number         0  wdt.o ABSOLUTE
-    C:\\Keil_v5\\ARM\\PACK\\Nuvoton\\NuMicro_DFP\\1.1.0\\Device\\Mini51\\Driver\\acmp.c 0x00000000   Number         0  acmp.o ABSOLUTE
-    C:\\Keil_v5\\ARM\\PACK\\Nuvoton\\NuMicro_DFP\\1.1.0\\Device\\Mini51\\Driver\\adc.c 0x00000000   Number         0  adc.o ABSOLUTE
-    C:\\Keil_v5\\ARM\\PACK\\Nuvoton\\NuMicro_DFP\\1.1.0\\Device\\Mini51\\Driver\\clk.c 0x00000000   Number         0  clk.o ABSOLUTE
-    C:\\Keil_v5\\ARM\\PACK\\Nuvoton\\NuMicro_DFP\\1.1.0\\Device\\Mini51\\Driver\\fmc.c 0x00000000   Number         0  fmc.o ABSOLUTE
-    C:\\Keil_v5\\ARM\\PACK\\Nuvoton\\NuMicro_DFP\\1.1.0\\Device\\Mini51\\Driver\\gpio.c 0x00000000   Number         0  gpio.o ABSOLUTE
-    C:\\Keil_v5\\ARM\\PACK\\Nuvoton\\NuMicro_DFP\\1.1.0\\Device\\Mini51\\Driver\\i2c.c 0x00000000   Number         0  i2c.o ABSOLUTE
-    C:\\Keil_v5\\ARM\\PACK\\Nuvoton\\NuMicro_DFP\\1.1.0\\Device\\Mini51\\Driver\\pwm.c 0x00000000   Number         0  pwm.o ABSOLUTE
-    C:\\Keil_v5\\ARM\\PACK\\Nuvoton\\NuMicro_DFP\\1.1.0\\Device\\Mini51\\Driver\\spi.c 0x00000000   Number         0  spi.o ABSOLUTE
-    C:\\Keil_v5\\ARM\\PACK\\Nuvoton\\NuMicro_DFP\\1.1.0\\Device\\Mini51\\Driver\\sys.c 0x00000000   Number         0  sys.o ABSOLUTE
-    C:\\Keil_v5\\ARM\\PACK\\Nuvoton\\NuMicro_DFP\\1.1.0\\Device\\Mini51\\Driver\\timer.c 0x00000000   Number         0  timer.o ABSOLUTE
-    C:\\Keil_v5\\ARM\\PACK\\Nuvoton\\NuMicro_DFP\\1.1.0\\Device\\Mini51\\Driver\\uart.c 0x00000000   Number         0  uart.o ABSOLUTE
-    C:\\Keil_v5\\ARM\\PACK\\Nuvoton\\NuMicro_DFP\\1.1.0\\Device\\Mini51\\Driver\\wdt.c 0x00000000   Number         0  wdt.o ABSOLUTE
+    D:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\acmp.c 0x00000000   Number         0  acmp.o ABSOLUTE
+    D:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\adc.c 0x00000000   Number         0  adc.o ABSOLUTE
+    D:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\clk.c 0x00000000   Number         0  clk.o ABSOLUTE
+    D:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\fmc.c 0x00000000   Number         0  fmc.o ABSOLUTE
+    D:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\gpio.c 0x00000000   Number         0  gpio.o ABSOLUTE
+    D:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\i2c.c 0x00000000   Number         0  i2c.o ABSOLUTE
+    D:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\pwm.c 0x00000000   Number         0  pwm.o ABSOLUTE
+    D:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\spi.c 0x00000000   Number         0  spi.o ABSOLUTE
+    D:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\sys.c 0x00000000   Number         0  sys.o ABSOLUTE
+    D:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\timer.c 0x00000000   Number         0  timer.o ABSOLUTE
+    D:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\uart.c 0x00000000   Number         0  uart.o ABSOLUTE
+    D:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Driver\wdt.c 0x00000000   Number         0  wdt.o ABSOLUTE
+    D:\\Keil_v5\\ARM\\PACK\\Nuvoton\\NuMicro_DFP\\1.1.0\\Device\\Mini51\\Driver\\acmp.c 0x00000000   Number         0  acmp.o ABSOLUTE
+    D:\\Keil_v5\\ARM\\PACK\\Nuvoton\\NuMicro_DFP\\1.1.0\\Device\\Mini51\\Driver\\adc.c 0x00000000   Number         0  adc.o ABSOLUTE
+    D:\\Keil_v5\\ARM\\PACK\\Nuvoton\\NuMicro_DFP\\1.1.0\\Device\\Mini51\\Driver\\clk.c 0x00000000   Number         0  clk.o ABSOLUTE
+    D:\\Keil_v5\\ARM\\PACK\\Nuvoton\\NuMicro_DFP\\1.1.0\\Device\\Mini51\\Driver\\fmc.c 0x00000000   Number         0  fmc.o ABSOLUTE
+    D:\\Keil_v5\\ARM\\PACK\\Nuvoton\\NuMicro_DFP\\1.1.0\\Device\\Mini51\\Driver\\gpio.c 0x00000000   Number         0  gpio.o ABSOLUTE
+    D:\\Keil_v5\\ARM\\PACK\\Nuvoton\\NuMicro_DFP\\1.1.0\\Device\\Mini51\\Driver\\i2c.c 0x00000000   Number         0  i2c.o ABSOLUTE
+    D:\\Keil_v5\\ARM\\PACK\\Nuvoton\\NuMicro_DFP\\1.1.0\\Device\\Mini51\\Driver\\pwm.c 0x00000000   Number         0  pwm.o ABSOLUTE
+    D:\\Keil_v5\\ARM\\PACK\\Nuvoton\\NuMicro_DFP\\1.1.0\\Device\\Mini51\\Driver\\spi.c 0x00000000   Number         0  spi.o ABSOLUTE
+    D:\\Keil_v5\\ARM\\PACK\\Nuvoton\\NuMicro_DFP\\1.1.0\\Device\\Mini51\\Driver\\sys.c 0x00000000   Number         0  sys.o ABSOLUTE
+    D:\\Keil_v5\\ARM\\PACK\\Nuvoton\\NuMicro_DFP\\1.1.0\\Device\\Mini51\\Driver\\timer.c 0x00000000   Number         0  timer.o ABSOLUTE
+    D:\\Keil_v5\\ARM\\PACK\\Nuvoton\\NuMicro_DFP\\1.1.0\\Device\\Mini51\\Driver\\uart.c 0x00000000   Number         0  uart.o ABSOLUTE
+    D:\\Keil_v5\\ARM\\PACK\\Nuvoton\\NuMicro_DFP\\1.1.0\\Device\\Mini51\\Driver\\wdt.c 0x00000000   Number         0  wdt.o ABSOLUTE
     RTE\Device\Mini54ZDE\retarget.c          0x00000000   Number         0  retarget.o ABSOLUTE
     RTE\Device\Mini54ZDE\startup_Mini51Series.s 0x00000000   Number         0  startup_mini51series.o ABSOLUTE
     RTE\Device\Mini54ZDE\system_Mini51Series.c 0x00000000   Number         0  system_mini51series.o ABSOLUTE
@@ -508,23 +508,23 @@ Image component sizes
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
        204          4          0          0          0       2270   adc.o
-       122         20          0         33         52      73481   bldcsensorless.o
+       122         20          0         33         52      73689   bldcsensorless.o
        464         24          0          0          0       3878   clk.o
-       480         46          0        536          0       4692   communication.o
-       220         16         32         12          0       3306   error.o
+       480         46          0        536          0       4804   communication.o
+       220         16         32         12          0       3410   error.o
         92          4          0          0          0      62406   gpio.o
-       696         60          0         24          0       4838   it.o
-      1388        176          0          4          0      79239   main.o
-       100         30          0         24          0       1597   protection.o
+       696         60          0         24          0       4866   it.o
+      1388        176          0          4          0      79351   main.o
+       100         30          0         24          0       1681   protection.o
        784         12          0          0          0       7454   pwm.o
-       324        128          0          4          0       4359   retarget.o
+       324        128          0          4          0       4467   retarget.o
        460          6          0          0          0       3728   spi.o
-        20          4        192          0        512        600   startup_mini51series.o
+        20          4        192          0        512        628   startup_mini51series.o
        204          6          0          0          0       2052   sys.o
-        80         24          0          8          0        826   system_mini51series.o
+        80         24          0          8          0        882   system_mini51series.o
 
     ----------------------------------------------------------------------
-      5638        560        256        648        568     254726   Object Totals
+      5638        560        256        648        568     255566   Object Totals
          0          0         32          0          0          0   (incl. Generated)
          0          0          0          3          4          0   (incl. Padding)
 
@@ -568,8 +568,8 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-      6696        628        256        648        568     253506   Grand Totals
-      6696        628        256        648        568     253506   ELF Image Totals
+      6696        628        256        648        568     254346   Grand Totals
+      6696        628        256        648        568     254346   ELF Image Totals
       6696        628        256        648          0          0   ROM Totals
 
 ==============================================================================

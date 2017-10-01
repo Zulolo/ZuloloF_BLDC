@@ -5,7 +5,7 @@
 
 #define LED_PORT					P5
 #define LED_PIN						BIT4
-#define LED_OUTPUT				P54
+#define LED_OUTPUT					P54
 
 #define GET_SPECIFIED_EEROR(x)		((unErrorMaster & (1L << (x)) == 0) ? FALSE : TRUE)
 #define IS_ANY_EEROR				((unErrorMaster == 0) ? FALSE : TRUE)
@@ -36,7 +36,7 @@ typedef enum {
 
 #define LED_ON					(LED_OUTPUT = 0)
 #define LED_OFF 				(LED_OUTPUT = 1)
-#define LED_TOGGLE 			(GPIO_TOGGLE(LED_OUTPUT))
+#define LED_TOGGLE 				(GPIO_TOGGLE(LED_OUTPUT))
 
 #ifdef __USED_BY_ERROR_C__
 #define EXTERNAL_ERROR

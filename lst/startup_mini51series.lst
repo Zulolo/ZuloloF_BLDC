@@ -266,9 +266,9 @@ ARM Macro Assembler    Page 5
 
 Command Line: --16 --debug --xref --diag_suppress=9931 --cpu=Cortex-M0 --apcs=i
 nterwork --depend=.\obj\startup_mini51series.d -o.\obj\startup_mini51series.o -
-I.\RTE\Device\Mini54ZDE -I.\RTE\_BLDC_driver -IC:\Keil_v5\ARM\PACK\ARM\CMSIS\5.
-1.1\CMSIS\Include -IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51
-\Driver -IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include -
+I.\RTE\Device\Mini54ZDE -I.\RTE\_BLDC_driver -ID:\Keil_v5\ARM\PACK\ARM\CMSIS\5.
+1.0\CMSIS\Include -ID:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51
+\Driver -ID:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.1.0\Device\Mini51\Include -
 -predefine="__MICROLIB SETA 1" --predefine="__UVISION_VERSION SETA 524" --prede
 fine="_RTE_ SETA 1" --list=.\lst\startup_mini51series.lst RTE\Device\Mini54ZDE\
 startup_Mini51Series.s
